@@ -140,6 +140,7 @@ export default function MergeSandboxModal({
       }
     >
       <Stack gap="sm">
+        {/* eslint-disable-next-line no-restricted-syntax -- debt: F557 Stack/Row can't render this element */}
         <Text as="div" tone="body" className="flex items-center gap-2">
           <span>Merge</span>
           {/* eslint-disable-next-line no-restricted-syntax, local/primitive-classname -- debt: Pill has no 14px size; F528 type, F527 colour (text-sm text-strong) */}
@@ -285,6 +286,7 @@ function TickList({
           <li key={r.id} className="px-3 py-2 hover:bg-hover">
             <Checkbox
               label={
+                // eslint-disable-next-line no-restricted-syntax -- debt: F557 Stack/Row can't render this element
                 <span className="flex items-center gap-2">
                   <span className="truncate">{r.label}</span>
                   {r.badges}

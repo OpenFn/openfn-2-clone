@@ -145,6 +145,7 @@ function ScopesInput({
     setDraft("");
   };
   return (
+    // eslint-disable-next-line no-restricted-syntax -- debt: F557 Stack/Row can't render this element
     <div id={`generic-oauth-scopes-${id}`} className="space-y-2">
       <TextInput
         id={id}

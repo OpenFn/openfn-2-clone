@@ -88,6 +88,7 @@ export default function Donut({
       <Text as="ul" tone="body" className={LEGEND}>
         {slices.map(({ key, label, color, value, href }) => (
           <li key={key}>
+            {/* eslint-disable-next-line no-restricted-syntax -- debt: F556 off-scale gap-1.5, waiting on Lucy's rounding */}
             <TextLink to={href} variant="plain" className="flex items-center gap-1.5">
               <span aria-hidden="true" className={DOT} style={{ backgroundColor: color }} />
               <span className="capitalize">{label}</span>{" "}

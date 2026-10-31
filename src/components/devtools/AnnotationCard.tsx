@@ -37,6 +37,7 @@ function statusTone(status: string): Tone {
 function IdList({ label, ids, onOpenId }: { label: string; ids: string[]; onOpenId?: ((id: string) => void) | undefined }) {
   if (ids.length === 0) return null;
   return (
+    // eslint-disable-next-line no-restricted-syntax -- debt: F556 off-scale gap-1.5, waiting on Lucy's rounding
     <Text as="div" variant="body-sm" className="flex flex-wrap items-center gap-1.5">
       <span className="text-muted">{label}</span>
       {ids.map((id) => (
@@ -75,6 +76,7 @@ export default function AnnotationCard({ id, annotation, inventory, onOpenId, in
             />
           )}
         </div>
+        {/* eslint-disable-next-line no-restricted-syntax -- debt: F556 off-scale gap-1.5, waiting on Lucy's rounding */}
         <div className="flex flex-wrap items-center gap-1.5">
           <Pill variant="square">
             <code>{id}</code>

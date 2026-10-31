@@ -38,6 +38,7 @@ export default function CollectionsPanel({ collections: { collections, canManage
   );
 
   return (
+    // eslint-disable-next-line no-restricted-syntax -- debt: F557 Stack/Row can't render this element
     <div id="collections" className="space-y-4">
       <SectionHeader
         size="lg"

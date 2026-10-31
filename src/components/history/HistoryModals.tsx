@@ -94,6 +94,7 @@ function BulkModal({
         )
       }
     >
+      {/* eslint-disable-next-line no-restricted-syntax -- debt: F556 off-scale space-y-3, waiting on Lucy's rounding */}
       <Text as="div" tone="muted" className="space-y-3">
         {confirm.error && <Alert tone="danger">{errorMessage(confirm.error)}</Alert>}
         {children}

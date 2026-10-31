@@ -47,6 +47,7 @@ export default function UserDeletionModal({
           </Button>
         }
       >
+        {/* eslint-disable-next-line no-restricted-syntax -- debt: F556 off-scale space-y-3, waiting on Lucy's rounding */}
         <Text as="div" tone="muted" className="space-y-3">
           <p>
             {isCurrentUser ? "Your account" : "This user"} cannot be deleted until their auditable activities have

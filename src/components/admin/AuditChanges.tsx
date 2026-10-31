@@ -54,6 +54,7 @@ export default function AuditChanges({ audit }: { audit: AuditEvent }) {
           </Card>
         )}
         {bodies.length > 0 && (
+          // eslint-disable-next-line no-restricted-syntax -- debt: F557 Stack/Row can't render this element
           <Card variant="muted" padding="sm" as="ul" className="space-y-2">
             {bodies.map(([env, body]) => (
               <li key={env}>

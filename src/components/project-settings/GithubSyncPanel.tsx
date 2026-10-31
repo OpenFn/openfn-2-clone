@@ -40,7 +40,9 @@ export default function GithubSyncPanel({ githubSync, sandbox, onInitiateSync, o
     );
   } else if (connection) {
     body = (
+      // eslint-disable-next-line no-restricted-syntax -- debt: F557 Stack/Row can't render this element
       <div id="github-sync-component" className="space-y-2">
+        {/* eslint-disable-next-line no-restricted-syntax -- debt: F558 a child would change in a flex column */}
         <Card className="space-y-4">
           <DetailList>
             <DetailItem label="Repository:">

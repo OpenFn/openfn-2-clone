@@ -38,6 +38,7 @@ export default function StepFailureBars({
     <div className="lg:relative lg:min-h-64 lg:flex-1">
       <ul className="relative -mr-6 flex max-h-64 flex-col gap-6 overflow-y-auto pr-4 lg:absolute lg:inset-0 lg:max-h-none">
         {rows.map(({ key, label, adaptor, count }) => (
+          // eslint-disable-next-line no-restricted-syntax -- debt: F557 Stack/Row can't render this element
           <li key={key} className="flex flex-col gap-2">
             <Text as="div" className="flex items-baseline justify-between gap-4">
               <div className="flex min-w-0 flex-col gap-1">

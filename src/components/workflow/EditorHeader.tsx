@@ -80,6 +80,7 @@ export default function EditorHeader({
           label={projectLabel}
           items={[["Workflows", `/projects/${project.id}/w`]]}
           current={
+            // eslint-disable-next-line no-restricted-syntax -- debt: F557 Stack/Row can't render this element
             <span className="flex items-center gap-2">
               <Tooltip content={workflowName}>
                 {/* eslint-disable-next-line no-restricted-syntax -- debt: a plain text button; Button has no text theme */}

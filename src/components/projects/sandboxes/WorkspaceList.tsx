@@ -53,7 +53,9 @@ export default function WorkspaceList({
   );
 
   return (
+    // eslint-disable-next-line no-restricted-syntax -- debt: F556 off-scale space-y-8, waiting on Lucy's rounding
     <div className="space-y-8">
+      {/* eslint-disable-next-line no-restricted-syntax -- debt: F556 off-scale space-y-3, waiting on Lucy's rounding */}
       <div className="space-y-3">
         {card(root, !rootIsSandbox)}
         {active.length === 0 && scheduled.length === 0 ? (

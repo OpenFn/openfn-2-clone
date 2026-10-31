@@ -110,6 +110,7 @@ export default function ConfigureAdaptorModal({
                       onChange={() => onCredentialChange(c.name)}
                       label={<span className="font-medium text-strong">{c.name}</span>}
                       hint={
+                        // eslint-disable-next-line no-restricted-syntax -- debt: F557 Stack/Row can't render this element
                         <Text className="flex items-center gap-1">
                           <span className="hero-user-solid h-4 w-4" />
                           {ownerEmail(c.ownerId)}

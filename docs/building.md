@@ -164,7 +164,8 @@ type (`PickerButton`) disables the rule on its line with the reason.
 
 Colour is `tone` (`<Text tone="muted">`). Emphasis inside a sentence is
 `font-medium`, not a nested `Text`. A block of copy is one `Text`
-(`<Text as="div" className="space-y-3">` around its paragraphs). One size
+(`<Text as="div">` around a `Stack` of its paragraphs; lint bans a bare
+`space-y-*`). One size
 per piece of text: nothing grows with the viewport (`@md:text-base`).
 Primitives own the type of their parts and callers don't restyle them; a
 primitive that needs a smaller form takes a prop (`DetailList size="sm"`).

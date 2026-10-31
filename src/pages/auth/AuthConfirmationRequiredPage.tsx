@@ -65,6 +65,7 @@ export default function AuthConfirmationRequiredPage({ email, onResend, onChange
   return (
     <AuthPanelLayout title="Confirm your email address" align="top">
       <AuthPanel>
+        {/* eslint-disable-next-line no-restricted-syntax -- debt: F557 Stack/Row can't render this element */}
         <Text as="div" tone="muted" className="space-y-4">
           <p>
             Your account is blocked pending email confirmation. We sent a confirmation link to{" "}

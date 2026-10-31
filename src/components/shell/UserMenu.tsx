@@ -55,6 +55,7 @@ export default function UserMenu({ user }: { user: MenuUser }) {
         </MenuHeader>
         {user.experimentalFeatures && (
           <div className="bg-amber-50 px-4 py-3">
+            {/* eslint-disable-next-line no-restricted-syntax -- debt: F556 off-scale gap-1.5, waiting on Lucy's rounding */}
             <Heading size="sm" as="p" className="flex items-center gap-1.5">
               <span className="hero-wrench-screwdriver-mini h-4 w-4 text-amber-600" />
               Experimental features on

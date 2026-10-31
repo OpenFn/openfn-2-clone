@@ -45,6 +45,7 @@ export default function HistorySearchBar({
         <SearchInput value={value} onChange={setValue} onClear={() => onSearch("")} placeholder="Search work orders..." />
       </form>
       <Text tone="muted">by</Text>
+      {/* eslint-disable-next-line no-restricted-syntax -- debt: F557 Stack/Row can't render this element */}
       <div id="search_button_group" className="flex items-center gap-2">
         <div className="inline-flex gap-0.5 rounded-md bg-surface p-1 ring-1 ring-inset ring-strong">
           {fields.map((f) => (

@@ -772,6 +772,7 @@ function OauthFields({
   }
 
   return (
+    // eslint-disable-next-line no-restricted-syntax -- debt: F558 a child would change in a flex column
     <div className="space-y-4">
       {scopes.length > 0 && (
         <Section

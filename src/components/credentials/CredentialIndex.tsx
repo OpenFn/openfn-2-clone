@@ -125,6 +125,7 @@ export default function CredentialIndex(props: Props) {
   };
 
   return (
+    // eslint-disable-next-line no-restricted-syntax -- debt: F557 Stack/Row can't render this element
     <div id="credentials-index-component" data-annotation="shared-credential-index-component" className="space-y-4">
       <OauthClientsTable
         rows={oauthClients}

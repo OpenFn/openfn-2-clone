@@ -103,6 +103,7 @@ export default function LiveDashboardHome({
         </Card>
 
         <div className="mt-8 grid grid-cols-2 gap-6 pb-16">
+          {/* eslint-disable-next-line no-restricted-syntax -- debt: F556 off-scale space-y-3, waiting on Lucy's rounding */}
           <div className="space-y-3">
             <Heading as="h2" size="lg">System information</Heading>
             <Card padding="lg">{data.systemInfo}</Card>
@@ -122,6 +123,7 @@ export default function LiveDashboardHome({
               <Stat label="IO" value={data.runQueues.io} />
             </div>
           </div>
+          {/* eslint-disable-next-line no-restricted-syntax -- debt: F556 off-scale space-y-3, waiting on Lucy's rounding */}
           <div className="space-y-3">
             <Heading as="h2" size="lg">System limits</Heading>
             {data.limits.map((l) => (
@@ -129,6 +131,7 @@ export default function LiveDashboardHome({
             ))}
             {/* eslint-disable-next-line local/primitive-classname -- debt: F526 box (pt-3) */}
             <Heading as="h2" size="lg" className="pt-3">Memory</Heading>
+            {/* eslint-disable-next-line no-restricted-syntax -- debt: F556 off-scale space-y-5, waiting on Lucy's rounding */}
             <Card padding="lg" className="space-y-5">
               <div className="flex h-6 gap-0.5 overflow-hidden">
                 {data.memory.map((m) => (
@@ -140,6 +143,7 @@ export default function LiveDashboardHome({
                   <DetailItem
                     key={m.label}
                     label={
+                      // eslint-disable-next-line no-restricted-syntax -- debt: F557 Stack/Row can't render this element
                       <span className="flex items-center gap-2">
                         <span className={cn("h-4 w-4 rounded-sm", m.color)} />
                         {m.label}

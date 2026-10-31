@@ -37,6 +37,7 @@ export default function CredentialDeletionModal({ onClose, credential, onDelete 
           </Button>
         }
       >
+        {/* eslint-disable-next-line no-restricted-syntax -- debt: F556 off-scale space-y-3, waiting on Lucy's rounding */}
         <Text as="div" tone="muted" className="space-y-3">
           <p>{activityNote}</p>
           <p>Contact your instance administrator for more details.</p>

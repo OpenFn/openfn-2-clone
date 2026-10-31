@@ -64,6 +64,7 @@ function Signature({ signature }: { signature: ErrorSignature }) {
   const state = OUTCOMES[signature.exit_reason];
   const color = state && FAILURE_COLORS[state];
   return (
+    // eslint-disable-next-line no-restricted-syntax -- debt: F556 off-scale space-y-1.5, waiting on Lucy's rounding
     <div className="space-y-1.5">
       <p className="flex items-center gap-2 font-medium text-strong capitalize">
         {color && <span aria-hidden="true" className={DOT} style={{ backgroundColor: color }} />}

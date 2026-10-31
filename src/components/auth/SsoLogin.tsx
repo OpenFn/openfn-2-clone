@@ -9,6 +9,7 @@ import type { SsoProvider } from "../../types/auth";
 export default function SsoLogin({ provider }: { provider: SsoProvider }) {
   return (
     <>
+      {/* eslint-disable-next-line no-restricted-syntax -- debt: F557 Stack/Row can't render this element */}
       <Text as="div" variant="body-sm" tone="body" className="flex items-center gap-2">
         <hr className="flex-1 border-subtle" />
         or

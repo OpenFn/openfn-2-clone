@@ -148,6 +148,7 @@ export default function VolumeBars({
                 <p className="border-b border-subtle px-3 py-2 font-medium text-strong">{rangeLabel(tip.at, hours, timezone)}</p>
                 <ul className="flex flex-col gap-1.5 px-3 py-2 text-body">
                   {totals.map(({ key, label, color }) => (
+                    // eslint-disable-next-line no-restricted-syntax -- debt: F557 Stack/Row can't render this element
                     <li key={key} className="flex items-center gap-2">
                       <span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: color }} />
                       <span className="grow pr-4">{label}</span>
@@ -171,6 +172,7 @@ export default function VolumeBars({
       <p className="sr-only">{`Window totals: ${totals.map(({ label, value }) => `${label} ${formatNumber(value)}`).join(", ")}.`}</p>
       <Text as="ul" aria-hidden="true" tone="body" className={LEGEND}>
         {totals.map(({ key, label, color }) => (
+          // eslint-disable-next-line no-restricted-syntax -- debt: F557 Stack/Row can't render this element
           <li key={key} className="flex items-center gap-2">
             <span className={DOT} style={{ backgroundColor: color }} />
             {label}

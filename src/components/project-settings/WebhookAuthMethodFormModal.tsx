@@ -121,6 +121,7 @@ export default function WebhookAuthMethodFormModal({ authMethod, onCancel, onSav
             void reveal.run();
           }}
         >
+          {/* eslint-disable-next-line no-restricted-syntax -- debt: F557 Stack/Row can't render this element */}
           <Text as="div" className="space-y-4">
             <p>
               You're required to reauthenticate yourself before viewing the webhook{" "}

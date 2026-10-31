@@ -132,6 +132,7 @@ export function BodyViewer({
     );
   }
   return (
+    // eslint-disable-next-line no-restricted-syntax -- debt: F557 Stack/Row can't render this element
     <Text as="div" variant="body-sm" tone="faint" className="space-y-1">
       <Card variant="muted" padding="none" className="relative">
         <div className="absolute right-2 top-2 flex items-center gap-1.5">

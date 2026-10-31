@@ -87,6 +87,7 @@ export default function EdgeInspector({ edge, onChange, onDelete, onClose }: Pro
             className="h-24 bg-code font-mono text-code"
           />
           <Disclosure variant="inline" defaultOpen={false} title="How to write expressions">
+            {/* eslint-disable-next-line no-restricted-syntax -- debt: F557 Stack/Row can't render this element */}
             <Text as="div" variant="body-sm" tone="muted" className="space-y-1">
               <p>Use the state from the previous step to decide whether this step should run.</p>
               <p>Must be a single JavaScript expression with `state` in scope.</p>

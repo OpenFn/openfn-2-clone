@@ -178,6 +178,7 @@ export default function AIAssistantPanel({ sessions, onClose }: Props) {
                     <Heading size="sm" as="h3" className="truncate">
                       {s.title}
                     </Heading>
+                    {/* eslint-disable-next-line no-restricted-syntax -- debt: F556 off-scale gap-3, waiting on Lucy's rounding */}
                     <Text as="div" variant="body-sm" tone="muted" className="flex items-center justify-between gap-3">
                       {formatSessionAge(s.updatedAt)}
                       <Pill>{s.messages.length}</Pill>
@@ -231,6 +232,7 @@ export default function AIAssistantPanel({ sessions, onClose }: Props) {
       </div>
 
       <Modal open={aboutOpen} onClose={() => setAboutOpen(false)} title="About the AI Assistant" size="md">
+        {/* eslint-disable-next-line no-restricted-syntax -- debt: F557 Stack/Row can't render this element */}
         <Text as="div" className="space-y-4">
           <p>The OpenFn AI Assistant helps you build workflows and write job code. It can:</p>
           <ul className="list-inside list-disc space-y-1 pl-4">

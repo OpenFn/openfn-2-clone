@@ -73,7 +73,9 @@ export default function RunViewerPanel({ projectId, run, startedBy, steps, logs,
             {startedBy && <DetailItem label="Started by">{startedBy}</DetailItem>}
           </DetailList>
         </div>
+        {/* eslint-disable-next-line no-restricted-syntax -- debt: F556 off-scale gap-3, waiting on Lucy's rounding */}
         <div className="flex flex-col gap-3">
+          {/* eslint-disable-next-line no-restricted-syntax -- debt: F557 Stack/Row can't render this element */}
           <Heading size="sm" as="p" className="flex items-center gap-1">
             Run Steps
             <InfoTooltip title="This run may not have executed all steps in the workflow. Only the steps that were executed in this specific run are shown here." />
@@ -81,6 +83,7 @@ export default function RunViewerPanel({ projectId, run, startedBy, steps, logs,
           {steps.length === 0 ? (
             <EmptyState variant="plain" message="No steps yet" />
           ) : (
+            // eslint-disable-next-line no-restricted-syntax -- debt: F557 Stack/Row can't render this element
             <ul aria-label="Execution steps" className="space-y-2">
               {steps.map((s) => {
                 const selected = s.id === selectedStepId;
