@@ -15,6 +15,7 @@ import CopyButton from "../primitives/CopyButton";
 function Group({ title, className, children }: { title: string; className?: string; children: ReactNode }) {
   return (
     <section className={className}>
+      {/* eslint-disable-next-line local/primitive-classname -- debt: F525 margin, F526 box (mb-3 border-b border-subtle pb-1.5) */}
       <Heading size="xs" as="h2" className="mb-3 border-b border-subtle pb-1.5">
         {title}
       </Heading>
@@ -47,6 +48,7 @@ export default function ChannelRequestSummary({
           state={request.state}
           title={request.state === "timeout" && event?.errorMessage ? humanizeError(event.errorMessage) : undefined}
         />
+        {/* eslint-disable-next-line local/primitive-classname -- debt: F525 margin (ml-auto) */}
         <Text as="div" variant="body-sm" className="ml-auto flex flex-wrap items-center gap-x-4 gap-y-1">
           <span className="flex items-center gap-1.5">
             <Heading size="xs" as="span">

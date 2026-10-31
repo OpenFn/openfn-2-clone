@@ -158,7 +158,7 @@ type (`PickerButton`) disables the rule on its line with the reason.
 | `code-md` / `code-sm` | 14px / 12px mono | Ids, paths, hashes, log lines |
 | `stat-lg` / `stat-md` / `stat-sm` | 30px / 24px / 18px | A metric's number, a chart total, a count in a cell |
 
-Colour is a class (`text-muted`). Emphasis inside a sentence is
+Colour is `tone` (`<Text tone="muted">`). Emphasis inside a sentence is
 `font-medium`, not a nested `Text`. A block of copy is one `Text`
 (`<Text as="div" className="space-y-3">` around its paragraphs). One size
 per piece of text: nothing grows with the viewport (`@md:text-base`).

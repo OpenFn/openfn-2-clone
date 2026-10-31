@@ -140,8 +140,51 @@ const local = {
         }
       },
     },
+    // D299: a primitive's className, from a page or feature component, is layout and sizing only
+    // (src/components/CLAUDE.md). Names imported from primitives/ are checked; a className held in
+    // a variable passes unread.
+    'primitive-classname': {
+      meta: { type: 'problem', messages: { bad: 'className on a primitive is layout and sizing only, not {{bad}}. Use its props (tone, variant, padding) or let the parent own the gap. See src/components/CLAUDE.md.' } },
+      create(context) {
+        const primitives = new Set()
+        const strings = (node, out) => {
+          if (!node) return out
+          if (node.type === 'Literal' && typeof node.value === 'string') out.push(node.value)
+          else if (node.type === 'TemplateLiteral') {
+            node.quasis.forEach((q) => out.push(q.value.cooked ?? ''))
+            node.expressions.forEach((e) => strings(e, out))
+          } else if (node.type === 'JSXExpressionContainer') strings(node.expression, out)
+          else if (node.type === 'ConditionalExpression') [node.consequent, node.alternate].forEach((e) => strings(e, out))
+          else if (node.type === 'LogicalExpression') (node.operator === '&&' ? [node.right] : [node.left, node.right]).forEach((e) => strings(e, out))
+          else if (node.type === 'BinaryExpression' && node.operator === '+') [node.left, node.right].forEach((e) => strings(e, out))
+          else if (node.type === 'CallExpression') node.arguments.forEach((e) => strings(e, out))
+          else if (node.type === 'ArrayExpression') node.elements.forEach((e) => strings(e, out))
+          else if (node.type === 'ObjectExpression') node.properties.forEach((p) => p.type === 'Property' && strings(p.key, out))
+          return out
+        }
+        return {
+          ImportDeclaration(node) {
+            if (/(^|\/)primitives(\/|$)/.test(node.source.value)) node.specifiers.forEach((s) => primitives.add(s.local.name))
+          },
+          JSXAttribute(node) {
+            const tag = node.parent.name
+            if (node.name.name !== 'className' || tag.type !== 'JSXIdentifier' || !primitives.has(tag.name)) return
+            const bad = strings(node.value, [])
+              .join(' ')
+              .split(/\s+/)
+              .filter((cls) => cls && !layoutClass.test(cls.split(':').pop().replace(/^!|!$/g, '').replace(/^-/, '')))
+            if (bad.length) context.report({ node, messageId: 'bad', data: { bad: bad.join(' ') } })
+          },
+        }
+      },
+    },
   },
 }
+
+// Layout and sizing (D299): display, flex and grid, gaps, sizing, text overflow, overflow,
+// position, sr-only, group/peer and container queries. Variant prefixes (`sm:`) and `!` are stripped first.
+const layoutClass =
+  /^(flex|inline-flex|grid|inline-grid|block|inline-block|inline|hidden|contents|(flex|grid|col|row|items|justify|content|self|place|order|gap|space-[xy])-.+|(min-|max-)?[wh]-.+|size-.+|(shrink|grow)(-.+)?|basis-.+|aspect-.+|truncate|line-clamp-.+|(whitespace|break|wrap)-.+|text-(wrap|nowrap|balance|pretty|ellipsis|clip)|overflow-.+|relative|absolute|fixed|sticky|static|(inset|top|bottom|left|right|z)-.+|(not-)?sr-only|(group|peer)(\/.+)?|isolate|@container(\/.+)?)$/
 
 const routerMessage = 'Navigate through useRouter() and Link from src/routing/router.'
 const routerImports = [
@@ -246,6 +289,12 @@ export default defineConfig([
     files: ['src/pages/**/*.tsx', 'src/components/*/**/*.tsx'],
     ignores: ['src/components/primitives/**', '**/*.stories.tsx'],
     rules: { 'no-restricted-syntax': [...consumerRules(colourRules()), ...typeRules] },
+  },
+  {
+    // D299. ponytail: these folders first; the rest of src/components/*/ joins in the next step.
+    files: ['src/pages/**/*.tsx', 'src/components/{admin,auth,credentials,devtools,domain,history,profile}/**/*.tsx'],
+    ignores: ['**/*.stories.tsx', '**/*.test.tsx'],
+    rules: { 'local/primitive-classname': 'error' },
   },
   // Raw palette colours, confined to the files that are about colour.
   // Tag colours:

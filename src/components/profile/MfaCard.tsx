@@ -92,6 +92,7 @@ export default function MfaCard({ mfa, onStartSetup, onConfirm, onDisable }: Pro
       action={action}
     >
       {show && (
+        // eslint-disable-next-line local/primitive-classname -- debt: F526 box (border-t border-strong pt-5)
         <Text as="div" className="space-y-5 border-t border-strong pt-5">
           {enabled && !setup && (
             <p>

@@ -24,8 +24,8 @@ this is in [docs/building.md](./docs/building.md).
   permissions and states (`disabled`, `pending`) stay booleans.
 - Primitives know nothing about Lightning: no product wording, permissions
   or sandbox logic.
-- `className` on a primitive is for placement only (`flex-1`, `w-full`,
-  `min-w-0`), never for how it looks.
+- `className` on a primitive is layout and sizing only (`flex-1`, `w-full`,
+  `min-w-0`), never for how it looks. The list is in src/components/CLAUDE.md.
 - Never work around a primitive. If it can't do the job, extend it (within reason!)
 - The parent owns the space between children. No outer margins.
 - A component's stories are its spec: one per state (empty, loading, error,

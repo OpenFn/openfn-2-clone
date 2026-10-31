@@ -165,6 +165,7 @@ export default function ChannelRequestShowPage({
               <DetailItem label="Config Version">
                 {request.snapshot.lockVersion}
                 {configChanged && (
+                  // eslint-disable-next-line local/primitive-classname -- debt: F525 margin (ml-2)
                   <Pill tone="warning" className="ml-2">
                     Config changed
                   </Pill>

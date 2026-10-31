@@ -49,6 +49,7 @@ export default function FirstSetupPage({ onSave }: FirstSetupPageProps) {
         <Form
           id="superuser-registration-form"
           {...form.formProps(onSave)}
+          // eslint-disable-next-line local/primitive-classname -- debt: F525 margin (mt-4)
           className="mt-4 w-1/2"
           actions={
             <Button type="submit">

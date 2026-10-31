@@ -28,6 +28,7 @@ export default function SettingsMenu() {
     <div data-devtools className="fixed bottom-5 z-9999" style={{ right: annotations.open ? ANNOTATIONS_PANEL_WIDTH + 20 : 20 }}>
       <Popover
         align="end"
+        // eslint-disable-next-line local/primitive-classname -- debt: F526 box (p-4)
         className="w-80 p-4"
         trigger={
           <IconButton
@@ -35,6 +36,7 @@ export default function SettingsMenu() {
             label="Open settings"
             tooltip="Settings"
             data-ui="settings-trigger"
+            // eslint-disable-next-line local/primitive-classname -- debt: F526 box, F527 colour (rounded-full bg-inverse text-inverse shadow-lg hover:bg-inverse/90)
             className="h-12 w-12 rounded-full bg-inverse text-inverse shadow-lg hover:bg-inverse/90"
           />
         }

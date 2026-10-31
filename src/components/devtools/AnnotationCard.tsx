@@ -39,7 +39,7 @@ function IdList({ label, ids, onOpenId }: { label: string; ids: string[]; onOpen
     <Text as="div" variant="body-sm" className="flex flex-wrap items-center gap-1.5">
       <span className="text-muted">{label}</span>
       {ids.map((id) => (
-        // eslint-disable-next-line no-restricted-syntax -- debt: Button has no 12px mono size for ids
+        // eslint-disable-next-line no-restricted-syntax, local/primitive-classname -- debt: Button has no 12px mono size for ids; F528 type (font-mono text-xs)
         <Button key={id} variant="secondary" size="xs" className="font-mono text-xs" onClick={() => onOpenId?.(id)}>
           {id}
         </Button>
@@ -113,6 +113,7 @@ export default function AnnotationCard({ id, annotation, inventory, onOpenId, in
         <>
           {annotation.frontMatterRaw && (
             <Disclosure title="Front matter" defaultOpen={false} padding="none">
+              {/* eslint-disable-next-line local/primitive-classname -- debt: F526 box (border-t border-subtle px-4 py-3) */}
               <Text as="pre" variant="code-sm" tone="muted" className="overflow-x-auto border-t border-subtle px-4 py-3">
                 {annotation.frontMatterRaw}
               </Text>

@@ -29,6 +29,7 @@ export default function TokensTable({ tokens }: { tokens: ApiToken[] }) {
           <Td>
             <code className="whitespace-nowrap">{token.masked}</code>
           </Td>
+          {/* eslint-disable-next-line local/primitive-classname -- debt: F528 type (font-medium) */}
           <Td className="whitespace-nowrap font-medium">
             <DateTime value={token.insertedAt} />
           </Td>

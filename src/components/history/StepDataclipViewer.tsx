@@ -46,6 +46,7 @@ export default function StepDataclipViewer({
     return runFinished ? (
       <EmptyState variant="plain" message={`No ${inputOrOutput} state could be saved for this run.`} />
     ) : (
+      // eslint-disable-next-line local/primitive-classname -- debt: F526 box, F528 type, F527 colour (rounded-md bg-code p-12 text-center text-code)
       <Text as="div" variant="code-sm" className="rounded-md bg-code p-12 text-center text-code">
         <TextPingLoader>Nothing yet</TextPingLoader>
       </Text>

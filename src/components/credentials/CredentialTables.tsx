@@ -112,6 +112,7 @@ export function CredentialsTable({ rows, showOwner = false, emptyState, actions 
                     title="OAuth client not found"
                     icon="hero-exclamation-triangle"
                     iconClass="h-5 w-5"
+                    // eslint-disable-next-line local/primitive-classname -- debt: F525 margin (ml-2)
                     className="ml-2"
                   />
                 )}

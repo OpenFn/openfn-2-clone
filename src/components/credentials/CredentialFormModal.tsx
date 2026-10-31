@@ -428,6 +428,7 @@ export default function CredentialFormModal({
       before={
         schema === "oauth" &&
         !client && (
+          // eslint-disable-next-line local/primitive-classname -- debt: F525 margin (mb-4)
           <Alert tone="danger" header="OAuth client not found" className="mb-4">
             <p>The associated Oauth client for this credential cannot be found. Create a new client or contact your administrator.</p>
           </Alert>
@@ -527,6 +528,7 @@ export default function CredentialFormModal({
               label="Credential Body"
               required
               rows={8}
+              // eslint-disable-next-line local/primitive-classname -- debt: F528 type (font-mono)
               className="font-mono"
               value={env.body}
               onChange={(e) => patchEnv(env.key, { body: e.target.value })}
@@ -619,6 +621,7 @@ function SchemaInput({
           label={f.label}
           required={f.required}
           rows={4}
+          // eslint-disable-next-line local/primitive-classname -- debt: F528 type (font-mono)
           className="font-mono"
           value={code ?? (value === undefined ? "" : JSON.stringify(value, null, 2))}
           errors={code !== undefined && !parseJson(code).ok ? ["must be valid JSON"] : []}
@@ -708,6 +711,7 @@ function OauthFields({
       <>
         <Alert tone="warning" header="Reauthentication Required">
           <p>You've changed the permissions for this credential.</p>
+          {/* eslint-disable-next-line local/primitive-classname -- debt: F525 margin (mt-2) */}
           <Text as="p" className="mt-2">
             Please reauthenticate with {client.name} to apply these changes.
           </Text>
@@ -744,6 +748,7 @@ function OauthFields({
       <>
         <Alert tone="warning" header={`${client.name} is Having Issues`}>
           <p>{client.name} is experiencing technical difficulties.</p>
+          {/* eslint-disable-next-line local/primitive-classname -- debt: F525 margin (mt-2) */}
           <Text as="p" className="mt-2">
             This is temporary - please try again in a few minutes.
           </Text>

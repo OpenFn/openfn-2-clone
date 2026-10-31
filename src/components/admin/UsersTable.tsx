@@ -45,6 +45,7 @@ export default function UsersTable({
 
   return (
     <>
+      {/* eslint-disable-next-line local/primitive-classname -- debt: F525 margin (mb-4) */}
       <SearchInput value={filter} onChange={setFilter} placeholder="Filter users..." className="mb-4 max-w-sm" />
       <Table
         header={
@@ -81,6 +82,7 @@ export default function UsersTable({
             <Td>{!user.disabled && checkIcon}</Td>
             <Td>{user.supportUser && checkIcon}</Td>
             <Td>{user.scheduledDeletion && formatShortDateTime(user.scheduledDeletion)}</Td>
+            {/* eslint-disable-next-line local/primitive-classname -- debt: F526 box (py-0.5) */}
             <Td className="py-0.5">
               <ButtonMenu label="Actions">
                 <MenuItem to={`/settings/users/${user.id}`}>Edit</MenuItem>

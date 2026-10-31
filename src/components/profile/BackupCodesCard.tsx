@@ -26,6 +26,7 @@ export default function BackupCodesCard({
 }) {
   const { copied, copy } = useCopy(codes.map((c) => c.code).join("\n\n"));
   return (
+    // eslint-disable-next-line local/primitive-classname -- debt: F526 box (divide-y divide-strong)
     <Card padding="none" className="divide-y divide-strong">
       <div className="p-6">
         <SectionHeader
@@ -60,6 +61,7 @@ export default function BackupCodesCard({
           Copy Codes
         </Button>
         {copied && (
+          // eslint-disable-next-line local/primitive-classname -- debt: F526 box (p-2)
           <Alert id="codes-copied-alert" tone="success" className="p-2">
             Copied!
           </Alert>

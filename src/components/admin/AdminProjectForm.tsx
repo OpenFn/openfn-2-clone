@@ -119,11 +119,13 @@ export default function AdminProjectForm({ project, users, onSave, cancelHref }:
           badgeLabel="Note that this project will be named:"
           fieldClassName="w-1/2"
         />
+        {/* eslint-disable-next-line local/primitive-classname -- debt: F525 margin (mb-2 mt-8) */}
         <Heading as="h2" className="mb-2 mt-8">
           Manage project users
         </Heading>
 
 
+        {/* eslint-disable-next-line local/primitive-classname -- debt: F525 margin (mb-4) */}
         <SearchInput value={sort.filter} onChange={sort.setFilter} placeholder="Filter users..." className="mb-4 max-w-sm" />
 
         <Table
@@ -141,6 +143,7 @@ export default function AdminProjectForm({ project, users, onSave, cancelHref }:
           }
         >
           {sort.rows.map(({ user, role }) => (
+            // eslint-disable-next-line local/primitive-classname -- debt: F527 colour (text-faint)
             <Tr key={user.id} className={cn(role === "" && "text-faint")}>
               <Td>{fullName(user)}</Td>
               <Td>{user.email}</Td>
