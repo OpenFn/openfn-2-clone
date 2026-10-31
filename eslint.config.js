@@ -95,7 +95,7 @@ const colourRules = ({ palette = true, literals = true, amber = false } = {}) =>
   ...banned(`\\b${UTIL}-(?:danger|success|warning|info)-\\d`, `Status shade: use its role name. ${statusRoles}`),
   ...(literals
     ? banned(
-        '(?:^|[\\s(,\\[:])#[0-9a-fA-F]{3,8}\\b|rgba?\\(|--color-(?:gray|red|green|yellow|blue|white|black)\\b',
+        '(?:^|[\\s(,\\[:])#[0-9a-fA-F]{3,8}\\b|rgba?\\(|--color-(?:gray|red|green|yellow|blue|white|black|danger|success|warning|info)\\b',
         `Colour literal: use a named colour class, or its variable in a style (var(--text-color-muted), var(--background-color-surface)). A canvas or Monaco value that copies Lightning is disabled on its line with the reason. ${tokens}`
       )
     : []),
@@ -252,12 +252,11 @@ export default defineConfig([
     files: ['src/theme/monacoTheme.ts', 'src/constants.ts', 'src/components/projects/health/palette.ts'],
     rules: { 'no-restricted-syntax': srcRules(colourRules({ literals: false })) },
   },
-  // Chart palettes:
+  // Chart palettes (the status-shade ban still holds):
   {
-    files: ['src/components/history/ChannelTiming.tsx'],
-    rules: { 'no-restricted-syntax': [...consumerRules([]), ...typeRules] },
+    files: ['src/components/history/ChannelTiming.tsx', 'src/components/admin/LiveDashboardHome.tsx'],
+    rules: { 'no-restricted-syntax': [...consumerRules(colourRules({ palette: false, literals: false })), ...typeRules] },
   },
-  { files: ['src/components/admin/LiveDashboardHome.tsx'], rules: { 'no-restricted-syntax': [...consumerRules([]), ...typeRules] } },
   // Tests and fixtures hold data (sandbox colours) and query chart classes:
   { files: ['src/**/*.test.{ts,tsx}', 'src/mock-data/**/*.{ts,tsx}'], rules: { 'no-restricted-syntax': srcRules([]) } },
   {
