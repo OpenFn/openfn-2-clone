@@ -122,6 +122,7 @@ export default function WorkflowsTable({
                     {wf.name}
                   </p>
                 </Tooltip>
+                {/* eslint-disable-next-line local/primitive-classname -- debt: F525 margin (mt-1) */}
                 <Text as="p" variant="body-sm" className="mt-1">
                   Updated <DateTime value={wf.updatedAt} />
                 </Text>
@@ -189,6 +190,7 @@ function Count({ value, to, children }: { value: number; to: string; children: R
   return (
     <>
       <Text as="div" variant="stat-sm">{value > 0 ? <TextLink to={to}>{value}</TextLink> : <span className="text-faint">0</span>}</Text>{" "}
+      {/* eslint-disable-next-line local/primitive-classname -- debt: F525 margin (mt-1) */}
       <Text as="div" variant="body-sm" className="mt-1">{value > 0 ? children : "N/A"}</Text>
     </>
   );

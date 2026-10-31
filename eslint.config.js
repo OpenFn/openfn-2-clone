@@ -291,9 +291,9 @@ export default defineConfig([
     rules: { 'no-restricted-syntax': [...consumerRules(colourRules()), ...typeRules] },
   },
   {
-    // D299. ponytail: these folders first; the rest of src/components/*/ joins in the next step.
-    files: ['src/pages/**/*.tsx', 'src/components/{admin,auth,credentials,devtools,domain,history,profile}/**/*.tsx'],
-    ignores: ['**/*.stories.tsx', '**/*.test.tsx'],
+    // D299.
+    files: ['src/pages/**/*.tsx', 'src/components/*/**/*.tsx'],
+    ignores: ['src/components/primitives/**', '**/*.stories.tsx', '**/*.test.tsx'],
     rules: { 'local/primitive-classname': 'error' },
   },
   // Raw palette colours, confined to the files that are about colour.

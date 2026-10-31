@@ -23,10 +23,12 @@ interface Props {
 function Section({ title, description, className, children }: { title: string; description?: ReactNode; className?: string; children: ReactNode }) {
   return (
     <div className={className}>
+      {/* eslint-disable-next-line local/primitive-classname -- debt: F525 margin (mb-2) */}
       <Heading size="sm" className="mb-2">
         {title}
       </Heading>
       {description && (
+        // eslint-disable-next-line local/primitive-classname -- debt: F525 margin (mb-3)
         <Text as="p" tone="muted" className="mb-3">
           {description}
         </Text>
@@ -76,6 +78,7 @@ export default function WorkflowSettings({ graph, projectConcurrency, projectId,
           onChange={(e) => onChange({ concurrency: e.target.value === "" ? null : Number(e.target.value) })}
         />
         {concurrencyDisabled && (
+          // eslint-disable-next-line local/primitive-classname -- debt: F525 margin, F528 type (mt-2 italic)
           <Text as="p" variant="body-sm" tone="muted" className="mt-2 italic">
             Parallel execution of runs is disabled for this project. This setting will have no effect. You can modify your Project
             Concurrency setting on the <TextLink to={`/projects/${projectId}/settings`}>project setup</TextLink> page.

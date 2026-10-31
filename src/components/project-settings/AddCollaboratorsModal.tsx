@@ -70,6 +70,7 @@ export default function AddCollaboratorsModal({ existingEmails, onCancel, onSave
             />
             <RoleSelect value={r.role} errors={submitted && !r.role ? ["can't be blank"] : []} onChange={(role) => update(i, { role })} />
             {rows.length > 1 && (
+              // eslint-disable-next-line local/primitive-classname -- debt: F525 margin (mt-2)
               <IconButton icon="hero-minus-circle" label="Remove row" className="mt-2" onClick={() => setRows(rows.filter((_, j) => j !== i))} />
             )}
           </div>

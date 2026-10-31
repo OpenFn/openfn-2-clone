@@ -69,6 +69,7 @@ export default function WorkflowHealth({
         active={tab}
         onChange={setTab}
         label="Count by"
+        // eslint-disable-next-line local/primitive-classname -- debt: F526 box (border-b-0)
         className="border-b-0"
       />
       {tab === "Work orders" ? (

@@ -82,6 +82,7 @@ export default function EdgeInspector({ edge, onChange, onDelete, onClose }: Pro
             value={expression}
             onChange={(e) => onChange({ conditionExpression: e.target.value })}
             placeholder="eg: !state.error"
+            // eslint-disable-next-line local/primitive-classname -- debt: F526 box, F528 type, F527 colour (bg-code font-mono text-code)
             className="h-24 bg-code font-mono text-code"
           />
           <Disclosure variant="inline" defaultOpen={false} title="How to write expressions">
@@ -100,6 +101,7 @@ export default function EdgeInspector({ edge, onChange, onDelete, onClose }: Pro
         </div>
       )}
       {fromTrigger && (
+        // eslint-disable-next-line local/primitive-classname -- debt: F528 type (italic)
         <Text as="p" variant="body-sm" tone="muted" className="italic">
           This path will be active if its trigger is enabled
         </Text>

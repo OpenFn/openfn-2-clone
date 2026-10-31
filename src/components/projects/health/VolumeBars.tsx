@@ -140,6 +140,7 @@ export default function VolumeBars({
               <Text
                 as="div"
                 variant="body-sm"
+                // eslint-disable-next-line local/primitive-classname -- debt: F529 state, F526 box (pointer-events-none rounded-lg border border-subtle bg-surface shadow-lg)
                 className="pointer-events-none absolute top-0 z-10 whitespace-nowrap rounded-lg border border-subtle bg-surface shadow-lg"
                 // Beside the bar, on the side with more room.
                 style={hovered < n / 2 ? { left: `${((hovered + 1) / n) * 100}%` } : { right: `${((n - hovered) / n) * 100}%` }}
@@ -157,7 +158,7 @@ export default function VolumeBars({
               </Text>
             )}
           </div>
-          {/* eslint-disable-next-line no-restricted-syntax -- chart geometry: bar gaps scale with the chart */}
+          {/* eslint-disable-next-line no-restricted-syntax, local/primitive-classname -- chart geometry: bar gaps scale with the chart; debt: F526 box (pt-1) */}
           <Text as="div" variant="body-sm" tone="muted" className="flex h-5 gap-[1%] pt-1">
             {rows.map((r, i) => (
               <span key={r.at} className="flex-1 truncate text-center">

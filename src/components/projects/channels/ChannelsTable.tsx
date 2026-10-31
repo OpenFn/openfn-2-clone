@@ -54,6 +54,7 @@ export default function ChannelsTable({
       >
         {channels.map((channel) => (
           <Tr key={channel.id} id={`channel-${channel.id}`}>
+            {/* eslint-disable-next-line local/primitive-classname -- debt: F528 type, F527 colour (font-medium text-strong text-faint) */}
             <Td wrap maxWidth={60} className={cn("font-medium", channel.enabled ? "text-strong" : "text-faint")}>
               <span id={`channel-name-${channel.id}`}>{channel.name}</span>
             </Td>

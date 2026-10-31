@@ -73,6 +73,7 @@ export default function MiniHistory({
     history.length === 0 ? (
       <EmptyState variant="plain" icon="hero-rectangle-stack" title="No related history" message="Why not run it a few times to see some history?" />
     ) : (
+      // eslint-disable-next-line local/primitive-classname -- debt: F526 box (divide-y divide-subtle)
       <Text as="div" variant="body-sm" className="divide-y divide-subtle">
         {history.map(({ workOrder, runs }) => {
           const selected = runs.some((r) => r.id === selectedRunId);
@@ -94,6 +95,7 @@ export default function MiniHistory({
                     icon={selected || isExpanded ? "hero-chevron-down" : "hero-chevron-right"}
                     label={`${isExpanded ? "Collapse" : "Expand"} work order details`}
                     size="xs"
+                    // eslint-disable-next-line local/primitive-classname -- debt: F527 colour (text-primary-600)
                     className={cn(selected && "text-primary-600")}
                     onClick={(e) => {
                       e.stopPropagation();
@@ -177,6 +179,7 @@ export default function MiniHistory({
         <div className="flex items-center gap-1 border-b border-subtle bg-subtle py-2 pr-5 pl-3">
           <Heading size="sm">Run History</Heading>
           <FullHistoryLink to={historyHref} />
+          {/* eslint-disable-next-line local/primitive-classname -- debt: F525 margin (ml-auto) */}
           <IconButton icon="hero-x-mark" label="Back to landing" size="xs" className="ml-auto" onClick={onBack} />
         </div>
         <div className="flex-1 overflow-y-auto">{list}</div>

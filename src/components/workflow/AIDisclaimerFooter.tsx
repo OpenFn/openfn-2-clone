@@ -14,6 +14,7 @@ export default function AIDisclaimerFooter({ variant = "default" }: { variant?: 
           variant="plain"
           to="https://www.openfn.org/ai"
           external
+          // eslint-disable-next-line local/primitive-classname -- debt: F528 type, F527 colour (underline hover:text-strong hover:text-body)
           className={cn("underline hover:text-strong", muted && "hover:text-body")}
         >
           Learn more.

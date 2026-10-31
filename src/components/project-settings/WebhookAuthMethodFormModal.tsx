@@ -32,6 +32,7 @@ function SecretField({ id, value, type, revealed, onShow }: { id: string; value:
   const buttonClass = "-ml-px w-24 rounded-l-none rounded-r-lg";
   return (
     <div className="flex">
+      {/* eslint-disable-next-line local/primitive-classname -- debt: F526 box (rounded-r-none) */}
       <TextInput id={id} type={type} value={value} disabled fieldClassName="flex-1" className="rounded-r-none" />
       {revealed ? (
         <CopyButton id={buttonId} value={value} className={buttonClass}>

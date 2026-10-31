@@ -179,6 +179,7 @@ export default function DiagramNode({
             size="xs"
             icon={<span className="hero-plus pointer-events-none h-4 w-4" aria-hidden="true" />}
             label="Add a path to a new step"
+            // eslint-disable-next-line local/primitive-classname -- debt: F529 state, F525 margin, F526 box (pointer-events-auto ml-1 rounded-lg)
             className="pointer-events-auto ml-1 rounded-lg"
             onClick={(e) => {
               e.stopPropagation();
