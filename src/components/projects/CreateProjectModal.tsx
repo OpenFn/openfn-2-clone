@@ -56,7 +56,7 @@ export default function CreateProjectModal({
       />
       <div className="space-y-2">
         <TextArea id="project_description" label="Description" {...form.fieldProps("description")} />
-        <Text as="p" variant="body-sm" className="text-muted">
+        <Text as="p" variant="body-sm" tone="muted">
           A short description of a project [max 240 characters]
         </Text>
       </div>

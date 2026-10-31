@@ -131,4 +131,4 @@ function Panel<T>({ query, card = false, children }: { query: HealthQuery<T>; ca
 }
 
 /** The small gray note at the right of a card's title. */
-const meta = (text: string) => <Text variant="body-sm" className="text-muted">{text}</Text>;
+const meta = (text: string) => <Text variant="body-sm" tone="muted">{text}</Text>;

@@ -98,7 +98,7 @@ export default function RunViewerPanel({ projectId, run, startedBy, steps, logs,
                     >
                       <StepIcon reason={s.exitReason} />
                       <span className="min-w-0 flex-1 truncate">{s.jobName}</span>
-                      <Text variant="body-sm" className="shrink-0 text-muted">
+                      <Text variant="body-sm" tone="muted" className="shrink-0">
                         {formatElapsed(s.startedAt, s.finishedAt)}
                       </Text>
                     </button>

@@ -63,7 +63,7 @@ export default function AdaptorDocs({ adaptor }: { adaptor: string }) {
               {fn.example && (
                 <>
                   <p className="mt-2 text-body">Example</p>
-                  <Text as="pre" variant="code-sm" className="mx-4 mt-1 overflow-x-auto rounded-md border-2 border-subtle bg-sunken py-2 pr-8 pl-4 text-strong">
+                  <Text as="pre" variant="code-sm" tone="strong" className="mx-4 mt-1 overflow-x-auto rounded-md border-2 border-subtle bg-sunken py-2 pr-8 pl-4">
                     {fn.example}
                   </Text>
                 </>

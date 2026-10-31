@@ -65,7 +65,7 @@ export default function AuthConfirmationRequiredPage({ email, onResend, onChange
   return (
     <AuthPanelLayout title="Confirm your email address" align="top">
       <AuthPanel>
-        <Text as="div" className="space-y-4 text-muted">
+        <Text as="div" tone="muted" className="space-y-4">
           <p>
             Your account is blocked pending email confirmation. We sent a confirmation link to{" "}
             <span className="font-medium">{email}</span> when you signed up — open it to keep using OpenFn.

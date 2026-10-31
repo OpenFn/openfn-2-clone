@@ -20,7 +20,7 @@ export default function MfaRequiredCard({ title = "MFA Required for Project" }: 
         </span>
         <div className="space-y-2">
           <Heading>{title}</Heading>
-          <Text as="p" className="text-muted">
+          <Text as="p" tone="muted">
             This project requires all members to use multi-factor authentication. Please enable MFA for{" "}
             <TextLink to="/profile">your account</TextLink> in order to gain access.
           </Text>

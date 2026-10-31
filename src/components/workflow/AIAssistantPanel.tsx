@@ -176,7 +176,7 @@ export default function AIAssistantPanel({ sessions, onClose }: Props) {
                     <Heading size="sm" as="h3" className="truncate">
                       {s.title}
                     </Heading>
-                    <Text as="div" variant="body-sm" className="flex items-center justify-between gap-3 text-muted">
+                    <Text as="div" variant="body-sm" tone="muted" className="flex items-center justify-between gap-3">
                       {formatSessionAge(s.updatedAt)}
                       <Pill>{s.messages.length}</Pill>
                     </Text>

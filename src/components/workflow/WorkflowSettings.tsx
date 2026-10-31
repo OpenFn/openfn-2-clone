@@ -27,7 +27,7 @@ function Section({ title, description, className, children }: { title: string; d
         {title}
       </Heading>
       {description && (
-        <Text as="p" className="mb-3 text-muted">
+        <Text as="p" tone="muted" className="mb-3">
           {description}
         </Text>
       )}
@@ -76,7 +76,7 @@ export default function WorkflowSettings({ graph, projectConcurrency, projectId,
           onChange={(e) => onChange({ concurrency: e.target.value === "" ? null : Number(e.target.value) })}
         />
         {concurrencyDisabled && (
-          <Text as="p" variant="body-sm" className="mt-2 italic text-muted">
+          <Text as="p" variant="body-sm" tone="muted" className="mt-2 italic">
             Parallel execution of runs is disabled for this project. This setting will have no effect. You can modify your Project
             Concurrency setting on the <TextLink to={`/projects/${projectId}/settings`}>project setup</TextLink> page.
           </Text>

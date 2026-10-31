@@ -101,7 +101,7 @@ export default function ManualRunPanel({
               invalidMessage="Invalid file format. Please only upload: JSON"
               onFile={(file) => void file.text().then((text) => setBody(prettyJson(text)))}
             />
-            <Text as="div" className="flex items-center gap-2 py-2 text-muted *:h-px *:flex-1 *:bg-emphasis" aria-hidden="true">
+            <Text as="div" tone="muted" className="flex items-center gap-2 py-2 *:h-px *:flex-1 *:bg-emphasis" aria-hidden="true">
               <span />
               OR
               <span />
@@ -169,7 +169,7 @@ export default function ManualRunPanel({
             <Heading className="min-w-0 wrap-break-word">{selected.name || "Unnamed"}</Heading>
             <IconButton icon="hero-pencil" label="Rename" size="xs" />
           </div>
-          <Text as="div" variant="body-sm" className="flex items-center gap-2 text-muted">
+          <Text as="div" variant="body-sm" tone="muted" className="flex items-center gap-2">
             <span className="capitalize">{selected.type.replace("_", " ")}</span>
             <span>•</span>
             <span>{formatLocalDate(selected.insertedAt)}</span>

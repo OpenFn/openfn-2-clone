@@ -98,7 +98,7 @@ export default function VolumeBars({
   return (
     <>
       <div className={`${FRAME} flex`} aria-hidden="true">
-        <Text as="div" variant="body-sm" className="flex w-11 shrink-0 flex-col text-muted">
+        <Text as="div" variant="body-sm" tone="muted" className="flex w-11 shrink-0 flex-col">
           <div className="relative flex-1">
             {ticks.map((t, i) => (
               <span key={i} className="absolute right-2 translate-y-1/2" style={{ bottom: `${(t / ceiling) * 100}%` }}>
@@ -158,7 +158,7 @@ export default function VolumeBars({
             )}
           </div>
           {/* eslint-disable-next-line no-restricted-syntax -- chart geometry: bar gaps scale with the chart */}
-          <Text as="div" variant="body-sm" className="flex h-5 gap-[1%] pt-1 text-muted">
+          <Text as="div" variant="body-sm" tone="muted" className="flex h-5 gap-[1%] pt-1">
             {rows.map((r, i) => (
               <span key={r.at} className="flex-1 truncate text-center">
                 {(n - 1 - i) % every === 0 ? tickLabel(r.at, hours, timezone) : ""}

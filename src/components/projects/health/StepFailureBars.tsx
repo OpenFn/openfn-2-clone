@@ -44,7 +44,7 @@ export default function StepFailureBars({
                 <Tooltip content={label}>
                   <span className={cn("truncate", key === NO_STEP ? "italic text-muted" : "text-strong")}>{label}</span>
                 </Tooltip>
-                {adaptor && <Text variant="code-sm" className="truncate text-muted">{adaptorLabel(adaptor)}</Text>}
+                {adaptor && <Text variant="code-sm" tone="muted" className="truncate">{adaptorLabel(adaptor)}</Text>}
               </div>
               <span className="shrink-0 font-medium tabular-nums text-strong">{formatNumber(count)}</span>
             </Text>

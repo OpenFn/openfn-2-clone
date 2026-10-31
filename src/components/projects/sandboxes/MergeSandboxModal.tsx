@@ -139,7 +139,7 @@ export default function MergeSandboxModal({
       }
     >
       <div className="space-y-2">
-        <Text as="div" className="flex items-center gap-2 text-body">
+        <Text as="div" tone="body" className="flex items-center gap-2">
           <span>Merge</span>
           {/* eslint-disable-next-line no-restricted-syntax -- debt: Pill has no 14px size */}
           <Pill variant="square" color="gray" className="text-sm text-strong">
@@ -162,7 +162,7 @@ export default function MergeSandboxModal({
             }}
           />
         </Text>
-        <Text as="p" className="text-body">
+        <Text as="p" tone="body">
           The workflows you select below will overwrite their counterparts in{" "}
           <strong className="font-medium text-strong">{targetName}</strong>. Any conflicting changes in the target are lost.
         </Text>
@@ -275,7 +275,7 @@ function TickList({
             onChange={() => onChange(all ? new Set() : new Set(rows.map((r) => r.id)))}
           />
         </div>
-        <Text variant="body-sm" className="text-muted">
+        <Text variant="body-sm" tone="muted">
           {selected.size} of {rows.length} selected
         </Text>
       </div>

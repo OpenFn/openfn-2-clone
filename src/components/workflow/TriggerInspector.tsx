@@ -177,7 +177,7 @@ export default function TriggerInspector({ trigger, onChange, onClose }: Props) 
           <>
             <WebhookUrlField>
               <Card padding="sm">
-                <Text as="div" variant="code-sm" className="break-all text-muted">
+                <Text as="div" variant="code-sm" tone="muted" className="break-all">
                   {webhookUrl(draft.id)}
                 </Text>
               </Card>
@@ -235,7 +235,7 @@ export default function TriggerInspector({ trigger, onChange, onClose }: Props) 
             <Pill>Default</Pill>
             <CopyButton value={url} label="Copy Default URL" size="xs" />
           </div>
-          <Text as="div" variant="code-sm" className="mt-1 break-all text-muted">
+          <Text as="div" variant="code-sm" tone="muted" className="mt-1 break-all">
             {url}
           </Text>
         </Card>
@@ -248,7 +248,7 @@ export default function TriggerInspector({ trigger, onChange, onClose }: Props) 
             <span className="text-faint">(API Key)</span>
           </Text>
         ) : (
-          <Text as="p" variant="body-sm" className="text-muted">
+          <Text as="p" variant="body-sm" tone="muted">
             No authentication configured.{" "}
             <TextLink onClick={startEdit} className="font-medium">
               Add authentication
@@ -257,7 +257,7 @@ export default function TriggerInspector({ trigger, onChange, onClose }: Props) 
         )}
       </Disclosure>
       <Disclosure variant="inline" defaultOpen={false} title="Response">
-        <Text as="p" variant="body-sm" className="text-muted">
+        <Text as="p" variant="body-sm" tone="muted">
           {response.shortDescription}{" "}
           <TextLink to="https://docs.openfn.org/documentation/build/triggers#webhook-responses" external>
             learn more

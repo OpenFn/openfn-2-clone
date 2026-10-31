@@ -85,7 +85,7 @@ export default function EdgeInspector({ edge, onChange, onDelete, onClose }: Pro
             className="h-24 bg-code font-mono text-code"
           />
           <Disclosure variant="inline" defaultOpen={false} title="How to write expressions">
-            <Text as="div" variant="body-sm" className="space-y-1 text-muted">
+            <Text as="div" variant="body-sm" tone="muted" className="space-y-1">
               <p>Use the state from the previous step to decide whether this step should run.</p>
               <p>Must be a single JavaScript expression with `state` in scope.</p>
               <p>
@@ -100,7 +100,7 @@ export default function EdgeInspector({ edge, onChange, onDelete, onClose }: Pro
         </div>
       )}
       {fromTrigger && (
-        <Text as="p" variant="body-sm" className="italic text-muted">
+        <Text as="p" variant="body-sm" tone="muted" className="italic">
           This path will be active if its trigger is enabled
         </Text>
       )}

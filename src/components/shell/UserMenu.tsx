@@ -59,7 +59,7 @@ export default function UserMenu({ user }: { user: MenuUser }) {
               <span className="hero-wrench-screwdriver-mini h-4 w-4 text-amber-600" />
               Experimental features on
             </Heading>
-            <Text as="p" variant="body-sm" className="mt-0.5 text-muted">
+            <Text as="p" variant="body-sm" tone="muted" className="mt-0.5">
               You're using features that are still being built. Things may work differently for you than for your
               teammates.
             </Text>

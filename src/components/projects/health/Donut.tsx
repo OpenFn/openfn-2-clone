@@ -81,8 +81,8 @@ export default function Donut({
           )}
         </svg>
         <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-          <Text variant="stat-md" className="text-strong">{middle.value}</Text>
-          <Text variant="body-sm" className="text-muted">{middle.label}</Text>
+          <Text variant="stat-md" tone="strong">{middle.value}</Text>
+          <Text variant="body-sm" tone="muted">{middle.label}</Text>
         </div>
       </div>
       <Text as="ul" className={LEGEND}>

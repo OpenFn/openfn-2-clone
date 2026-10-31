@@ -144,7 +144,7 @@ export default function MfaCard({ mfa, onStartSetup, onConfirm, onDisable }: Pro
                 />
               </Form>
               <Modal open={showSecret} onClose={() => setShowSecret(false)} title="Your two-factor secret" size="sm">
-                <Text className="text-muted">
+                <Text tone="muted">
                   <code>{setup.secret}</code>
                 </Text>
               </Modal>

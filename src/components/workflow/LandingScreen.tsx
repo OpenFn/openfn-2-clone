@@ -106,7 +106,7 @@ export default function LandingScreen({ aiAssistantEnabled = true, onBuildWithAI
             onClick={onBrowseTemplates}
           />
         </div>
-        <Text as="p" className="text-center text-muted">
+        <Text as="p" tone="muted" className="text-center">
           or{" "}
           <TextLink onClick={onImportYAML}>import a YAML file manually</TextLink>
         </Text>

@@ -69,12 +69,12 @@ function Signature({ signature }: { signature: ErrorSignature }) {
         {color && <span aria-hidden="true" className={DOT} style={{ backgroundColor: color }} />}
         {state ?? errorTypeOf(signature)}
       </p>
-      <Text as="p" variant="code-md" className="border-l-2 border-strong pl-2 text-strong" style={{ borderColor: color }}>
+      <Text as="p" variant="code-md" tone="strong" className="border-l-2 border-strong pl-2" style={{ borderColor: color }}>
         {signature.exit_reason}:{errorTypeOf(signature)}
         {signature.step_name && ` @ ${signature.step_name}`}
       </Text>
       {signature.adaptor && (
-        <Text as="p" variant="code-md" className="text-muted">
+        <Text as="p" variant="code-md" tone="muted">
           {adaptorLabel(signature.adaptor)}
         </Text>
       )}

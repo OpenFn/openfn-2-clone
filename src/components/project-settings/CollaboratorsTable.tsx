@@ -75,7 +75,7 @@ export default function CollaboratorsTable({ collaborators, canReceiveFailureAle
               {c.email}
             </Text>
             {c.isCurrentUser && (
-              <Text variant="body-sm" className="text-faint">
+              <Text variant="body-sm" tone="faint">
                 <em>Well hello, you!</em>
               </Text>
             )}

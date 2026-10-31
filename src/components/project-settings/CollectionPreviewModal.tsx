@@ -34,7 +34,7 @@ export default function CollectionPreviewModal({ name, json, onClose }: Props) {
         // eslint-disable-next-line no-restricted-syntax -- debt: belongs in CodeViewer
         <pre className="h-96 overflow-auto rounded-md bg-code p-4 text-xs text-code">{json}</pre>
       ) : (
-        <Text as="p" className="flex h-96 items-center justify-center text-faint">
+        <Text as="p" tone="faint" className="flex h-96 items-center justify-center">
           This collection is empty.
         </Text>
       )}
