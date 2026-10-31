@@ -57,26 +57,52 @@ function clickedControl(e: MouseEvent<HTMLElement>) {
   return control !== null && e.currentTarget.contains(control);
 }
 
-/** A row. With `onClick` the whole row is clickable; links and buttons inside it still do their own thing. */
+/** A clickable row's link, in its first cell (D303): Tab reaches it, Enter opens it, and a click anywhere else on the row follows it. */
+export function RowLink({ to, children }: { to: string; children: ReactNode }) {
+  return (
+    <Link to={to} data-row-action="">
+      {children}
+    </Link>
+  );
+}
+
+/** An expandable row's chevron, as a button: Enter or Space toggles it, and a click anywhere else on the row does too. */
+export function RowToggle({ expanded, onToggle, label }: { expanded: boolean; onToggle: () => void; label: string }) {
+  return (
+    <button
+      type="button"
+      data-row-action=""
+      aria-expanded={expanded}
+      aria-label={label}
+      onClick={onToggle}
+      className={cn(expanded ? "hero-chevron-up" : "hero-chevron-down", "size-4 text-faint")}
+    />
+  );
+}
+
+/**
+ * A row. A row holding a `RowLink` or `RowToggle` is clickable: a click on the row clicks it,
+ * so the keyboard path and the mouse path are the same control. Links and buttons inside the row still do their own thing.
+ */
 export function Tr({
   children,
-  onClick,
   className,
   id,
 }: {
   children: ReactNode;
-  onClick?: (() => void) | undefined;
   className?: string;
   id?: string;
 }) {
   return (
     <tr
       id={id}
-      onClick={onClick && ((e) => !clickedControl(e) && onClick())}
+      onClick={(e) => {
+        if (!clickedControl(e)) e.currentTarget.querySelector<HTMLElement>("[data-row-action]")?.click();
+      }}
       className={cn(
         "transition-colors duration-150",
         "has-[td]:hover:bg-hover",
-        onClick && "cursor-pointer",
+        "has-data-row-action:cursor-pointer",
         "last:rounded-b-lg",
         "[&>td:first-child]:py-4 [&>td:first-child]:pr-3 [&>td:first-child]:pl-4 [&>td:first-child]:sm:pl-6",
         "[&>th:first-child]:py-3.5 [&>th:first-child]:pr-3 [&>th:first-child]:pl-4 [&>th:first-child]:sm:pl-6",

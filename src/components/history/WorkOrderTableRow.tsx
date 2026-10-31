@@ -2,7 +2,7 @@ import { useState } from "react";
 import IconButton from "../primitives/IconButton";
 import { Checkbox } from "../primitives/Inputs";
 import Pill from "../primitives/Pill";
-import { Td, Tr } from "../primitives/Table";
+import { RowToggle, Td, Tr } from "../primitives/Table";
 import type { WorkOrderRow } from "../../types/history";
 import { activeStates } from "../../constants";
 import DateTime from "../primitives/DateTime";
@@ -13,7 +13,6 @@ import StatePill from "../domain/StatePill";
 import UuidChip from "../primitives/UuidChip";
 import { RunCard } from "./RunCard";
 import WipedTooltip from "./WipedTooltip";
-import { cn } from "../../utils/cn";
 import { zeroPersistenceMessage as zeroPersistence } from "./runHelpers";
 import Tooltip from "../primitives/Tooltip";
 
@@ -69,7 +68,6 @@ export default function WorkOrderTableRow({
         id={`toggle_details_for_${wo.id}`}
         // eslint-disable-next-line local/primitive-classname -- debt: F526 box (bg-subtle bg-surface)
         className={selected ? "bg-subtle" : "bg-surface"}
-        onClick={runs.length ? () => setExpanded((e) => !e) : undefined}
       >
         {/* eslint-disable-next-line local/primitive-classname -- debt: F526 box (!pr-1) */}
         <Td className="!pr-1">
@@ -183,7 +181,7 @@ export default function WorkOrderTableRow({
                   />
                 ))}
               <Pill>{runs.length}</Pill>
-              <span className={cn(expanded ? "hero-chevron-up" : "hero-chevron-down", "size-4 text-faint")} />
+              <RowToggle expanded={expanded} onToggle={() => setExpanded((e) => !e)} label="Show runs" />
             </>
           )}
         </Td>

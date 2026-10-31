@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Table, Td, Th, Tr } from "./Table";
+import { RowLink, Table, Td, Th, Tr } from "./Table";
 import Pagination from "./Pagination";
 import { users } from "../../mock-data/users";
 import { fullName } from "../../utils/format";
@@ -23,8 +23,10 @@ export const Default: Story = {
       footer={<Pagination page={{ number: 1, size: 10, totalEntries: users.length }} />}
     >
       {users.map((u) => (
-        <Tr key={u.id} onClick={() => {}}>
-          <Td className="text-strong">{fullName(u)}</Td>
+        <Tr key={u.id}>
+          <Td className="text-strong">
+            <RowLink to={`/users/${u.id}`}>{fullName(u)}</RowLink>
+          </Td>
           <Td>{u.email}</Td>
           <Td>{u.role}</Td>
         </Tr>

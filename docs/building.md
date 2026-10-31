@@ -46,7 +46,7 @@ its stories; read the component before using it.
 | Read-only code, a log or a dataclip | `CodeViewer` |
 | Rendered markdown | `Markdown` |
 | A file upload or drop area | `FileDropZone` |
-| Tabular data | `Table` with `Tr`, `Th`, `Td`; `state` for a list that is loading or failed (a clickable `Tr` ignores clicks on links and buttons inside it) |
+| Tabular data | `Table` with `Tr`, `Th`, `Td`; `state` for a list that is loading or failed (a clickable row holds a `RowLink` in its first cell, or a `RowToggle` if it expands; a click elsewhere on the row clicks that control, so the keyboard reaches the same thing) |
 | Nothing to show yet: an empty list, panel or viewer | `EmptyState` (`fill` to centre in its box, `loading` to pulse) |
 | Sorting and filtering a small table in the browser | `useTableSort` |
 | A status message | `Alert` |
