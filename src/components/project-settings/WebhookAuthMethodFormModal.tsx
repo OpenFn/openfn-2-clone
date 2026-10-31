@@ -13,6 +13,7 @@ import { errorMessage } from "../../utils/errors";
 import { useAction } from "../../utils/useAction";
 import { useForm } from "../../utils/useForm";
 import { blank } from "../../utils/validate";
+import { Stack } from "../primitives/Stack";
 
 interface Props {
   /** Omit to create a new method (starts at the "choose a type" step). */
@@ -163,7 +164,7 @@ export default function WebhookAuthMethodFormModal({ authMethod, onCancel, onSav
           </Button>
         }
       >
-        <div className="space-y-4">
+        <Stack>
           {next.error && <Alert tone="danger">{errorMessage(next.error)}</Alert>}
           <RadioCards
             aria-label="Authentication type"
@@ -174,7 +175,7 @@ export default function WebhookAuthMethodFormModal({ authMethod, onCancel, onSav
               { value: "api", icon: "hero-code-bracket-square", label: "API Key Authentication (‘x-api-key’ header)" },
             ]}
           />
-        </div>
+        </Stack>
       </Modal>
     );
   }
