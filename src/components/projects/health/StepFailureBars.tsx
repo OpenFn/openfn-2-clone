@@ -31,7 +31,7 @@ export default function StepFailureBars({
   emptyMessage: string;
 }) {
   const rows = groupByStep(signatures);
-  if (rows.length === 0) return <Text as="p" className={EMPTY}>{emptyMessage}</Text>;
+  if (rows.length === 0) return <Text as="p" tone="muted" className={EMPTY}>{emptyMessage}</Text>;
   const max = Math.max(...rows.map((r) => r.count));
 
   return (

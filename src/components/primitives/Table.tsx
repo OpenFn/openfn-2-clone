@@ -180,7 +180,7 @@ export function Td({
   actions?: boolean;
   /** Long words (names, emails, URLs) break onto the next line. */
   wrap?: boolean;
-  /** Caps the column width, in Tailwind spacing units (60 = 15rem). */
+  /** A max-width in Tailwind spacing units (60 = 15rem). Auto table layout ignores it while the table has room (F530). */
   maxWidth?: keyof typeof maxWidthClasses;
 }) {
   return (

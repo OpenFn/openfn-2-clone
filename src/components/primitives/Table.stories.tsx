@@ -59,21 +59,35 @@ export const LoadError: Story = {
   ),
 };
 
-/** `wrap` breaks long words; `maxWidth` caps the column. */
+/**
+ * `wrap` breaks long words when the table is narrow. `maxWidth` sets a
+ * max-width the table layout ignores while it has room (F530).
+ */
 export const WrapAndMaxWidth: Story = {
   render: () => (
-    <Table header={header}>
-      {users.map((u) => (
-        <Tr key={u.id}>
+    <div className="max-w-xl">
+      <Table header={header}>
+        {users.map((u) => (
+          <Tr key={u.id}>
+            <Td wrap maxWidth={40}>
+              {fullName(u)}
+            </Td>
+            <Td wrap maxWidth={48}>
+              {u.email}
+            </Td>
+            <Td>{u.role}</Td>
+          </Tr>
+        ))}
+        <Tr>
           <Td wrap maxWidth={40}>
-            {fullName(u)}
+            Maximiliana Wolfeschlegelsteinhausen-Bergerdorff
           </Td>
           <Td wrap maxWidth={48}>
-            {u.email}
+            maximiliana.wolfeschlegelsteinhausen@ministry-of-health.example.org
           </Td>
-          <Td>{u.role}</Td>
+          <Td>viewer</Td>
         </Tr>
-      ))}
-    </Table>
+      </Table>
+    </div>
   ),
 };

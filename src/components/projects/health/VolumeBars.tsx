@@ -82,7 +82,7 @@ export default function VolumeBars({
   const totals = SERIES.map((s) => ({ ...s, value: rows.reduce((sum, r) => sum + r[s.key], 0) })).filter(
     ({ key, value }) => key !== "cancelled" || value > 0
   );
-  if (totals.every(({ value }) => value === 0)) return <Text as="p" className={EMPTY}>{emptyMessage}</Text>;
+  if (totals.every(({ value }) => value === 0)) return <Text as="p" tone="muted" className={EMPTY}>{emptyMessage}</Text>;
 
   const max = Math.max(...rows.map((r) => r.success + r.cancelled + r.failed));
   // A tenth of headroom, rounded up to four whole-number steps.
@@ -169,7 +169,7 @@ export default function VolumeBars({
         </div>
       </div>
       <p className="sr-only">{`Window totals: ${totals.map(({ label, value }) => `${label} ${formatNumber(value)}`).join(", ")}.`}</p>
-      <Text as="ul" aria-hidden="true" className={LEGEND}>
+      <Text as="ul" aria-hidden="true" tone="body" className={LEGEND}>
         {totals.map(({ key, label, color }) => (
           <li key={key} className="flex items-center gap-2">
             <span className={DOT} style={{ backgroundColor: color }} />

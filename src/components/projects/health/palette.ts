@@ -19,9 +19,9 @@ export const FAILURE_COLORS: Record<FailureState, string> = {
 
 /** The chart frame, so empty and full cards are the same height. */
 export const FRAME = "h-55";
-export const EMPTY = "flex min-h-55 flex-1 items-center justify-center text-center text-muted";
+export const EMPTY = "flex min-h-55 flex-1 items-center justify-center text-center";
 /** The always-on legend under a chart, and the colour dot on its rows. */
-export const LEGEND = "mt-2 flex flex-wrap justify-center gap-x-6 gap-y-1 text-body";
+export const LEGEND = "mt-2 flex flex-wrap justify-center gap-x-6 gap-y-1";
 export const DOT = "h-2.5 w-2.5 shrink-0 rounded-full";
 
 /** A share to one decimal, never rounding a failure away (Donut.tsx `percent`). */
