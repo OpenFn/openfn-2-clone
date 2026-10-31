@@ -10,6 +10,7 @@ import Popover from "../primitives/Popover";
 import Toggle from "../primitives/Toggle";
 import { ANNOTATIONS_PANEL_WIDTH } from "./AnnotationsPanel";
 import Tooltip from "../primitives/Tooltip";
+import { Stack } from "../primitives/Stack";
 
 /**
  * Floating settings button in the bottom-right corner. Its panel opens and
@@ -57,7 +58,7 @@ export default function SettingsMenu() {
             />
             <div className="border-t border-subtle pt-4">
               <Field group label="Theme">
-                  <div className="space-y-2">
+                <Stack gap="sm">
                   {themes.map((theme) => (
                     <Radio
                       key={theme.id}
@@ -68,7 +69,7 @@ export default function SettingsMenu() {
                       hint={theme.description}
                     />
                   ))}
-                </div>
+                </Stack>
               </Field>
             </div>
           </div>

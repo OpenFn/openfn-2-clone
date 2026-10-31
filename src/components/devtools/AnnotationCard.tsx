@@ -9,6 +9,7 @@ import type { Tone } from "../primitives/tone";
 import EmptyState from "../primitives/EmptyState";
 import TextLink from "../primitives/TextLink";
 import Markdown from "../primitives/Markdown";
+import { Stack } from "../primitives/Stack";
 
 interface Props {
   id: string;
@@ -60,8 +61,8 @@ export default function AnnotationCard({ id, annotation, inventory, onOpenId, in
   const list = (key: string) => (Array.isArray(fm[key]) ? (fm[key] as string[]) : []);
 
   return (
-    <div className="space-y-4">
-      <div className="space-y-2">
+    <Stack>
+      <Stack gap="sm">
         <div className="flex items-start justify-between gap-2">
           <Heading as="h2">{title}</Heading>
           {annotation && (
@@ -89,7 +90,7 @@ export default function AnnotationCard({ id, annotation, inventory, onOpenId, in
         )}
         <IdList label="Inherits" ids={list("inherits")} onOpenId={onOpenId} />
         <IdList label="Flows" ids={list("flows")} onOpenId={onOpenId} />
-      </div>
+      </Stack>
 
       {!annotation && (
         <EmptyState
@@ -122,6 +123,6 @@ export default function AnnotationCard({ id, annotation, inventory, onOpenId, in
           <Markdown source={annotation.body} />
         </>
       )}
-    </div>
+    </Stack>
   );
 }

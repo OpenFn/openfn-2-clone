@@ -7,6 +7,7 @@ import Text from "../primitives/Text";
 import TextLink from "../primitives/TextLink";
 import AnnotationCard from "./AnnotationCard";
 import Tooltip from "../primitives/Tooltip";
+import { Row } from "../primitives/Stack";
 
 export const ANNOTATIONS_PANEL_WIDTH = 440;
 
@@ -36,7 +37,7 @@ export default function AnnotationsPanel() {
             </Text>
           </Tooltip>
         </div>
-        <div className="flex items-center gap-1">
+        <Row gap="xs">
           <IconButton
             icon={pinnedId ? "hero-lock-closed" : "hero-lock-open"}
             label={pinnedId ? "Unpin and follow the mouse" : "Pin this annotation"}
@@ -44,7 +45,7 @@ export default function AnnotationsPanel() {
             onClick={() => pin(pinnedId ? null : currentId)}
           />
           <CloseButton onClick={() => setOpen(false)} />
-        </div>
+        </Row>
       </div>
 
       {pinnedId === null && currentId !== pageId && pageId && (
