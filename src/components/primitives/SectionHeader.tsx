@@ -39,7 +39,7 @@ export default function SectionHeader({ title, subtitle, size = "md", action, pe
         </Heading>
         {subtitle && <Text as="p" className="mt-1 text-muted">{subtitle}</Text>}
         {permissionsSection && (
-          <Text as="p" className="mt-2 text-danger-700">
+          <Text as="p" className="mt-2 text-danger">
             Role based permissions: You cannot modify this project's {permissionsSection}
           </Text>
         )}

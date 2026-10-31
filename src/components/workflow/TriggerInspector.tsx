@@ -243,7 +243,7 @@ export default function TriggerInspector({ trigger, onChange, onClose }: Props) 
       <Disclosure variant="inline" defaultOpen={false} title="Authentication" note={trigger.hasAuthMethod ? "1 configured" : "none configured"}>
         {trigger.hasAuthMethod ? (
           <Text as="div" variant="body-sm" className="flex items-center gap-2">
-            <span className="hero-shield-check-micro h-4 w-4 text-success-600" />
+            <span className="hero-shield-check-micro h-4 w-4 text-success-icon" />
             <span className="font-medium text-body">CommCare webhook key</span>
             <span className="text-faint">(API Key)</span>
           </Text>

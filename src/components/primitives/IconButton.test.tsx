@@ -6,9 +6,9 @@ import IconButton from "./IconButton";
 
 describe("IconButton", () => {
   it("lets a caller's hover colour replace its own", () => {
-    render(<IconButton icon="hero-x-mark" label="Cancel" className="hover:text-danger-500" />);
+    render(<IconButton icon="hero-x-mark" label="Cancel" className="hover:text-danger" />);
     const classes = screen.getByRole("button", { name: "Cancel" }).className;
-    expect(classes).toContain("hover:text-danger-500");
+    expect(classes).toContain("hover:text-danger");
     expect(classes).not.toMatch(/hover:text-body/);
   });
 

@@ -20,10 +20,13 @@ const colorClasses: Record<PillColor, string> = {
 
 const toneClasses: Record<Tone, string> = {
   neutral: "bg-sunken text-body",
-  info: "bg-info-100 text-info-700",
-  success: "bg-success-100 text-success-700",
-  warning: "bg-warning-100 text-warning-800",
-  danger: "bg-danger-100 text-danger-700",
+  // eslint-disable-next-line no-restricted-syntax -- debt: Pill's fill is 100, the fill role is 50 (F521)
+  info: "bg-info-100 text-info",
+  // eslint-disable-next-line no-restricted-syntax -- debt: Pill's fill is 100, the fill role is 50 (F521)
+  success: "bg-success-100 text-success",
+  warning: "bg-warning text-warning-strong",
+  // eslint-disable-next-line no-restricted-syntax -- debt: Pill's fill is 100, the fill role is 50 (F521)
+  danger: "bg-danger-100 text-danger",
 };
 
 /**

@@ -65,6 +65,7 @@ const banned = (re, message) => [
   { selector: `TemplateElement[value.raw=/${re}/]`, message },
 ]
 const tokens = 'See src/theme/tokens.css.'
+const statusRoles = `Each status (danger, success, warning, info) has text-<s>, text-<s>-strong (headings, text on a fill), text-<s>-icon, border-<s> and ring-<s>, bg-<s> (pale fill) and bg-<s>-strong (the solid). A use no role fits stays on its shade behind a debt: disable naming a finding. ${tokens}`
 const colourRules = ({ palette = true, literals = true, amber = false } = {}) => [
   ...(palette
     ? [
@@ -82,7 +83,7 @@ const colourRules = ({ palette = true, literals = true, amber = false } = {}) =>
         ),
         ...banned(
           `\\b${UTIL}-(?:red|green|yellow|blue)-\\d`,
-          'Raw status colour: keep the shade and use the status name: red is danger, green is success, yellow is warning, blue is info (bg-red-50 becomes bg-danger-50).'
+          'Raw status colour: red is danger, green is success, yellow is warning, blue is info; then use its role name (bg-red-50 becomes bg-danger). ' + statusRoles
         ),
         ...banned(
           `\\b${UTIL}-(?:${OTHER.filter((f) => !amber || f !== 'amber').join('|')})-\\d|\\b(?:fill|stroke|from|to|via|placeholder|shadow|decoration)-(?:gray-\\d|${WB})`,
@@ -90,6 +91,8 @@ const colourRules = ({ palette = true, literals = true, amber = false } = {}) =>
         ),
       ]
     : []),
+  // Status shades, banned even where raw palette colours are allowed (Pill).
+  ...banned(`\\b${UTIL}-(?:danger|success|warning|info)-\\d`, `Status shade: use its role name. ${statusRoles}`),
   ...(literals
     ? banned(
         '(?:^|[\\s(,\\[:])#[0-9a-fA-F]{3,8}\\b|rgba?\\(|--color-(?:gray|red|green|yellow|blue|white|black)\\b',

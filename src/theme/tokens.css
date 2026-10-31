@@ -14,9 +14,12 @@
  * file too (`@import '@openfn/ui/tokens.css'`). Without it, `text-muted`
  * silently produces no CSS there.
  *
- * Brand and status keep their scales: `primary`, `danger`, `success`,
- * `warning` and `info`. Raw palette classes are kept only in a few confined
- * files (eslint.config.js lists them).
+ * Brand keeps its scale (`primary`). Each status (`danger`, `success`,
+ * `warning`, `info`) has role names like the greys: `text-<s>`,
+ * `text-<s>-strong`, `text-<s>-icon`, `border-<s>` (and `ring-<s>`),
+ * `bg-<s>` and `bg-<s>-strong` (the solid). Status shades (`bg-danger-50`)
+ * are banned outside src/theme/. Raw palette classes are kept only in a
+ * few confined files (eslint.config.js lists them).
  */
 @theme {
   /* Text */
@@ -58,6 +61,37 @@
   --border-color-invalid: var(--color-danger-700);
   --ring-color-invalid: var(--color-danger-700);
   --outline-color-invalid: var(--color-danger-700);
+
+  /* Status roles. Each shade is the one that role used most before the
+     names existed, so moving onto them changed nothing on screen. */
+  --text-color-danger: var(--color-danger-700);
+  --text-color-danger-strong: var(--color-danger-800); /* headings, text on a fill */
+  --text-color-danger-icon: var(--color-danger-500); /* icons, the required * */
+  --border-color-danger: var(--color-danger-200);
+  --ring-color-danger: var(--color-danger-200);
+  --background-color-danger: var(--color-danger-50);
+  --background-color-danger-strong: var(--color-danger-600); /* the solid: buttons, dots */
+  --text-color-success: var(--color-success-700);
+  --text-color-success-strong: var(--color-success-800); /* headings, text on a fill */
+  --text-color-success-icon: var(--color-success-600); /* icons, the required * */
+  --border-color-success: var(--color-success-200);
+  --ring-color-success: var(--color-success-200);
+  --background-color-success: var(--color-success-50);
+  --background-color-success-strong: var(--color-success-700); /* the solid: buttons, dots */
+  --text-color-warning: var(--color-warning-700);
+  --text-color-warning-strong: var(--color-warning-800); /* headings, text on a fill */
+  --text-color-warning-icon: var(--color-warning-500); /* icons, the required * */
+  --border-color-warning: var(--color-warning-200);
+  --ring-color-warning: var(--color-warning-200);
+  --background-color-warning: var(--color-warning-100);
+  --background-color-warning-strong: var(--color-warning-600); /* the solid: buttons, dots */
+  --text-color-info: var(--color-info-700);
+  --text-color-info-strong: var(--color-info-800); /* headings, text on a fill */
+  --text-color-info-icon: var(--color-info-500); /* icons, the required * */
+  --border-color-info: var(--color-info-200);
+  --ring-color-info: var(--color-info-200);
+  --background-color-info: var(--color-info-50);
+  --background-color-info-strong: var(--color-info-600); /* the solid: buttons, dots */
 
   /* info is blue, which is what both apps draw for alerts, toasts and
      "running". */

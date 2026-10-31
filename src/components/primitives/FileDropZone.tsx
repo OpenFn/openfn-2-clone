@@ -79,7 +79,7 @@ export default function FileDropZone({ accept, onFile, label, hint, invalidMessa
           : dragging
             ? "cursor-pointer border-primary-500 bg-primary-50 text-body"
             : invalid
-              ? "cursor-pointer border-invalid bg-danger-50"
+              ? "cursor-pointer border-invalid bg-danger"
               : "cursor-pointer bg-surface hover:border-emphasis",
         className
       )}

@@ -95,7 +95,7 @@ export function Field({
       <span className="flex items-center">
         <LabelTag id={labelId} htmlFor={LabelTag === "label" ? id : undefined} data-ui="label" className="text-sm/6 font-medium text-strong group-disabled/field:text-faint">
           {label}
-          {required && <span data-ui="required" className="text-danger-500"> *</span>}
+          {required && <span data-ui="required" className="text-danger-icon"> *</span>}
         </LabelTag>
         {info && <InfoTooltip title={info} />}
       </span>
