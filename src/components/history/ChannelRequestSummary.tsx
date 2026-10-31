@@ -76,7 +76,7 @@ export default function ChannelRequestSummary({
         </Group>
         <Group title="Destination">
           <DetailList layout="grid" className="md:grid-cols-2">
-            <DetailItem label="URL" mono>
+            <DetailItem label="URL" variant="code">
               {channel.destinationUrl}
             </DetailItem>
             <DetailItem label="Auth">
@@ -93,7 +93,7 @@ export default function ChannelRequestSummary({
             <DetailItem label="Completed">
               <DateTime value={request.completedAt} />
             </DetailItem>
-            <DetailItem label="Latency" mono>
+            <DetailItem label="Latency" variant="code">
               {event?.latencyUs != null ? `${formatUs(event.latencyUs)} ms` : "—"}
             </DetailItem>
           </DetailList>

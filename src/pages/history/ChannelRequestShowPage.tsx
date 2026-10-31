@@ -158,7 +158,7 @@ export default function ChannelRequestShowPage({
 
           <Disclosure variant="card" id="context-section" title="Context" defaultOpen={false}>
             <DetailList layout="grid" className="md:grid-cols-3">
-              <DetailItem label="Destination URL" mono>
+              <DetailItem label="Destination URL" variant="code">
                 {request.snapshot.destinationUrl}
               </DetailItem>
               <DetailItem label="Channel Name">{request.snapshot.name}</DetailItem>

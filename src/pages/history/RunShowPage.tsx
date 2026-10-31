@@ -188,7 +188,7 @@ export default function RunShowPage({
                   )}
                 </span>
               </DetailItem>
-              <DetailItem label="Work Order" mono>
+              <DetailItem label="Work Order" variant="code">
                 <TextLink to={`/projects/${project.id}/history?filters[workorder_id]=${run.workOrderId}`} title={run.workOrderId}>
                   {shortUuid(run.workOrderId)}
                 </TextLink>
@@ -196,7 +196,7 @@ export default function RunShowPage({
               {run.startedBy && <DetailItem label="Started by">{run.startedBy}</DetailItem>}
               <DetailItem label="Started">{run.startedAt && <DateTime value={run.startedAt} />}</DetailItem>
               <DetailItem label="Finished">{run.finishedAt && <DateTime value={run.finishedAt} />}</DetailItem>
-              <DetailItem label="Final Output" mono>
+              <DetailItem label="Final Output" variant="code">
                 {run.finalDataclipId && (
                   <TextLink to={`/projects/${project.id}/dataclips/${run.finalDataclipId}/show`}>
                     {shortUuid(run.finalDataclipId)}

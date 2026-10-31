@@ -41,15 +41,15 @@ export function DetailList({
   );
 }
 
-/** One label and its value. `mono` sets the value in the code font. */
+/** One label and its value. `variant="code"` sets the value in the code font. */
 export function DetailItem({
   label,
-  mono = false,
+  variant = "text",
   className,
   children,
 }: {
   label: ReactNode;
-  mono?: boolean;
+  variant?: "text" | "code";
   className?: string;
   children?: ReactNode;
 }) {
@@ -58,20 +58,20 @@ export function DetailItem({
     return (
       <div className={className}>
         <Heading size="xs" as="dt">{label}</Heading>
-        <Value mono={mono} className="mt-1 wrap-break-word text-strong">{children}</Value>
+        <Value code={variant === "code"} className="mt-1 wrap-break-word text-strong">{children}</Value>
       </div>
     );
   }
   return (
     <div className={cn("flex items-center justify-between gap-4 py-2", className)}>
       <dt className="min-w-0 wrap-break-word font-medium text-muted">{label}</dt>
-      <Value mono={mono} className="min-w-0 wrap-break-word text-right text-strong">{children}</Value>
+      <Value code={variant === "code"} className="min-w-0 wrap-break-word text-right text-strong">{children}</Value>
     </div>
   );
 }
 
-// A plain value takes the list's size; a mono one is always code-sm.
-function Value({ mono, className, children }: { mono: boolean; className: string; children?: ReactNode }) {
-  if (mono) return <Text as="dd" variant="code-sm" className={className}>{children}</Text>;
+// A plain value takes the list's size; a code one is always code-sm.
+function Value({ code, className, children }: { code: boolean; className: string; children?: ReactNode }) {
+  if (code) return <Text as="dd" variant="code-sm" className={className}>{children}</Text>;
   return <dd className={className}>{children}</dd>;
 }

@@ -103,7 +103,7 @@ export default function ChannelTiming({ event }: { event: ChannelEvent | undefin
                     style={{ width: `${s.pct}%`, minWidth: 20 }}
                   >
                     {s.badge && (
-                      <Pill color="orange" square className="absolute -top-5 left-1/2 -translate-x-1/2 px-1 py-0">
+                      <Pill color="orange" variant="square" className="absolute -top-5 left-1/2 -translate-x-1/2 px-1 py-0">
                         {s.badge}
                       </Pill>
                     )}

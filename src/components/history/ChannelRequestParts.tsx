@@ -24,8 +24,8 @@ const methodColors: Record<string, PillColor> = {
 
 export function MethodBadge({ method }: { method: string | null | undefined }) {
   return (
-    <Pill square mono color={(method && methodColors[method]) || "gray"} className="font-bold uppercase">
-      {method || "—"}
+    <Pill variant="square" color={(method && methodColors[method]) || "gray"} className="font-bold uppercase">
+      <code>{method || "—"}</code>
     </Pill>
   );
 }
@@ -50,8 +50,8 @@ function statusTone(status: number | null | undefined): Tone {
 /** An HTTP status code chip, coloured by class (`status_code_display`, `status_code_badge`). */
 export function StatusCodeBadge({ status }: { status: number | null | undefined }) {
   return (
-    <Pill square mono tone={statusTone(status)} className="font-bold">
-      {status ?? "—"}
+    <Pill variant="square" tone={statusTone(status)} className="font-bold">
+      <code>{status ?? "—"}</code>
     </Pill>
   );
 }
@@ -65,7 +65,7 @@ export function HeadersList({ headers }: { headers: [string, string][] }) {
     <DetailList size="sm">
       {headers.map(([name, value], i) => (
         // Headers repeat (set-cookie, via), so the key is the position.
-        <DetailItem key={i} label={name} mono>
+        <DetailItem key={i} label={name} variant="code">
           <span className={cn("break-all", value === "[REDACTED]" && "italic text-faint")}>{value}</span>
         </DetailItem>
       ))}
@@ -108,8 +108,8 @@ export function BodyViewer({
   if (ct && !isText(ct)) {
     return (
       <Text as="div" className="flex items-center gap-2 py-4 text-muted">
-        <Pill square mono>
-          {contentTypeLabel(ct)}
+        <Pill variant="square">
+          <code>{contentTypeLabel(ct)}</code>
         </Pill>
         {size != null && <span>{formatBytes(size)}</span>}
         {hash && <Text variant="code-sm" className="text-faint">SHA256: {hash}</Text>}
@@ -131,8 +131,8 @@ export function BodyViewer({
       <Card variant="muted" padding="none" className="relative">
         <div className="absolute right-2 top-2 flex items-center gap-1.5">
           {ct && (
-            <Pill square mono>
-              {contentTypeLabel(ct)}
+            <Pill variant="square">
+              <code>{contentTypeLabel(ct)}</code>
             </Pill>
           )}
           <CopyButton value={preview} label="Copy body" size="xs" className="bg-white/80" />
@@ -170,8 +170,8 @@ export function ResponseEmpty({
       : ["hero-lock-closed", "Request not sent — credential error"];
   return (
     <EmptyState variant="plain" icon={icon} title={label} message={humanMessage} className="border-t border-subtle">
-      <Pill square mono>
-        {errorCode}
+      <Pill variant="square">
+        <code>{errorCode}</code>
       </Pill>
     </EmptyState>
   );

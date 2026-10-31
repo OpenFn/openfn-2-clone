@@ -40,6 +40,11 @@ const designRules = [
     selector: 'JSXOpeningElement[name.name=/^[A-Z]/]:not([name.name=/^(Diff)?Editor$/]) > JSXAttribute[name.name=/^(theme|kind|appearance)$/]',
     message: propNames,
   },
+  // D300: a look is one `variant`, not a boolean. The primitives' old boolean names stay banned.
+  {
+    selector: 'JSXOpeningElement[name.name=/^(Card|Table|Modal|DetailItem|Pill|Disclosure|Header)$/] > JSXAttribute[name.name=/^(muted|dashed|square|mono|bare|divide|padded|loggedOut)$/]',
+    message: "A look is one `variant`, not a boolean prop (PRINCIPLES.md, Components).",
+  },
   {
     selector: 'JSXOpeningElement[name.name=/^[A-Z]/]:not([name.name="Pill"]) > JSXAttribute[name.name="color"][value.type="Literal"]',
     message: propNames,

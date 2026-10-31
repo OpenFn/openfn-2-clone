@@ -75,8 +75,8 @@ export default function AnnotationCard({ id, annotation, inventory, onOpenId, in
           )}
         </div>
         <div className="flex flex-wrap items-center gap-1.5">
-          <Pill square mono>
-            {id}
+          <Pill variant="square">
+            <code>{id}</code>
           </Pill>
           {annotation && <Pill color="primary">{annotation.folder.replace(/s$/, "")}</Pill>}
           {status && <Pill tone={statusTone(status)}>{status}</Pill>}

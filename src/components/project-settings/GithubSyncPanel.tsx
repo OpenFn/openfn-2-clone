@@ -49,16 +49,16 @@ export default function GithubSyncPanel({ githubSync, sandbox, onInitiateSync, o
               </TextLink>
             </DetailItem>
             <DetailItem label="Branch:">
-              <Pill square mono>{connection.branch}</Pill>
+              <Pill variant="square"><code>{connection.branch}</code></Pill>
             </DetailItem>
             <DetailItem label="GitHub Installation ID:">
-              <Pill square mono>{connection.githubInstallationId}</Pill>
+              <Pill variant="square"><code>{connection.githubInstallationId}</code></Pill>
             </DetailItem>
             <DetailItem label="Path to config:">
-              <Pill square mono>{connection.configPath}</Pill>
+              <Pill variant="square"><code>{connection.configPath}</code></Pill>
             </DetailItem>
             <DetailItem label="Sync version:">
-              <Pill square mono>{connection.syncVersion ? "v2 (new)" : "v1 (legacy)"}</Pill>
+              <Pill variant="square"><code>{connection.syncVersion ? "v2 (new)" : "v1 (legacy)"}</code></Pill>
             </DetailItem>
           </DetailList>
           <Button
