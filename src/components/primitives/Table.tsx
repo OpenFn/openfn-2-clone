@@ -75,8 +75,10 @@ export function RowToggle({ expanded, onToggle, label }: { expanded: boolean; on
       aria-expanded={expanded}
       aria-label={label}
       onClick={onToggle}
-      className={cn(expanded ? "hero-chevron-up" : "hero-chevron-down", "size-4 text-faint")}
-    />
+      className="flex"
+    >
+      <span aria-hidden="true" className={cn(expanded ? "hero-chevron-up" : "hero-chevron-down", "size-4 text-faint")} />
+    </button>
   );
 }
 

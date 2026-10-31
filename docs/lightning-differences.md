@@ -277,3 +277,7 @@ goes back to Lightning's way.
   keyboard provider ignores Escape in inputs, so a keyboard user in the
   inspector would have no way back to the diagram. Elsewhere in the editor,
   Escape in an input still does nothing.
+- **Clickable table rows can be reached from the keyboard.** Lightning's
+  clickable rows only respond to a click. In the replica each one holds a link
+  (projects, workflows) or a toggle button (history work orders) that Tab
+  reaches, and a click on the row clicks it (D303).
