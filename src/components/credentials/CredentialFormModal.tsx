@@ -11,6 +11,7 @@ import Tabs from "../primitives/Tabs";
 import Text from "../primitives/Text";
 import TextLink from "../primitives/TextLink";
 import Section from "../primitives/Section";
+import { Stack } from "../primitives/Stack";
 import ProjectsPicker from "./ProjectsPicker";
 import { adaptorIconUrl } from "../../utils/adaptors";
 import { assetUrl } from "../../utils/assets";
@@ -489,7 +490,7 @@ export default function CredentialFormModal({
             />
           }
         />
-        <div className="space-y-6">
+        <Stack gap="lg">
           <TextInput
             id="environment-name-input"
             label="Environment name"
@@ -534,7 +535,7 @@ export default function CredentialFormModal({
               onChange={(e) => patchEnv(env.key, { body: e.target.value })}
             />
           ) : (
-            <div className="space-y-6">
+            <Stack gap="lg">
               {fields.map((f) => (
                 <SchemaInput
                   key={`${env.key}-${f.key}`}
@@ -549,9 +550,9 @@ export default function CredentialFormModal({
                   }}
                 />
               ))}
-            </div>
+            </Stack>
           )}
-        </div>
+        </Stack>
         {envs.length > 1 && (
           <Button variant="secondary" size="sm" onClick={() => setConfirmingEnvDelete(true)} icon="hero-trash">
             Delete environment
