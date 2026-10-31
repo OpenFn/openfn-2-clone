@@ -1,9 +1,9 @@
-import { useState, type ReactNode } from "react";
+import { useState } from "react";
 import type { WorkflowGraph } from "../../types/workflow-graph";
 import Button from "../primitives/Button";
 import ConfirmModal from "../primitives/ConfirmModal";
-import Heading from "../primitives/Heading";
 import { TextInput } from "../primitives/Inputs";
+import Section from "../primitives/Section";
 import Toggle from "../primitives/Toggle";
 import TextLink from "../primitives/TextLink";
 import InspectorLayout from "./InspectorLayout";
@@ -20,24 +20,6 @@ interface Props {
   onClose: () => void;
 }
 
-function Section({ title, description, className, children }: { title: string; description?: ReactNode; className?: string; children: ReactNode }) {
-  return (
-    <div className={className}>
-      {/* eslint-disable-next-line local/primitive-classname -- debt: F525 margin (mb-2) */}
-      <Heading size="sm" className="mb-2">
-        {title}
-      </Heading>
-      {description && (
-        // eslint-disable-next-line local/primitive-classname -- debt: F525 margin (mb-3)
-        <Text as="p" tone="muted" className="mb-3">
-          {description}
-        </Text>
-      )}
-      {children}
-    </div>
-  );
-}
-
 /**
  * Workflow settings (`?panel=settings`, inspector/WorkflowSettings.tsx):
  * name, the YAML link, console.log toggle, max concurrency and Reset.
@@ -48,7 +30,7 @@ export default function WorkflowSettings({ graph, projectConcurrency, projectId,
   return (
     <InspectorLayout title="Workflow settings" onClose={onClose}>
       <TextInput id="name" label="Workflow Name" value={graph.name} onChange={(e) => onChange({ name: e.target.value })} />
-      <Section title="Workflow as YAML">
+      <Section size="sm" title="Workflow as YAML">
         <Text>
           <TextLink onClick={onViewAsYAML}>View your workflow as YAML code</TextLink>
         </Text>
@@ -60,6 +42,7 @@ export default function WorkflowSettings({ graph, projectConcurrency, projectId,
         onChange={(enableJobLogs) => onChange({ enableJobLogs })}
       />
       <Section
+        size="sm"
         title="Concurrency"
         description={
           <>
@@ -78,22 +61,24 @@ export default function WorkflowSettings({ graph, projectConcurrency, projectId,
           onChange={(e) => onChange({ concurrency: e.target.value === "" ? null : Number(e.target.value) })}
         />
         {concurrencyDisabled && (
-          // eslint-disable-next-line local/primitive-classname -- debt: F525 margin, F528 type (mt-2 italic)
-          <Text as="p" variant="body-sm" tone="muted" className="mt-2 italic">
+          // eslint-disable-next-line local/primitive-classname -- debt: F528 type (italic)
+          <Text as="p" variant="body-sm" tone="muted" className="italic">
             Parallel execution of runs is disabled for this project. This setting will have no effect. You can modify your Project
             Concurrency setting on the <TextLink to={`/projects/${projectId}/settings`}>project setup</TextLink> page.
           </Text>
         )}
       </Section>
-      <Section
-        title="Reset Workflow"
-        description="Discard all uncommitted changes and restore the workflow to its latest saved snapshot. This action cannot be undone."
-        className="border-t border-subtle pt-6"
-      >
-        <Button tone="danger" onClick={() => setConfirmReset(true)}>
-          Reset to Latest Snapshot
-        </Button>
-      </Section>
+      <div className="border-t border-subtle pt-6">
+        <Section
+          size="sm"
+          title="Reset Workflow"
+          description="Discard all uncommitted changes and restore the workflow to its latest saved snapshot. This action cannot be undone."
+        >
+          <Button tone="danger" onClick={() => setConfirmReset(true)}>
+            Reset to Latest Snapshot
+          </Button>
+        </Section>
+      </div>
       <ConfirmModal
         open={confirmReset}
         onClose={() => setConfirmReset(false)}

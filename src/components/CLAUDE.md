@@ -27,6 +27,9 @@ tone="muted"`), `variant` for a look, `padding`, `wrap` and `maxWidth` on
 `Td`. The parent owns the gap between children, so a margin becomes the
 parent's `gap`. If no prop fits, extend the primitive.
 
+A heading over a block of content is a `Section` (it owns the gaps), not a
+`Heading` with a margin.
+
 Uses that predate the rule are frozen with
 `// eslint-disable-next-line local/primitive-classname -- debt: F5xx …`,
 naming the finding (F525 margin, F526 padding/border/background, F527

@@ -180,7 +180,11 @@ Lightning's wording wins wherever Lightning has the screen.
   a settings tab opens with `SectionHeader size="lg"`.
 - Row actions go in `<Td actions>` as `Button size="xs" variant="secondary"`
   with Lightning's verb. More than two go in a `ButtonMenu` labelled
-  "Actions". A page with several tables heads each with `SectionHeader`.
+  "Actions". A page with several tables puts each in a `Section`.
+- A titled block with a body is a `Section` (`size`, `variant="eyebrow"`
+  for a group of facts inside a card); it owns the gaps. A bare
+  `SectionHeader` only when there is no body or the parent already owns
+  the gap.
 - An empty list is `EmptyState` with Lightning's message. If the list has a
   create action, the empty state is that action (`buttonText`, `onClick`),
   `disabled` when the user can't create. `variant="plain"` inside a card.

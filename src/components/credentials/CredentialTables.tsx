@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import SectionHeader from "../primitives/SectionHeader";
+import Section from "../primitives/Section";
 import InfoTooltip from "../primitives/InfoTooltip";
 import Pill from "../primitives/Pill";
 import { Table, Td, Th, Tr } from "../primitives/Table";
@@ -48,8 +48,7 @@ interface TableProps<T> {
 
 export function OauthClientsTable({ rows, showOwner = false, emptyState, actions }: TableProps<OauthClientRow>) {
   return (
-    <div id="oauth-clients-table-container" className="space-y-2">
-      <SectionHeader title="OAuth Clients" />
+    <Section id="oauth-clients-table-container" title="OAuth Clients">
       {rows.length === 0 ? (
         emptyState
       ) : (
@@ -78,14 +77,13 @@ export function OauthClientsTable({ rows, showOwner = false, emptyState, actions
           ))}
         </Table>
       )}
-    </div>
+    </Section>
   );
 }
 
 export function CredentialsTable({ rows, showOwner = false, emptyState, actions }: TableProps<CredentialRow>) {
   return (
-    <div id="credentials-table-container" className="space-y-2">
-      <SectionHeader title="Credentials" />
+    <Section id="credentials-table-container" title="Credentials">
       {rows.length === 0 ? (
         emptyState
       ) : (
@@ -135,14 +133,13 @@ export function CredentialsTable({ rows, showOwner = false, emptyState, actions 
           ))}
         </Table>
       )}
-    </div>
+    </Section>
   );
 }
 
 export function KeychainCredentialsTable({ rows, showOwner = true, emptyState, actions }: TableProps<KeychainCredentialRow>) {
   return (
-    <div id="keychain-credentials-table-container" className="space-y-2">
-      <SectionHeader title="Keychain Credentials" />
+    <Section id="keychain-credentials-table-container" title="Keychain Credentials">
       {rows.length === 0 ? (
         emptyState
       ) : (
@@ -173,6 +170,6 @@ export function KeychainCredentialsTable({ rows, showOwner = true, emptyState, a
           ))}
         </Table>
       )}
-    </div>
+    </Section>
   );
 }

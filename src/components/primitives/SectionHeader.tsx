@@ -1,12 +1,15 @@
 import { createContext, useContext, type ReactNode } from "react";
+import { cn } from "../../utils/cn";
 import Heading from "./Heading";
 import Text from "./Text";
 
 interface Props {
   title: ReactNode;
   subtitle?: ReactNode;
-  /** `lg` opens a tab or page of settings; `md` titles a card or a part of one. */
-  size?: "lg" | "md";
+  /** `lg` opens a tab or page of settings; `md` titles a card or a part of one; `sm` titles a part of an inspector panel or modal. */
+  size?: "lg" | "md" | "sm";
+  /** `eyebrow`: a small uppercase label with a rule under it, for groups of facts inside a card. `size` is ignored. */
+  variant?: "default" | "eyebrow";
   /** Right-aligned action, usually a Button. */
   action?: ReactNode;
   /** When set, shows "Role based permissions: You cannot modify this project's {section}". */
@@ -29,12 +32,13 @@ export function NestedSections({ children }: { children: ReactNode }) {
  * section's main action on the right (Lightning's
  * `LayoutComponents.section_header`). `Card` uses it for its header.
  */
-export default function SectionHeader({ title, subtitle, size = "md", action, permissionsSection }: Props) {
+export default function SectionHeader({ title, subtitle, size = "md", variant = "default", action, permissionsSection }: Props) {
   const nestedLevel = useContext(NestedLevel);
+  const eyebrow = variant === "eyebrow";
   return (
-    <div className="flex items-start justify-between gap-8">
+    <div className={cn("flex items-start justify-between gap-8", eyebrow && "border-b border-subtle pb-1.5")}>
       <div>
-        <Heading size={size} as={size === "lg" ? "h2" : nestedLevel}>
+        <Heading size={eyebrow ? "xs" : size} as={size === "lg" && !eyebrow ? "h2" : nestedLevel}>
           {title}
         </Heading>
         {subtitle && <Text as="p" className="mt-1 text-muted">{subtitle}</Text>}
