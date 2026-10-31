@@ -5,6 +5,7 @@ import type { SearchFieldId } from "../../types/history";
 import SearchInput from "../primitives/SearchInput";
 import Text from "../primitives/Text";
 import Tooltip from "../primitives/Tooltip";
+import { Row } from "../primitives/Stack";
 
 /**
  * History's search row (run_live/index.html.heex): the search input, "by",
@@ -32,7 +33,7 @@ export default function HistorySearchBar({
   }
 
   return (
-    <div className="flex items-center gap-2">
+    <Row>
       <form
         className="flex-1"
         onSubmit={(e) => {
@@ -62,6 +63,6 @@ export default function HistorySearchBar({
           Search
         </Button>
       </div>
-    </div>
+    </Row>
   );
 }
