@@ -13,7 +13,7 @@ describe("Modal", () => {
   });
 
   it("names a dialog that shows no title by its label", () => {
-    render(<Modal open bare title="Hidden" label="Search projects" onClose={() => {}}>Picker</Modal>);
+    render(<Modal open variant="bare" title="Hidden" label="Search projects" onClose={() => {}}>Picker</Modal>);
     screen.getByRole("dialog", { name: "Search projects" });
   });
 

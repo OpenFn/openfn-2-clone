@@ -23,7 +23,7 @@ export default function WipedDataViewer({
   adminContacts?: string[];
 }) {
   return (
-    <Card dashed padding="none" className="mb-4 px-8 pb-8 pt-6">
+    <Card variant="dashed" padding="none" className="mb-4 px-8 pb-8 pt-6">
       <Text as="div" className="space-y-4 text-center text-muted">
         <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full border-2 border-strong text-faint">
           <span className="hero-code-bracket h-4 w-4" />

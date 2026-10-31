@@ -89,7 +89,7 @@ export default function ConfigureAdaptorModal({
           aside={needsCredentials && <TextLink>New Credential</TextLink>}
         >
           {!needsCredentials ? (
-            <Card muted padding="lg" className="text-center text-muted">
+            <Card variant="muted" padding="lg" className="text-center text-muted">
               <Text as="p">This adaptor does not require credentials.</Text>
             </Card>
           ) : shown.length === 0 ? (

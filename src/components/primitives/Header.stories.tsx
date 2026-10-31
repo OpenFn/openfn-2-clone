@@ -35,7 +35,7 @@ export const LongTitle: Story = {
     children: <Button>Save</Button>,
   },
 };
-export const LoggedOut: Story = { args: { title: "Log in", loggedOut: true } };
+export const LoggedOut: Story = { args: { title: "Log in", size: "xl" } };
 export const LongBreadcrumbs: Story = {
   args: {
     breadcrumbs: (

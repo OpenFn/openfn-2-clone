@@ -135,7 +135,7 @@ export default function Picker({ items: allItems, currentId, placeholder, emptyM
   // the panel sits high on the page, like a command palette.
   return (
     // eslint-disable-next-line no-restricted-syntax -- sized to the viewport
-    <Modal open={isOpen} onClose={closePicker} bare label={placeholder} className="mt-[15vh] self-start overflow-hidden">
+    <Modal open={isOpen} onClose={closePicker} variant="bare" label={placeholder} className="mt-[15vh] self-start overflow-hidden">
       <SearchList<Row>
         variant="palette"
         listId="picker-options"

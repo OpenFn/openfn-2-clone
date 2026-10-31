@@ -61,7 +61,7 @@ export default function TemplateBrowserModal({ isOpen, onClose, projectId, templ
           />
           {visible.length === 0 && <EmptyState variant="plain" message="No saved templates match your search." />}
         </div>
-        <Card muted padding="none" className="flex min-w-0 flex-1 flex-col overflow-clip">
+        <Card variant="muted" padding="none" className="flex min-w-0 flex-1 flex-col overflow-clip">
           <div className="min-h-0 flex-1">
             {previewed ? (
               <WorkflowDiagram key={previewed.id} graph={templateGraph(previewed, projectId)} selection={null} onSelect={() => {}} preview />

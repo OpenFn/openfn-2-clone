@@ -11,7 +11,7 @@ export function Table({
   header,
   children,
   footer,
-  divide = true,
+  variant = "divided",
   id,
   state = "ready",
   loadingMessage = "Loading ...",
@@ -21,13 +21,15 @@ export function Table({
   children: ReactNode;
   /** Rendered under the table, e.g. a Pagination bar. */
   footer?: ReactNode;
-  divide?: boolean;
+  /** `divided` rules a line between rows; `plain` leaves them open. */
+  variant?: "divided" | "plain";
   id?: string;
   /** While a server-driven list loads or after it fails, the body is a message instead of `children` (STANDARDS pattern 3). */
   state?: "loading" | "error" | "ready";
   loadingMessage?: string;
   errorMessage?: string;
 }) {
+  const divide = variant === "divided";
   return (
     <div id={id} data-ui="table" className="shadow ring-1 ring-black/5 sm:rounded-lg bg-subtle">
       <table className={cn("min-w-full", divide && "divide-y divide-subtle")}>

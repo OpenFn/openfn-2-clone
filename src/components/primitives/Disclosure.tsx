@@ -21,8 +21,8 @@ interface Props {
    * inside a form.
    */
   variant?: DisclosureVariant;
-  /** Pad the body (`card` only); turn off for full-bleed content such as code. */
-  padded?: boolean;
+  /** Body padding (`card` only); `none` for full-bleed content such as code. */
+  padding?: "md" | "none";
   children: ReactNode;
 }
 
@@ -30,7 +30,7 @@ interface Props {
  * A header that shows and hides its body, with the open state exposed to
  * assistive tech. The chevron points down when open and right when closed.
  */
-export default function Disclosure({ id, title, titleRight, note, defaultOpen = true, variant = "card", padded = true, children }: Props) {
+export default function Disclosure({ id, title, titleRight, note, defaultOpen = true, variant = "card", padding = "md", children }: Props) {
   const chevron = (size: string) => (
     <span className={cn("hero-chevron-down-mini shrink-0 text-faint transition-transform group-data-open:rotate-0 -rotate-90", size)} />
   );
@@ -72,7 +72,7 @@ export default function Disclosure({ id, title, titleRight, note, defaultOpen = 
           {titleRight}
           <span className="ml-auto">{chevron("h-5 w-5")}</span>
         </DisclosureButton>
-        <DisclosurePanel className={cn(padded && "px-4 pb-4")}>{children}</DisclosurePanel>
+        <DisclosurePanel className={cn(padding === "md" && "px-4 pb-4")}>{children}</DisclosurePanel>
       </HeadlessDisclosure>
     </Card>
   );

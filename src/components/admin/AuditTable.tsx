@@ -35,7 +35,7 @@ export default function AuditTable({
 }) {
   return (
     <Table
-      divide={false}
+      variant="plain"
       header={
         <Tr>
           <Th>Occurred</Th>

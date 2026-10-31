@@ -40,7 +40,7 @@ export default function FirstSetupPage({ onSave }: FirstSetupPageProps) {
   });
 
   return (
-    <PageContent header={<Header title="Setup" loggedOut />}>
+    <PageContent header={<Header title="Setup" size="xl" />}>
       <Centered>
         <p>
           Looks like this is a fresh install of OpenFn Lightning. Create a superuser account to manage projects and

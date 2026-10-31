@@ -112,7 +112,7 @@ export default function AnnotationCard({ id, annotation, inventory, onOpenId, in
       {annotation && (
         <>
           {annotation.frontMatterRaw && (
-            <Disclosure title="Front matter" defaultOpen={false} padded={false}>
+            <Disclosure title="Front matter" defaultOpen={false} padding="none">
               <Text as="pre" variant="code-sm" className="overflow-x-auto border-t border-subtle px-4 py-3 text-muted">
                 {annotation.frontMatterRaw}
               </Text>

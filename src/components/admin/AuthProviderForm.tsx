@@ -214,7 +214,7 @@ export default function AuthProviderForm({ provider, onSave, onTest, onRemove, i
           <div className="space-y-2 sm:border-t sm:border-subtle sm:pt-4">
             <Heading size="sm">Redirect URI</Heading>
             <Card
-              muted
+              variant="muted"
               padding="sm"
               id="redirect-uri-preview"
               className={cn("font-mono", !valid && "cursor-not-allowed text-faint")}

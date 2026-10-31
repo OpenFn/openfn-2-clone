@@ -95,7 +95,7 @@ export default function ChannelRequestShowPage({
                 variant="card"
                 id="request-section"
                 title="Request"
-                padded={false}
+                padding="none"
                 titleRight={event?.requestBodySize ? <SectionSizeBadge size={event.requestBodySize} /> : undefined}
               >
                 {event?.requestHeaders && (
@@ -119,7 +119,7 @@ export default function ChannelRequestShowPage({
                 variant="card"
                 id="response-section"
                 title="Response"
-                padded={false}
+                padding="none"
                 titleRight={
                   <>
                     {event?.responseStatus && <StatusCodeBadge status={event.responseStatus} />}

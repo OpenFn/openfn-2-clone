@@ -147,7 +147,7 @@ export default function LiveDashboardHome({
                   </DetailItem>
                 ))}
               </DetailList>
-              <Card muted padding="sm" className="text-center">
+              <Card variant="muted" padding="sm" className="text-center">
                 Total usage: {totalMemory.toFixed(1)} MB
               </Card>
             </Card>

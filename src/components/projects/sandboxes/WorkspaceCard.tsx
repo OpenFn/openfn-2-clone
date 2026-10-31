@@ -50,7 +50,7 @@ export default function WorkspaceCard({
     <Card
       id={isRoot && !deleted ? undefined : `sandbox-card-${workspace.id}`}
       padding="none"
-      muted={!!deleted}
+      variant={deleted ? "muted" : "default"}
       // The whole card shows the focus outline when its name area is reached by keyboard.
       className={cn(
         "flex overflow-hidden has-[[role=button]:focus-visible]:outline-2 has-[[role=button]:focus-visible]:outline-offset-2 has-[[role=button]:focus-visible]:outline-focus",

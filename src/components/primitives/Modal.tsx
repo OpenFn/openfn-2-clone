@@ -26,10 +26,10 @@ interface Props {
   footer?: ReactNode;
   size?: ModalSize;
   /**
-   * Render only the panel, with no header, padding or footer, for modals
-   * that lay out their own content (pickers, browsers, wizards).
+   * `bare` renders only the panel, with no header, padding or footer, for
+   * modals that lay out their own content (pickers, browsers, wizards).
    */
-  bare?: boolean;
+  variant?: "default" | "bare";
   /** Names the dialog for screen readers when no `title` is shown (none given, or `bare`). */
   label?: string;
   className?: string;
@@ -40,7 +40,8 @@ interface Props {
  * optional description, body and footer. Escape and clicking outside close
  * it; focus is trapped inside while it's open.
  */
-export default function Modal({ open, onClose, title, description, children, footer, size = "lg", bare = false, label, className }: Props) {
+export default function Modal({ open, onClose, title, description, children, footer, size = "lg", variant = "default", label, className }: Props) {
+  const bare = variant === "bare";
   return (
     <Dialog open={open} onClose={onClose} transition aria-label={title && !bare ? undefined : label} className="relative z-200" data-ui="modal">
       <DialogBackdrop

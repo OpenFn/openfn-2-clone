@@ -128,7 +128,7 @@ export function BodyViewer({
   }
   return (
     <Text as="div" variant="body-sm" className="space-y-1 text-faint">
-      <Card muted padding="none" className="relative">
+      <Card variant="muted" padding="none" className="relative">
         <div className="absolute right-2 top-2 flex items-center gap-1.5">
           {ct && (
             <Pill square mono>
