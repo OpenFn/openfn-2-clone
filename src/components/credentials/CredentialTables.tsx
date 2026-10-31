@@ -4,7 +4,7 @@ import InfoTooltip from "../primitives/InfoTooltip";
 import Pill from "../primitives/Pill";
 import CopyChip from "../primitives/CopyChip";
 import { Row } from "../primitives/Stack";
-import { Table, Td, Th, Tr } from "../primitives/Table";
+import { Table, Td, Th, Tr, Truncated } from "../primitives/Table";
 import type { CredentialRow, KeychainCredentialRow, OauthClientRow } from "../../types/credentials";
 import Tooltip from "../primitives/Tooltip";
 
@@ -101,7 +101,7 @@ export function CredentialsTable({ rows, showOwner = false, emptyState, actions 
               <Td>
                 {/* Only the name is cut off, so a long one can't push the warning out of sight. */}
                 <Row gap="sm" className="max-w-60">
-                  <span className="min-w-0 truncate">{credential.name}</span>
+                  <Truncated className="min-w-0">{credential.name}</Truncated>
                   {credential.schema === "oauth" && !credential.oauthClient && (
                     <InfoTooltip title="OAuth client not found" icon="hero-exclamation-triangle" iconClass="h-5 w-5" />
                   )}

@@ -2,6 +2,7 @@ import { useLayoutEffect, useRef, useState, type MouseEvent, type ReactNode, typ
 import { Link } from "../../routing/router";
 import { cn } from "../../utils/cn";
 import EmptyState from "./EmptyState";
+import Tooltip from "./Tooltip";
 
 /**
  * Lightning's table components (components/table.ex): a ringed, rounded
@@ -30,28 +31,10 @@ export function Table({
   errorMessage?: string;
 }) {
   const divide = variant === "divided";
-  // Whether columns are hidden past the right edge, so the pinned actions column casts a shadow over them.
-  const scroller = useRef<HTMLDivElement>(null);
-  const [moreRight, setMoreRight] = useState(false);
-  useLayoutEffect(() => {
-    const el = scroller.current;
-    if (!el) return;
-    const measure = () => setMoreRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 1);
-    measure();
-    el.addEventListener("scroll", measure, { passive: true });
-    // The table too: rows arriving or filtered away change its width, not the scroller's.
-    const observer = new ResizeObserver(measure);
-    observer.observe(el);
-    if (el.firstElementChild) observer.observe(el.firstElementChild);
-    return () => {
-      el.removeEventListener("scroll", measure);
-      observer.disconnect();
-    };
-  }, []);
   return (
     <div id={id} data-ui="table" className="shadow ring-1 ring-black/5 sm:rounded-lg bg-subtle">
       {/* A table wider than its box scrolls sideways inside the card instead of spilling out of it. */}
-      <div ref={scroller} data-more-right={moreRight || undefined} className="group/scroll overflow-x-auto sm:rounded-lg">
+      <div className="overflow-x-auto sm:rounded-lg">
         <table className={cn("min-w-full", divide && "divide-y divide-subtle")}>
           <thead>{header}</thead>
           {state === "ready" && <tbody className={cn("bg-surface", divide && "divide-y divide-subtle")}>{children}</tbody>}
@@ -128,7 +111,7 @@ export function Tr({
           ?.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, metaKey, ctrlKey, shiftKey, altKey }));
       }}
       className={cn(
-        "group/row transition-colors duration-150",
+        "transition-colors duration-150",
         "has-[td]:hover:bg-hover",
         "has-data-row-action:cursor-pointer",
         "last:rounded-b-lg",
@@ -194,8 +177,6 @@ export function Th({
       className={cn(
         "text-sm font-semibold text-strong select-none whitespace-nowrap",
         alignClasses[align],
-        // Pinned to the right edge, so a table that scrolls sideways keeps its actions in view.
-        actions && "sticky! right-0 bg-subtle group-data-more-right/scroll:shadow-scroll-edge",
         className
       )}
     >
@@ -241,15 +222,18 @@ export function Td({
   actions?: boolean;
   /** Long words break onto the next line: prose, and a URL people read to check it. */
   wrap?: boolean;
-  /** One line, cut off with an ellipsis at `maxWidth` (default 60): a long name people open the record to read. A value people copy is a `CopyChip`. */
+  /** One line, cut off with an ellipsis at `maxWidth` (default 60), the whole text on hover while it's cut off: a long name. A value people copy is a `CopyChip`. */
   truncate?: boolean;
   /** A max-width in Tailwind spacing units (60 = 15rem), held by a block inside the cell, since auto table layout ignores a cell's own max-width (F530). */
   maxWidth?: keyof typeof maxWidthClasses;
 }) {
   // Auto table layout ignores a cell's max-width, so a capped value gets its own block.
   const capped = truncate || maxWidth !== undefined;
-  const body = capped ? (
-    <span className={cn("block", maxWidthClasses[maxWidth ?? 60], truncate && "truncate", wrap && "wrap-break-word")}>{children}</span>
+  const width = maxWidthClasses[maxWidth ?? 60];
+  const body = truncate ? (
+    <Truncated className={width}>{children}</Truncated>
+  ) : capped ? (
+    <span className={cn("block", width, wrap && "wrap-break-word")}>{children}</span>
   ) : (
     children
   );
@@ -258,7 +242,6 @@ export function Td({
       className={cn(
         "text-sm text-muted first:rounded-bl-lg last:rounded-br-lg",
         align && alignClasses[align],
-        actions && "sticky! right-0 bg-surface group-hover/row:bg-hover group-data-more-right/scroll:shadow-scroll-edge",
         wrap && !capped && "wrap-break-word",
         className,
       )}
@@ -269,3 +252,25 @@ export function Td({
   );
 }
 
+
+/** Text on one line; while the ellipsis cuts it off, hovering shows the whole of it. `Td truncate` uses it; use it directly for a value that shares its cell with an icon. */
+export function Truncated({ children, className }: { children: ReactNode; className: string }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const [full, setFull] = useState<string | null>(null);
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const measure = () => setFull(el.scrollWidth > el.clientWidth ? el.textContent : null);
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [children]);
+  return (
+    <Tooltip content={full}>
+      <span ref={ref} className={cn("block truncate", className)}>
+        {children}
+      </span>
+    </Tooltip>
+  );
+}

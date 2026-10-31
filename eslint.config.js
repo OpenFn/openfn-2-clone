@@ -57,6 +57,16 @@ const designRules = [
     selector: 'JSXAttribute[name.name="variant"][value.value=/^(neutral|info|success|warning|danger|error)$/]',
     message: propNames,
   },
+  // A browser tooltip shows late, can't be styled and the keyboard never reaches it.
+  {
+    selector: 'JSXOpeningElement[name.name=/^[a-z]/] > JSXAttribute[name.name="title"]',
+    message: "Native title tooltip: use `Tooltip`, or the component's own `tooltip` prop.",
+  },
+  // A cell's own max-width doesn't hold in an auto-layout table, so hand-made truncation spills (F530).
+  {
+    selector: 'JSXOpeningElement[name.name="Td"] > JSXAttribute[name.name="className"] :matches(Literal[value=/\\btruncate\\b/], TemplateElement[value.raw=/\\btruncate\\b/])',
+    message: "Truncate a cell with `<Td truncate maxWidth={…}>`, not a class: a cell's max-width doesn't hold in an auto table layout.",
+  },
 ]
 
 // Colours are named for what they're for (src/theme/tokens.css). Each message

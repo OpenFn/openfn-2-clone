@@ -120,7 +120,7 @@ export function Field({
       {...(group && { disabled, "aria-label": ariaLabel, "aria-labelledby": label && !ariaLabel ? labelId : undefined, "aria-describedby": describedBy })}
     >
       {labelRow}
-      {hint && <small id={hintId} data-ui="hint" className="mb-2 block text-xs text-muted group-disabled/field:text-faint">{hint}</small>}
+      {hint && <small id={hintId} data-ui="hint" className="mb-4 block text-xs/5 text-muted group-disabled/field:text-faint">{hint}</small>}
       {/* A group's radios take only aria-invalid; the fieldset already carries the hint and errors. */}
       <FieldContext.Provider value={passThrough ? outer : group ? { invalid } : { id, describedBy, invalid, labelled: Boolean(label && id) }}>{children}</FieldContext.Provider>
       {note && (

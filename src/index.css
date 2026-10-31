@@ -93,20 +93,6 @@
       disabled:opacity-60;
 }
 
-/* A pinned column's left edge while columns scroll underneath it: says there is more. */
-/* Drawn as a gradient beside the cell: table cells don't draw box-shadows. */
-@utility shadow-scroll-edge {
-  &::before {
-    content: "";
-    position: absolute;
-    inset-block: 0;
-    left: -12px;
-    width: 12px;
-    pointer-events: none;
-    background: linear-gradient(to left, rgb(0 0 0 / 0.08), transparent);
-  }
-}
-
 @utility link-uuid {
   @apply cursor-pointer
       /* underline */

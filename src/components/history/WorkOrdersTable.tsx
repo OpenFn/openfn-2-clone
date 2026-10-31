@@ -139,9 +139,7 @@ export default function WorkOrdersTable({
           <Th align="right">
             <span className="mr-2">Status</span>
           </Th>
-          <Th align="right" actions>
-            Runs
-          </Th>
+          <Th align="right">Runs</Th>
         </Tr>
       }
       footer={
