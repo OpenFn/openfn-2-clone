@@ -238,14 +238,15 @@ export default function TriggerInspector({ trigger, onChange, onClose }: Props) 
       <TriggerTypeBadge />
       <WebhookUrlField>
         <Card padding="sm">
-          <Row justify="between">
-            <Pill>Default</Pill>
-            <CopyButton value={url} label="Copy Default URL" size="xs" />
-          </Row>
-          {/* eslint-disable-next-line local/primitive-classname -- debt: F525 margin (mt-1) */}
-          <Text as="div" variant="code-sm" tone="muted" className="mt-1 break-all">
-            {url}
-          </Text>
+          <Stack gap="xs">
+            <Row justify="between">
+              <Pill>Default</Pill>
+              <CopyButton value={url} label="Copy Default URL" size="xs" />
+            </Row>
+            <Text as="div" variant="code-sm" tone="muted" className="break-all">
+              {url}
+            </Text>
+          </Stack>
         </Card>
       </WebhookUrlField>
       <Disclosure variant="inline" defaultOpen={false} title="Authentication" note={trigger.hasAuthMethod ? "1 configured" : "none configured"}>

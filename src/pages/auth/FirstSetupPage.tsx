@@ -3,6 +3,7 @@ import Button from "../../components/primitives/Button";
 import Form from "../../components/primitives/Form";
 import { PasswordInput, TextInput } from "../../components/primitives/Inputs";
 import { Centered, PageContent } from "../../components/primitives/PageContent";
+import { Stack } from "../../components/primitives/Stack";
 import { useForm } from "../../utils/useForm";
 import { blank, isValidEmail } from "../../utils/validate";
 
@@ -42,33 +43,34 @@ export default function FirstSetupPage({ onSave }: FirstSetupPageProps) {
   return (
     <PageContent header={<Header title="Setup" size="xl" />}>
       <Centered>
-        <p>
-          Looks like this is a fresh install of OpenFn Lightning. Create a superuser account to manage projects and
-          users.
-        </p>
-        <Form
-          id="superuser-registration-form"
-          {...form.formProps(onSave)}
-          // eslint-disable-next-line local/primitive-classname -- debt: F525 margin (mt-4)
-          className="mt-4 w-1/2"
-          actions={
-            <Button type="submit">
-              Save
-            </Button>
-          }
-        >
-          <TextInput id="first_name" name="first_name" label="First name" {...form.fieldProps("firstName")} />
-          <TextInput id="last_name" name="last_name" label="Last name" {...form.fieldProps("lastName")} />
-          <TextInput id="email" name="email" type="email" label="Email" {...form.fieldProps("email")} />
-          <PasswordInput id="password" name="password" label="Password" autoComplete="new-password" {...form.fieldProps("password")} />
-          <PasswordInput
-            id="password_confirmation"
-            name="password_confirmation"
-            label="Password confirmation"
-            autoComplete="new-password"
-            {...form.fieldProps("passwordConfirmation")}
-          />
-        </Form>
+        <Stack>
+          <p>
+            Looks like this is a fresh install of OpenFn Lightning. Create a superuser account to manage projects and
+            users.
+          </p>
+          <Form
+            id="superuser-registration-form"
+            {...form.formProps(onSave)}
+            className="w-1/2"
+            actions={
+              <Button type="submit">
+                Save
+              </Button>
+            }
+          >
+            <TextInput id="first_name" name="first_name" label="First name" {...form.fieldProps("firstName")} />
+            <TextInput id="last_name" name="last_name" label="Last name" {...form.fieldProps("lastName")} />
+            <TextInput id="email" name="email" type="email" label="Email" {...form.fieldProps("email")} />
+            <PasswordInput id="password" name="password" label="Password" autoComplete="new-password" {...form.fieldProps("password")} />
+            <PasswordInput
+              id="password_confirmation"
+              name="password_confirmation"
+              label="Password confirmation"
+              autoComplete="new-password"
+              {...form.fieldProps("passwordConfirmation")}
+            />
+          </Form>
+        </Stack>
       </Centered>
     </PageContent>
   );

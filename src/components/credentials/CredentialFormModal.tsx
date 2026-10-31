@@ -711,11 +711,12 @@ function OauthFields({
     status = (
       <>
         <Alert tone="warning" header="Reauthentication Required">
-          <p>You've changed the permissions for this credential.</p>
-          {/* eslint-disable-next-line local/primitive-classname -- debt: F525 margin (mt-2) */}
-          <Text as="p" className="mt-2">
-            Please reauthenticate with {client.name} to apply these changes.
-          </Text>
+          <Stack gap="sm">
+            <p>You've changed the permissions for this credential.</p>
+            <Text as="p">
+              Please reauthenticate with {client.name} to apply these changes.
+            </Text>
+          </Stack>
         </Alert>
         {signInButton("Reauthenticate")}
       </>
@@ -748,11 +749,12 @@ function OauthFields({
     status = (
       <>
         <Alert tone="warning" header={`${client.name} is Having Issues`}>
-          <p>{client.name} is experiencing technical difficulties.</p>
-          {/* eslint-disable-next-line local/primitive-classname -- debt: F525 margin (mt-2) */}
-          <Text as="p" className="mt-2">
-            This is temporary - please try again in a few minutes.
-          </Text>
+          <Stack gap="sm">
+            <p>{client.name} is experiencing technical difficulties.</p>
+            <Text as="p">
+              This is temporary - please try again in a few minutes.
+            </Text>
+          </Stack>
         </Alert>
         {signInButton("Try Again Later")}
       </>

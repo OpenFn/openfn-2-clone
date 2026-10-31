@@ -6,6 +6,7 @@ import Disclosure from "../primitives/Disclosure";
 import Heading from "../primitives/Heading";
 import TextLink from "../primitives/TextLink";
 import Text from "../primitives/Text";
+import { Stack } from "../primitives/Stack";
 
 /**
  * The IDE's Docs panel (assets/js/adaptor-docs/components/DocsPanel.tsx):
@@ -20,9 +21,9 @@ export default function AdaptorDocs({ adaptor }: { adaptor: string }) {
   return (
     // eslint-disable-next-line local/primitive-classname -- debt: F525 margin (ml-1)
     <Text as="div" className="ml-1 space-y-4 overflow-auto">
-      <div>
-        {/* eslint-disable-next-line local/primitive-classname -- debt: F525 margin, F527 colour (mb-2 text-body) */}
-        <Heading size="lg" as="h1" className="mb-2 text-body">
+      <Stack gap="sm">
+        {/* eslint-disable-next-line local/primitive-classname -- debt: F527 colour (text-body) */}
+        <Heading size="lg" as="h1" className="text-body">
           {pkg} ({version})
         </Heading>
         <div>
@@ -39,7 +40,7 @@ export default function AdaptorDocs({ adaptor }: { adaptor: string }) {
             </TextLink>
           </p>
         </div>
-      </div>
+      </Stack>
       <Disclosure variant="inline" defaultOpen={false} title="Editor tips & shortcuts">
         <div className="space-y-2 border-l-4 border-strong pl-2">
           <p>
