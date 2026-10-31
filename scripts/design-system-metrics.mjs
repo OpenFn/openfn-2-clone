@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Measures how much styling lives outside the primitives. Run before and
 // after design-system work: `node scripts/design-system-metrics.mjs`.
-import { readFileSync, readdirSync, statSync } from 'node:fs'
+import { readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs'
 import { join, relative, sep } from 'node:path'
 
 const root = new URL('../src/', import.meta.url).pathname
@@ -73,7 +73,38 @@ const rows = [
   ['Raw <table> in features + pages', count(consumers, /<table\b/g)],
   ['Raw palette classes in features + pages', count(consumers, rawPalette)],
   ['Primitive imports in features + pages', primImports],
+  ['debt: lines in src', files.reduce((n, f) => n + (f.raw.match(/\bdebt:/g) ?? []).length, 0)],
 ]
+
+// The ratchet: these only go down. `--check` (CI) fails when one rises above the
+// committed baseline; `--update` writes the new, lower numbers into it.
+const ratchet = [
+  'className= in features + pages',
+  'Class-list literals in features + pages',
+  '  duplicated (same list used 2+ times)',
+  'Distinct Tailwind tokens in features + pages',
+  'Arbitrary values (`-[…]`) in features + pages',
+  'Raw <button> in features + pages',
+  'Raw <input>/<select>/<textarea> in features + pages',
+  'Raw <table> in features + pages',
+  'Raw palette classes in features + pages',
+  'debt: lines in src',
+]
+const baselineFile = new URL('./design-system-baseline.json', import.meta.url)
+const now = Object.fromEntries(rows.filter(([k]) => ratchet.includes(k)))
+if (process.argv.includes('--update')) {
+  writeFileSync(baselineFile, JSON.stringify(now, null, 2) + '\n')
+  console.log('Baseline updated.')
+  process.exit(0)
+}
+if (process.argv.includes('--check')) {
+  const base = JSON.parse(readFileSync(baselineFile, 'utf8'))
+  const up = ratchet.filter((k) => now[k] > base[k])
+  const down = ratchet.filter((k) => now[k] < base[k])
+  for (const k of up) console.error(`Went up: ${k.trim()} ${base[k]} → ${now[k]}. Use a primitive or prop instead; see docs/building.md.`)
+  for (const k of down) console.log(`Went down: ${k.trim()} ${base[k]} → ${now[k]}. Lock it in: node scripts/design-system-metrics.mjs --update`)
+  process.exit(up.length ? 1 : 0)
+}
 const w = Math.max(...rows.map((r) => r[0].length))
 if (process.argv.includes('--json')) console.log(JSON.stringify(Object.fromEntries(rows)))
 else for (const [k, v] of rows) console.log(`${k.padEnd(w)}  ${v}`)

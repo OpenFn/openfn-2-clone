@@ -33,7 +33,11 @@ data, comments) and loads when you touch one.
 - `npm run kickstart:sync` regenerates the shared projects from
   `kickstart/exports/`.
 - `node scripts/design-system-metrics.mjs` counts styling outside the
-  primitives. The numbers should only go down.
+  primitives and the `debt:` lines. They only go down: CI runs it with
+  `--check` against `scripts/design-system-baseline.json` and fails if one
+  rises. When yours go down, run it with `--update` and commit the
+  baseline. A new lint rule that freezes old breaches as `debt:` raises
+  the count once: update the baseline in that PR and say why.
 
 ## Where things are
 
