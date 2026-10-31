@@ -20,6 +20,7 @@ import { formatLocalDate, formatShortLocalDateTime, prettyJson, shortUuid, uuidO
 import Tooltip from "../primitives/Tooltip";
 import EmptyState from "../primitives/EmptyState";
 import Text from "../primitives/Text";
+import { Row } from "../primitives/Stack";
 
 type Tab = "empty" | "custom" | "existing";
 
@@ -116,13 +117,13 @@ export default function ManualRunPanel({
       {tab === "existing" && (
         // eslint-disable-next-line local/primitive-classname -- debt: F526 box (px-3 pt-4 pb-6)
         <Text as="div" className="flex flex-col gap-3 px-3 pt-4 pb-6">
-          <div className="flex items-center gap-2">
+          <Row>
             <SearchInput value={query} onChange={setQuery} placeholder="Search names or UUID prefixes" size="sm" className="flex-1" />
             <Button>Search</Button>
             <IconButton icon="hero-calendar-days" label="Filter by date created" />
             <IconButton icon="hero-rectangle-group" label="Filter by type" />
             <IconButton icon="hero-tag" label="Named only" active={namedOnly} onClick={() => setNamedOnly((n) => !n)} />
-          </div>
+          </Row>
           <div className="flex flex-col gap-3 overflow-auto">
             {visible.length ? (
               visible.map((clip, i) => (
@@ -168,10 +169,10 @@ export default function ManualRunPanel({
     <div className="flex h-full flex-col">
       <div className={cn("flex items-center justify-between gap-4 pb-4", embedded ? "px-3 pt-3" : "px-6 pt-4")}>
         <div className="flex min-w-0 flex-col gap-1">
-          <div className="flex items-center gap-2">
+          <Row>
             <Heading className="min-w-0 wrap-break-word">{selected.name || "Unnamed"}</Heading>
             <IconButton icon="hero-pencil" label="Rename" size="xs" />
-          </div>
+          </Row>
           <Text as="div" variant="body-sm" tone="muted" className="flex items-center gap-2">
             <span className="capitalize">{selected.type.replace("_", " ")}</span>
             <span>•</span>

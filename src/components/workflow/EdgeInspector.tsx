@@ -10,6 +10,7 @@ import TextLink from "../primitives/TextLink";
 import InspectorLayout, { InspectorFooter } from "./InspectorLayout";
 import Tooltip from "../primitives/Tooltip";
 import Text from "../primitives/Text";
+import { Stack } from "../primitives/Stack";
 
 interface Props {
   edge: EditorEdge;
@@ -61,7 +62,7 @@ export default function EdgeInspector({ edge, onChange, onDelete, onClose }: Pro
         onChange={(e) => onChange({ conditionType: e.target.value as EdgeConditionType })}
       />
       {edge.conditionType === "js_expression" && (
-        <div className="space-y-2">
+        <Stack gap="sm">
           <TextArea
             id="condition_expression"
             label={
@@ -98,7 +99,7 @@ export default function EdgeInspector({ edge, onChange, onDelete, onClose }: Pro
               </p>
             </Text>
           </Disclosure>
-        </div>
+        </Stack>
       )}
       {fromTrigger && (
         // eslint-disable-next-line local/primitive-classname -- debt: F528 type (italic)

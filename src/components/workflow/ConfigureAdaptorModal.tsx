@@ -14,6 +14,7 @@ import TextLink from "../primitives/TextLink";
 import { ADAPTOR_HELP } from "./AdaptorDisplay";
 import AdaptorIcon from "./AdaptorIcon";
 import Text from "../primitives/Text";
+import { Stack } from "../primitives/Stack";
 
 const CREDENTIALS_HELP =
   "If the system you're working with requires authentication, choose a credential with login details (secrets) that will allow this job to connect. If you're not connecting to an external system you don't need a credential.";
@@ -61,7 +62,7 @@ export default function ConfigureAdaptorModal({
       title="Configure connection"
       footer={<Button onClick={onClose}>Close</Button>}
     >
-      <div className="space-y-6">
+      <Stack gap="lg">
         <div className="grid grid-cols-3 gap-4">
           <Field className="col-span-2" label="Adaptor" info={ADAPTOR_HELP}>
             {/* As tall as the Version field beside it. */}
@@ -122,7 +123,7 @@ export default function ConfigureAdaptorModal({
             </Card>
           )}
         </Field>
-      </div>
+      </Stack>
     </Modal>
   );
 }

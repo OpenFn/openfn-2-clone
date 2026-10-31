@@ -11,6 +11,7 @@ import TextLink from "../primitives/TextLink";
 import InspectorLayout, { InspectorFooter } from "./InspectorLayout";
 import CopyButton from "../primitives/CopyButton";
 import Text from "../primitives/Text";
+import { Stack, Row } from "../primitives/Stack";
 
 const TITLES = { webhook: "On webhook call", cron: "On a schedule" } as const;
 
@@ -186,7 +187,7 @@ export default function TriggerInspector({ trigger, onChange, onClose }: Props) 
               </Card>
             </WebhookUrlField>
             <Field group label="Response">
-              <div className="space-y-2">
+              <Stack gap="sm">
                 {[IMMEDIATELY, ON_COMPLETE].map((o) => (
                   // eslint-disable-next-line local/primitive-classname -- debt: F526 box (hover:bg-hover)
                   <Card key={o.value} padding="sm" className="hover:bg-hover">
@@ -199,7 +200,7 @@ export default function TriggerInspector({ trigger, onChange, onClose }: Props) 
                     />
                   </Card>
                 ))}
-              </div>
+              </Stack>
             </Field>
           </>
         ) : (
@@ -236,10 +237,10 @@ export default function TriggerInspector({ trigger, onChange, onClose }: Props) 
       <TriggerTypeBadge />
       <WebhookUrlField>
         <Card padding="sm">
-          <div className="flex items-center justify-between gap-2">
+          <Row justify="between">
             <Pill>Default</Pill>
             <CopyButton value={url} label="Copy Default URL" size="xs" />
-          </div>
+          </Row>
           {/* eslint-disable-next-line local/primitive-classname -- debt: F525 margin (mt-1) */}
           <Text as="div" variant="code-sm" tone="muted" className="mt-1 break-all">
             {url}

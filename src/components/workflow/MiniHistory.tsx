@@ -12,6 +12,7 @@ import { formatDuration, formatRelative, uuidOf } from "../../utils/format";
 import Tooltip from "../primitives/Tooltip";
 import EmptyState from "../primitives/EmptyState";
 import Text from "../primitives/Text";
+import { Row } from "../primitives/Stack";
 
 const Dot = () => <span className="text-strong">&bull;</span>;
 
@@ -204,7 +205,7 @@ export default function MiniHistory({
           )}
           onClick={onToggle}
         >
-          <div className="flex items-center gap-2">
+          <Row>
             {/* Only on the heading: around the link too, it would open with the link's own tooltip. */}
             <Tooltip content="⌘ H">
               <div>
@@ -212,7 +213,7 @@ export default function MiniHistory({
               </div>
             </Tooltip>
             <FullHistoryLink id="view-history" to={historyHref} />
-          </div>
+          </Row>
           <IconButton
             icon={collapsed ? "hero-chevron-right" : "hero-chevron-left"}
             label={collapsed ? "Show history" : "Hide history"}
