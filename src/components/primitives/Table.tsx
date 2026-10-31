@@ -1,4 +1,4 @@
-import type { MouseEvent, ReactNode, TdHTMLAttributes } from "react";
+import { useLayoutEffect, useRef, useState, type MouseEvent, type ReactNode, type TdHTMLAttributes } from "react";
 import { Link } from "../../routing/router";
 import { cn } from "../../utils/cn";
 import EmptyState from "./EmptyState";
@@ -30,12 +30,31 @@ export function Table({
   errorMessage?: string;
 }) {
   const divide = variant === "divided";
+  // Whether columns are hidden past the right edge, so the pinned actions column casts a shadow over them.
+  const scroller = useRef<HTMLDivElement>(null);
+  const [moreRight, setMoreRight] = useState(false);
+  useLayoutEffect(() => {
+    const el = scroller.current;
+    if (!el) return;
+    const measure = () => setMoreRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 1);
+    measure();
+    el.addEventListener("scroll", measure, { passive: true });
+    const observer = new ResizeObserver(measure);
+    observer.observe(el);
+    return () => {
+      el.removeEventListener("scroll", measure);
+      observer.disconnect();
+    };
+  }, []);
   return (
     <div id={id} data-ui="table" className="shadow ring-1 ring-black/5 sm:rounded-lg bg-subtle">
-      <table className={cn("min-w-full", divide && "divide-y divide-subtle")}>
-        <thead>{header}</thead>
-        {state === "ready" && <tbody className={cn("bg-surface", divide && "divide-y divide-subtle")}>{children}</tbody>}
-      </table>
+      {/* A table wider than its box scrolls sideways inside the card instead of spilling out of it. */}
+      <div ref={scroller} data-more-right={moreRight || undefined} className="group/scroll overflow-x-auto sm:rounded-lg">
+        <table className={cn("min-w-full", divide && "divide-y divide-subtle")}>
+          <thead>{header}</thead>
+          {state === "ready" && <tbody className={cn("bg-surface", divide && "divide-y divide-subtle")}>{children}</tbody>}
+        </table>
+      </div>
       {state !== "ready" && (
         <div role={state === "error" ? "alert" : undefined}>
           <EmptyState
@@ -102,7 +121,7 @@ export function Tr({
         if (!clickedControl(e)) e.currentTarget.querySelector<HTMLElement>("[data-row-action]")?.click();
       }}
       className={cn(
-        "transition-colors duration-150",
+        "group/row transition-colors duration-150",
         "has-[td]:hover:bg-hover",
         "has-data-row-action:cursor-pointer",
         "last:rounded-b-lg",
@@ -165,7 +184,13 @@ export function Th({
     <th
       scope="col"
       colSpan={colSpan}
-      className={cn("text-sm font-semibold text-strong select-none whitespace-nowrap", alignClasses[align], className)}
+      className={cn(
+        "text-sm font-semibold text-strong select-none whitespace-nowrap",
+        alignClasses[align],
+        // Pinned to the right edge, so a table that scrolls sideways keeps its actions in view.
+        actions && "sticky! right-0 bg-subtle group-data-more-right/scroll:shadow-scroll-edge",
+        className
+      )}
     >
       {sortHref ? (
         <Link to={sortHref} className="group inline-flex items-center">
@@ -199,6 +224,7 @@ export function Td({
   align,
   actions = false,
   wrap = false,
+  truncate = false,
   maxWidth,
   ...rest
 }: Omit<TdHTMLAttributes<HTMLTableCellElement>, "align"> & {
@@ -206,23 +232,29 @@ export function Td({
   align?: CellAlign;
   /** A row's action buttons: one right-aligned row with even gaps. */
   actions?: boolean;
-  /** Long words (names, emails, URLs) break onto the next line. */
+  /** Prose breaks onto the next line. For a value with no spaces (an id, a path, a URL), use `truncate`. */
   wrap?: boolean;
-  /** A max-width in Tailwind spacing units (60 = 15rem). Auto table layout ignores it while the table has room (F530). */
+  /** One line, cut off with an ellipsis at `maxWidth` (default 60). For values with no spaces: ids, paths, URLs, long names. */
+  truncate?: boolean;
+  /** A max-width in Tailwind spacing units (60 = 15rem). Auto table layout ignores it on the cell while the table has room (F530), so it holds only with `truncate`. */
   maxWidth?: keyof typeof maxWidthClasses;
 }) {
+  // Auto table layout ignores a cell's max-width, so a truncated value gets its own block.
+  const body = truncate ? <span className={cn("block truncate", maxWidthClasses[maxWidth ?? 60])}>{children}</span> : children;
   return (
     <td
       className={cn(
         "text-sm text-muted first:rounded-bl-lg last:rounded-br-lg",
         align && alignClasses[align],
+        actions && "sticky! right-0 bg-surface group-hover/row:bg-hover group-data-more-right/scroll:shadow-scroll-edge",
         wrap && "wrap-break-word",
-        maxWidth && maxWidthClasses[maxWidth],
+        !truncate && maxWidth && maxWidthClasses[maxWidth],
         className,
       )}
       {...rest}
     >
-      {actions ? <div className="flex items-center justify-end gap-2">{children}</div> : children}
+      {actions ? <div className="flex items-center justify-end gap-2">{children}</div> : body}
     </td>
   );
 }
+

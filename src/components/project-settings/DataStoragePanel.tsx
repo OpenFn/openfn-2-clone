@@ -4,6 +4,8 @@ import Card from "../primitives/Card";
 import Form from "../primitives/Form";
 import { Field, Radio, Select } from "../primitives/Inputs";
 import SectionHeader from "../primitives/SectionHeader";
+import { Stack } from "../primitives/Stack";
+import PlanLimitNote from "../domain/PlanLimitNote";
 import TextLink from "../primitives/TextLink";
 import SandboxSettingsBanner from "./SandboxSettingsBanner";
 import type { DataStorageSettings, DataStorageValues } from "../../types/project-settings";
@@ -82,68 +84,72 @@ export default function DataStoragePanel({ dataStorage, sandbox, onSave }: Props
           )}
       >
         <Card>
-          {/* The plan's note (why the periods are limited) ends the hint, so it's read with the dropdown. */}
-          <Select
-            id="project_history_retention_period"
-            label="History Retention Period"
-            hint={
-              <>
-                Select how long your run history is stored in OpenFn before being removed from the servers.{" "}
-                <TextLink href="https://docs.openfn.org/documentation/manage-projects/retention-periods" external>
-                  Learn more
-                </TextLink>
-                <span className="block">This includes all Work Orders, Runs, and Logs.</span>
-                {limitMessage && <span className="block">{limitMessage}</span>}
-              </>
-            }
-            prompt="Select Period"
-            options={options}
-            disabled={!canEdit || periods.length === 1}
-            className="w-fit"
-            {...form.fieldProps("historyRetentionPeriod")}
-          />
+          {/* The plan's note says why the periods are limited, under the dropdown it locks. */}
+          <Stack gap="sm">
+            <Select
+              id="project_history_retention_period"
+              label="History Retention Period"
+              hint={
+                <>
+                  Select how long your run history is stored in OpenFn before being removed from the servers.{" "}
+                  <TextLink href="https://docs.openfn.org/documentation/manage-projects/retention-periods" external>
+                    Learn more
+                  </TextLink>
+                  <span className="block">This includes all Work Orders, Runs, and Logs.</span>
+                </>
+              }
+              prompt="Select Period"
+              options={options}
+              disabled={!canEdit || periods.length === 1}
+              className="w-fit"
+              {...form.fieldProps("historyRetentionPeriod")}
+            />
+            {limitMessage && <PlanLimitNote>{limitMessage}</PlanLimitNote>}
+          </Stack>
         </Card>
         <Card>
-          <Field
-            group
-            label="Input/Output Data Storage Policy"
-            hint={
-              <>
-                The input and output data associated with workflow runs and channel requests is useful for debugging.
-                However it can contain sensitive PII. Should OpenFn store this data?{" "}
-                <TextLink href="https://docs.openfn.org/documentation/manage-projects/io-data-storage" external>
-                  Learn more
-                </TextLink>
-              </>
-            }
-            disabled={!canEdit}
-          >
-            <div className="space-y-2">
-              {policies.map(([value, text]) => (
-                <Radio
-                  key={value}
-                  id={value}
-                  name="retention_policy"
-                  value={value}
-                  label={text}
-                  checked={form.values.retentionPolicy === value}
-                  onChange={() => {
-                    form.set("retentionPolicy", value);
-                    // settings.ex `validate`: zero-persistence keeps no input/output data, so no period either.
-                    if (value === "erase_all") form.set("dataclipRetentionPeriod", "");
-                  }}
-                />
-              ))}
-            </div>
-          </Field>
-          {form.values.retentionPolicy !== "retain_all" && (
-            <Alert tone="warning" header="Heads Up!">
-              <p>
-                When enabled, you will no longer be able to retry workflow runs, and channel request/response payloads
-                will not be stored.
-              </p>
-            </Alert>
-          )}
+          <Stack>
+            <Field
+              group
+              label="Input/Output Data Storage Policy"
+              hint={
+                <>
+                  The input and output data associated with workflow runs and channel requests is useful for debugging.
+                  However it can contain sensitive PII. Should OpenFn store this data?{" "}
+                  <TextLink href="https://docs.openfn.org/documentation/manage-projects/io-data-storage" external>
+                    Learn more
+                  </TextLink>
+                </>
+              }
+              disabled={!canEdit}
+            >
+              <Stack gap="sm">
+                {policies.map(([value, text]) => (
+                  <Radio
+                    key={value}
+                    id={value}
+                    name="retention_policy"
+                    value={value}
+                    label={text}
+                    checked={form.values.retentionPolicy === value}
+                    onChange={() => {
+                      form.set("retentionPolicy", value);
+                      // settings.ex `validate`: zero-persistence keeps no input/output data, so no period either.
+                      if (value === "erase_all") form.set("dataclipRetentionPeriod", "");
+                    }}
+                  />
+                ))}
+              </Stack>
+            </Field>
+            {form.values.retentionPolicy !== "retain_all" && (
+              <Alert tone="warning" header="Heads Up!">
+                <p>
+                  When enabled, you will no longer be able to retry workflow runs, and channel request/response payloads
+                  will not be stored.
+                </p>
+              </Alert>
+            )}
+          </Stack>
         </Card>
         <Card>
           <Select

@@ -5,6 +5,9 @@ import { readFileSync, readdirSync, statSync } from 'node:fs'
 import { join, relative, sep } from 'node:path'
 
 const root = new URL('../src/', import.meta.url).pathname
+// Comments quote class names (a debt: disable says which classes it excuses),
+// so they're dropped before counting. A `//` after a colon or quote is a URL.
+const stripComments = (src) => src.replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|[^:'"`])\/\/.*$/gm, '$1')
 const walk = (dir) =>
   readdirSync(dir).flatMap((f) => {
     const p = join(dir, f)
@@ -14,13 +17,16 @@ const walk = (dir) =>
 const files = walk(root)
   .filter((f) => /\.(tsx|ts)$/.test(f) && !f.endsWith('.stories.tsx'))
   .filter((f) => !f.includes(`${sep}mock-data${sep}`) && !f.includes(`${sep}stories${sep}`))
-  .map((f) => ({ path: relative(root, f), src: readFileSync(f, 'utf8') }))
+  .map((f) => {
+    const raw = readFileSync(f, 'utf8')
+    return { path: relative(root, f), raw, src: stripComments(raw) }
+  })
 
 const isPrimitive = (p) => p.startsWith('components/primitives/')
 const isFeature = (p) => p.startsWith('components/') && !isPrimitive(p)
 const isPage = (p) => p.startsWith('pages/')
 
-const loc = (fs) => fs.reduce((n, f) => n + f.src.split('\n').filter((l) => l.trim()).length, 0)
+const loc = (fs) => fs.reduce((n, f) => n + f.raw.split('\n').filter((l) => l.trim()).length, 0)
 const count = (fs, re) => fs.reduce((n, f) => n + (f.src.match(re) ?? []).length, 0)
 
 // Every string literal that looks like a Tailwind class list.

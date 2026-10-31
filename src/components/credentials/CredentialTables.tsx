@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import Section from "../primitives/Section";
 import InfoTooltip from "../primitives/InfoTooltip";
 import Pill from "../primitives/Pill";
+import CopyChip from "../primitives/CopyChip";
 import { Table, Td, Th, Tr } from "../primitives/Table";
 import type { CredentialRow, KeychainCredentialRow, OauthClientRow } from "../../types/credentials";
 import Tooltip from "../primitives/Tooltip";
@@ -23,13 +24,6 @@ function ProjectBadges({ names }: { names: string[] }) {
   );
 }
 
-function Code({ children }: { children: string }) {
-  return (
-    <Pill variant="square" title={children}>
-      <code>{children}</code>
-    </Pill>
-  );
-}
 
 /** The Type column (data_tables.ex `credential_type`): the client's name for OAuth. */
 function credentialType(credential: CredentialRow): string {
@@ -66,9 +60,9 @@ export function OauthClientsTable({ rows, showOwner = false, emptyState, actions
         >
           {rows.map((client) => (
             <Tr key={client.id} id={`oauth-clients-${client.id}`}>
-              <Td wrap maxWidth={60}>{client.name}</Td>
-              {showOwner && <Td wrap maxWidth={60}>{client.global ? "GLOBAL" : client.ownerEmail}</Td>}
-              <Td wrap maxWidth={80}>
+              <Td truncate maxWidth={60}>{client.name}</Td>
+              {showOwner && <Td truncate maxWidth={60}>{client.global ? "GLOBAL" : client.ownerEmail}</Td>}
+              <Td truncate maxWidth={80}>
                 <ProjectBadges names={client.global ? ["GLOBAL"] : client.projects.map((p) => p.name)} />
               </Td>
               <Td wrap maxWidth={72}>{client.authorizationEndpoint}</Td>
@@ -103,7 +97,7 @@ export function CredentialsTable({ rows, showOwner = false, emptyState, actions 
         >
           {rows.map((credential) => (
             <Tr key={credential.id} id={`credentials-${credential.id}`}>
-              <Td wrap maxWidth={60}>
+              <Td truncate maxWidth={60}>
                 {credential.name}
                 {credential.schema === "oauth" && !credential.oauthClient && (
                   <InfoTooltip
@@ -115,13 +109,13 @@ export function CredentialsTable({ rows, showOwner = false, emptyState, actions 
                   />
                 )}
               </Td>
-              <Td wrap maxWidth={40}>{credentialType(credential)}</Td>
-              {showOwner && <Td wrap maxWidth={60}>{credential.ownerEmail}</Td>}
+              <Td truncate maxWidth={40}>{credentialType(credential)}</Td>
+              {showOwner && <Td truncate maxWidth={60}>{credential.ownerEmail}</Td>}
               <Td wrap maxWidth={100}>
                 <ProjectBadges names={credential.projects.map((p) => p.name)} />
               </Td>
-              <Td wrap maxWidth={48}>
-                {credential.externalId ? <Code>{credential.externalId}</Code> : <span className="text-faint">-</span>}
+              <Td truncate maxWidth={48}>
+                {credential.externalId ? <CopyChip value={credential.externalId} /> : <span className="text-faint">-</span>}
               </Td>
               <Td>
                 <Tooltip content={credential.environments.join(", ")}>
@@ -157,14 +151,14 @@ export function KeychainCredentialsTable({ rows, showOwner = true, emptyState, a
         >
           {rows.map((kc) => (
             <Tr key={kc.id} id={`keychain-credentials-${kc.id}`}>
-              <Td wrap maxWidth={60}>{kc.name}</Td>
-              <Td wrap maxWidth={100}>
-                <Code>{kc.path}</Code>
+              <Td truncate maxWidth={60}>{kc.name}</Td>
+              <Td truncate maxWidth={100}>
+                <CopyChip value={kc.path} />
               </Td>
-              <Td wrap maxWidth={60}>
+              <Td truncate maxWidth={60}>
                 {kc.defaultCredential ? kc.defaultCredential.name : <span className="text-faint">None</span>}
               </Td>
-              {showOwner && <Td wrap maxWidth={60}>{kc.ownerEmail}</Td>}
+              {showOwner && <Td truncate maxWidth={60}>{kc.ownerEmail}</Td>}
               <Td actions>{actions?.(kc)}</Td>
             </Tr>
           ))}

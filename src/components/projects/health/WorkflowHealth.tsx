@@ -13,7 +13,7 @@ import StepFailureBars from "./StepFailureBars";
 import TriageTable from "./TriageTable";
 import Alert from "../../primitives/Alert";
 import Card from "../../primitives/Card";
-import Heading from "../../primitives/Heading";
+import Section from "../../primitives/Section";
 import Spinner from "../../primitives/Spinner";
 import Tabs from "../../primitives/Tabs";
 import Text from "../../primitives/Text";
@@ -102,14 +102,11 @@ export default function WorkflowHealth({
         </Card>
       )}
 
-      <section className="space-y-3">
-        <Heading as="h2" size="xs">
-          Triage - grouped by failure type
-        </Heading>
+      <Section title="Triage - grouped by failure type">
         <Panel query={failures} card>
           {({ signatures, window }) => <TriageTable signatures={signatures} emptyMessage={empty("failures")} {...links} from={window.from} />}
         </Panel>
-      </section>
+      </Section>
     </div>
   );
 }
