@@ -9,6 +9,7 @@ import { Checkbox, Select } from "../../primitives/Inputs";
 import Pill from "../../primitives/Pill";
 import Spinner from "../../primitives/Spinner";
 import Text from "../../primitives/Text";
+import { Stack } from "../../primitives/Stack";
 
 interface State {
   /** The latest preview that arrived. Merge always sends its target. */
@@ -138,7 +139,7 @@ export default function MergeSandboxModal({
         })
       }
     >
-      <div className="space-y-2">
+      <Stack gap="sm">
         <Text as="div" tone="body" className="flex items-center gap-2">
           <span>Merge</span>
           {/* eslint-disable-next-line no-restricted-syntax, local/primitive-classname -- debt: Pill has no 14px size; F528 type, F527 colour (text-sm text-strong) */}
@@ -166,7 +167,7 @@ export default function MergeSandboxModal({
           The workflows you select below will overwrite their counterparts in{" "}
           <strong className="font-medium text-strong">{targetName}</strong>. Any conflicting changes in the target are lost.
         </Text>
-      </div>
+      </Stack>
 
       {s.error && (
         <Alert tone="danger" id="merge-preview-error">
