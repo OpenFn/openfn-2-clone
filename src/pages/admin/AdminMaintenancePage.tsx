@@ -2,6 +2,7 @@ import Header from "../../components/primitives/Header";
 import { Centered, PageContent } from "../../components/primitives/PageContent";
 import MaintenanceCard from "../../components/admin/MaintenanceCard";
 import { useAction } from "../../utils/useAction";
+import { Stack } from "../../components/primitives/Stack";
 
 /** The contract between this page and whatever feeds it (the replica wrapper, later Lightning). */
 export interface AdminMaintenancePageProps {
@@ -23,7 +24,7 @@ export default function AdminMaintenancePage({ onRefreshAdaptors, onRefreshIcons
   return (
     <PageContent header={<Header title="Maintenance" />}>
       <Centered>
-        <div className="flex flex-col gap-4">
+        <Stack>
           <MaintenanceCard
             id="refresh-adaptors-card"
             buttonId="refresh-adaptors-button"
@@ -40,7 +41,7 @@ export default function AdminMaintenancePage({ onRefreshAdaptors, onRefreshIcons
             onRun={() => void icons.run()}
             pending={icons.pending}
           />
-        </div>
+        </Stack>
       </Centered>
     </PageContent>
   );

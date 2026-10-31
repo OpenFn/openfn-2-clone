@@ -7,6 +7,7 @@ import JsonViewer from "../../components/history/JsonViewer";
 import type { DataclipBody, DataclipDetail } from "../../types/history";
 import type { CurrentProject } from "../../types/projects";
 import { shortUuid } from "../../utils/format";
+import { Stack } from "../../components/primitives/Stack";
 
 export interface DataclipShowPageProps {
   project: CurrentProject;
@@ -33,7 +34,8 @@ export default function DataclipShowPage({ project, projectLabel, dataclip, body
         />
       }
     >
-      <Centered className="space-y-6">
+      <Centered>
+        <Stack gap="lg">
         <DataclipDetailsCard dataclip={dataclip} />
         <DataclipBodyCard>
           {dataclip.wipedAt !== null ? (
@@ -48,6 +50,7 @@ export default function DataclipShowPage({ project, projectLabel, dataclip, body
             <JsonViewer body={body} />
           )}
         </DataclipBodyCard>
+        </Stack>
       </Centered>
     </PageContent>
   );
