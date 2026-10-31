@@ -3,6 +3,7 @@ import Section from "../primitives/Section";
 import InfoTooltip from "../primitives/InfoTooltip";
 import Pill from "../primitives/Pill";
 import CopyChip from "../primitives/CopyChip";
+import { Row } from "../primitives/Stack";
 import { Table, Td, Th, Tr } from "../primitives/Table";
 import type { CredentialRow, KeychainCredentialRow, OauthClientRow } from "../../types/credentials";
 import Tooltip from "../primitives/Tooltip";
@@ -62,7 +63,7 @@ export function OauthClientsTable({ rows, showOwner = false, emptyState, actions
             <Tr key={client.id} id={`oauth-clients-${client.id}`}>
               <Td truncate maxWidth={60}>{client.name}</Td>
               {showOwner && <Td truncate maxWidth={60}>{client.global ? "GLOBAL" : client.ownerEmail}</Td>}
-              <Td truncate maxWidth={80}>
+              <Td wrap maxWidth={80}>
                 <ProjectBadges names={client.global ? ["GLOBAL"] : client.projects.map((p) => p.name)} />
               </Td>
               <Td wrap maxWidth={72}>{client.authorizationEndpoint}</Td>
@@ -97,17 +98,14 @@ export function CredentialsTable({ rows, showOwner = false, emptyState, actions 
         >
           {rows.map((credential) => (
             <Tr key={credential.id} id={`credentials-${credential.id}`}>
-              <Td truncate maxWidth={60}>
-                {credential.name}
-                {credential.schema === "oauth" && !credential.oauthClient && (
-                  <InfoTooltip
-                    title="OAuth client not found"
-                    icon="hero-exclamation-triangle"
-                    iconClass="h-5 w-5"
-                    // eslint-disable-next-line local/primitive-classname -- debt: F525 margin (ml-2)
-                    className="ml-2"
-                  />
-                )}
+              <Td>
+                {/* Only the name is cut off, so a long one can't push the warning out of sight. */}
+                <Row gap="sm" className="max-w-60">
+                  <span className="min-w-0 truncate">{credential.name}</span>
+                  {credential.schema === "oauth" && !credential.oauthClient && (
+                    <InfoTooltip title="OAuth client not found" icon="hero-exclamation-triangle" iconClass="h-5 w-5" />
+                  )}
+                </Row>
               </Td>
               <Td truncate maxWidth={40}>{credentialType(credential)}</Td>
               {showOwner && <Td truncate maxWidth={60}>{credential.ownerEmail}</Td>}

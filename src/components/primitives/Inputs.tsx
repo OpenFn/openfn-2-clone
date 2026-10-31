@@ -35,6 +35,8 @@ interface FieldProps {
   info?: string | undefined;
   /** At the right end of the label row, at the label's size: one link that acts on the field ("New Credential"), or a badge. */
   aside?: ReactNode;
+  /** Under the control and read with it: why it's locked (a `PlanLimitNote`). */
+  note?: ReactNode;
   /** Classes for the field wrapper (label + control + errors), e.g. `flex-1` to grow in a flex row. `className` styles the control itself. */
   fieldClassName?: string | undefined;
 }
@@ -60,6 +62,7 @@ export function Field({
   errors = [],
   info,
   aside,
+  note,
   group = false,
   disabled,
   "aria-label": ariaLabel,
@@ -79,12 +82,13 @@ export function Field({
   const base = useId();
   const labelId = `${base}-label`;
   const hintId = `${base}-hint`;
+  const noteId = `${base}-note`;
   const errorIds = errors.map((_, i) => `${base}-error-${i}`);
-  const describedBy = [...(hint ? [hintId] : []), ...errorIds].join(" ") || undefined;
+  const describedBy = [...(hint ? [hintId] : []), ...(note ? [noteId] : []), ...errorIds].join(" ") || undefined;
   const invalid = errors.length > 0;
   const outer = useContext(FieldContext);
   // A control's own Field with no label, hint or errors (TextInput inside a labelled Field) keeps the outer Field's wiring.
-  const passThrough = !group && !label && !hint && !invalid;
+  const passThrough = !group && !label && !hint && !note && !invalid;
   // A label points at its control by id; without one (a group, or a Field around a card) it's plain text.
   const LabelTag = group || !id ? "span" : "label";
   // A hint sits close under its label, so the two read as one; the control comes after a wider gap.
@@ -119,6 +123,11 @@ export function Field({
       {hint && <small id={hintId} data-ui="hint" className="mb-2 block text-xs text-muted group-disabled/field:text-faint">{hint}</small>}
       {/* A group's radios take only aria-invalid; the fieldset already carries the hint and errors. */}
       <FieldContext.Provider value={passThrough ? outer : group ? { invalid } : { id, describedBy, invalid, labelled: Boolean(label && id) }}>{children}</FieldContext.Provider>
+      {note && (
+        <div id={noteId} data-ui="field-note" className="mt-2">
+          {note}
+        </div>
+      )}
       {errors.map((e, i) => (
         <FieldError key={e} id={errorIds[i]}>
           {e}
@@ -274,6 +283,7 @@ export function Select({
   errors = [],
   info,
   aside,
+  note,
   fieldClassName,
   options,
   prompt,
@@ -325,7 +335,7 @@ export function Select({
       // Like a native select, picking the option already chosen changes nothing.
       onChange={(v: string) => v !== value && onChange?.({ target: { value: v } })}
     >
-      <Field label={label && labelText(label)} required={required} hint={hint} errors={errors} info={info} aside={aside} className={fieldClassName}>
+      <Field label={label && labelText(label)} required={required} hint={hint} errors={errors} info={info} aside={aside} note={note} className={fieldClassName}>
         {!label && ariaLabel && labelText(ariaLabel, "sr-only")}
         <FieldControlProps>
           {(field) => (

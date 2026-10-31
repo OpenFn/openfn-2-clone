@@ -10,6 +10,7 @@ export default function CopyChip({ value }: { value: string }) {
     <Tooltip content={value} copy={value}>
       <button
         type="button"
+        aria-label={`Copy ${value}`}
         data-ui="copy-chip"
         className="block max-w-full cursor-pointer truncate rounded-md bg-subtle px-2 py-0.5 font-mono text-xs text-body hover:bg-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
       >

@@ -84,28 +84,26 @@ export default function DataStoragePanel({ dataStorage, sandbox, onSave }: Props
           )}
       >
         <Card>
-          {/* The plan's note says why the periods are limited, under the dropdown it locks. */}
-          <Stack gap="sm">
-            <Select
-              id="project_history_retention_period"
-              label="History Retention Period"
-              hint={
-                <>
-                  Select how long your run history is stored in OpenFn before being removed from the servers.{" "}
-                  <TextLink href="https://docs.openfn.org/documentation/manage-projects/retention-periods" external>
-                    Learn more
-                  </TextLink>
-                  <span className="block">This includes all Work Orders, Runs, and Logs.</span>
-                </>
-              }
-              prompt="Select Period"
-              options={options}
-              disabled={!canEdit || periods.length === 1}
-              className="w-fit"
-              {...form.fieldProps("historyRetentionPeriod")}
-            />
-            {limitMessage && <PlanLimitNote>{limitMessage}</PlanLimitNote>}
-          </Stack>
+          <Select
+            id="project_history_retention_period"
+            label="History Retention Period"
+            hint={
+              <>
+                Select how long your run history is stored in OpenFn before being removed from the servers.{" "}
+                <TextLink href="https://docs.openfn.org/documentation/manage-projects/retention-periods" external>
+                  Learn more
+                </TextLink>
+                <span className="block">This includes all Work Orders, Runs, and Logs.</span>
+              </>
+            }
+            prompt="Select Period"
+            options={options}
+            disabled={!canEdit || periods.length === 1}
+            className="w-fit"
+            // The plan's note says why the periods are limited, under the dropdown and read with it.
+            note={limitMessage && <PlanLimitNote>{limitMessage}</PlanLimitNote>}
+            {...form.fieldProps("historyRetentionPeriod")}
+          />
         </Card>
         <Card>
           <Stack>

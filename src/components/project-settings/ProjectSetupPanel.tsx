@@ -130,9 +130,9 @@ export default function ProjectSetupPanel({ setup, parent, onSaveIdentity, onSav
           disabled={!canEditProject || setup.concurrencyLimitMessage !== null}
           label="Disable parallel execution"
           note="(No more than one run at a time)"
+          // The plan's reason, under the switch it locks and read with it.
+          description={setup.concurrencyLimitMessage && <PlanLimitNote>{setup.concurrencyLimitMessage}</PlanLimitNote>}
         />
-        {/* The plan's reason, under the switch it locks. */}
-        {setup.concurrencyLimitMessage && <PlanLimitNote>{setup.concurrencyLimitMessage}</PlanLimitNote>}
         <ConfirmModal
           open={confirmingSerial}
           onClose={() => setConfirmingSerial(false)}

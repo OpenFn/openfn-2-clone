@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { cn } from "../../utils/cn";
 import IconButton from "../primitives/IconButton";
 import { Checkbox } from "../primitives/Inputs";
 import Pill from "../primitives/Pill";
@@ -141,7 +142,8 @@ export default function WorkOrderTableRow({
         <Td align="right" className="w-32">
           <StatePill state={wo.state} />
         </Td>
-        <Td actions className="w-20">
+        {/* eslint-disable-next-line local/primitive-classname -- debt: F526 box (bg-subtle): the pinned cell paints its own background, so it repeats the selected row's */}
+        <Td actions className={cn("w-20", selected && "bg-subtle")}>
           {runs.length > 0 && (
             <>
               {wo.state === "pending" && canRunWorkflow && (

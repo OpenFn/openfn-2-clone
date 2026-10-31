@@ -49,7 +49,7 @@ export default function WebhookAuthMethodsTable({ authMethods, canWrite, onCreat
         return (
           <Tr key={m.id} id={m.id}>
             {/* eslint-disable-next-line local/primitive-classname -- debt: F527 colour (text-strong) */}
-            <Td maxWidth={60} className="truncate text-strong">{m.name}</Td>
+            <Td truncate maxWidth={60} className="text-strong">{m.name}</Td>
             {/* eslint-disable-next-line local/primitive-classname -- debt: F527 colour (text-strong) */}
             <Td className="text-strong">{typeLabel[m.authType]}</Td>
             <Td>

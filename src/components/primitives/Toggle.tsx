@@ -11,7 +11,7 @@ interface BaseProps {
   label?: string;
   /** Gray text after the label, e.g. "(currently optional for this project)". */
   note?: ReactNode;
-  description?: string | undefined;
+  description?: ReactNode;
   disabled?: boolean;
   id?: string;
   /** Hover text, e.g. why the switch is disabled. */
@@ -85,9 +85,7 @@ export default function Toggle({ checked, onChange, label, note, description, di
         )}
       </div>
       {description && (
-        <Text as="p" id={descriptionId} className="text-muted">
-          {description}
-        </Text>
+        <div id={descriptionId}>{typeof description === "string" ? <Text as="p" tone="muted">{description}</Text> : description}</div>
       )}
     </div>
   );

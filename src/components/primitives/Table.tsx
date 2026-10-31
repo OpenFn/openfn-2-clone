@@ -39,8 +39,10 @@ export function Table({
     const measure = () => setMoreRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 1);
     measure();
     el.addEventListener("scroll", measure, { passive: true });
+    // The table too: rows arriving or filtered away change its width, not the scroller's.
     const observer = new ResizeObserver(measure);
     observer.observe(el);
+    if (el.firstElementChild) observer.observe(el.firstElementChild);
     return () => {
       el.removeEventListener("scroll", measure);
       observer.disconnect();
@@ -118,7 +120,12 @@ export function Tr({
     <tr
       id={id}
       onClick={(e) => {
-        if (!clickedControl(e)) e.currentTarget.querySelector<HTMLElement>("[data-row-action]")?.click();
+        if (clickedControl(e)) return;
+        // Pass the modifier keys on, so Cmd/Ctrl-click opens the row's link in a new tab.
+        const { metaKey, ctrlKey, shiftKey, altKey } = e;
+        e.currentTarget
+          .querySelector("[data-row-action]")
+          ?.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, metaKey, ctrlKey, shiftKey, altKey }));
       }}
       className={cn(
         "group/row transition-colors duration-150",
@@ -232,23 +239,27 @@ export function Td({
   align?: CellAlign;
   /** A row's action buttons: one right-aligned row with even gaps. */
   actions?: boolean;
-  /** Prose breaks onto the next line. For a value with no spaces (an id, a path, a URL), use `truncate`. */
+  /** Long words break onto the next line: prose, and a URL people read to check it. */
   wrap?: boolean;
-  /** One line, cut off with an ellipsis at `maxWidth` (default 60). For values with no spaces: ids, paths, URLs, long names. */
+  /** One line, cut off with an ellipsis at `maxWidth` (default 60): a long name people open the record to read. A value people copy is a `CopyChip`. */
   truncate?: boolean;
-  /** A max-width in Tailwind spacing units (60 = 15rem). Auto table layout ignores it on the cell while the table has room (F530), so it holds only with `truncate`. */
+  /** A max-width in Tailwind spacing units (60 = 15rem), held by a block inside the cell, since auto table layout ignores a cell's own max-width (F530). */
   maxWidth?: keyof typeof maxWidthClasses;
 }) {
-  // Auto table layout ignores a cell's max-width, so a truncated value gets its own block.
-  const body = truncate ? <span className={cn("block truncate", maxWidthClasses[maxWidth ?? 60])}>{children}</span> : children;
+  // Auto table layout ignores a cell's max-width, so a capped value gets its own block.
+  const capped = truncate || maxWidth !== undefined;
+  const body = capped ? (
+    <span className={cn("block", maxWidthClasses[maxWidth ?? 60], truncate && "truncate", wrap && "wrap-break-word")}>{children}</span>
+  ) : (
+    children
+  );
   return (
     <td
       className={cn(
         "text-sm text-muted first:rounded-bl-lg last:rounded-br-lg",
         align && alignClasses[align],
         actions && "sticky! right-0 bg-surface group-hover/row:bg-hover group-data-more-right/scroll:shadow-scroll-edge",
-        wrap && "wrap-break-word",
-        !truncate && maxWidth && maxWidthClasses[maxWidth],
+        wrap && !capped && "wrap-break-word",
         className,
       )}
       {...rest}
