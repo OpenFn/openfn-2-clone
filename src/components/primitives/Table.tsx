@@ -154,20 +154,46 @@ export function Th({
   );
 }
 
+// Static so Tailwind sees each class: the widths cells use today.
+const maxWidthClasses = {
+  40: "max-w-40",
+  48: "max-w-48",
+  60: "max-w-60",
+  64: "max-w-64",
+  72: "max-w-72",
+  80: "max-w-80",
+  100: "max-w-100",
+};
+
 export function Td({
   children,
   className,
   align,
   actions = false,
+  wrap = false,
+  maxWidth,
   ...rest
 }: Omit<TdHTMLAttributes<HTMLTableCellElement>, "align"> & {
   children?: ReactNode;
   align?: CellAlign;
   /** A row's action buttons: one right-aligned row with even gaps. */
   actions?: boolean;
+  /** Long words (names, emails, URLs) break onto the next line. */
+  wrap?: boolean;
+  /** Caps the column width, in Tailwind spacing units (60 = 15rem). */
+  maxWidth?: keyof typeof maxWidthClasses;
 }) {
   return (
-    <td className={cn("text-sm text-muted first:rounded-bl-lg last:rounded-br-lg", align && alignClasses[align], className)} {...rest}>
+    <td
+      className={cn(
+        "text-sm text-muted first:rounded-bl-lg last:rounded-br-lg",
+        align && alignClasses[align],
+        wrap && "wrap-break-word",
+        maxWidth && maxWidthClasses[maxWidth],
+        className,
+      )}
+      {...rest}
+    >
       {actions ? <div className="flex items-center justify-end gap-2">{children}</div> : children}
     </td>
   );

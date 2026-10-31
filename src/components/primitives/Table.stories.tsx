@@ -58,3 +58,22 @@ export const LoadError: Story = {
     </Table>
   ),
 };
+
+/** `wrap` breaks long words; `maxWidth` caps the column. */
+export const WrapAndMaxWidth: Story = {
+  render: () => (
+    <Table header={header}>
+      {users.map((u) => (
+        <Tr key={u.id}>
+          <Td wrap maxWidth={40}>
+            {fullName(u)}
+          </Td>
+          <Td wrap maxWidth={48}>
+            {u.email}
+          </Td>
+          <Td>{u.role}</Td>
+        </Tr>
+      ))}
+    </Table>
+  ),
+};

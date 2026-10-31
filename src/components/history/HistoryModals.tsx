@@ -94,7 +94,7 @@ function BulkModal({
         )
       }
     >
-      <Text as="div" className="space-y-3 text-muted">
+      <Text as="div" tone="muted" className="space-y-3">
         {confirm.error && <Alert tone="danger">{errorMessage(confirm.error)}</Alert>}
         {children}
       </Text>
@@ -104,7 +104,7 @@ function BulkModal({
           {button("all", allLabel)}
           <div className="relative col-span-2 flex justify-center" aria-hidden="true">
             <div className="absolute inset-x-0 top-1/2 border-t border-strong" />
-            <Text className="relative bg-surface px-2 text-muted">OR</Text>
+            <Text tone="muted" className="relative bg-surface px-2">OR</Text>
           </div>
           <div className="col-span-2 grid">{back}</div>
         </div>

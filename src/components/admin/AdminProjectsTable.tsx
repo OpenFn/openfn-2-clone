@@ -59,10 +59,10 @@ export default function AdminProjectsTable({
           const deletion = project.scheduledDeletion;
           return (
             <Tr key={project.id} id={`project-row-${project.id}`}>
-              <Td className="max-w-80 wrap-break-word">{project.name}</Td>
+              <Td wrap maxWidth={80}>{project.name}</Td>
               <Td>{formatShortDateTime(project.insertedAt)}</Td>
-              <Td className="max-w-80 wrap-break-word">{project.description}</Td>
-              <Td className="max-w-64 wrap-break-word">{owner === "" ? "No owner" : owner}</Td>
+              <Td wrap maxWidth={80}>{project.description}</Td>
+              <Td wrap maxWidth={64}>{owner === "" ? "No owner" : owner}</Td>
               <Td>{deletion && formatShortDateTime(deletion)}</Td>
               <Td actions className="py-0.5">
                 <ButtonMenu label="Actions">

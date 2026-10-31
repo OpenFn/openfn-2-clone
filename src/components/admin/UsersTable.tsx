@@ -62,17 +62,17 @@ export default function UsersTable({
       >
         {rows.map((user) => (
           <Tr key={user.id} id={`user-${user.id}`}>
-            <Td className="max-w-40 wrap-break-word">
+            <Td wrap maxWidth={40}>
               <Tooltip content={user.firstName}>
                 <span>{user.firstName}</span>
               </Tooltip>
             </Td>
-            <Td className="max-w-40 wrap-break-word">
+            <Td wrap maxWidth={40}>
               <Tooltip content={user.lastName}>
                 <span>{user.lastName}</span>
               </Tooltip>
             </Td>
-            <Td className="max-w-48 wrap-break-word">
+            <Td wrap maxWidth={48}>
               <Tooltip content={user.email}>
                 <span>{user.email}</span>
               </Tooltip>

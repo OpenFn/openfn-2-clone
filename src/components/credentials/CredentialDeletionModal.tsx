@@ -37,7 +37,7 @@ export default function CredentialDeletionModal({ onClose, credential, onDelete 
           </Button>
         }
       >
-        <Text as="div" className="space-y-3 text-muted">
+        <Text as="div" tone="muted" className="space-y-3">
           <p>{activityNote}</p>
           <p>Contact your instance administrator for more details.</p>
         </Text>

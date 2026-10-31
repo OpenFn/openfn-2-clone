@@ -200,7 +200,7 @@ export default function AuthProviderForm({ provider, onSave, onTest, onRemove, i
             onChange={(e) => set("allowUnverifiedEmail", e.target.checked)}
           />
         </Form>
-        <Text as="div" className="flex flex-col gap-4 text-body">
+        <Text as="div" tone="body" className="flex flex-col gap-4">
           <p>
             Allows users with existing accounts to login with an external OpenID Connect account that matches their
             email address.

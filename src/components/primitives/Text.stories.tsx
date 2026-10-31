@@ -1,12 +1,12 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import Text, { type TextVariant } from "./Text";
+import Text, { type TextTone, type TextVariant } from "./Text";
 
 const meta: Meta<typeof Text> = { title: "Primitives/Text", component: Text, args: { children: "Run started 3 minutes ago" } };
 export default meta;
 type Story = StoryObj<typeof Text>;
 
 export const BodyMd: Story = {};
-export const BodySm: Story = { args: { variant: "body-sm", className: "text-muted" } };
+export const BodySm: Story = { args: { variant: "body-sm", tone: "muted" } };
 export const LabelMd: Story = { args: { variant: "label-md", children: "Destination URL" } };
 export const LabelSm: Story = { args: { variant: "label-sm", children: "Destination URL" } };
 export const CodeMd: Story = { args: { variant: "code-md", children: "/fhir/Patient?identifier=58213" } };
@@ -23,7 +23,7 @@ export const Scale: Story = {
     <div className="space-y-3">
       {all.map((v) => (
         <div key={v} className="flex items-baseline gap-6">
-          <Text variant="code-sm" className="w-20 text-muted">
+          <Text variant="code-sm" tone="muted" className="w-20">
             {v}
           </Text>
           <Text variant={v}>The quick brown fox, 1,284 runs</Text>
@@ -36,7 +36,8 @@ export const Scale: Story = {
 export const Block: Story = {
   args: {
     as: "div",
-    className: "space-y-3 text-muted",
+    tone: "muted",
+    className: "space-y-3",
     children: (
       <>
         <p>
@@ -48,4 +49,22 @@ export const Block: Story = {
       </>
     ),
   },
+};
+
+const tones: TextTone[] = ["strong", "body", "muted", "faint", "danger", "success", "warning", "info"];
+
+/** Every tone, on a surface: `faint` and `success` miss AA contrast on the grey page. Unset inherits. */
+export const Tones: Story = {
+  render: () => (
+    <div className="space-y-2 rounded-lg bg-surface p-4">
+      {tones.map((t) => (
+        <div key={t} className="flex items-baseline gap-6">
+          <Text variant="code-sm" tone="muted" className="w-20">
+            {t}
+          </Text>
+          <Text tone={t}>Run started 3 minutes ago</Text>
+        </div>
+      ))}
+    </div>
+  ),
 };

@@ -57,7 +57,7 @@ export default function ChannelRequestsTable({
             <Td>
               <ChannelStatePill state={r.state} />
             </Td>
-            <Td className="max-w-xs truncate">{r.errorMessage}</Td>
+            <Td maxWidth={80} className="truncate">{r.errorMessage}</Td>
           </Tr>
         ))
       )}

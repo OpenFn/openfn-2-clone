@@ -59,7 +59,7 @@ export function StepListItem({
   onRetry: () => void;
 }) {
   return (
-    <Text as="div" variant="body-sm" id={`step-${step.id}`} role="listitem" className={cn("flex items-center text-muted hover:bg-surface", step.cloned && "opacity-50")}>
+    <Text as="div" variant="body-sm" id={`step-${step.id}`} role="listitem" tone="muted" className={cn("flex items-center hover:bg-surface", step.cloned && "opacity-50")}>
       <div className="flex flex-1 items-center gap-2 py-2 pl-4">
         <StepIcon reason={step.exitReason} errorType={step.errorType} />
         <TextLink to={step.href} variant="plain" className="whitespace-nowrap text-strong hover:text-primary-500">

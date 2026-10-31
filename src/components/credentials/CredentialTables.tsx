@@ -67,12 +67,12 @@ export function OauthClientsTable({ rows, showOwner = false, emptyState, actions
         >
           {rows.map((client) => (
             <Tr key={client.id} id={`oauth-clients-${client.id}`}>
-              <Td className="wrap-break-word max-w-60">{client.name}</Td>
-              {showOwner && <Td className="wrap-break-word max-w-60">{client.global ? "GLOBAL" : client.ownerEmail}</Td>}
-              <Td className="wrap-break-word max-w-80">
+              <Td wrap maxWidth={60}>{client.name}</Td>
+              {showOwner && <Td wrap maxWidth={60}>{client.global ? "GLOBAL" : client.ownerEmail}</Td>}
+              <Td wrap maxWidth={80}>
                 <ProjectBadges names={client.global ? ["GLOBAL"] : client.projects.map((p) => p.name)} />
               </Td>
-              <Td className="wrap-break-word max-w-72">{client.authorizationEndpoint}</Td>
+              <Td wrap maxWidth={72}>{client.authorizationEndpoint}</Td>
               <Td actions>{actions?.(client)}</Td>
             </Tr>
           ))}
@@ -105,7 +105,7 @@ export function CredentialsTable({ rows, showOwner = false, emptyState, actions 
         >
           {rows.map((credential) => (
             <Tr key={credential.id} id={`credentials-${credential.id}`}>
-              <Td className="wrap-break-word max-w-60">
+              <Td wrap maxWidth={60}>
                 {credential.name}
                 {credential.schema === "oauth" && !credential.oauthClient && (
                   <InfoTooltip
@@ -116,12 +116,12 @@ export function CredentialsTable({ rows, showOwner = false, emptyState, actions 
                   />
                 )}
               </Td>
-              <Td className="wrap-break-word max-w-40">{credentialType(credential)}</Td>
-              {showOwner && <Td className="wrap-break-word max-w-60">{credential.ownerEmail}</Td>}
-              <Td className="wrap-break-word max-w-100">
+              <Td wrap maxWidth={40}>{credentialType(credential)}</Td>
+              {showOwner && <Td wrap maxWidth={60}>{credential.ownerEmail}</Td>}
+              <Td wrap maxWidth={100}>
                 <ProjectBadges names={credential.projects.map((p) => p.name)} />
               </Td>
-              <Td className="wrap-break-word max-w-48">
+              <Td wrap maxWidth={48}>
                 {credential.externalId ? <Code>{credential.externalId}</Code> : <span className="text-faint">-</span>}
               </Td>
               <Td>
@@ -159,14 +159,14 @@ export function KeychainCredentialsTable({ rows, showOwner = true, emptyState, a
         >
           {rows.map((kc) => (
             <Tr key={kc.id} id={`keychain-credentials-${kc.id}`}>
-              <Td className="wrap-break-word max-w-60">{kc.name}</Td>
-              <Td className="wrap-break-word max-w-100">
+              <Td wrap maxWidth={60}>{kc.name}</Td>
+              <Td wrap maxWidth={100}>
                 <Code>{kc.path}</Code>
               </Td>
-              <Td className="wrap-break-word max-w-60">
+              <Td wrap maxWidth={60}>
                 {kc.defaultCredential ? kc.defaultCredential.name : <span className="text-faint">None</span>}
               </Td>
-              {showOwner && <Td className="wrap-break-word max-w-60">{kc.ownerEmail}</Td>}
+              {showOwner && <Td wrap maxWidth={60}>{kc.ownerEmail}</Td>}
               <Td actions>{actions?.(kc)}</Td>
             </Tr>
           ))}

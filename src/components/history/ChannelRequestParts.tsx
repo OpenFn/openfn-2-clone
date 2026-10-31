@@ -32,7 +32,7 @@ export function MethodBadge({ method }: { method: string | null | undefined }) {
 
 export function RequestPathDisplay({ event }: { event: ChannelEvent | undefined }) {
   return (
-    <Text variant="code-md" className="break-all text-strong">
+    <Text variant="code-md" tone="strong" className="break-all">
       {event?.requestPath}
       {event?.requestQueryString && <span className="text-muted">?{event.requestQueryString}</span>}
     </Text>
@@ -57,7 +57,7 @@ export function StatusCodeBadge({ status }: { status: number | null | undefined 
 }
 
 export function SectionSizeBadge({ size }: { size: number }) {
-  return <Text variant="code-sm" className="text-faint">{formatBytes(size)}</Text>;
+  return <Text variant="code-sm" tone="faint">{formatBytes(size)}</Text>;
 }
 
 export function HeadersList({ headers }: { headers: [string, string][] }) {
@@ -107,12 +107,12 @@ export function BodyViewer({
   }
   if (ct && !isText(ct)) {
     return (
-      <Text as="div" className="flex items-center gap-2 py-4 text-muted">
+      <Text as="div" tone="muted" className="flex items-center gap-2 py-4">
         <Pill variant="square">
           <code>{contentTypeLabel(ct)}</code>
         </Pill>
         {size != null && <span>{formatBytes(size)}</span>}
-        {hash && <Text variant="code-sm" className="text-faint">SHA256: {hash}</Text>}
+        {hash && <Text variant="code-sm" tone="faint">SHA256: {hash}</Text>}
       </Text>
     );
   }
@@ -120,14 +120,14 @@ export function BodyViewer({
   const previewBytes = preview == null ? 0 : new TextEncoder().encode(preview).length;
   if (preview == null) {
     return (
-      <Text as="div" className="py-4 text-muted">
+      <Text as="div" tone="muted" className="py-4">
         Body not captured
-        {size != null && <Text variant="body-sm" className="ml-1 text-faint">({formatBytes(size)})</Text>}
+        {size != null && <Text variant="body-sm" tone="faint" className="ml-1">({formatBytes(size)})</Text>}
       </Text>
     );
   }
   return (
-    <Text as="div" variant="body-sm" className="space-y-1 text-faint">
+    <Text as="div" variant="body-sm" tone="faint" className="space-y-1">
       <Card variant="muted" padding="none" className="relative">
         <div className="absolute right-2 top-2 flex items-center gap-1.5">
           {ct && (

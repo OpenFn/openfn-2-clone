@@ -48,7 +48,7 @@ export default function WebhookAuthMethodsTable({ authMethods, canWrite, onCreat
         const summary = linkedUsageSummary(m);
         return (
           <Tr key={m.id} id={m.id}>
-            <Td className="max-w-60 truncate text-strong">{m.name}</Td>
+            <Td maxWidth={60} className="truncate text-strong">{m.name}</Td>
             <Td className="text-strong">{typeLabel[m.authType]}</Td>
             <Td>
               {summary ? (

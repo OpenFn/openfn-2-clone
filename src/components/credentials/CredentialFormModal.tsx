@@ -689,7 +689,7 @@ function OauthFields({
   if (env.pending) {
     // Lightning has no way out of this; a closed popup would otherwise leave the tab waiting for good.
     status = (
-      <Text as="p" className="text-muted">
+      <Text as="p" tone="muted">
         Authenticating with {client.name}... <TextLink onClick={onSignIn}>Start again</TextLink>
       </Text>
     );
@@ -732,7 +732,7 @@ function OauthFields({
             user info to verify. This app may not provide a user info endpoint, or your admin may not have configured it.
           </Alert>
         )}
-        <Text as="p" className="text-muted">
+        <Text as="p" tone="muted">
           If your credential isn't working as expected, you can{" "}
           <TextLink onClick={onSignIn}>reauthenticate with {client.name}</TextLink>
         </Text>
@@ -774,7 +774,7 @@ function OauthFields({
             <InfoTooltip title="Select permissions associated to your OAuth2 Token" />
           </Heading>
           {client.scopesDocUrl && (
-            <Text as="p" variant="body-sm" className="text-strong">
+            <Text as="p" variant="body-sm" tone="strong">
               Learn more about {client.name} permissions{" "}
               <TextLink to={client.scopesDocUrl} external>
                 here

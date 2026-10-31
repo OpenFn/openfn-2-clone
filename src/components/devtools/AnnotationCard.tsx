@@ -83,7 +83,7 @@ export default function AnnotationCard({ id, annotation, inventory, onOpenId, in
           {inventory && <Pill tone={statusTone(inventory.status)}>inventory: {inventory.status}</Pill>}
         </div>
         {inventory && (
-          <Text as="p" variant="body-sm" className="text-muted">
+          <Text as="p" variant="body-sm" tone="muted">
             {inventory.section} · <code>{inventory.route.replace(/`/g, "")}</code>
           </Text>
         )}
@@ -113,7 +113,7 @@ export default function AnnotationCard({ id, annotation, inventory, onOpenId, in
         <>
           {annotation.frontMatterRaw && (
             <Disclosure title="Front matter" defaultOpen={false} padding="none">
-              <Text as="pre" variant="code-sm" className="overflow-x-auto border-t border-subtle px-4 py-3 text-muted">
+              <Text as="pre" variant="code-sm" tone="muted" className="overflow-x-auto border-t border-subtle px-4 py-3">
                 {annotation.frontMatterRaw}
               </Text>
             </Disclosure>

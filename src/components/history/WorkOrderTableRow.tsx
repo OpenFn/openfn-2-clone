@@ -103,7 +103,7 @@ export default function WorkOrderTableRow({
               title={
                 <>
                   {wo.workflowName}
-                  <Text variant="body-sm" className="block text-faint">Click to view</Text>
+                  <Text variant="body-sm" tone="faint" className="block">Click to view</Text>
                 </>
               }
             >

@@ -116,7 +116,7 @@ export default function WorkflowsTable({
           const on = s.triggerEnabled ?? wf.enabled;
           return (
             <Tr key={wf.id} id={`workflow-${wf.id}`} onClick={() => navigate(`/projects/${projectId}/w/${wf.id}`)}>
-              <Td className="max-w-60">
+              <Td maxWidth={60}>
                 <Tooltip content={on ? wf.name : `${wf.name} (disabled)`}>
                   <p className={cn("workflow-name truncate font-medium", on ? "text-strong" : "text-faint")}>
                     {wf.name}
