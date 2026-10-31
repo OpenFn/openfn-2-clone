@@ -10,6 +10,7 @@ import Pill from "../../primitives/Pill";
 import Spinner from "../../primitives/Spinner";
 import Text from "../../primitives/Text";
 import { Stack } from "../../primitives/Stack";
+import { Row } from "../../primitives/Stack";
 
 interface State {
   /** The latest preview that arrived. Merge always sends its target. */
@@ -286,11 +287,10 @@ function TickList({
           <li key={r.id} className="px-3 py-2 hover:bg-hover">
             <Checkbox
               label={
-                // eslint-disable-next-line no-restricted-syntax -- debt: F557 Stack/Row can't render this element
-                <span className="flex items-center gap-2">
+                <Row as="span" gap="sm">
                   <span className="truncate">{r.label}</span>
                   {r.badges}
-                </span>
+                </Row>
               }
               checked={selected.has(r.id)}
               onChange={() => onChange(toggled(selected, r.id))}

@@ -7,6 +7,7 @@ import { DetailItem, DetailList } from "../primitives/DetailList";
 import Heading from "../primitives/Heading";
 import Pill from "../primitives/Pill";
 import TextLink from "../primitives/TextLink";
+import { Row } from "../primitives/Stack";
 
 type Data = LiveDashboardData;
 
@@ -143,11 +144,10 @@ export default function LiveDashboardHome({
                   <DetailItem
                     key={m.label}
                     label={
-                      // eslint-disable-next-line no-restricted-syntax -- debt: F557 Stack/Row can't render this element
-                      <span className="flex items-center gap-2">
+                      <Row as="span" gap="sm">
                         <span className={cn("h-4 w-4 rounded-sm", m.color)} />
                         {m.label}
-                      </span>
+                      </Row>
                     }
                   >
                     {m.value} MB

@@ -9,6 +9,7 @@ import SaveButton from "./SaveButton";
 import VersionDropdown from "./VersionDropdown";
 import Tooltip from "../primitives/Tooltip";
 import Text from "../primitives/Text";
+import { Row } from "../primitives/Stack";
 
 interface Props {
   project: CurrentProject;
@@ -80,8 +81,7 @@ export default function EditorHeader({
           label={projectLabel}
           items={[["Workflows", `/projects/${project.id}/w`]]}
           current={
-            // eslint-disable-next-line no-restricted-syntax -- debt: F557 Stack/Row can't render this element
-            <span className="flex items-center gap-2">
+            <Row as="span" gap="sm">
               <Tooltip content={workflowName}>
                 {/* eslint-disable-next-line no-restricted-syntax -- debt: a plain text button; Button has no text theme */}
                 <button type="button" onClick={onTitleClick} className="max-w-64 truncate hover:text-body">
@@ -89,7 +89,7 @@ export default function EditorHeader({
                 </button>
               </Tooltip>
               <VersionDropdown snapshots={snapshots} pinnedVersion={pinnedVersion} onVersionSelect={onVersionSelect} />
-            </span>
+            </Row>
           }
         />
       </div>

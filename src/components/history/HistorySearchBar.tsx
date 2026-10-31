@@ -45,8 +45,7 @@ export default function HistorySearchBar({
         <SearchInput value={value} onChange={setValue} onClear={() => onSearch("")} placeholder="Search work orders..." />
       </form>
       <Text tone="muted">by</Text>
-      {/* eslint-disable-next-line no-restricted-syntax -- debt: F557 Stack/Row can't render this element */}
-      <div id="search_button_group" className="flex items-center gap-2">
+      <Row gap="sm" id="search_button_group">
         <div className="inline-flex gap-0.5 rounded-md bg-surface p-1 ring-1 ring-inset ring-strong">
           {fields.map((f) => (
             <Tooltip key={f.id} content={f.label} side="top">
@@ -63,7 +62,7 @@ export default function HistorySearchBar({
         <Button type="submit" form="run-search-form">
           Search
         </Button>
-      </div>
+      </Row>
     </Row>
   );
 }

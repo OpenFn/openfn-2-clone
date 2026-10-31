@@ -45,8 +45,7 @@ export default function SettingsMenu() {
         {(close) => (
           // The panel is portalled out of the root, so it marks itself as
           // devtools too: hovering it mustn't change the annotation shown.
-          // eslint-disable-next-line no-restricted-syntax -- debt: F557 Stack/Row can't render this element
-          <div data-devtools aria-label="Settings" className="space-y-4">
+          <Stack gap="md" data-devtools aria-label="Settings">
             <div className="flex items-center justify-between">
               <Heading size="sm">Settings</Heading>
               <CloseButton label="Close settings" size="xs" onClick={close} />
@@ -73,7 +72,7 @@ export default function SettingsMenu() {
                 </Stack>
               </Field>
             </div>
-          </div>
+          </Stack>
         )}
       </Popover>
     </div>

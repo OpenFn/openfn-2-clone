@@ -14,6 +14,7 @@ import Heading from "../primitives/Heading";
 import InfoTooltip from "../primitives/InfoTooltip";
 import EmptyState from "../primitives/EmptyState";
 import Text from "../primitives/Text";
+import { Stack } from "../primitives/Stack";
 
 export type RunViewerTab = "log" | "input" | "output";
 
@@ -83,8 +84,7 @@ export default function RunViewerPanel({ projectId, run, startedBy, steps, logs,
           {steps.length === 0 ? (
             <EmptyState variant="plain" message="No steps yet" />
           ) : (
-            // eslint-disable-next-line no-restricted-syntax -- debt: F557 Stack/Row can't render this element
-            <ul aria-label="Execution steps" className="space-y-2">
+            <Stack as="ul" gap="sm" aria-label="Execution steps">
               {steps.map((s) => {
                 const selected = s.id === selectedStepId;
                 return (
@@ -108,7 +108,7 @@ export default function RunViewerPanel({ projectId, run, startedBy, steps, logs,
                   </li>
                 );
               })}
-            </ul>
+            </Stack>
           )}
         </div>
       </div>

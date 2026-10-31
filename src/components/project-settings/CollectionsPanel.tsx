@@ -8,6 +8,7 @@ import CollectionsTable from "./CollectionsTable";
 import SandboxSettingsBanner from "./SandboxSettingsBanner";
 import type { CollectionRow, CollectionsSettings } from "../../types/project-settings";
 import { useActions } from "../../utils/useAction";
+import { Stack } from "../primitives/Stack";
 
 interface Props {
   collections: CollectionsSettings;
@@ -38,8 +39,7 @@ export default function CollectionsPanel({ collections: { collections, canManage
   );
 
   return (
-    // eslint-disable-next-line no-restricted-syntax -- debt: F557 Stack/Row can't render this element
-    <div id="collections" className="space-y-4">
+    <Stack gap="md" id="collections">
       <SectionHeader
         size="lg"
         title="Project collections"
@@ -102,6 +102,6 @@ export default function CollectionsPanel({ collections: { collections, canManage
         onEdit={(collection) => setAction({ kind: "edit", collection })}
         onDelete={(collection) => setAction({ kind: "delete", collection })}
       />
-    </div>
+    </Stack>
   );
 }

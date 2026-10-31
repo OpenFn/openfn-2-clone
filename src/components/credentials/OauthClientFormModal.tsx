@@ -8,6 +8,7 @@ import ProjectsPicker from "./ProjectsPicker";
 import { useForm } from "../../utils/useForm";
 import { blank } from "../../utils/validate";
 import type { CredentialProjectRef, OauthClientRow, OauthClientSecretsResult, OauthClientValues } from "../../types/credentials";
+import { Stack } from "../primitives/Stack";
 
 interface Props {
   open: boolean;
@@ -145,8 +146,7 @@ function ScopesInput({
     setDraft("");
   };
   return (
-    // eslint-disable-next-line no-restricted-syntax -- debt: F557 Stack/Row can't render this element
-    <div id={`generic-oauth-scopes-${id}`} className="space-y-2">
+    <Stack gap="sm" id={`generic-oauth-scopes-${id}`}>
       <TextInput
         id={id}
         label={label}
@@ -170,6 +170,6 @@ function ScopesInput({
           ))}
         </div>
       )}
-    </div>
+    </Stack>
   );
 }
