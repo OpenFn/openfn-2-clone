@@ -5,7 +5,7 @@ import Alert from "../primitives/Alert";
 import Button from "../primitives/Button";
 import Form from "../primitives/Form";
 import Card from "../primitives/Card";
-import Heading from "../primitives/Heading";
+import Section from "../primitives/Section";
 import { Checkbox, PasswordInput, TextInput } from "../primitives/Inputs";
 import Text from "../primitives/Text";
 import TextLink from "../primitives/TextLink";
@@ -211,30 +211,32 @@ export default function AuthProviderForm({ provider, onSave, onTest, onRemove, i
             Connect support and it's well-known file see{" "}
             {docsLink("https://developers.google.com/identity/protocols/oauth2/openid-connect#discovery")}
           </p>
-          <div className="space-y-2 sm:border-t sm:border-subtle sm:pt-4">
-            <Heading size="sm">Redirect URI</Heading>
-            <Card
-              variant="muted"
-              padding="sm"
-              id="redirect-uri-preview"
-              // eslint-disable-next-line local/primitive-classname -- debt: F528 type, F529 state, F527 colour (font-mono cursor-not-allowed text-faint)
-              className={cn("font-mono", !valid && "cursor-not-allowed text-faint")}
-            >
-              {valid ? authRedirectUri(values) : <>{values.redirectHost}&hellip;</>}
-            </Card>
-            <p>
-              Ensure your provider has this redirect URI set. For more information see{" "}
-              {docsLink("https://developers.google.com/identity/protocols/oauth2/openid-connect#setredirecturi")}
-            </p>
+          <div className="sm:border-t sm:border-subtle sm:pt-4">
+            <Section title="Redirect URI" size="sm">
+              <Card
+                variant="muted"
+                padding="sm"
+                id="redirect-uri-preview"
+                // eslint-disable-next-line local/primitive-classname -- debt: F528 type, F529 state, F527 colour (font-mono cursor-not-allowed text-faint)
+                className={cn("font-mono", !valid && "cursor-not-allowed text-faint")}
+              >
+                {valid ? authRedirectUri(values) : <>{values.redirectHost}&hellip;</>}
+              </Card>
+              <p>
+                Ensure your provider has this redirect URI set. For more information see{" "}
+                {docsLink("https://developers.google.com/identity/protocols/oauth2/openid-connect#setredirecturi")}
+              </p>
+            </Section>
           </div>
           {provider.id !== null && (
-            <div className="mt-auto space-y-2">
-              <Heading size="sm">Remove</Heading>
-              <p>Deletes the Authentication Configuration, and disables external authentication for Lightning.</p>
-              {remove.error && <Alert tone="danger">{errorMessage(remove.error)}</Alert>}
-              <Button tone="danger" onClick={() => void remove.run()} pending={remove.pending} icon="hero-trash">
-                Remove
-              </Button>
+            <div className="mt-auto">
+              <Section title="Remove" size="sm">
+                <p>Deletes the Authentication Configuration, and disables external authentication for Lightning.</p>
+                {remove.error && <Alert tone="danger">{errorMessage(remove.error)}</Alert>}
+                <Button tone="danger" onClick={() => void remove.run()} pending={remove.pending} icon="hero-trash">
+                  Remove
+                </Button>
+              </Section>
             </div>
           )}
         </Text>

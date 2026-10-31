@@ -229,8 +229,10 @@ Examples: `Domain/UserDeletionModal` (Blocked), `Credentials/Modals`
 
 A tab or page of settings starts with a `SectionHeader`, then one `Card` per
 group with `title` and `description`. A card that holds a single setting
-has no title: the control's `Field` `label` and `hint` name and explain it,
-as in any form (`Project settings/DataStoragePanel`). A switch or select saves on change
+has no title: the control's `Field` `label` and `hint` name and explain
+it, as in any form (`Project settings/DataStoragePanel`). SecurityPanel,
+ProjectSetupPanel, ExperimentalFeaturesCard and MaintenanceCard still have
+titles (G187 is open). A switch or select saves on change
 with `useChosenValue`; if the save fails, it goes back and an error toast
 says why. Text fields save with `useForm` and a Save button at the bottom of
 the card.

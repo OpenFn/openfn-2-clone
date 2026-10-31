@@ -4,13 +4,13 @@ import Button from "../primitives/Button";
 import Alert from "../primitives/Alert";
 import Card from "../primitives/Card";
 import ConfirmModal from "../primitives/ConfirmModal";
-import Heading from "../primitives/Heading";
 import IconButton from "../primitives/IconButton";
 import InfoTooltip from "../primitives/InfoTooltip";
 import { Checkbox, PasswordInput, Radio, TextArea, TextInput } from "../primitives/Inputs";
 import Tabs from "../primitives/Tabs";
 import Text from "../primitives/Text";
 import TextLink from "../primitives/TextLink";
+import Section from "../primitives/Section";
 import ProjectsPicker from "./ProjectsPicker";
 import { adaptorIconUrl } from "../../utils/adaptors";
 import { assetUrl } from "../../utils/assets";
@@ -773,11 +773,15 @@ function OauthFields({
   return (
     <div className="space-y-4">
       {scopes.length > 0 && (
-        <div className="space-y-2">
-          <Heading size="sm">
-            Select permissions
-            <InfoTooltip title="Select permissions associated to your OAuth2 Token" />
-          </Heading>
+        <Section
+          size="sm"
+          title={
+            <>
+              Select permissions
+              <InfoTooltip title="Select permissions associated to your OAuth2 Token" />
+            </>
+          }
+        >
           {client.scopesDocUrl && (
             <Text as="p" variant="body-sm" tone="strong">
               Learn more about {client.name} permissions{" "}
@@ -800,7 +804,7 @@ function OauthFields({
               );
             })}
           </div>
-        </div>
+        </Section>
       )}
       {authorizeError && <Alert tone="danger">{errorMessage(authorizeError)}</Alert>}
       {status}
