@@ -62,7 +62,8 @@ export default function AnnotationCard({ id, annotation, inventory, onOpenId, in
   const list = (key: string) => (Array.isArray(fm[key]) ? (fm[key] as string[]) : []);
 
   return (
-    <Stack>
+    // eslint-disable-next-line no-restricted-syntax -- debt: F558 a child would change in a flex column
+    <div className="space-y-4">
       <Stack gap="sm">
         <div className="flex items-start justify-between gap-2">
           <Heading as="h2">{title}</Heading>
@@ -125,6 +126,6 @@ export default function AnnotationCard({ id, annotation, inventory, onOpenId, in
           <Markdown source={annotation.body} />
         </>
       )}
-    </Stack>
+    </div>
   );
 }
