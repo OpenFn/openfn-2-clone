@@ -4,7 +4,7 @@ import CodeEditor from "./CodeEditor";
 import { withCanvas } from "../../stories/decorators";
 
 const meta: Meta<typeof CodeEditor> = {
-  title: "Workflow/CodeEditor",
+  title: "Primitives/CodeEditor",
   component: CodeEditor,
   decorators: [withCanvas("h-64")],
 };
@@ -13,15 +13,15 @@ type Story = StoryObj<typeof CodeEditor>;
 
 function EditableDemo() {
   const [value, setValue] = useState("fn(state => state);\n");
-  return <CodeEditor value={value} onChange={setValue} />;
+  return <CodeEditor value={value} onChange={setValue} ariaLabel="Job code" />;
 }
 
 export const Editable: Story = { render: () => <EditableDemo /> };
 export const ReadOnly: Story = {
-  args: { value: "get('trackedEntityInstances', {\n  ou: 'DiszpKrYNg8',\n});\n", readOnly: true },
+  args: { value: "get('trackedEntityInstances', {\n  ou: 'DiszpKrYNg8',\n});\n", readOnly: true, ariaLabel: "Job code" },
 };
 export const Json: Story = {
-  args: { value: '{\n  "data": {\n    "resourceType": "Patient"\n  }\n}\n', language: "json", readOnly: true },
+  args: { value: '{\n  "data": {\n    "resourceType": "Patient"\n  }\n}\n', language: "json", readOnly: true, ariaLabel: "Job code" },
 };
 export const Minimap: Story = {
   args: {

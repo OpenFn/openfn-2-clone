@@ -1,10 +1,14 @@
 /**
  * Pure helpers over history records: log filtering, channel request events,
- * failure counts, run state labels, work order selection and the workflows-index metric cards. No fixture access.
+ * failure counts, run state labels, work order selection, History's search in
+ * words and as URL params, and the workflows-index metric cards. No fixture access.
  */
 import type { ChannelEvent } from "../types/channels";
-import type { LogLine, RunDisplayState, WorkOrderRow } from "../types/history";
-import { capitalize } from "./format";
+import type { HistoryWorkflowRef, LogLine, RunDisplayState, SearchFieldId, WorkOrderFilters, WorkOrderRow } from "../types/history";
+import type { SortState } from "../types/lists";
+import { historySearchFields, historyStatuses } from "../constants";
+import type { ParamPatch } from "./useUrlParams";
+import { capitalize, formatQueryDate } from "./format";
 import type { ProjectMetrics } from "../types/workflows";
 import { FAILURE_STATES, type WorkOrderStateCounts } from "../types/workflow-health";
 
@@ -99,4 +103,63 @@ export function stateLabel(state: RunDisplayState): string {
     default:
       return capitalize(state);
   }
+}
+
+const fieldWords: Record<SearchFieldId, string> = { log: "Logs", body: "Input", dataclip_name: "Dataclip Name", id: "Id" };
+
+/**
+ * The search in words, for "Rerun all matching" (components.ex
+ * `humanize_search_params`, word for word, including its "between before
+ * and after").
+ */
+export function describeWorkOrderQuery(f: WorkOrderFilters, workflows: HistoryWorkflowRef[]) {
+  const between = (after: string | null, before: string | null, lead: string) =>
+    after && before
+      ? `${lead} between ${formatQueryDate(before)} and ${formatQueryDate(after)}`
+      : after
+        ? `${lead} after ${formatQueryDate(after)}`
+        : before
+          ? `${lead} before ${formatQueryDate(before)}`
+          : "";
+  const workflow = workflows.find((w) => w.id === f.workflowId);
+  const statuses = f.statuses.map((s) => `'${capitalize(s)}'`);
+  return [
+    between(f.receivedAfter, f.receivedBefore, "received"),
+    workflow ? `for ${workflow.name} workflow` : "",
+    between(f.activityAfter, f.activityBefore, "which was last run"),
+    f.searchTerm && f.searchFields.length
+      ? `whose run ${f.searchFields.map((x) => fieldWords[x]).join(" and ")} contain ${f.searchTerm}`
+      : "",
+    statuses.length > 1 ? `having a status of either ${statuses.join(" or ")}` : statuses.length ? `having a status of ${statuses[0]}` : "",
+  ]
+    .filter(Boolean)
+    .join(", ");
+}
+
+/**
+ * Every filter as the URL's `filters[…]` params, so a change keeps the rest
+ * (index.ex "apply_filters" merges into the filters it holds). The run
+ * statuses go as repeated `filters[run_status][]`, which a patch can't set,
+ * so they're left as the URL has them.
+ */
+export function workOrderFilterParams(f: WorkOrderFilters, sort: SortState): ParamPatch {
+  const flag = (on: boolean) => (on ? "true" : null);
+  return {
+    "filters[workflow_id]": f.workflowId,
+    ...Object.fromEntries(historyStatuses.map((s) => [`filters[${s.id}]`, flag(f.statuses.includes(s.id))])),
+    "filters[wo_date_after]": f.receivedAfter,
+    "filters[wo_date_before]": f.receivedBefore,
+    "filters[date_after]": f.activityAfter,
+    "filters[date_before]": f.activityBefore,
+    "filters[run_date_after]": f.runCreatedAfter,
+    "filters[run_date_before]": f.runCreatedBefore,
+    "filters[workorder_id]": f.workorderId,
+    "filters[error_signature_exit_reason]": f.errorSignature?.exitReason ?? null,
+    "filters[error_signature_error_type]": f.errorSignature?.errorType ?? null,
+    "filters[error_signature_job_id]": f.errorSignature?.jobId ?? null,
+    "filters[search_term]": f.searchTerm || null,
+    ...Object.fromEntries(historySearchFields.map((s) => [`filters[${s.id}]`, flag(f.searchFields.includes(s.id))])),
+    "filters[sort_by]": sort.key,
+    "filters[sort_direction]": sort.direction,
+  };
 }

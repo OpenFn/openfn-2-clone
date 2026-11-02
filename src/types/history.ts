@@ -167,3 +167,48 @@ export interface WorkOrderRow {
   /** The input dataclip's page. */
   dataclipHref: string;
 }
+
+/** The error signature the workflow health page's triage row filters History to. */
+export interface ErrorSignatureFilter {
+  exitReason: string;
+  errorType: string | null;
+  /** Set for a step-level signature. */
+  jobId: string | null;
+  /** The job's name, null when it's unset or the job is gone. */
+  jobName: string | null;
+}
+
+/**
+ * The search History is showing, read from the URL's `filters[…]`. Dates are
+ * ISO 8601 in UTC; null is unset.
+ */
+export interface WorkOrderFilters {
+  workflowId: string | null;
+  statuses: HistoryWorkOrderState[];
+  /** When the work order arrived (`wo_date_after` / `wo_date_before`). */
+  receivedAfter: string | null;
+  receivedBefore: string | null;
+  /** The work order's last activity (`date_after` / `date_before`). */
+  activityAfter: string | null;
+  activityBefore: string | null;
+  /** Only the health page's runs chart sets these; History can only clear them. */
+  runStatuses: RunState[];
+  runCreatedAfter: string | null;
+  runCreatedBefore: string | null;
+  workorderId: string | null;
+  errorSignature: ErrorSignatureFilter | null;
+  /** "" for no search. */
+  searchTerm: string;
+  searchFields: SearchFieldId[];
+}
+
+/** A workflow in the project: the filter's options, and the jobs "Retry from" offers. */
+export interface HistoryWorkflowRef {
+  id: string;
+  name: string;
+  /** In the order "Retry from" lists them. */
+  jobs: { id: string; name: string }[];
+}
+
+/** The ticked work orders' ids, or "all" for every one matching the filters. */
+export type WorkOrderTarget = string[] | "all";

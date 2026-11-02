@@ -15,7 +15,11 @@ interface Props {
 
 /** Children in a column, with the gap between them. The parent owns the space, not the children's margins. */
 export function Stack({ gap = "md", as: As = "div", className, children }: Props) {
-  return <As className={cn("flex flex-col", gaps[gap], className)}>{children}</As>;
+  return (
+    <As data-ui="stack" className={cn("flex flex-col", gaps[gap], className)}>
+      {children}
+    </As>
+  );
 }
 
 /** Children in a line, centred on each other, with the gap between them. */
@@ -29,6 +33,7 @@ export function Row({
 }: Props & { wrap?: boolean; justify?: "start" | "between" | "end" }) {
   return (
     <As
+      data-ui="row"
       className={cn(
         "flex items-center",
         gaps[gap],

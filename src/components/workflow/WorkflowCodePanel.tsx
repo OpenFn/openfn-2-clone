@@ -1,6 +1,6 @@
 import type { WorkflowGraph } from "../../types/workflow-graph";
 import Button from "../primitives/Button";
-import CodeEditor from "./CodeEditor";
+import CodeEditor from "../primitives/CodeEditor";
 import InspectorLayout, { InspectorFooter } from "./InspectorLayout";
 import { workflowToYaml } from "./workflowYaml";
 import CopyButton from "../primitives/CopyButton";

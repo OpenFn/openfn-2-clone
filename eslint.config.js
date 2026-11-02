@@ -86,7 +86,7 @@ const colourRules = ({ palette = true, literals = true, amber = false } = {}) =>
     ? [
         ...banned(
           `\\btext-(?:gray-\\d|${WB})`,
-          `Raw text colour: use text-strong (gray-900/800), text-body (700), text-muted (600/500), text-faint (400/300), text-code (on bg-code) or text-inverse (white). ${tokens}`
+          `Raw text colour: use text-strong (gray-900/800), text-body (700), text-muted (600), text-faint (500/400/300), text-code (on bg-code) or text-inverse (white). ${tokens}`
         ),
         ...banned(
           `\\bbg-(?:gray-\\d|${WB})`,

@@ -47,6 +47,7 @@ its stories; read the component before using it.
 | An on/off switch | `Toggle` |
 | An inline link | `TextLink` |
 | Read-only code, a log or a dataclip | `CodeViewer` |
+| Code the user edits (a job, YAML, a custom input) | `CodeEditor` (Monaco; give it an `ariaLabel`) |
 | Rendered markdown | `Markdown` |
 | A file upload or drop area | `FileDropZone` |
 | Tabular data | `Table` with `Tr`, `Th`, `Td`; `state` for a list that is loading or failed (a clickable row holds a `RowLink` in its first cell, or a `RowToggle` if it expands; a click elsewhere on the row clicks that control, so the keyboard reaches the same thing) |
@@ -183,7 +184,8 @@ Lightning's wording wins wherever Lightning has the screen.
   a settings tab opens with `SectionHeader size="lg"`.
 - Row actions go in `<Td actions>` as `Button size="xs" variant="secondary"`
   with Lightning's verb. More than two go in a `ButtonMenu` labelled
-  "Actions". A page with several tables puts each in a `Section`.
+  "Actions" (a ••• menu on a redesign, PRINCIPLES "Where we're heading"). A
+  page with several tables puts each in a `Section`.
 - A long value in a cell depends on what people do with it. A name they
   open the record to read: `<Td truncate>`, one line with an ellipsis. A
   value they paste elsewhere (an external id, a keychain path): a
@@ -213,14 +215,17 @@ Examples: `Primitives/Header` (WithBreadcrumbsAndTitle), `Primitives/Table`
   unless Lightning words it otherwise (`CollectionDeleteModal` says
   "Delete", `RemoveCollaboratorModal` "Confirm"). The body says what will
   happen.
-- Typed confirmation only where Lightning asks: deleting a project, sandbox
-  or user account. A new action asks only if it deletes a whole project or
-  account.
+- Typed confirmation where Lightning asks: deleting a project, sandbox or
+  user account. A new action asks if it deletes a whole project or account,
+  or stops data being kept (turning on zero persistence).
 
 Examples: `Primitives/ConfirmModal` (Danger, TypeToConfirm),
 `Credentials/Modals` (DeleteCredential).
 
 ### Can't do it yet
+
+The test: could this user change it themselves? A role is not allowed; no
+free seats, owned projects or audited runs are not ready.
 
 - **Not allowed** (a permission): keep the button, disable it, give the
   reason as its `tooltip`. Hide it only if Lightning does. A gated section

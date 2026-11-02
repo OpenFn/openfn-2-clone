@@ -1,43 +1,46 @@
 # CLAUDE.md
 
-A React replica of OpenFn Lightning's UI, built page by page from the
-behaviour audit in `annotations/` (copied from OpenFn/lightning; `SOURCE.md`
-says which commit). It is becoming the frontend that replaces Lightning's
-LiveView UI. React, TypeScript, Vite, Tailwind 4.
+A React replica of OpenFn Lightning's UI, built page by page. It is
+becoming the frontend that replaces Lightning's LiveView UI. Built with React,
+TypeScript, Vite, Tailwind 4.
 
 **No backend.** Pages render from fixtures in `src/mock-data/`; save, delete
 and run only change local state. Each page is built so that wiring it to
 Lightning touches one wrapper file and nothing else (see The data seam).
 
-## Read before you build
+## What to read for your task
 
-| Doc | Says |
+| You're… | Read |
 |---|---|
-| [PRINCIPLES.md](./PRINCIPLES.md) | What good looks like |
-| [docs/building.md](./docs/building.md) | Which primitive to use, where a new component goes, how to build one, and the recurring patterns |
-| [STANDARDS.md](./STANDARDS.md) | How a page behaves: pending, failure, lists, the page and its wrapper |
-| [docs/lightning-differences.md](./docs/lightning-differences.md) | Where we differ from Lightning on purpose |
+| Doing anything | [PRINCIPLES.md](./PRINCIPLES.md). It's short: what good looks like |
+| Building or changing a page | The page's annotation, `annotations/views/<inventory-id>.md`: what Lightning's page does and says. Then [STANDARDS.md](./STANDARDS.md): the page and its `.replica.tsx` wrapper, pending, failure, lists |
+| Building or changing a component | [docs/building.md](./docs/building.md): which primitive to use, where a new one goes, the recurring patterns |
+| Building something Lightning doesn't have, or a redesign | PRINCIPLES.md "Where we're heading" |
+| Changing something that looks different from Lightning | [docs/lightning-differences.md](./docs/lightning-differences.md) first; it may be on purpose |
 
 `.claude/rules/` holds the rules for one kind of file (tests, stories, mock
-data, comments) and loads when you touch one.
+data, comments, lint) and loads by itself when you touch one.
 
-## Commands
+## Checking your work
 
-- `npm run dev`, `npm run build` (typecheck and build), `npm test` (Vitest)
-- `npm run lint`: warnings fail too. An exception is disabled on its line
-  with a reason after ` -- `; `debt:` marks one to fix.
-- `npm run storybook` (port 6006); `npm run test:stories` renders every
-  story and runs axe on it. Stop Storybook first.
-- `npm run compare:all` compares the replica with a local Lightning, screen
-  by screen. Use the `compare-with-lightning` skill.
+- Before you say it's done: `npm run lint` (warnings fail too),
+  `npm run build` (typechecks) and `npm test`.
+- Changed a component or a story: also `npm run test:stories`, which
+  renders every story and runs axe on it. Stop Storybook first.
+- A lint exception is disabled on its line with a reason after ` -- `;
+  `debt:` marks one to fix.
+
+## Running it
+
+- `npm run dev`, then open `http://localhost:5173/openfn-3-poc/#/projects`.
+  It's a hash router; `/projects` is a 404.
+- `npm run storybook` (port 6006).
+- `npm run compare:all` compares the replica with a local Lightning. Use
+  the `compare-with-lightning` skill.
 - `npm run kickstart:sync` regenerates the shared projects from
   `kickstart/exports/`.
-- `node scripts/design-system-metrics.mjs` counts styling outside the
-  primitives and the `debt:` lines. They only go down: CI runs it with
-  `--check` against `scripts/design-system-baseline.json` and fails if one
-  rises. When yours go down, run it with `--update` and commit the
-  baseline. A new lint rule that freezes old breaches as `debt:` raises
-  the count once: update the baseline in that PR and say why.
+- CI fails if the styling counts from `scripts/design-system-metrics.mjs`
+  rise.
 
 ## Where things are
 
@@ -60,11 +63,6 @@ data, comments) and loads when you touch one.
   `src/session/`: the signed-in user.
 - `src/mock-data/`: the fake database. `src/theme/`: themes and colour
   tokens.
-- `annotations/`: the audit copy. The annotations panel (settings button)
-  shows the nearest `data-annotation="<id>"`, else the page's view id from
-  `src/annotations/viewIds.ts`, so a new page needs an entry there. To
-  update, replace the folder from the Lightning branch and update
-  `SOURCE.md`.
 
 ## Rules that matter everywhere
 

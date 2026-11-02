@@ -3,7 +3,7 @@ import Button from "../primitives/Button";
 import FileDropZone from "../primitives/FileDropZone";
 import FormModal from "../primitives/FormModal";
 import { Field } from "../primitives/Inputs";
-import CodeEditor from "./CodeEditor";
+import CodeEditor from "../primitives/CodeEditor";
 
 interface Props {
   isOpen: boolean;

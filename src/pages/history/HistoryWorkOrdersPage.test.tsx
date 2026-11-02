@@ -3,10 +3,10 @@ import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import { ToastProvider } from "../../components/primitives/Toast";
 import { RouterProvider, type Router } from "../../routing/router";
-import type { RunRow, StepRow, WorkOrderRow } from "../../types/history";
+import type { RunRow, StepRow, WorkOrderFilters, WorkOrderRow } from "../../types/history";
 import { RequestError } from "../../utils/errors";
 import { formatRelativeDetailed } from "../../utils/format";
-import HistoryWorkOrdersPage, { type HistoryWorkOrdersPageProps, type WorkOrderFilters } from "./HistoryWorkOrdersPage";
+import HistoryWorkOrdersPage, { type HistoryWorkOrdersPageProps } from "./HistoryWorkOrdersPage";
 import { isDisabled } from "../../test/disabled";
 import { tooltipOf } from "../../test/tooltip";
 

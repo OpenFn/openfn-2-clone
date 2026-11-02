@@ -1,12 +1,32 @@
 # Design system principles
 
-The goal: A person or an agent can build a new Lightning screen fast, from parts that
-already exist, and it looks and behaves like every other screen. If a page
-needs its own styling, the system has failed, not the page.
+## What good looks like
 
-We know it's working when there's one way to do each thing, pages hold no
-styling (`className` only for placement), and agents applying these
-principles agree on a finding 95% of the time.
+**Why.** The design system makes the frontend look and feel consistent,
+with defined patterns shared across screens. It moves us to a cleaner
+frontend with less styling debt than Lightning has today. Without defined
+patterns, building with AI gets messy, as the collab editor did.
+
+**Lightning.** Same words and behaviour as Lightning, with one consistent
+look. Where Lightning harms the user (it's inaccessible, hides why something
+failed, or loses work) and the fix lives in a shared part, we fix it and
+write it down in [docs/lightning-differences.md](./docs/lightning-differences.md).
+
+**Tokens.** Anything common comes from tokens, never raw values. Colour
+and type do, and lint enforces it. Spacing and radius should too; they
+aren't checked yet.
+
+**Where things go.** Search first, and say what you found. Something other
+design systems have is a primitive. Something Lightning-specific that two
+screens use is domain. A one-off gets its own small file in the area folder,
+never written inline in a page.
+
+**Debt.** `debt:` is never used in new work: code that can't pass lint isn't
+finished. It only freezes old code when a new rule lands, with a human's yes.
+
+**How we know it works.** The numbers go down, below today's. Agents given
+a new screen get it right first time. The screens look like one product. And
+the structure is easy to explain to a developer.
 
 Organise first, then improve the look: once pages hold no styling, a better
 look is a change to the primitives. General web and accessibility rules are
@@ -17,7 +37,9 @@ this is in [docs/building.md](./docs/building.md).
 ## Components
 
 - One job, one component. When two do the same thing, delete one.
-- Name it for what it does (clear to both agents and humans)
+- Name it for its job, never its look or the page it was first used on: a
+  name holding a colour, size or page name gets renamed (`RedModal` →
+  `ConfirmModal`, `HistoryPill` → `RunStatePill`).
 - Compose, don't configure: content through `children` and named slots
   (`title`, `footer`), not boolean props that change what it does.
 - A prop that changes the look is one `variant`, not a boolean; `can*`
@@ -26,20 +48,27 @@ this is in [docs/building.md](./docs/building.md).
   or sandbox logic.
 - `className` on a primitive is layout and sizing only (`flex-1`, `w-full`,
   `min-w-0`), never for how it looks. The list is in src/components/CLAUDE.md.
-- Never work around a primitive. If it can't do the job, extend it (within reason!)
 - The parent owns the space between children. No outer margins.
 - A component's stories are its spec: one per state (empty, loading, error,
   disabled, pending, long text).
 
 ## Look and behaviour
 
-- Tokens only, and colour by meaning: status colours for messages, run
-  colours for run states, `tone="danger"` for destructive actions.
+- Colour means something: red is an error or a destructive action, yellow a
+  warning, green success, blue information; run states use run colours.
+  If taking the colour away loses nothing, it's grey.
 - Contrast 4.5:1 for text, 3:1 for large text and icons. Colour is never the
   only signal.
-- A control that can't be used right now stays focusable and says why.
-- Design for the longest real value, not the fixture. Long names wrap or truncate; empty ones don't break the layout
+- A control the user is blocked from (by permission, plan or state) stays
+  focusable and its tooltip says why ("Only owners can delete projects").
+  Native `disabled` only when there's nothing to explain.
+- Text a user typed has a known home. In a one-line slot (table cell,
+  breadcrumb, pill, tab, menu item, button) it truncates and shows the whole
+  value on hover, through `Td truncate` or `Truncated`, never by hand. In a
+  block (heading, detail list, description, toast) it wraps, breaking long
+  words and URLs. Every story with user text has a Long variant.
 - Every list has an empty state. Every action has pending and error states.
+- Success messages fade; errors stay until dismissed and say what to do.
 
 ## One way to do each thing
 
@@ -79,10 +108,12 @@ out labels, errors or buttons itself.
 
 ## Where we're heading
 
-These change what Lightning does or says, so they wait until a page is
-redesigned on purpose, and each is listed in
+These change how Lightning looks or what it says. They apply to anything
+Lightning doesn't have (a new page, action or flow) and to any page being
+redesigned on purpose. Everywhere else, copy Lightning until that page's
+redesign. Each one is listed in
 [docs/lightning-differences.md](./docs/lightning-differences.md) when it
-lands. Until then, copy Lightning.
+lands, and a listed redesign overrides an annotation's `preserve`.
 
 - Row actions beyond two go in a ••• menu, not one labelled "Actions".
 - A confirm button repeats the action ("Remove collaborator"), never
@@ -90,15 +121,10 @@ lands. Until then, copy Lightning.
 - Choose the container by the size of the task: a menu to pick, a side
   panel to edit what's selected, a pop-up for one short task, a step-by-step
   pop-up for set-up, a page for anything long. A pop-up never opens another.
-- Switches save instantly and offer Undo; forms use Save and Cancel; the
-  editor shows "Unsaved changes" or "Saved".
-- Success messages fade; errors stay until dismissed and say what to do.
-- Undo for anything reversible. Type the name to delete a project or account.
+- Type the name to delete a project or account.
 - Step-by-step pop-ups show "Step 1 of 2", keep their size, Back left, Next
   right.
-- Lists paginate from 25 rows.
-- One "search everything" on Ctrl/Cmd+K, and a project switcher on every
-  page.
+- Lists show 25 rows a page. Ported pages keep Lightning's 10 until then.
 - Sentence case. Buttons are a verb and a noun. One word per thing, from a
   shared glossary.
 - One primary action per screen.

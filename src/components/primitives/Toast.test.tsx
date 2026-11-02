@@ -30,12 +30,18 @@ describe("Toast", () => {
     expect(showToast("danger").getAttribute("role")).toBe("alert");
   });
 
-  it("closes itself after 5 seconds", () => {
+  it("closes a success message after 5 seconds", () => {
     showToast();
     wait(4900);
     expect(screen.queryByText("Saved")).toBeTruthy();
     wait(100);
     expect(screen.queryByText("Saved")).toBeNull();
+  });
+
+  it("keeps an error up until it is dismissed", () => {
+    showToast("danger");
+    wait(60_000);
+    expect(screen.queryByText("Saved")).toBeTruthy();
   });
 
   it("stays while pointed at, then waits the full time again after the pointer leaves", () => {

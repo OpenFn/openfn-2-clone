@@ -9,9 +9,9 @@ import { findProject, projects } from "../../mock-data/projects";
 import { simulateRequest } from "../../mock-data/request";
 import { workflowsIn } from "../../mock-data/workflows";
 import { usePermissions } from "../../session/session";
-import type { HistoryWorkOrderState, RunRow, RunState, WorkOrderRow } from "../../types/history";
+import type { HistoryWorkOrderState, RunRow, RunState, WorkOrderFilters, WorkOrderRow } from "../../types/history";
 import type { WorkOrder } from "../../mock-data/models/history";
-import HistoryWorkOrdersPage, { type WorkOrderFilters } from "./HistoryWorkOrdersPage";
+import HistoryWorkOrdersPage from "./HistoryWorkOrdersPage";
 
 /** Repo's Scrivener page size, and Invocation's `@workorders_count_limit`. */
 const PAGE_SIZE = 10;

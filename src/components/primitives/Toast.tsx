@@ -15,7 +15,7 @@ type ShowToast = (message: ReactNode, tone?: ToastTone) => void;
 
 const ToastContext = createContext<ShowToast>(() => {});
 
-/** How long a toast stays up once nobody is pointing at or focused on it, as Lightning's flash. */
+/** How long a success toast stays up once nobody is pointing at or focused on it, as Lightning's flash. An error stays until dismissed, so a failure is never missed. */
 const DURATION_MS = 5000;
 
 const tones: Record<ToastTone, { box: string; icon: string }> = {
@@ -53,7 +53,7 @@ function ToastStack({ children }: { children: ReactNode }) {
       {children}
       <div className="pointer-events-none fixed inset-x-0 bottom-6 z-50 flex flex-col items-center gap-2 px-4" aria-live="polite">
         {toasts.map((t) => (
-          <Toast key={t.id} tone={t.tone} onClose={() => dismiss(t.id)} timeout={DURATION_MS}>
+          <Toast key={t.id} tone={t.tone} onClose={() => dismiss(t.id)} timeout={t.tone === "danger" ? undefined : DURATION_MS}>
             {t.message}
           </Toast>
         ))}
@@ -73,7 +73,7 @@ interface ToastProps {
   children: ReactNode;
   onClose?: () => void;
   /** Closes itself after this many ms, paused while pointed at or focused, restarting in full after. */
-  timeout?: number;
+  timeout?: number | undefined;
 }
 
 /**

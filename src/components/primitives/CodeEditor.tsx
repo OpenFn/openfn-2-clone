@@ -1,7 +1,7 @@
 import Editor, { type OnMount } from "@monaco-editor/react";
 import { useEffect, useState } from "react";
 import type { editor } from "monaco-editor";
-import { useFieldControl } from "../primitives/fieldControl";
+import { useFieldControl } from "./fieldControl";
 import { cn } from "../../utils/cn";
 import { setUpMonaco } from "../../theme/monacoTheme";
 
@@ -10,7 +10,8 @@ interface Props {
   onChange?: (value: string) => void;
   readOnly?: boolean;
   className?: string;
-  ariaLabel?: string;
+  /** The editor's accessible name ("Job code", "Workflow YAML"). */
+  ariaLabel: string;
   /** Monaco's language id. */
   language?: string;
   /** Merged over the defaults, as Lightning's CollaborativeMonaco takes them. */
@@ -59,7 +60,7 @@ export default function CodeEditor({
   onChange,
   readOnly = false,
   className,
-  ariaLabel = "Job code",
+  ariaLabel,
   language = "javascript",
   options,
 }: Props) {
@@ -76,7 +77,7 @@ export default function CodeEditor({
     }
   }, [input, invalid, describedBy]);
   return (
-    <div className={cn("h-full w-full", invalid && "rounded-lg border border-invalid", className)}>
+    <div data-ui="code-editor" className={cn("h-full w-full", invalid && "rounded-lg border border-invalid", className)}>
       <Editor
         height="100%"
         value={value}
