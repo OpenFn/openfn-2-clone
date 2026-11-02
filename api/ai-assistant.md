@@ -70,12 +70,20 @@ Tokens: session token. Paged, newest first. Send `job_id` or `workflow_id`.
 > - the cookie route takes `session_type` (`job_code` or `workflow_template`)
 >   with `job_id`, or `project_id` and an optional `workflow_id`, and pages
 >   with `offset` and `limit` (default 20). "Newest" is by `updated_at`.
-> - a `job_id` lists by job alone; nothing checks it is in the path's project.
->   It also matches sessions for a job not yet saved, by the id in `meta`.
+> - a `job_id` is a filter, not a target: it lists by job alone, and nothing
+>   checks it is in the path's project. It also matches sessions for a job not
+>   yet saved, by the id in `meta`. A job the caller can't see, or someone
+>   else's unsaved-job session with no workflow, lists nothing, as an unknown
+>   job does. Only a `job_id` that isn't a UUID is refused, with 400
+>   `invalid_parameter`.
 > - a `workflow_id` with no saved workflow lists the project's sessions that
->   have no workflow, instead of none.
-> - the cookie route checks `Permissions.can(:workflows, :access_read, ...)`,
->   which any project member passes, and answers in its own shape.
+>   have no workflow, instead of none. So does leaving `workflow_id` out, since
+>   the controller always passes a `workflow:` option.
+> - with `project_id`, the cookie route checks the project with
+>   `LightningWeb.API.Target.project/3` and `:access_project` (standing, and
+>   MFA where the project requires it), so any project member passes. A
+>   project the caller can't access is 403 `forbidden`, as is an unknown one
+>   except to a superuser. It answers in its own shape.
 
 ## Start an AI session
 
@@ -151,7 +159,8 @@ Notable errors:
 - 422 `invalid` with a `must_accept` entry when the disclaimer hasn't been
   accepted in the last 24 hours.
 - 402 `exceeds_limit` when the project has used its allowance.
-- 404 `not_found` for a `step_id` or `run_id` from another project.
+- 422 `invalid` with a `not_found` entry for a `step_id` or `run_id` from
+  another project.
 
 > Implementation note: `Lightning.AiAssistant.save_message/3` saves the
 > message and queues `Lightning.AiAssistant.MessageProcessor` in one

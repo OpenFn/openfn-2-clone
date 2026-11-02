@@ -4,7 +4,8 @@
 
 Status: **Public**
 
-Tokens: personal access token. Read only. Service account support is planned.
+Tokens: personal access token, or service account with `projects:write`. Read
+only.
 
 ```
 GET /api/runs
@@ -14,8 +15,10 @@ GET /api/runs/:id
 GET /api/projects/:project_id/runs/:id
 ```
 
-Getting one run answers for any run in a project the caller can access; the
-nested route doesn't check that the run belongs to `:project_id`.
+On the nested route, a run that isn't in the path's project answers 404 to a
+caller who can access the project. On `/api/runs/:id`, an unknown or malformed
+id answers 403 `forbidden`, except to the service account, which hears 404 or
+400. See [who hears 404](./errors.md#who-hears-404).
 
 Lists are paged, newest first by `inserted_at`, and take these filters:
 
@@ -26,8 +29,12 @@ Lists are paged, newest first by `inserted_at`, and take these filters:
 | `inserted_after`, `inserted_before` | ISO 8601. |
 | `updated_after`, `updated_before` | ISO 8601. |
 
-Every bad filter is reported together in one 400 `invalid_parameter`. An
-unknown `project_id` answers 404.
+Every bad filter is reported together in one 400 `invalid_parameter`. The
+service account must send `project_id`, in the path or the query; without it
+the answer is 400 `invalid_parameter` with a `required` entry. A `project_id`
+you may not access answers 403 `forbidden`, whether or not the project exists,
+and is checked before the other filters. Only superusers and the service
+account hear 404 for an unknown `project_id`, or 400 for one that isn't a UUID.
 
 Each run (`priority` is `immediate` or `normal`):
 
