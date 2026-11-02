@@ -12,7 +12,7 @@ GET /api/audit_events
 ```
 
 Tokens: personal access token of a superuser, or service account with
-`audit:read`. Paged, newest first.
+`audit:read` (a [planned grant](./authentication.md)). Paged, newest first.
 
 | Parameter | Notes |
 | --- | --- |

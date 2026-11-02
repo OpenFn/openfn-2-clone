@@ -326,8 +326,8 @@ Tokens: personal access token or session token.
 
 Returns the user the token belongs to, in the same shape as
 [`GET /api/users/:id`](./users.md#get-a-user). Use it to check which account a
-token is for. A service account token answers 404 `not_found`, since a service
-account isn't a user. The projects you are a member of are `GET /api/projects`.
+token is for. A service account token answers 403 `forbidden`, since a service
+account isn't a user and the route isn't open to its tokens. The projects you are a member of are `GET /api/projects`.
 
 With a session token it adds what the account page shows:
 
