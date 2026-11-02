@@ -37,7 +37,7 @@ export type TextTone = keyof typeof tones;
  * Any text that isn't a heading. `variant` names what the text is and how
  * big; `tone` sets its colour (unset inherits). `className` is layout and
  * sizing only (see src/components/CLAUDE.md). It can wrap a block
- * of copy as well as a line: `<Text as="div" className="space-y-3">`. Inside
+ * of copy as well as a line: `<Text as="div">` around a `<Stack>`. Inside
  * it, bold, italic and code keep its size: `font-medium`, `italic`, `<code>`.
  */
 export default function Text({

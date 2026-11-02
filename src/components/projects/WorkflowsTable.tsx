@@ -189,7 +189,7 @@ function toggleTooltip(triggerType: string, enabled: boolean, lifecycle: boolean
 function Count({ value, to, children }: { value: number; to: string; children: ReactNode }) {
   return (
     <Stack gap="xs">
-      <Text as="div" variant="stat-sm">{value > 0 ? <TextLink to={to}>{value}</TextLink> : <span className="text-faint">0</span>}</Text>{" "}
+      <Text as="div" variant="stat-sm">{value > 0 ? <TextLink to={to}>{value}</TextLink> : <span className="text-faint">0</span>}</Text>
       <Text as="div" variant="body-sm">{value > 0 ? children : "N/A"}</Text>
     </Stack>
   );
