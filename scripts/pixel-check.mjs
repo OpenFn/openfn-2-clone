@@ -8,7 +8,7 @@
 //
 // Writes <out-dir>/index.html: one row per changed, added or removed story.
 // Click a row to step through them full size: ← → move between stories,
-// 1–4 switch close-up / before / after / diff, F flags one, Esc closes.
+// 1–4 switch diff / close-up / before / after, F flags one, Esc closes.
 import { createServer } from 'node:http';
 import { readFile, mkdir, writeFile } from 'node:fs/promises';
 import { join, extname } from 'node:path';
@@ -157,22 +157,22 @@ td{vertical-align:top;padding:8px;border-top:1px solid #ddd}td img{max-width:640
 </style>
 <h1>Pixel check</h1>
 <p>${total} stories; ${rows.length} differ. Changed ones run smallest change first; flaky ones differ from themselves and come last.</p>
-<p>Click a row to step through full size: <b>← →</b> next story, <b>1–4</b> close-up / before / after / diff, <b>F</b> flag it, <b>Esc</b> back to the list.</p>
+<p>Click a row to step through full size: <b>← →</b> next story, <b>1–4</b> diff / close-up / before / after, <b>F</b> flag it, <b>Esc</b> back to the list.</p>
 <details><summary>Flagged stories (<span id=n>0</span>)</summary><div id=flags></div></details>
 <table><tr><th>Story</th><th>Close-up (before | after)</th></tr>
 ${rows.map((r, i) => `<tr class=row data-i=${i}><td><b>${r.id}</b><br>${r.status}${r.changed ? `<br>${r.changed} px` : ''}</td><td>${r.changed ? `<img src="img/${r.id}.crop.png" loading=lazy>` : r.status === 'removed' ? `<img src="img/${r.id}.before.png" loading=lazy>` : `<img src="img/${r.id}.after.png" loading=lazy>`}</td></tr>`).join('\n')}
 </table>
 <div id=v><div id=bar><button id=prev>←</button><span id=pos></span><button id=next>→</button><span class=id id=title></span><span id=meta></span><span class=grow></span>
-<button data-k=crop>1 Close-up</button><button data-k=before>2 Before</button><button data-k=after>3 After</button><button data-k=diff>4 Diff</button>
+<button data-k=diff>1 Diff</button><button data-k=crop>2 Close-up</button><button data-k=before>3 Before</button><button data-k=after>4 After</button>
 <button class=flag id=flag>F Flag</button><button id=close>Esc</button></div><div id=pic><img id=img></div></div>
 <script>
 const rows = ${JSON.stringify(rows)};
 const flags = new Set(JSON.parse(localStorage.getItem('pixel-flags:' + location.pathname) || '[]'));
-let i = 0, view = 'crop';
+let i = 0, view = 'diff';
 const has = (r, k) => k === 'before' ? r.status !== 'added' : k === 'after' ? r.status !== 'removed' : r.changed > 0;
 function show() {
   const r = rows[i];
-  if (!has(r, view)) view = ['crop', 'after', 'before'].find((k) => has(r, k));
+  if (!has(r, view)) view = ['diff', 'crop', 'after', 'before'].find((k) => has(r, k));
   img.src = 'img/' + r.id + '.' + view + '.png';
   title.textContent = r.id;
   meta.textContent = r.status + (r.changed ? ' · ' + r.changed + ' px' : '');
@@ -187,8 +187,8 @@ function save() {
   document.getElementById('flags').textContent = [...flags].join('\\n');
   document.querySelectorAll('tr.row').forEach((t) => t.classList.toggle('flagged', flags.has(rows[t.dataset.i].id)));
 }
-const open = (j) => { i = j; v.classList.add('open'); show(); };
-const go = (d) => { i = (i + d + rows.length) % rows.length; show(); };
+const open = (j) => { i = j; view = 'diff'; v.classList.add('open'); show(); };
+const go = (d) => { i = (i + d + rows.length) % rows.length; view = 'diff'; show(); };
 const toggleFlag = () => { const id = rows[i].id; flags.has(id) ? flags.delete(id) : flags.add(id); save(); show(); };
 document.querySelectorAll('tr.row').forEach((t) => t.onclick = () => open(+t.dataset.i));
 prev.onclick = () => go(-1); next.onclick = () => go(1); close.onclick = () => v.classList.remove('open'); flag.onclick = toggleFlag;
@@ -196,7 +196,7 @@ document.querySelectorAll('[data-k]').forEach((b) => b.onclick = () => { view = 
 addEventListener('keydown', (e) => {
   if (!v.classList.contains('open')) return;
   const k = { ArrowLeft: () => go(-1), ArrowRight: () => go(1), Escape: () => v.classList.remove('open'), f: toggleFlag,
-    1: () => { view = 'crop'; show(); }, 2: () => { view = 'before'; show(); }, 3: () => { view = 'after'; show(); }, 4: () => { view = 'diff'; show(); } }[e.key];
+    1: () => { view = 'diff'; show(); }, 2: () => { view = 'crop'; show(); }, 3: () => { view = 'before'; show(); }, 4: () => { view = 'after'; show(); } }[e.key];
   if (k) { e.preventDefault(); k(); }
 });
 save();
