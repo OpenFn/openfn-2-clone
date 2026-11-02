@@ -25,13 +25,24 @@ that Lightning drops any `set-cookie` header and adds its own security headers
 An `x-request-id` of 20 to 200 characters is passed through, or Lightning
 makes one.
 
-Lightning's own errors are `{"error": "<message>"}`, not problem documents:
+Lightning's own errors are [problem documents](./errors.md), and carry the
+same security headers:
 
-- 404 for an unknown or disabled channel, or an id that isn't a UUID.
-- 401 when the channel needs credentials and none of its methods match.
-- 502 when the destination credential can't be used, for example because it
-  has no values for the project's environment (`main` for a project that
-  doesn't set one). The request is recorded, and wasn't sent.
+- 404 `not_found` for an unknown or disabled channel, or an id that isn't a
+  UUID.
+- 401 `unauthenticated` when the channel needs credentials and none of its
+  methods match, whether credentials were sent or not. It challenges with
+  `ApiKey header="x-api-key"` when the channel takes an API key, and never
+  with Basic.
+- 502 `bad_gateway` when the destination credential can't be used, for
+  example because it has no values for the project's environment (`main` for
+  a project that doesn't set one). The request is recorded, and wasn't sent.
+- 500 `internal` when Lightning can't save the channel's snapshot.
+
+A destination that can't be reached answers 502 or 504, and one in a private
+network range answers 403 (`CHANNEL_BLOCK_PRIVATE_NETWORKS`, on by default).
+Those come from the proxy library, not Lightning's own error codes. Any status
+the destination itself answers passes through untouched.
 
 ## The channel object
 
@@ -137,8 +148,8 @@ used.
 
 Notable errors:
 
-- 409 `taken` with an entry at `#/name` when the project has a channel with
-  the name.
+- 422 `invalid` with a `taken` entry at `#/name` when the project has a
+  channel with the name.
 - 409 `concurrent_edit` when `lock_version` doesn't match.
 - 422 `invalid` with a `not_found` entry at
   `#/client_auth_method_ids/N` or `#/destination_credential_id` for an id from

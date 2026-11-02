@@ -55,7 +55,10 @@ Tokens: personal access token, or service account with `credentials:write`.
 
 Returns `{"credential": <credential>}`. You can see a credential if you own it
 or it is linked to a project whose credentials you may list. Anyone else gets
-404. A service account with `credentials:write` can see every credential.
+403 `forbidden`, whether or not it exists or the id is a UUID. A service
+account with `credentials:write` can see every credential, so only it hears
+404 `not_found` for an unknown id and 400 `invalid_parameter` for one that
+isn't a UUID.
 
 ## Create or replace a credential
 
@@ -97,16 +100,22 @@ curl -X PUT https://lightning.example.org/api/credentials/$CREDENTIAL_ID \
 Answers 201 `{"credential": <credential>}` when it creates one, 200 when it
 replaces one.
 
+Only the owner and a service account may replace a credential. An id that
+isn't a UUID answers 400 `invalid_parameter` to anyone, since anyone may
+create one.
+
 Notable errors:
 
-- 409 `id_taken` when the id belongs to a credential with a different owner,
-  or one you can't edit. Lightning never moves a credential between owners.
+- 403 `forbidden` when the id belongs to a credential you may not edit, even
+  one you can see through a project.
 - 409 `scheduled_for_deletion` when the credential is being deleted.
 - 403 `forbidden` when a person names an owner other than themselves. This is
   answered the same way whether or not the email has an account.
-- 409 `taken` when the owner already has a credential with this name.
-- 422 `invalid` with entries such as `not_found` at `#/owner`, `one_body` at
-  `#/credential_bodies`, or `not_found` or `no_access` at
+- 422 `invalid` with entries such as `taken` at `#/name` when the owner
+  already has a credential with this name, `not_allowed` at `#/owner` when a
+  replace names a different owner (Lightning never moves a credential between
+  owners), `not_found` at `#/owner`, `one_body` at `#/credential_bodies`,
+  `unknown_key` for a field not listed above, or `not_found` or `no_access` at
   `#/project_credentials/N/project_id` (the owner isn't a member of that
   project, or you can't link credentials there).
 - 503 `not_ready` with `Retry-After` when Lightning can't check the schema yet.
@@ -129,11 +138,13 @@ GET /api/credentials?project_id=:project_id
 GET /api/projects/:project_id/credentials
 ```
 
-Tokens: personal access token. Service account support is planned.
+Tokens: personal access token, or service account with `credentials:write`.
+A service account must name a project; without one it gets 403 `forbidden`.
 
 Without a project, lists your own credentials. With a project, lists every
-credential linked to it, whoever owns it. Returns
-`{"credentials": [<credential>, …]}`. Not paged.
+credential linked to it, whoever owns it; you need a role in the project, or
+support access to it. Returns `{"credentials": [<credential>, …], "links": …}`.
+Paged, by name.
 
 ## Create a credential (owned by you)
 
@@ -143,7 +154,8 @@ Status: **Public**
 POST /api/credentials
 ```
 
-Tokens: personal access token.
+Tokens: personal access token. A service account gets 403 `forbidden`; it
+creates through `PUT`, naming an owner.
 
 | Field | Type | Notes |
 | --- | --- | --- |
@@ -153,7 +165,9 @@ Tokens: personal access token.
 | `project_credentials` | array of `{project_id}` | Optional. You must be an editor or above on each project. |
 
 Answers 201 `{"credential": <credential>}`. Lightning picks the id. Prefer
-`PUT` if you need to retry safely.
+`PUT` if you need to retry safely. A name you already hold answers 422
+`invalid` with a `taken` entry at `#/name`, and it answers 503 `not_ready`
+while Lightning can't check the schema yet.
 
 ## Delete a credential
 
@@ -163,18 +177,18 @@ Status: **Public**
 DELETE /api/credentials/:id
 ```
 
-Tokens: personal access token. Only the owner can delete. Service account
-support is planned.
+Tokens: personal access token. Only the owner can delete, so a service
+account gets 403 `forbidden`. Service account support is planned.
 
-Answers 204 with no body. Someone who can see the credential but doesn't own it
-gets 403; anyone else gets 404. This also deletes a credential that is
-scheduled for deletion, which is the app's "Delete now".
+Answers 204 with no body. Anyone who doesn't own the credential gets 403
+`forbidden`, whether or not it exists or the id is a UUID; nobody hears 404.
+This also deletes a credential that is scheduled for deletion, which is the
+app's "Delete now".
 
 A credential that has been used by runs (`has_activity_in_projects`) can't be
-deleted, and should answer 409 `in_use`. Today the route doesn't check first,
-so the delete fails on the foreign key from run steps instead. The app asks
-`Lightning.Credentials.has_activity_in_projects?/1` before offering "Delete
-now".
+deleted, and answers 409 `in_use`. `Lightning.Credentials.delete_credential/2`
+checks `has_activity_in_projects?/1` first, which is also what the app asks
+before offering "Delete now".
 
 To delete a credential that has been used, schedule its deletion instead
 (below).
@@ -255,8 +269,8 @@ Notable errors:
 
 - 422 `invalid` with a `no_access` entry at `path` `project_id` when the owner
   isn't a member of the project.
-- 409 `taken` when another credential linked to the project has the same
-  `external_id`.
+- 422 `invalid` with a `taken` entry when another credential linked to the
+  project has the same `external_id`.
 
 > Implementation note: `Lightning.Credentials.update_credential/3` with a
 > `project_credentials` entry `%{"project_id" => id}`, through the `save`
