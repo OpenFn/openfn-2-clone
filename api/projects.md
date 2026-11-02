@@ -33,6 +33,17 @@ Tokens: personal access token, or service account with `projects:write`.
 
 A sandbox can be read here too, since it is a project.
 
+Notable errors:
+
+- 403 `forbidden` to a caller who isn't a member, or hasn't met the project's
+  MFA requirement, whether or not the project exists and whether or not the id
+  is a UUID. A superuser who isn't a member is refused too.
+- 404 `not_found` for an id that names no project, and 400
+  `invalid_parameter` with a `path` entry for one that isn't a UUID. Only a
+  superuser and the service account hear these.
+- 409 `scheduled_for_deletion` to a member or the service account when the
+  project is being deleted.
+
 Planned additional scope:
 
 - `id` on each member, the user id, as in the
@@ -111,8 +122,14 @@ Notable errors:
 - 422 `invalid` with a `not_found` entry at `#/members/N/email` for an email
   with no user, or `duplicate` for a user listed twice.
 - 402 `exceeds_limit` with an entry at `#/members` when the plan has no seat
-  for a member.
-- 409 `scheduled_for_deletion` when the project is being deleted.
+  for a member. A body that is also invalid answers the 422 instead.
+- 403 `forbidden` to a caller who may not replace the project, whether or not
+  it exists. A caller who isn't a superuser or the service account gets this
+  for an id that names no project too, since only they may create one.
+- 400 `invalid_parameter` with a `path` entry for an id that isn't a UUID, to
+  a superuser or the service account. Anyone else gets 403 `forbidden`.
+- 409 `scheduled_for_deletion` when the project is being deleted, to a caller
+  who could otherwise replace it.
 
 Planned additional scope:
 
@@ -125,7 +142,8 @@ Planned additional scope:
   afterwards.
 - Renaming a sandbox, or changing its colour, is also open to the owners and
   admins of the project at the top of its tree. A name a sibling already has
-  answers 409 `taken` with an entry at `#/name`, as when creating one.
+  answers 422 `invalid` with a `taken` entry at `#/name`, as when creating
+  one.
 
 ## List projects
 
@@ -135,17 +153,20 @@ Status: **Public**
 GET /api/projects
 ```
 
-Tokens: personal access token. Paged. Service account support is planned.
+Tokens: personal access token, or service account with `projects:write`.
+Paged: `page_size` defaults to 10, at most 100.
 
 Lists the projects you are a member of, not including sandboxes or projects
-scheduled for deletion, sorted by name. Each entry has the same shape as
+scheduled for deletion, sorted by name. A superuser gets only the projects
+they are a member of too. The service account gets every project on the
+instance, with the same exclusions. Each entry has the same shape as
 `GET /api/projects/:id`, without `members`.
 
 Planned additional scope:
 
-- With a service account or a superuser's token, every project on the
-  instance, including sandboxes and projects scheduled for deletion, and a `q`
-  filter on name, description and owner name. Each entry also carries
+- With a superuser's token, every project on the instance. With a service
+  account or a superuser's token, sandboxes and projects scheduled for
+  deletion too, and a `q` filter on name, description and owner name. Each entry also carries
   `inserted_at` and `owner` (the owner's `id`, `email`, `first_name` and
   `last_name`, or `null`).
 - `depth=all`: the sandboxes you can open too, at any depth, each with
@@ -421,8 +442,9 @@ the member list. To add someone who already has an account, use
 
 Notable errors:
 
-- 409 `taken` with an entry at `#/email` when the email already has an account,
-  with `existing` carrying their id, as for `POST /api/users`. A retry is safe.
+- 422 `invalid` with a `taken` entry at `#/email` when the email already has
+  an account, as for `POST /api/users`. The entry names nothing about the
+  account.
 - 402 `exceeds_limit` when the plan has no seat for a new member.
 
 > Implementation note: `Lightning.Projects.invite_collaborators/3` takes the
@@ -437,8 +459,7 @@ Notable errors:
 >   `viewer`) are all in the LiveView, not the function.
 > - It doesn't look for an existing account. The LiveView does
 >   (`InvitedCollaborators.validate_collaborators/2`). In the function a taken
->   email fails registration and returns `{:error, :user_registration_failed}`,
->   with no id for `existing`.
+>   email fails registration and returns `{:error, :user_registration_failed}`.
 
 ## Set your notifications for a project
 
@@ -548,7 +569,7 @@ to rename it.
 
 Notable errors:
 
-- 409 `taken` with an entry at `#/name` when a sibling has the name.
+- 422 `invalid` with a `taken` entry at `#/name` when a sibling has the name.
 - 402 `exceeds_limit` when the plan has no room for another sandbox.
 - 422 `invalid` when the parent is already at the instance's maximum nesting
   depth.
