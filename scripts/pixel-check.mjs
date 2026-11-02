@@ -11,7 +11,7 @@
 // 1–4 switch diff / close-up / before / after, F flags one, Esc closes.
 import { createServer } from 'node:http';
 import { readFile, mkdir, writeFile } from 'node:fs/promises';
-import { join, extname } from 'node:path';
+import { join, extname, resolve, sep } from 'node:path';
 import { chromium } from 'playwright';
 import { PNG } from 'pngjs';
 
@@ -31,7 +31,10 @@ if (!outDir) {
 const types = { '.html': 'text/html', '.js': 'text/javascript', '.mjs': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.svg': 'image/svg+xml', '.woff2': 'font/woff2', '.png': 'image/png' };
 function serve(dir) {
   const server = createServer(async (req, res) => {
-    const path = join(dir, decodeURIComponent(new URL(req.url, 'http://x').pathname));
+    const root = resolve(dir);
+    const path = resolve(join(root, decodeURIComponent(new URL(req.url, 'http://x').pathname)));
+    // Only files inside the Storybook build.
+    if (path !== root && !path.startsWith(root + sep)) return res.writeHead(404).end();
     try {
       const body = await readFile(path.endsWith('/') ? join(path, 'index.html') : path);
       res.writeHead(200, { 'content-type': types[extname(path)] ?? 'application/octet-stream' });
@@ -40,7 +43,7 @@ function serve(dir) {
       res.writeHead(404).end();
     }
   });
-  return new Promise((ok) => server.listen(0, () => ok(server)));
+  return new Promise((ok) => server.listen(0, '127.0.0.1', () => ok(server)));
 }
 
 const storyIds = async (dir) =>
@@ -50,14 +53,16 @@ const storyIds = async (dir) =>
 
 async function shoot(browser, port, id) {
   const page = await browser.newPage({ viewport: { width: 1280, height: 800 }, reducedMotion: 'reduce' });
+  try {
   // Stories that show "3 minutes ago" would differ run to run otherwise.
   await page.clock.setFixedTime(new Date('2026-10-15T12:00:00Z'));
   await page.goto(`http://localhost:${port}/iframe.html?id=${id}&viewMode=story`, { waitUntil: 'networkidle' });
   await page.addStyleTag({ content: '*,*::before,*::after{animation:none!important;transition:none!important;caret-color:transparent!important}' });
   await page.evaluate(() => document.fonts.ready);
-  const png = await page.screenshot({ fullPage: true });
-  await page.close();
-  return png;
+  return await page.screenshot({ fullPage: true });
+  } finally {
+    await page.close();
+  }
 }
 
 // Changed-pixel count and a red-on-faded diff image; sizes that differ count as all changed.
@@ -113,9 +118,21 @@ let done = 0;
 const queue = [...all];
 await Promise.all(Array.from({ length: 4 }, async () => {
   for (let id; (id = queue.shift()); ) {
+    if (++done % 100 === 0) console.log(`${done}/${all.length}`);
+    try {
+      await compare(id);
+    } catch (e) {
+      // One story failing to load shouldn't lose the whole run.
+      rows.push({ id, status: 'error', changed: 0 });
+      console.error(`${id}: ${e.message.split('\n')[0]}`);
+    }
+  }
+}));
+
+async function compare(id) {
     const a = idsA.includes(id) ? await shoot(browser, sa.address().port, id) : null;
     const b = idsB.includes(id) ? await shoot(browser, sb.address().port, id) : null;
-    if (a && b && a.equals(b)) { done++; continue; }
+    if (a && b && a.equals(b)) return;
     let status = !a ? 'added' : !b ? 'removed' : 'changed', changed = 0;
     // A story that differs from itself (Monaco, random keys) can't be judged.
     if (a && b && !a.equals(await shoot(browser, sa.address().port, id))) status = 'flaky';
@@ -124,14 +141,12 @@ await Promise.all(Array.from({ length: 4 }, async () => {
     if (a && b) {
       const d = diff(a, b);
       changed = d.changed;
-      if (!changed) { done++; continue; } // encoder noise, same pixels
+      if (!changed) return; // encoder noise, same pixels
       await writeFile(join(outDir, 'img', `${id}.diff.png`), d.image);
       await writeFile(join(outDir, 'img', `${id}.crop.png`), d.crop);
     }
     rows.push({ id, status, changed });
-    if (++done % 100 === 0) console.log(`${done}/${all.length}`);
-  }
-}));
+}
 await browser.close();
 sa.close();
 sb.close();
@@ -140,7 +155,7 @@ await writeReport(outDir, rows, all.length);
 console.log(`${rows.length} of ${all.length} stories differ: ${join(outDir, 'index.html')}`);
 
 async function writeReport(dir, rows, total) {
-  const order = { changed: 0, added: 1, removed: 2, flaky: 3 };
+  const order = { changed: 0, added: 1, removed: 2, flaky: 3, error: 4 };
   rows.sort((x, y) => order[x.status] - order[y.status] || x.changed - y.changed);
   await writeFile(join(dir, 'rows.json'), JSON.stringify({ rows, total }));
   await writeFile(join(dir, 'index.html'), `<!doctype html><meta charset="utf-8"><title>Pixel check</title>
@@ -156,7 +171,7 @@ td{vertical-align:top;padding:8px;border-top:1px solid #ddd}td img{max-width:640
 #flags{white-space:pre;background:#f3f4f6;padding:8px}
 </style>
 <h1>Pixel check</h1>
-<p>${total} stories; ${rows.length} differ. Changed ones run smallest change first; flaky ones differ from themselves and come last.</p>
+<p>${total} stories; ${rows.length} differ. Changed ones run smallest change first; flaky ones differ from themselves, and error ones didn't load; both come last.</p>
 <p>Click a row to step through full size: <b>← →</b> next story, <b>1–4</b> diff / close-up / before / after, <b>F</b> flag it, <b>Esc</b> back to the list.</p>
 <details><summary>Flagged stories (<span id=n>0</span>)</summary><div id=flags></div></details>
 <table><tr><th>Story</th><th>Close-up (before | after)</th></tr>
@@ -191,11 +206,11 @@ const open = (j) => { i = j; view = 'diff'; v.classList.add('open'); show(); };
 const go = (d) => { i = (i + d + rows.length) % rows.length; view = 'diff'; show(); };
 const toggleFlag = () => { const id = rows[i].id; flags.has(id) ? flags.delete(id) : flags.add(id); save(); show(); };
 document.querySelectorAll('tr.row').forEach((t) => t.onclick = () => open(+t.dataset.i));
-prev.onclick = () => go(-1); next.onclick = () => go(1); close.onclick = () => v.classList.remove('open'); flag.onclick = toggleFlag;
+prev.onclick = () => go(-1); next.onclick = () => go(1); document.getElementById('close').onclick = () => v.classList.remove('open'); flag.onclick = toggleFlag;
 document.querySelectorAll('[data-k]').forEach((b) => b.onclick = () => { view = b.dataset.k; show(); });
 addEventListener('keydown', (e) => {
   if (!v.classList.contains('open')) return;
-  const k = { ArrowLeft: () => go(-1), ArrowRight: () => go(1), Escape: () => v.classList.remove('open'), f: toggleFlag,
+  const k = { ArrowLeft: () => go(-1), ArrowRight: () => go(1), Escape: () => v.classList.remove('open'), f: toggleFlag, F: toggleFlag,
     1: () => { view = 'diff'; show(); }, 2: () => { view = 'crop'; show(); }, 3: () => { view = 'before'; show(); }, 4: () => { view = 'after'; show(); } }[e.key];
   if (k) { e.preventDefault(); k(); }
 });
