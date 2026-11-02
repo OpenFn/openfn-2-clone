@@ -148,8 +148,13 @@ await writeReport(outDir, rows, all.length);
 console.log(`${rows.length} of ${all.length} stories differ: ${join(outDir, 'index.html')}`);
 
 async function writeReport(dir, rows, total) {
-  const order = { changed: 0, added: 1, removed: 2, flaky: 3, error: 4 };
+  // Under this many changed pixels it's almost always an edge drawn half a
+  // pixel differently (a toggle's curve, an underline), not something you'd see.
+  const MINOR = 50;
+  for (const r of rows) if (r.status === 'changed' && r.changed < MINOR) r.status = 'minor';
+  const order = { changed: 0, added: 1, removed: 2, minor: 3, flaky: 4, error: 5 };
   rows.sort((x, y) => order[x.status] - order[y.status] || x.changed - y.changed);
+  const firstMinor = rows.findIndex((r) => r.status === 'minor');
   await writeFile(join(dir, 'index.html'), `<!doctype html><meta charset="utf-8"><title>Pixel check</title>
 <style>
 body{font:14px system-ui;margin:24px;color:#111}
@@ -163,11 +168,11 @@ td{vertical-align:top;padding:8px;border-top:1px solid #ddd}td img{max-width:640
 #flags{white-space:pre;background:#f3f4f6;padding:8px}
 </style>
 <h1>Pixel check</h1>
-<p>${total} stories; ${rows.length} differ. Changed ones run smallest change first; flaky ones differ from themselves, and error ones didn't load; both come last.</p>
+<p>${total} stories; ${rows.length} differ. Changed ones run smallest change first. Minor ones (under 50 px, almost always invisible edge shading) come after, then flaky ones that differ from themselves, and error ones that didn't load.</p>
 <p>Click a row to step through full size: <b>← →</b> next story, <b>1–4</b> diff / close-up / before / after, <b>F</b> flag it, <b>Esc</b> back to the list.</p>
 <details><summary>Flagged stories (<span id=n>0</span>)</summary><div id=flags></div></details>
 <table><tr><th>Story</th><th>Close-up (before | after)</th></tr>
-${rows.map((r, i) => `<tr class=row data-i=${i}><td><b>${r.id}</b><br>${r.status}${r.changed ? `<br>${r.changed} px` : ''}</td><td>${r.changed ? `<img src="img/${r.id}.crop.png" loading=lazy>` : r.status === 'error' ? '' : r.status === 'removed' ? `<img src="img/${r.id}.before.png" loading=lazy>` : `<img src="img/${r.id}.after.png" loading=lazy>`}</td></tr>`).join('\n')}
+${rows.map((r, i) => `${i === firstMinor ? '<tr><th colspan=2 style="text-align:left;padding-top:24px">Minor: probably invisible (under 50 px)</th></tr>' : ''}<tr class=row data-i=${i}><td><b>${r.id}</b><br>${r.status}${r.changed ? `<br>${r.changed} px` : ''}</td><td>${r.changed ? `<img src="img/${r.id}.crop.png" loading=lazy>` : r.status === 'error' ? '' : r.status === 'removed' ? `<img src="img/${r.id}.before.png" loading=lazy>` : `<img src="img/${r.id}.after.png" loading=lazy>`}</td></tr>`).join('\n')}
 </table>
 <div id=v><div id=bar><button id=prev>←</button><span id=pos></span><button id=next>→</button><span class=id id=title></span><span id=meta></span><span class=grow></span>
 <button data-k=diff>1 Diff</button><button data-k=crop>2 Close-up</button><button data-k=before>3 Before</button><button data-k=after>4 After</button>
