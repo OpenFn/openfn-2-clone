@@ -1,7 +1,7 @@
 # Workflows
 
-Tokens: personal access token. Creating, changing and deleting need editor or
-above. Service account support is planned.
+Tokens: personal access token, or service account with `projects:write`.
+Creating, changing and deleting need editor or above.
 
 ## The workflow object
 
@@ -78,7 +78,9 @@ GET /api/projects/:project_id/workflows
 ```
 
 Returns `{"workflows": [<workflow>, …]}` for every project you can access, or
-for one project. Not paged.
+for one project. Not paged. The service account can access every project. A
+`project_id` you may not access answers 403 `forbidden`, whether or not the
+project exists; see [who hears 404](./errors.md#who-hears-404).
 
 Planned additional scope:
 
@@ -119,6 +121,12 @@ GET /api/projects/:project_id/workflows/:id
 
 Returns `{"workflow": <workflow>}`.
 
+On the nested route, a workflow that isn't in the path's project, or is marked
+deleted, answers 404 to a caller who can access the project. On
+`/api/workflows/:id`, a caller who may not access the workflow's project
+answers 403 `forbidden`, and so does an unknown or malformed id, unless the
+caller is the service account, which hears 404 or 400.
+
 ## Create a workflow
 
 Status: **Public**
@@ -147,8 +155,11 @@ replaces those ids with new UUIDs in the response.
 Rules: every job and trigger has an id, edges form no cycle, at most one
 trigger is enabled, and exactly one enabled edge leaves the triggers. An edge
 from a trigger must be `always` or `js_expression`. Answers 201
-`{"workflow": <workflow>}`. Enabling a trigger beyond the plan's limit answers
-402 `exceeds_limit`.
+`{"workflow": <workflow>}`. A name another workflow in the project has, or a
+job or trigger id another workflow uses, answers 422 `invalid` with a `taken`
+entry. Every error in the body comes back in one 422. Enabling a trigger beyond
+the plan's limit answers 402 `exceeds_limit`, checked only once the body is
+valid.
 
 Planned additional scope: `template_id`, to start from a
 [workflow template](#list-workflow-templates) instead of sending `jobs`,
@@ -181,10 +192,16 @@ PUT /api/projects/:project_id/workflows/:id
 Send the fields to change. A list you send (`jobs`, `triggers`, `edges`)
 replaces the stored one, so send every item you want to keep. New jobs and
 triggers need UUIDs you generate. Triggers can be changed or added but not
-removed. Answers 200 `{"workflow": <workflow>}`.
+removed. A body `id` or `project_id` that differs from the path answers 422.
+Answers 200 `{"workflow": <workflow>}`.
 
-A workflow open in the editor answers 409 `being_edited`. A save that loses a
-race with another change answers 409 `concurrent_edit`.
+`PUT` is an update like `PATCH`: it never creates, so an unknown id answers
+404 to a caller who may change the project's workflows. A caller who may not
+answers 403 `forbidden` whatever the id.
+
+A workflow open in the editor answers 409 `being_edited`, before the body is
+read. A save that loses a race with another change answers 409
+`concurrent_edit`.
 
 ## Delete a workflow
 
