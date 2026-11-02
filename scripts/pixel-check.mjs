@@ -1,10 +1,9 @@
-// Screenshot every story in two built Storybooks and list the ones whose
-// pixels differ, so a sweep that should change nothing can be checked by
-// looking only at what did change.
+// A local, Chromatic-style visual check: screenshot every story in two built
+// Storybooks and list only the ones whose pixels differ, so a change that
+// should look the same is reviewed by what actually changed on screen.
 //
 //   npx storybook build -o <dir>   (once per commit)
 //   node scripts/pixel-check.mjs <before-dir> <after-dir> <out-dir>
-//   node scripts/pixel-check.mjs --report <out-dir>   (rebuild the page only)
 //
 // Writes <out-dir>/index.html: one row per changed, added or removed story.
 // Click a row to step through them full size: ← → move between stories,
@@ -15,13 +14,6 @@ import { join, extname, resolve, sep } from 'node:path';
 import { chromium } from 'playwright';
 import { PNG } from 'pngjs';
 
-if (process.argv[2] === '--report') {
-  // Rebuild index.html from a finished run's rows.json, without reshooting.
-  const dir = process.argv[3];
-  const { rows, total } = JSON.parse(await readFile(join(dir, 'rows.json'), 'utf8'));
-  await writeReport(dir, rows, total);
-  process.exit(0);
-}
 const [beforeDir, afterDir, outDir] = process.argv.slice(2);
 if (!outDir) {
   console.error('usage: pixel-check.mjs <before-dir> <after-dir> <out-dir>');
@@ -54,18 +46,19 @@ const storyIds = async (dir) =>
 async function shoot(browser, port, id) {
   const page = await browser.newPage({ viewport: { width: 1280, height: 800 }, reducedMotion: 'reduce' });
   try {
-  // Stories that show "3 minutes ago" would differ run to run otherwise.
-  await page.clock.setFixedTime(new Date('2026-10-15T12:00:00Z'));
-  await page.goto(`http://localhost:${port}/iframe.html?id=${id}&viewMode=story`, { waitUntil: 'networkidle' });
-  await page.addStyleTag({ content: '*,*::before,*::after{animation:none!important;transition:none!important;caret-color:transparent!important}' });
-  await page.evaluate(() => document.fonts.ready);
-  return await page.screenshot({ fullPage: true });
+    // Stories that show "3 minutes ago" would differ run to run otherwise.
+    await page.clock.setFixedTime(new Date('2026-10-15T12:00:00Z'));
+    await page.goto(`http://localhost:${port}/iframe.html?id=${id}&viewMode=story`, { waitUntil: 'networkidle' });
+    await page.addStyleTag({ content: '*,*::before,*::after{animation:none!important;transition:none!important;caret-color:transparent!important}' });
+    await page.evaluate(() => document.fonts.ready);
+    return await page.screenshot({ fullPage: true });
   } finally {
     await page.close();
   }
 }
 
-// Changed-pixel count and a red-on-faded diff image; sizes that differ count as all changed.
+// Changed-pixel count and a red-on-faded diff image. Where one screenshot is
+// taller or wider, the part only one of them covers counts as changed.
 function diff(a, b) {
   const A = PNG.sync.read(a), B = PNG.sync.read(b);
   const w = Math.max(A.width, B.width), h = Math.max(A.height, B.height);
@@ -130,22 +123,22 @@ await Promise.all(Array.from({ length: 4 }, async () => {
 }));
 
 async function compare(id) {
-    const a = idsA.includes(id) ? await shoot(browser, sa.address().port, id) : null;
-    const b = idsB.includes(id) ? await shoot(browser, sb.address().port, id) : null;
-    if (a && b && a.equals(b)) return;
-    let status = !a ? 'added' : !b ? 'removed' : 'changed', changed = 0;
-    // A story that differs from itself (Monaco, random keys) can't be judged.
-    if (a && b && !a.equals(await shoot(browser, sa.address().port, id))) status = 'flaky';
-    if (a) await writeFile(join(outDir, 'img', `${id}.before.png`), a);
-    if (b) await writeFile(join(outDir, 'img', `${id}.after.png`), b);
-    if (a && b) {
-      const d = diff(a, b);
-      changed = d.changed;
-      if (!changed) return; // encoder noise, same pixels
-      await writeFile(join(outDir, 'img', `${id}.diff.png`), d.image);
-      await writeFile(join(outDir, 'img', `${id}.crop.png`), d.crop);
-    }
-    rows.push({ id, status, changed });
+  const a = idsA.includes(id) ? await shoot(browser, sa.address().port, id) : null;
+  const b = idsB.includes(id) ? await shoot(browser, sb.address().port, id) : null;
+  if (a && b && a.equals(b)) return;
+  let status = !a ? 'added' : !b ? 'removed' : 'changed', changed = 0;
+  // A story that differs from itself (Monaco, random keys) can't be judged.
+  if (a && b && !a.equals(await shoot(browser, sa.address().port, id))) status = 'flaky';
+  if (a && b) {
+    const d = diff(a, b);
+    changed = d.changed;
+    if (!changed) return; // encoder noise, same pixels
+    await writeFile(join(outDir, 'img', `${id}.diff.png`), d.image);
+    await writeFile(join(outDir, 'img', `${id}.crop.png`), d.crop);
+  }
+  if (a) await writeFile(join(outDir, 'img', `${id}.before.png`), a);
+  if (b) await writeFile(join(outDir, 'img', `${id}.after.png`), b);
+  rows.push({ id, status, changed });
 }
 await browser.close();
 sa.close();
@@ -157,7 +150,6 @@ console.log(`${rows.length} of ${all.length} stories differ: ${join(outDir, 'ind
 async function writeReport(dir, rows, total) {
   const order = { changed: 0, added: 1, removed: 2, flaky: 3, error: 4 };
   rows.sort((x, y) => order[x.status] - order[y.status] || x.changed - y.changed);
-  await writeFile(join(dir, 'rows.json'), JSON.stringify({ rows, total }));
   await writeFile(join(dir, 'index.html'), `<!doctype html><meta charset="utf-8"><title>Pixel check</title>
 <style>
 body{font:14px system-ui;margin:24px;color:#111}
@@ -175,7 +167,7 @@ td{vertical-align:top;padding:8px;border-top:1px solid #ddd}td img{max-width:640
 <p>Click a row to step through full size: <b>← →</b> next story, <b>1–4</b> diff / close-up / before / after, <b>F</b> flag it, <b>Esc</b> back to the list.</p>
 <details><summary>Flagged stories (<span id=n>0</span>)</summary><div id=flags></div></details>
 <table><tr><th>Story</th><th>Close-up (before | after)</th></tr>
-${rows.map((r, i) => `<tr class=row data-i=${i}><td><b>${r.id}</b><br>${r.status}${r.changed ? `<br>${r.changed} px` : ''}</td><td>${r.changed ? `<img src="img/${r.id}.crop.png" loading=lazy>` : r.status === 'removed' ? `<img src="img/${r.id}.before.png" loading=lazy>` : `<img src="img/${r.id}.after.png" loading=lazy>`}</td></tr>`).join('\n')}
+${rows.map((r, i) => `<tr class=row data-i=${i}><td><b>${r.id}</b><br>${r.status}${r.changed ? `<br>${r.changed} px` : ''}</td><td>${r.changed ? `<img src="img/${r.id}.crop.png" loading=lazy>` : r.status === 'error' ? '' : r.status === 'removed' ? `<img src="img/${r.id}.before.png" loading=lazy>` : `<img src="img/${r.id}.after.png" loading=lazy>`}</td></tr>`).join('\n')}
 </table>
 <div id=v><div id=bar><button id=prev>←</button><span id=pos></span><button id=next>→</button><span class=id id=title></span><span id=meta></span><span class=grow></span>
 <button data-k=diff>1 Diff</button><button data-k=crop>2 Close-up</button><button data-k=before>3 Before</button><button data-k=after>4 After</button>
@@ -184,11 +176,12 @@ ${rows.map((r, i) => `<tr class=row data-i=${i}><td><b>${r.id}</b><br>${r.status
 const rows = ${JSON.stringify(rows)};
 const flags = new Set(JSON.parse(localStorage.getItem('pixel-flags:' + location.pathname) || '[]'));
 let i = 0, view = 'diff';
-const has = (r, k) => k === 'before' ? r.status !== 'added' : k === 'after' ? r.status !== 'removed' : r.changed > 0;
+const has = (r, k) => r.status === 'error' ? false : k === 'before' ? r.status !== 'added' : k === 'after' ? r.status !== 'removed' : r.changed > 0;
 function show() {
   const r = rows[i];
   if (!has(r, view)) view = ['diff', 'crop', 'after', 'before'].find((k) => has(r, k));
-  img.src = 'img/' + r.id + '.' + view + '.png';
+  img.hidden = !view;
+  if (view) img.src = 'img/' + r.id + '.' + view + '.png';
   title.textContent = r.id;
   meta.textContent = r.status + (r.changed ? ' · ' + r.changed + ' px' : '');
   pos.textContent = (i + 1) + ' / ' + rows.length;
