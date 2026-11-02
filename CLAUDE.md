@@ -1,8 +1,9 @@
 # CLAUDE.md
 
 A React replica of OpenFn Lightning's UI, built page by page from the
-behaviour audit in `annotations/` (copied from OpenFn/lightning; `SOURCE.md`
-says which commit). It is becoming the frontend that replaces Lightning's
+behaviour audit in `annotations/` (a copy; the current ones are on
+OpenFn/lightning branch `experiment/overnight-1`, and `SOURCE.md` says which
+commit this copy is from). It is becoming the frontend that replaces Lightning's
 LiveView UI. React, TypeScript, Vite, Tailwind 4.
 
 **No backend.** Pages render from fixtures in `src/mock-data/`; save, delete
