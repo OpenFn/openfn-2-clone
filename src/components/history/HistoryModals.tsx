@@ -7,6 +7,7 @@ import ConfirmModal from "../primitives/ConfirmModal";
 import Modal from "../primitives/Modal";
 import { Field, Radio } from "../primitives/Inputs";
 import Text from "../primitives/Text";
+import { Stack } from "../primitives/Stack";
 
 const plural = (n: number) => (n === 1 ? "" : "s");
 
@@ -94,9 +95,11 @@ function BulkModal({
         )
       }
     >
-      <Text as="div" tone="muted" className="space-y-3">
-        {confirm.error && <Alert tone="danger">{errorMessage(confirm.error)}</Alert>}
-        {children}
+      <Text as="div" tone="muted">
+        <Stack gap="md">
+          {confirm.error && <Alert tone="danger">{errorMessage(confirm.error)}</Alert>}
+          {children}
+        </Stack>
       </Text>
       {allLabel && (
         <div className="mt-5 grid grid-cols-2 gap-3">

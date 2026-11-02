@@ -10,6 +10,7 @@ import Popover from "../primitives/Popover";
 import Toggle from "../primitives/Toggle";
 import { ANNOTATIONS_PANEL_WIDTH } from "./AnnotationsPanel";
 import Tooltip from "../primitives/Tooltip";
+import { Stack } from "../primitives/Stack";
 
 /**
  * Floating settings button in the bottom-right corner. Its panel opens and
@@ -44,7 +45,7 @@ export default function SettingsMenu() {
         {(close) => (
           // The panel is portalled out of the root, so it marks itself as
           // devtools too: hovering it mustn't change the annotation shown.
-          <div data-devtools aria-label="Settings" className="space-y-4">
+          <Stack gap="md" data-devtools aria-label="Settings">
             <div className="flex items-center justify-between">
               <Heading size="sm">Settings</Heading>
               <CloseButton label="Close settings" size="xs" onClick={close} />
@@ -57,7 +58,7 @@ export default function SettingsMenu() {
             />
             <div className="border-t border-subtle pt-4">
               <Field group label="Theme">
-                  <div className="space-y-2">
+                <Stack gap="sm">
                   {themes.map((theme) => (
                     <Radio
                       key={theme.id}
@@ -68,10 +69,10 @@ export default function SettingsMenu() {
                       hint={theme.description}
                     />
                   ))}
-                </div>
+                </Stack>
               </Field>
             </div>
-          </div>
+          </Stack>
         )}
       </Popover>
     </div>

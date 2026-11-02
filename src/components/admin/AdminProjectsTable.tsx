@@ -1,5 +1,6 @@
 import type { AdminProjectRow } from "../../types/admin";
 import SearchInput from "../primitives/SearchInput";
+import { Stack } from "../primitives/Stack";
 import ButtonMenu from "../primitives/ButtonMenu";
 import { MenuItem } from "../primitives/Menu";
 import { Table, Td, Th, Tr } from "../primitives/Table";
@@ -39,9 +40,8 @@ export default function AdminProjectsTable({
   });
 
   return (
-    <>
-      {/* eslint-disable-next-line local/primitive-classname -- debt: F525 margin (mb-4) */}
-      <SearchInput value={filter} onChange={setFilter} placeholder="Filter projects..." className="mb-4 max-w-sm" />
+    <Stack>
+      <SearchInput value={filter} onChange={setFilter} placeholder="Filter projects..." className="max-w-sm" />
       <Table
         id="projects"
         header={
@@ -77,6 +77,6 @@ export default function AdminProjectsTable({
           );
         })}
       </Table>
-    </>
+    </Stack>
   );
 }

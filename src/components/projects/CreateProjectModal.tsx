@@ -5,6 +5,7 @@ import Text from "../primitives/Text";
 import { urlSafeName } from "../../utils/format";
 import { useForm } from "../../utils/useForm";
 import { blank } from "../../utils/validate";
+import { Stack } from "../primitives/Stack";
 
 /**
  * "Create a new project" (DashboardLive.ProjectCreationModal): Name, with
@@ -54,12 +55,12 @@ export default function CreateProjectModal({
         {...form.fieldProps("rawName")}
         badgeLabel="Your project will be named"
       />
-      <div className="space-y-2">
+      <Stack gap="sm">
         <TextArea id="project_description" label="Description" {...form.fieldProps("description")} />
         <Text as="p" variant="body-sm" tone="muted">
           A short description of a project [max 240 characters]
         </Text>
-      </div>
+      </Stack>
     </FormModal>
   );
 }

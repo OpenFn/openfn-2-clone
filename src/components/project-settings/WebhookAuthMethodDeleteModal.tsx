@@ -3,6 +3,7 @@ import ConfirmModal from "../primitives/ConfirmModal";
 import { UsageLinks } from "./LinkedUsageModal";
 import { byName } from "./usageRefs";
 import type { WebhookAuthMethodRow } from "../../types/project-settings";
+import { Stack } from "../primitives/Stack";
 
 interface Props {
   authMethod: WebhookAuthMethodRow;
@@ -48,13 +49,13 @@ export default function WebhookAuthMethodDeleteModal({ authMethod, onCancel, onD
       )}
       {channels.length > 0 && (
         <Alert tone="danger" header={`${countLabel(channels.length, "channel")} will accept unauthenticated requests`}>
-          <div className="space-y-2">
+          <Stack gap="sm">
             <UsageLinks refs={byName(channels)} />
             <p>
               These channels stay enabled and keep forwarding requests to their destination with the project
               credential attached. Add another client auth method, or disable the channels, before deleting this one.
             </p>
-          </div>
+          </Stack>
         </Alert>
       )}
     </ConfirmModal>

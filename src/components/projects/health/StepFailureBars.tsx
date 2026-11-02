@@ -4,6 +4,7 @@ import { cn } from "../../../utils/cn";
 import { EMPTY, FAILED, UNATTRIBUTED, adaptorLabel } from "./palette";
 import Text from "../../primitives/Text";
 import Tooltip from "../../primitives/Tooltip";
+import { Stack } from "../../primitives/Stack";
 
 const NO_STEP = "no-step";
 
@@ -38,7 +39,7 @@ export default function StepFailureBars({
     <div className="lg:relative lg:min-h-64 lg:flex-1">
       <ul className="relative -mr-6 flex max-h-64 flex-col gap-6 overflow-y-auto pr-4 lg:absolute lg:inset-0 lg:max-h-none">
         {rows.map(({ key, label, adaptor, count }) => (
-          <li key={key} className="flex flex-col gap-2">
+          <Stack as="li" gap="sm" key={key}>
             <Text as="div" className="flex items-baseline justify-between gap-4">
               <div className="flex min-w-0 flex-col gap-1">
                 <Tooltip content={label}>
@@ -54,7 +55,7 @@ export default function StepFailureBars({
                 style={{ width: `${(count / max) * 100}%`, backgroundColor: key === NO_STEP ? UNATTRIBUTED : FAILED }}
               />
             </div>
-          </li>
+          </Stack>
         ))}
       </ul>
     </div>

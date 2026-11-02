@@ -11,6 +11,7 @@ import Tabs from "../primitives/Tabs";
 import Text from "../primitives/Text";
 import TextLink from "../primitives/TextLink";
 import Section from "../primitives/Section";
+import { Stack } from "../primitives/Stack";
 import ProjectsPicker from "./ProjectsPicker";
 import { adaptorIconUrl } from "../../utils/adaptors";
 import { assetUrl } from "../../utils/assets";
@@ -489,7 +490,7 @@ export default function CredentialFormModal({
             />
           }
         />
-        <div className="space-y-6">
+        <Stack gap="lg">
           <TextInput
             id="environment-name-input"
             label="Environment name"
@@ -534,7 +535,7 @@ export default function CredentialFormModal({
               onChange={(e) => patchEnv(env.key, { body: e.target.value })}
             />
           ) : (
-            <div className="space-y-6">
+            <Stack gap="lg">
               {fields.map((f) => (
                 <SchemaInput
                   key={`${env.key}-${f.key}`}
@@ -549,9 +550,9 @@ export default function CredentialFormModal({
                   }}
                 />
               ))}
-            </div>
+            </Stack>
           )}
-        </div>
+        </Stack>
         {envs.length > 1 && (
           <Button variant="secondary" size="sm" onClick={() => setConfirmingEnvDelete(true)} icon="hero-trash">
             Delete environment
@@ -710,11 +711,12 @@ function OauthFields({
     status = (
       <>
         <Alert tone="warning" header="Reauthentication Required">
-          <p>You've changed the permissions for this credential.</p>
-          {/* eslint-disable-next-line local/primitive-classname -- debt: F525 margin (mt-2) */}
-          <Text as="p" className="mt-2">
-            Please reauthenticate with {client.name} to apply these changes.
-          </Text>
+          <Stack gap="sm">
+            <p>You've changed the permissions for this credential.</p>
+            <Text as="p">
+              Please reauthenticate with {client.name} to apply these changes.
+            </Text>
+          </Stack>
         </Alert>
         {signInButton("Reauthenticate")}
       </>
@@ -747,11 +749,12 @@ function OauthFields({
     status = (
       <>
         <Alert tone="warning" header={`${client.name} is Having Issues`}>
-          <p>{client.name} is experiencing technical difficulties.</p>
-          {/* eslint-disable-next-line local/primitive-classname -- debt: F525 margin (mt-2) */}
-          <Text as="p" className="mt-2">
-            This is temporary - please try again in a few minutes.
-          </Text>
+          <Stack gap="sm">
+            <p>{client.name} is experiencing technical difficulties.</p>
+            <Text as="p">
+              This is temporary - please try again in a few minutes.
+            </Text>
+          </Stack>
         </Alert>
         {signInButton("Try Again Later")}
       </>
@@ -771,6 +774,7 @@ function OauthFields({
   }
 
   return (
+    // eslint-disable-next-line no-restricted-syntax -- debt: F558 a child would change in a flex column
     <div className="space-y-4">
       {scopes.length > 0 && (
         <Section

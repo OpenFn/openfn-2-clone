@@ -58,10 +58,10 @@ export default function ChannelsTable({
             <Td wrap maxWidth={60} className={cn("font-medium", channel.enabled ? "text-strong" : "text-faint")}>
               <span id={`channel-name-${channel.id}`}>{channel.name}</span>
             </Td>
-            <Td maxWidth={80}>
+            <Td wrap maxWidth={80}>
               <div className="flex items-center gap-1.5 font-mono text-muted">
                 <span className="hero-arrow-right-start-on-rectangle h-4 w-4 shrink-0 text-faint" />
-                <span className="min-w-0 wrap-break-word">{channel.destinationUrl}</span>
+                <span className="min-w-0">{channel.destinationUrl}</span>
               </div>
               <ProxyUrlCopy url={channel.proxyUrl} icon className="mt-1" />
             </Td>

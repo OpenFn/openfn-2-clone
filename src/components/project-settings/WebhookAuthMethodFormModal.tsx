@@ -13,6 +13,7 @@ import { errorMessage } from "../../utils/errors";
 import { useAction } from "../../utils/useAction";
 import { useForm } from "../../utils/useForm";
 import { blank } from "../../utils/validate";
+import { Stack } from "../primitives/Stack";
 
 interface Props {
   /** Omit to create a new method (starts at the "choose a type" step). */
@@ -120,31 +121,33 @@ export default function WebhookAuthMethodFormModal({ authMethod, onCancel, onSav
             void reveal.run();
           }}
         >
-          <Text as="div" className="space-y-4">
-            <p>
-              You're required to reauthenticate yourself before viewing the webhook{" "}
-              {authType === "basic" ? "Password" : "API Key"}
-            </p>
-            <TextInput
-              id="user_password"
-              type="password"
-              label="Password"
-              autoComplete="new-password"
-              value={reauthValues.password}
-              onChange={(e) => setReauthValues({ ...reauthValues, password: e.target.value })}
-            />
-            <div className="flex items-center gap-2 text-muted">
-              <hr className="flex-1 border-strong" />
-              OR
-              <hr className="flex-1 border-strong" />
-            </div>
-            <TextInput
-              id="user_code"
-              label="2FA Code"
-              inputMode="numeric"
-              value={reauthValues.code}
-              onChange={(e) => setReauthValues({ ...reauthValues, code: e.target.value })}
-            />
+          <Text as="div">
+            <Stack gap="md">
+              <p>
+                You're required to reauthenticate yourself before viewing the webhook{" "}
+                {authType === "basic" ? "Password" : "API Key"}
+              </p>
+              <TextInput
+                id="user_password"
+                type="password"
+                label="Password"
+                autoComplete="new-password"
+                value={reauthValues.password}
+                onChange={(e) => setReauthValues({ ...reauthValues, password: e.target.value })}
+              />
+              <div className="flex items-center gap-2 text-muted">
+                <hr className="flex-1 border-strong" />
+                OR
+                <hr className="flex-1 border-strong" />
+              </div>
+              <TextInput
+                id="user_code"
+                label="2FA Code"
+                inputMode="numeric"
+                value={reauthValues.code}
+                onChange={(e) => setReauthValues({ ...reauthValues, code: e.target.value })}
+              />
+            </Stack>
           </Text>
         </Form>
       </Modal>
@@ -163,7 +166,7 @@ export default function WebhookAuthMethodFormModal({ authMethod, onCancel, onSav
           </Button>
         }
       >
-        <div className="space-y-4">
+        <Stack>
           {next.error && <Alert tone="danger">{errorMessage(next.error)}</Alert>}
           <RadioCards
             aria-label="Authentication type"
@@ -174,7 +177,7 @@ export default function WebhookAuthMethodFormModal({ authMethod, onCancel, onSav
               { value: "api", icon: "hero-code-bracket-square", label: "API Key Authentication (‘x-api-key’ header)" },
             ]}
           />
-        </div>
+        </Stack>
       </Modal>
     );
   }

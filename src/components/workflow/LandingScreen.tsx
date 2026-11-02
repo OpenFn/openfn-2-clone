@@ -8,6 +8,7 @@ import Pill from "../primitives/Pill";
 import TextLink from "../primitives/TextLink";
 import AIDisclaimerFooter from "./AIDisclaimerFooter";
 import Text from "../primitives/Text";
+import { Stack } from "../primitives/Stack";
 
 interface Props {
   aiAssistantEnabled?: boolean;
@@ -24,13 +25,14 @@ function OptionCard({ icon, title, description, onClick, testId }: { icon: strin
       <div className="mb-3 w-fit rounded-lg bg-sunken p-2">
         <span className={cn("block h-5 w-5 text-body", icon)} />
       </div>
-      <Heading size="sm" as="p">
-        {title}
-      </Heading>
-      {/* eslint-disable-next-line local/primitive-classname -- debt: F525 margin (mt-1) */}
-      <Text as="p" className="mt-1">
-        {description}
-      </Text>
+      <Stack gap="xs">
+        <Heading size="sm" as="p">
+          {title}
+        </Heading>
+        <Text as="p">
+          {description}
+        </Text>
+      </Stack>
     </Card>
   );
 }

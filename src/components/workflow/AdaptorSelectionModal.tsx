@@ -8,6 +8,7 @@ import AdaptorIcon from "./AdaptorIcon";
 import SearchList, { type SearchListSection } from "../primitives/SearchList";
 import { matchesQuery } from "../../utils/search";
 import Text from "../primitives/Text";
+import { Stack } from "../primitives/Stack";
 
 interface Props {
   isOpen: boolean;
@@ -71,12 +72,12 @@ export default function AdaptorSelectionModal({ isOpen, onClose, onSelect, adapt
         header={
           fallback && (
             <Alert tone="info">
-              <div className="flex flex-col gap-1">
+              <Stack gap="xs">
                 <p>
                   <span className="font-medium">No adaptor found</span> for "{query}"
                 </p>
                 <p>Try the HTTP adaptor below to connect to any system with a REST API.</p>
-              </div>
+              </Stack>
             </Alert>
           )
         }

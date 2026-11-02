@@ -77,6 +77,7 @@ export default function ChannelRequestShowPage({
   return (
     <PageContent header={header}>
       <Centered>
+        {/* eslint-disable-next-line no-restricted-syntax -- debt: F558 a child would change in a flex column */}
         <div className="space-y-4">
           <ChannelRequestSummary request={request} event={event} channel={channel} />
 

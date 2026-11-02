@@ -63,6 +63,12 @@ const cases: { rule: string; bad: string; good: string; message: RegExp; path?: 
     message: /Arbitrary Tailwind value/,
   },
   {
+    rule: "a plain column or line is Stack or Row (D312)",
+    bad: component('<div className="flex items-center justify-between gap-2">x</div>'),
+    good: component('<div className="flex flex-col gap-4 p-2">x</div>'),
+    message: /Plain column or line/,
+  },
+  {
     rule: "data seam: no mock data in a component",
     bad: 'import { projects } from "../../mock-data/projects";\nexport const n = projects.length;\n',
     good: 'import type { ProjectRow } from "../../types/projects";\nexport const n = (p: ProjectRow[]) => p.length;\n',

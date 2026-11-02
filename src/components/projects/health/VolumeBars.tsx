@@ -6,6 +6,7 @@ import { historyUrl } from "../../../utils/history";
 import type { RunBucket } from "../../../types/workflow-health";
 import { CANCELLED, DOT, EMPTY, FAILED, FRAME, LEGEND, SUCCESS } from "./palette";
 import Text from "../../primitives/Text";
+import { Row } from "../../primitives/Stack";
 
 /** A run has no `rejected` state, so the red band folds the other five. */
 const RUN_FAILURE_KEYS = ["failed", "crashed", "killed", "exception", "lost"] as const;
@@ -148,11 +149,11 @@ export default function VolumeBars({
                 <p className="border-b border-subtle px-3 py-2 font-medium text-strong">{rangeLabel(tip.at, hours, timezone)}</p>
                 <ul className="flex flex-col gap-1.5 px-3 py-2 text-body">
                   {totals.map(({ key, label, color }) => (
-                    <li key={key} className="flex items-center gap-2">
+                    <Row as="li" gap="sm" key={key}>
                       <span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: color }} />
                       <span className="grow pr-4">{label}</span>
                       <span className="font-medium tabular-nums text-strong">{formatNumber(tip[key])}</span>
-                    </li>
+                    </Row>
                   ))}
                 </ul>
               </Text>
@@ -171,10 +172,10 @@ export default function VolumeBars({
       <p className="sr-only">{`Window totals: ${totals.map(({ label, value }) => `${label} ${formatNumber(value)}`).join(", ")}.`}</p>
       <Text as="ul" aria-hidden="true" tone="body" className={LEGEND}>
         {totals.map(({ key, label, color }) => (
-          <li key={key} className="flex items-center gap-2">
+          <Row as="li" gap="sm" key={key}>
             <span className={DOT} style={{ backgroundColor: color }} />
             {label}
-          </li>
+          </Row>
         ))}
       </Text>
     </>

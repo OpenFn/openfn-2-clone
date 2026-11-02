@@ -19,6 +19,7 @@ import Tabs from "../../primitives/Tabs";
 import Text from "../../primitives/Text";
 import VolumeBars from "./VolumeBars";
 import { FRAME } from "./palette";
+import { Stack } from "../../primitives/Stack";
 
 type Tab = "Work orders" | "Runs";
 
@@ -60,7 +61,7 @@ export default function WorkflowHealth({
   const links = { projectId, workflowId };
 
   return (
-    <div className="flex flex-col gap-6">
+    <Stack gap="lg">
       <Tabs<Tab>
         tabs={[
           { id: "Work orders", label: "Work orders" },
@@ -107,7 +108,7 @@ export default function WorkflowHealth({
           {({ signatures, window }) => <TriageTable signatures={signatures} emptyMessage={empty("failures")} {...links} from={window.from} />}
         </Panel>
       </Section>
-    </div>
+    </Stack>
   );
 }
 

@@ -9,6 +9,7 @@ import TextLink from "../primitives/TextLink";
 import SandboxSettingsBanner from "./SandboxSettingsBanner";
 import type { GithubSyncSettings } from "../../types/project-settings";
 import { useAction } from "../../utils/useAction";
+import { Stack } from "../primitives/Stack";
 
 interface Props {
   githubSync: GithubSyncSettings;
@@ -40,7 +41,8 @@ export default function GithubSyncPanel({ githubSync, sandbox, onInitiateSync, o
     );
   } else if (connection) {
     body = (
-      <div id="github-sync-component" className="space-y-2">
+      <Stack gap="sm" id="github-sync-component">
+        {/* eslint-disable-next-line no-restricted-syntax -- debt: F558 a child would change in a flex column */}
         <Card className="space-y-4">
           <DetailList>
             <DetailItem label="Repository:">
@@ -98,7 +100,7 @@ export default function GithubSyncPanel({ githubSync, sandbox, onInitiateSync, o
             </p>
           </ConfirmModal>
         )}
-      </div>
+      </Stack>
     );
   } else if (canInstall && !userConnected) {
     body = (

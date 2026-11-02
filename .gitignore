@@ -12,6 +12,7 @@ dist
 dist-ssr
 storybook-static
 compare-out
+pixel-check-screenshots
 *.local
 
 # Editor directories and files

@@ -2,6 +2,7 @@ import ButtonMenu from "../primitives/ButtonMenu";
 import { MenuItem } from "../primitives/Menu";
 import Pill from "../primitives/Pill";
 import { showCredentialModal, userCredentialMenuOptions, type NewCredentialOption } from "./credentialModalEvents";
+import { Row } from "../primitives/Stack";
 
 interface Props {
   id?: string;
@@ -18,10 +19,10 @@ export default function NewCredentialMenuButton({ id = "credential-options-menu-
       <ButtonMenu label="Add new" variant="primary">
         {options.map((o) => (
           <MenuItem key={o.target} disabled={o.disabled} onClick={() => showCredentialModal(o.target)}>
-            <span className="flex items-center gap-2">
+            <Row as="span" gap="sm">
               {o.label}
               {o.badge && <Pill>{o.badge}</Pill>}
-            </span>
+            </Row>
           </MenuItem>
         ))}
       </ButtonMenu>

@@ -69,6 +69,18 @@ const designRules = [
   },
 ]
 
+// D312: a className that is only a plain column or line is Stack or Row. Any gap is caught, so an
+// off-scale one left behind carries a debt: disable until it's rounded. Only static strings are read.
+const tok = (t) => `(?=(?:\\S+\\s+)*${t}(?:\\s|$))`
+const only = (ts) => `(?:(?:${ts})(?:\\s+|$))+$`
+const stackMessage =
+  'Plain column or line: use Stack (column) or Row (centred line) with gap xs, sm, md or lg (4, 8, 16, 24px); the parent owns the gap. See src/components/primitives/Stack.tsx.'
+const stackRules = [
+  `^\\s*space-y-[\\d.]+\\s*$`,
+  `^\\s*${tok('flex')}${tok('flex-col')}${tok('gap-[\\d.]+')}${only('flex|flex-col|gap-[\\d.]+')}`,
+  `^\\s*${tok('flex')}${tok('items-center')}${tok('gap-[\\d.]+')}${only('flex|items-center|flex-wrap|justify-between|justify-end|gap-[\\d.]+')}`,
+].map((re) => ({ selector: `JSXAttribute[name.name="className"] > Literal[value=/${re}/]`, message: stackMessage }))
+
 // Colours are named for what they're for (src/theme/tokens.css). Each message
 // names what to use instead. White and black with an alpha (`black/5`,
 // `white/10`) are allowed: they tint whatever is behind them.
@@ -298,7 +310,7 @@ export default defineConfig([
   {
     files: ['src/pages/**/*.tsx', 'src/components/*/**/*.tsx'],
     ignores: ['src/components/primitives/**', '**/*.stories.tsx'],
-    rules: { 'no-restricted-syntax': [...consumerRules(colourRules()), ...typeRules] },
+    rules: { 'no-restricted-syntax': [...consumerRules(colourRules()), ...typeRules, ...stackRules] },
   },
   {
     // D299.
@@ -319,7 +331,7 @@ export default defineConfig([
   // Chart palettes (the status-shade ban still holds):
   {
     files: ['src/components/history/ChannelTiming.tsx', 'src/components/admin/LiveDashboardHome.tsx'],
-    rules: { 'no-restricted-syntax': [...consumerRules(colourRules({ palette: false, literals: false })), ...typeRules] },
+    rules: { 'no-restricted-syntax': [...consumerRules(colourRules({ palette: false, literals: false })), ...typeRules, ...stackRules] },
   },
   // Tests and fixtures hold data (sandbox colours) and query chart classes:
   { files: ['src/**/*.test.{ts,tsx}', 'src/mock-data/**/*.{ts,tsx}'], rules: { 'no-restricted-syntax': srcRules([]) } },
@@ -334,7 +346,7 @@ export default defineConfig([
   // The amber notices (support user, experimental):
   {
     files: ['src/components/shell/UserMenu.tsx', 'src/components/shell/Sidebar.tsx'],
-    rules: { 'no-restricted-syntax': [...consumerRules(colourRules({ amber: true })), ...typeRules] },
+    rules: { 'no-restricted-syntax': [...consumerRules(colourRules({ amber: true })), ...typeRules, ...stackRules] },
   },
   {
     // The router adapter is the one place that reads the browser URL.
