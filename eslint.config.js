@@ -40,6 +40,11 @@ const designRules = [
     selector: 'JSXOpeningElement[name.name=/^[A-Z]/]:not([name.name=/^(Diff)?Editor$/]) > JSXAttribute[name.name=/^(theme|kind|appearance)$/]',
     message: propNames,
   },
+  // D300: a look is one `variant`, not a boolean. The primitives' old boolean names stay banned.
+  {
+    selector: 'JSXOpeningElement[name.name=/^(Card|Table|Modal|DetailItem|Pill|Disclosure|Header)$/] > JSXAttribute[name.name=/^(muted|dashed|square|mono|bare|divide|padded|loggedOut)$/]',
+    message: "A look is one `variant`, not a boolean prop (PRINCIPLES.md, Components).",
+  },
   {
     selector: 'JSXOpeningElement[name.name=/^[A-Z]/]:not([name.name="Pill"]) > JSXAttribute[name.name="color"][value.type="Literal"]',
     message: propNames,
@@ -51,6 +56,16 @@ const designRules = [
   {
     selector: 'JSXAttribute[name.name="variant"][value.value=/^(neutral|info|success|warning|danger|error)$/]',
     message: propNames,
+  },
+  // A browser tooltip shows late, can't be styled and the keyboard never reaches it.
+  {
+    selector: 'JSXOpeningElement[name.name=/^[a-z]/] > JSXAttribute[name.name="title"]',
+    message: "Native title tooltip: use `Tooltip`, or the component's own `tooltip` prop.",
+  },
+  // A cell's own max-width doesn't hold in an auto-layout table, so hand-made truncation spills (F530).
+  {
+    selector: 'JSXOpeningElement[name.name="Td"] > JSXAttribute[name.name="className"] :matches(Literal[value=/\\btruncate\\b/], TemplateElement[value.raw=/\\btruncate\\b/])',
+    message: "Truncate a cell with `<Td truncate maxWidth={…}>`, not a class: a cell's max-width doesn't hold in an auto table layout.",
   },
 ]
 
@@ -65,6 +80,7 @@ const banned = (re, message) => [
   { selector: `TemplateElement[value.raw=/${re}/]`, message },
 ]
 const tokens = 'See src/theme/tokens.css.'
+const statusRoles = `Each status (danger, success, warning, info) has text-<s>, text-<s>-strong (headings, text on a fill), text-<s>-icon, border-<s> and ring-<s>, bg-<s> (pale fill) and bg-<s>-strong (the solid). A use no role fits stays on its shade behind a debt: disable naming a finding. ${tokens}`
 const colourRules = ({ palette = true, literals = true, amber = false } = {}) => [
   ...(palette
     ? [
@@ -82,7 +98,7 @@ const colourRules = ({ palette = true, literals = true, amber = false } = {}) =>
         ),
         ...banned(
           `\\b${UTIL}-(?:red|green|yellow|blue)-\\d`,
-          'Raw status colour: keep the shade and use the status name: red is danger, green is success, yellow is warning, blue is info (bg-red-50 becomes bg-danger-50).'
+          'Raw status colour: red is danger, green is success, yellow is warning, blue is info; then use its role name (bg-red-50 becomes bg-danger). ' + statusRoles
         ),
         ...banned(
           `\\b${UTIL}-(?:${OTHER.filter((f) => !amber || f !== 'amber').join('|')})-\\d|\\b(?:fill|stroke|from|to|via|placeholder|shadow|decoration)-(?:gray-\\d|${WB})`,
@@ -90,9 +106,11 @@ const colourRules = ({ palette = true, literals = true, amber = false } = {}) =>
         ),
       ]
     : []),
+  // Status shades, banned even where raw palette colours are allowed (Pill).
+  ...banned(`\\b${UTIL}-(?:danger|success|warning|info)-\\d`, `Status shade: use its role name. ${statusRoles}`),
   ...(literals
     ? banned(
-        '(?:^|[\\s(,\\[:])#[0-9a-fA-F]{3,8}\\b|rgba?\\(|--color-(?:gray|red|green|yellow|blue|white|black)\\b',
+        '(?:^|[\\s(,\\[:])#[0-9a-fA-F]{3,8}\\b|rgba?\\(|--color-(?:gray|red|green|yellow|blue|white|black|danger|success|warning|info)\\b',
         `Colour literal: use a named colour class, or its variable in a style (var(--text-color-muted), var(--background-color-surface)). A canvas or Monaco value that copies Lightning is disabled on its line with the reason. ${tokens}`
       )
     : []),
@@ -132,8 +150,51 @@ const local = {
         }
       },
     },
+    // D299: a primitive's className, from a page or feature component, is layout and sizing only
+    // (src/components/CLAUDE.md). Names imported from primitives/ are checked; a className held in
+    // a variable passes unread.
+    'primitive-classname': {
+      meta: { type: 'problem', messages: { bad: 'className on a primitive is layout and sizing only, not {{bad}}. Use its props (tone, variant, padding) or let the parent own the gap. See src/components/CLAUDE.md.' } },
+      create(context) {
+        const primitives = new Set()
+        const strings = (node, out) => {
+          if (!node) return out
+          if (node.type === 'Literal' && typeof node.value === 'string') out.push(node.value)
+          else if (node.type === 'TemplateLiteral') {
+            node.quasis.forEach((q) => out.push(q.value.cooked ?? ''))
+            node.expressions.forEach((e) => strings(e, out))
+          } else if (node.type === 'JSXExpressionContainer') strings(node.expression, out)
+          else if (node.type === 'ConditionalExpression') [node.consequent, node.alternate].forEach((e) => strings(e, out))
+          else if (node.type === 'LogicalExpression') (node.operator === '&&' ? [node.right] : [node.left, node.right]).forEach((e) => strings(e, out))
+          else if (node.type === 'BinaryExpression' && node.operator === '+') [node.left, node.right].forEach((e) => strings(e, out))
+          else if (node.type === 'CallExpression') node.arguments.forEach((e) => strings(e, out))
+          else if (node.type === 'ArrayExpression') node.elements.forEach((e) => strings(e, out))
+          else if (node.type === 'ObjectExpression') node.properties.forEach((p) => p.type === 'Property' && strings(p.key, out))
+          return out
+        }
+        return {
+          ImportDeclaration(node) {
+            if (/(^|\/)primitives(\/|$)/.test(node.source.value)) node.specifiers.forEach((s) => primitives.add(s.local.name))
+          },
+          JSXAttribute(node) {
+            const tag = node.parent.name
+            if (node.name.name !== 'className' || tag.type !== 'JSXIdentifier' || !primitives.has(tag.name)) return
+            const bad = strings(node.value, [])
+              .join(' ')
+              .split(/\s+/)
+              .filter((cls) => cls && !layoutClass.test(cls.split(':').pop().replace(/^!|!$/g, '').replace(/^-/, '')))
+            if (bad.length) context.report({ node, messageId: 'bad', data: { bad: bad.join(' ') } })
+          },
+        }
+      },
+    },
   },
 }
+
+// Layout and sizing (D299): display, flex and grid, gaps, sizing, text overflow, overflow,
+// position, sr-only, group/peer and container queries. Variant prefixes (`sm:`) and `!` are stripped first.
+const layoutClass =
+  /^(flex|inline-flex|grid|inline-grid|block|inline-block|inline|hidden|contents|(flex|grid|col|row|items|justify|content|self|place|order|gap|space-[xy])-.+|(min-|max-)?[wh]-.+|size-.+|(shrink|grow)(-.+)?|basis-.+|aspect-.+|truncate|line-clamp-.+|(whitespace|break|wrap)-.+|text-(wrap|nowrap|balance|pretty|ellipsis|clip)|overflow-.+|relative|absolute|fixed|sticky|static|(inset|top|bottom|left|right|z)-.+|(not-)?sr-only|(group|peer)(\/.+)?|isolate|@container(\/.+)?)$/
 
 const routerMessage = 'Navigate through useRouter() and Link from src/routing/router.'
 const routerImports = [
@@ -239,6 +300,12 @@ export default defineConfig([
     ignores: ['src/components/primitives/**', '**/*.stories.tsx'],
     rules: { 'no-restricted-syntax': [...consumerRules(colourRules()), ...typeRules] },
   },
+  {
+    // D299.
+    files: ['src/pages/**/*.tsx', 'src/components/*/**/*.tsx'],
+    ignores: ['src/components/primitives/**', '**/*.stories.tsx', '**/*.test.tsx'],
+    rules: { 'local/primitive-classname': 'error' },
+  },
   // Raw palette colours, confined to the files that are about colour.
   // Tag colours:
   { files: ['src/components/primitives/Pill.tsx'], rules: { 'no-restricted-syntax': srcRules(colourRules({ palette: false })) } },
@@ -249,12 +316,11 @@ export default defineConfig([
     files: ['src/theme/monacoTheme.ts', 'src/constants.ts', 'src/components/projects/health/palette.ts'],
     rules: { 'no-restricted-syntax': srcRules(colourRules({ literals: false })) },
   },
-  // Chart palettes:
+  // Chart palettes (the status-shade ban still holds):
   {
-    files: ['src/components/history/ChannelTiming.tsx'],
-    rules: { 'no-restricted-syntax': [...consumerRules([]), ...typeRules] },
+    files: ['src/components/history/ChannelTiming.tsx', 'src/components/admin/LiveDashboardHome.tsx'],
+    rules: { 'no-restricted-syntax': [...consumerRules(colourRules({ palette: false, literals: false })), ...typeRules] },
   },
-  { files: ['src/components/admin/LiveDashboardHome.tsx'], rules: { 'no-restricted-syntax': [...consumerRules([]), ...typeRules] } },
   // Tests and fixtures hold data (sandbox colours) and query chart classes:
   { files: ['src/**/*.test.{ts,tsx}', 'src/mock-data/**/*.{ts,tsx}'], rules: { 'no-restricted-syntax': srcRules([]) } },
   {

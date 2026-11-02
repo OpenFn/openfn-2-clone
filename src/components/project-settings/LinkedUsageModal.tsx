@@ -1,4 +1,4 @@
-import Heading from "../primitives/Heading";
+import Section from "../primitives/Section";
 import Modal from "../primitives/Modal";
 import TextLink from "../primitives/TextLink";
 import { byName } from "./usageRefs";
@@ -32,16 +32,14 @@ export default function LinkedUsageModal({ authMethod, onClose }: Props) {
           The "<span className="font-semibold">{authMethod.name}</span>" authentication method is used by:
         </p>
         {triggers.length > 0 && (
-          <section className="space-y-2">
-            <Heading size="sm">Workflow triggers ({triggers.length})</Heading>
+          <Section size="sm" title={`Workflow triggers (${triggers.length})`}>
             <UsageLinks refs={triggers} />
-          </section>
+          </Section>
         )}
         {channels.length > 0 && (
-          <section className="space-y-2">
-            <Heading size="sm">Channels ({channels.length})</Heading>
+          <Section size="sm" title={`Channels (${channels.length})`}>
             <UsageLinks refs={byName(channels)} />
-          </section>
+          </Section>
         )}
       </div>
     </Modal>

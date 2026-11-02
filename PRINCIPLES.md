@@ -20,10 +20,12 @@ this is in [docs/building.md](./docs/building.md).
 - Name it for what it does (clear to both agents and humans)
 - Compose, don't configure: content through `children` and named slots
   (`title`, `footer`), not boolean props that change what it does.
+- A prop that changes the look is one `variant`, not a boolean; `can*`
+  permissions and states (`disabled`, `pending`) stay booleans.
 - Primitives know nothing about Lightning: no product wording, permissions
   or sandbox logic.
-- `className` on a primitive is for placement only (`flex-1`, `w-full`,
-  `min-w-0`), never for how it looks.
+- `className` on a primitive is layout and sizing only (`flex-1`, `w-full`,
+  `min-w-0`), never for how it looks. The list is in src/components/CLAUDE.md.
 - Never work around a primitive. If it can't do the job, extend it (within reason!)
 - The parent owns the space between children. No outer margins.
 - A component's stories are its spec: one per state (empty, loading, error,

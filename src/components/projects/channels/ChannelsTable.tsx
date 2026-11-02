@@ -54,10 +54,11 @@ export default function ChannelsTable({
       >
         {channels.map((channel) => (
           <Tr key={channel.id} id={`channel-${channel.id}`}>
-            <Td className={cn("max-w-60 font-medium wrap-break-word", channel.enabled ? "text-strong" : "text-faint")}>
+            {/* eslint-disable-next-line local/primitive-classname -- debt: F528 type, F527 colour (font-medium text-strong text-faint) */}
+            <Td wrap maxWidth={60} className={cn("font-medium", channel.enabled ? "text-strong" : "text-faint")}>
               <span id={`channel-name-${channel.id}`}>{channel.name}</span>
             </Td>
-            <Td className="max-w-80">
+            <Td maxWidth={80}>
               <div className="flex items-center gap-1.5 font-mono text-muted">
                 <span className="hero-arrow-right-start-on-rectangle h-4 w-4 shrink-0 text-faint" />
                 <span className="min-w-0 wrap-break-word">{channel.destinationUrl}</span>

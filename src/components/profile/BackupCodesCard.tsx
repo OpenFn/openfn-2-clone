@@ -26,6 +26,7 @@ export default function BackupCodesCard({
 }) {
   const { copied, copy } = useCopy(codes.map((c) => c.code).join("\n\n"));
   return (
+    // eslint-disable-next-line local/primitive-classname -- debt: F526 box (divide-y divide-strong)
     <Card padding="none" className="divide-y divide-strong">
       <div className="p-6">
         <SectionHeader
@@ -42,7 +43,7 @@ export default function BackupCodesCard({
           // eslint-disable-next-line no-restricted-syntax -- a backup code is spaced out so it reads one character at a time
           <div key={c.code} className="text-center tracking-widest">
             {c.usedAt ? (
-              <Text className="text-faint">
+              <Text tone="faint">
                 <span className="line-through">{c.code}</span>
                 <InfoTooltip title={`Code used on ${c.usedAt.slice(0, 19).replace("T", " ")}`} />
               </Text>
@@ -60,6 +61,7 @@ export default function BackupCodesCard({
           Copy Codes
         </Button>
         {copied && (
+          // eslint-disable-next-line local/primitive-classname -- debt: F526 box (p-2)
           <Alert id="codes-copied-alert" tone="success" className="p-2">
             Copied!
           </Alert>

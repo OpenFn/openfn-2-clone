@@ -48,7 +48,7 @@ export default function TransferCredentialModal({ open, onClose, credential, onT
       submitId={revoke ? `${modalId}-revoke-button` : `${modalId}-submit-button`}
     >
       {revoke ? (
-        <Text as="p" className="text-muted">
+        <Text as="p" tone="muted">
           Revoking this transfer will cancel the pending request. This will keep the credential under your ownership.
           You will need to initiate a new transfer request to transfer it in the future.
         </Text>

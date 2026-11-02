@@ -40,6 +40,7 @@ export default function AdminProjectsTable({
 
   return (
     <>
+      {/* eslint-disable-next-line local/primitive-classname -- debt: F525 margin (mb-4) */}
       <SearchInput value={filter} onChange={setFilter} placeholder="Filter projects..." className="mb-4 max-w-sm" />
       <Table
         id="projects"
@@ -59,11 +60,12 @@ export default function AdminProjectsTable({
           const deletion = project.scheduledDeletion;
           return (
             <Tr key={project.id} id={`project-row-${project.id}`}>
-              <Td className="max-w-80 wrap-break-word">{project.name}</Td>
+              <Td wrap maxWidth={80}>{project.name}</Td>
               <Td>{formatShortDateTime(project.insertedAt)}</Td>
-              <Td className="max-w-80 wrap-break-word">{project.description}</Td>
-              <Td className="max-w-64 wrap-break-word">{owner === "" ? "No owner" : owner}</Td>
+              <Td wrap maxWidth={80}>{project.description}</Td>
+              <Td wrap maxWidth={64}>{owner === "" ? "No owner" : owner}</Td>
               <Td>{deletion && formatShortDateTime(deletion)}</Td>
+              {/* eslint-disable-next-line local/primitive-classname -- debt: F526 box (py-0.5) */}
               <Td actions className="py-0.5">
                 <ButtonMenu label="Actions">
                   <MenuItem to={`/settings/projects/${project.id}`}>Edit</MenuItem>

@@ -2,7 +2,7 @@ import { useState } from "react";
 import IconButton from "../primitives/IconButton";
 import { Checkbox } from "../primitives/Inputs";
 import Pill from "../primitives/Pill";
-import { Td, Tr } from "../primitives/Table";
+import { RowToggle, Td, Tr } from "../primitives/Table";
 import type { WorkOrderRow } from "../../types/history";
 import { activeStates } from "../../constants";
 import DateTime from "../primitives/DateTime";
@@ -13,7 +13,6 @@ import StatePill from "../domain/StatePill";
 import UuidChip from "../primitives/UuidChip";
 import { RunCard } from "./RunCard";
 import WipedTooltip from "./WipedTooltip";
-import { cn } from "../../utils/cn";
 import { zeroPersistenceMessage as zeroPersistence } from "./runHelpers";
 import Tooltip from "../primitives/Tooltip";
 
@@ -67,9 +66,10 @@ export default function WorkOrderTableRow({
     <>
       <Tr
         id={`toggle_details_for_${wo.id}`}
+        // eslint-disable-next-line local/primitive-classname -- debt: F526 box (bg-subtle bg-surface)
         className={selected ? "bg-subtle" : "bg-surface"}
-        onClick={runs.length ? () => setExpanded((e) => !e) : undefined}
       >
+        {/* eslint-disable-next-line local/primitive-classname -- debt: F526 box (!pr-1) */}
         <Td className="!pr-1">
           {available ? (
             <Checkbox
@@ -83,6 +83,7 @@ export default function WorkOrderTableRow({
               <Checkbox
                 id={`select_${wo.id}`}
                 label={<span className="sr-only">Select work order</span>}
+                // eslint-disable-next-line local/primitive-classname -- debt: F526 box (disabled:bg-subtle)
                 className="disabled:bg-subtle"
                 checked={false}
                 disabled
@@ -99,11 +100,12 @@ export default function WorkOrderTableRow({
             <TextLink
               to={wo.workflowHref}
               variant="plain"
+              // eslint-disable-next-line local/primitive-classname -- debt: F529 state, F527 colour (workflow-name text-strong hover:text-primary-600)
               className="workflow-name block max-w-50 truncate text-strong hover:text-primary-600"
               title={
                 <>
                   {wo.workflowName}
-                  <Text variant="body-sm" className="block text-faint">Click to view</Text>
+                  <Text variant="body-sm" tone="faint" className="block">Click to view</Text>
                 </>
               }
             >
@@ -158,6 +160,7 @@ export default function WorkOrderTableRow({
                     icon="hero-arrow-path-mini"
                     label="Retry (run from the start)"
                     size="xs"
+                    // eslint-disable-next-line local/primitive-classname -- debt: F527 colour (hover:text-primary-400)
                     className="hover:text-primary-400"
                     onClick={() => {
                       onRetry();
@@ -178,13 +181,14 @@ export default function WorkOrderTableRow({
                   />
                 ))}
               <Pill>{runs.length}</Pill>
-              <span className={cn(expanded ? "hero-chevron-up" : "hero-chevron-down", "size-4 text-faint")} />
+              <RowToggle expanded={expanded} onToggle={() => setExpanded((e) => !e)} label="Show runs" />
             </>
           )}
         </Td>
       </Tr>
       {expanded && (
         <Tr>
+          {/* eslint-disable-next-line local/primitive-classname -- debt: F526 box (!p-0) */}
           <Td colSpan={9} className="!p-0">
             <div className="flex flex-col gap-3 bg-sunken p-3">
               {runs.map((run, i) => {

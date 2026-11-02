@@ -12,10 +12,11 @@ export const Danger: Story = { args: { tone: "danger", children: "Deleted in san
 export const Warning: Story = { args: { tone: "warning", children: "Read-only" } };
 export const Info: Story = { args: { tone: "info", children: "New" } };
 /** `color` is for tags that mean nothing, like dataclip types and HTTP methods. */
-export const TagColour: Story = { args: { color: "purple", mono: true, children: "step_result" } };
-export const Square: Story = { args: { color: "primary", square: true, children: "latest" } };
+export const TagColour: Story = { args: { color: "purple", children: <code>step_result</code> } };
+export const Square: Story = { args: { color: "primary", variant: "square", children: "latest" } };
 export const Removable: Story = { args: { color: "blue", children: "openhie-project", onRemove: () => {} } };
-export const Mono: Story = { args: { mono: true, children: "v2.14.3" } };
+/** Code text goes in `<code>`. */
+export const Mono: Story = { args: { children: <code>v2.14.3</code> } };
 export const LongText: Story = { args: { color: "blue", children: "kenya-moh-community-health-referrals-sandbox", onRemove: () => {} } };
 /** `title` shows as a tooltip on hover. */
 export const WithTooltip: Story = { args: { tone: "warning", children: "Read-only", title: "Sandboxes can't edit this setting" } };

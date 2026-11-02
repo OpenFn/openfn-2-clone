@@ -1,5 +1,5 @@
 import type { SandboxRow } from "../../../types/sandboxes";
-import Heading from "../../primitives/Heading";
+import Section from "../../primitives/Section";
 import TextLink from "../../primitives/TextLink";
 import WorkspaceCard from "./WorkspaceCard";
 import EmptyState from "../../primitives/EmptyState";
@@ -73,12 +73,9 @@ export default function WorkspaceList({
         )}
       </div>
       {scheduled.length > 0 && (
-        <div id="scheduled-for-deletion-section" className="space-y-3">
-          <Heading as="h2" size="lg">
-            Scheduled for deletion
-          </Heading>
+        <Section id="scheduled-for-deletion-section" size="lg" title="Scheduled for deletion">
           {scheduled.map((s) => card(s))}
-        </div>
+        </Section>
       )}
     </div>
   );

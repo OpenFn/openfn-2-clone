@@ -1,6 +1,5 @@
 import { adaptorDisplayName, adaptorShortName, resolveAdaptor } from "../../utils/adaptors";
 import { ADAPTORS_WITHOUT_CREDENTIALS } from "../../constants";
-import { cn } from "../../utils/cn";
 import Button from "../primitives/Button";
 import Card from "../primitives/Card";
 import Pill from "../primitives/Pill";
@@ -43,7 +42,7 @@ export default function AdaptorDisplay({ adaptor, credentialName = null, onEdit,
             <span className="truncate font-medium text-muted">{adaptorDisplayName(adaptor)}</span>
           </div>
         )}
-        <Text variant="body-sm" className={cn("whitespace-nowrap", isReadOnly ? "text-faint" : "text-muted")}>
+        <Text variant="body-sm" tone={isReadOnly ? "faint" : "muted"} className="whitespace-nowrap">
           {version === "latest" ? "latest" : `v${version}`}
         </Text>
         {hasCredential && (

@@ -8,7 +8,7 @@ import { useAction } from "../../utils/useAction";
 import SearchInput from "../primitives/SearchInput";
 import Button from "../primitives/Button";
 import Form from "../primitives/Form";
-import Heading from "../primitives/Heading";
+import Section from "../primitives/Section";
 import { Radio } from "../primitives/Inputs";
 import NameField from "../primitives/NameField";
 import { Table, Td, Th, Tr } from "../primitives/Table";
@@ -119,51 +119,50 @@ export default function AdminProjectForm({ project, users, onSave, cancelHref }:
           badgeLabel="Note that this project will be named:"
           fieldClassName="w-1/2"
         />
-        <Heading as="h2" className="mb-2 mt-8">
-          Manage project users
-        </Heading>
+        {/* eslint-disable-next-line local/primitive-classname -- debt: F525 margin (mt-8) */}
+        <Section title="Manage project users" className="mt-8">
+          <SearchInput value={sort.filter} onChange={sort.setFilter} placeholder="Filter users..." className="max-w-sm" />
 
-
-        <SearchInput value={sort.filter} onChange={sort.setFilter} placeholder="Filter users..." className="mb-4 max-w-sm" />
-
-        <Table
-          id="project_users_table"
-          header={
-            <Tr>
-              {th("name", "NAME", false)}
-              {th("email", "EMAIL", false)}
-              {th("no_access", "NO ACCESS")}
-              {th("owner", "OWNER")}
-              {th("admin", "ADMIN")}
-              {th("editor", "EDITOR")}
-              {th("viewer", "VIEWER")}
-            </Tr>
-          }
-        >
-          {sort.rows.map(({ user, role }) => (
-            <Tr key={user.id} className={cn(role === "" && "text-faint")}>
-              <Td>{fullName(user)}</Td>
-              <Td>{user.email}</Td>
-              {(["", ...ROLES] as Role[]).map((r) => (
-                <Td key={r || "no_access"} align="center">
-                  <span className="inline-flex justify-center">
-                    <Radio
-                      name={`project_users[${user.id}][role]`}
-                      id={`project_users_${user.id}_role_${r || "no_access"}`}
-                      label={<span className="sr-only">{`${fullName(user)}: ${r || "no access"}`}</span>}
-                      checked={role === r}
-                      onChange={() => {
-                        setRoles((prev) => ({ ...prev, [user.id]: r }));
-                        setTouched(true);
-                        save.reset();
-                      }}
-                    />
-                  </span>
-                </Td>
-              ))}
-            </Tr>
-          ))}
-        </Table>
+          <Table
+            id="project_users_table"
+            header={
+              <Tr>
+                {th("name", "NAME", false)}
+                {th("email", "EMAIL", false)}
+                {th("no_access", "NO ACCESS")}
+                {th("owner", "OWNER")}
+                {th("admin", "ADMIN")}
+                {th("editor", "EDITOR")}
+                {th("viewer", "VIEWER")}
+              </Tr>
+            }
+          >
+            {sort.rows.map(({ user, role }) => (
+              // eslint-disable-next-line local/primitive-classname -- debt: F527 colour (text-faint)
+              <Tr key={user.id} className={cn(role === "" && "text-faint")}>
+                <Td>{fullName(user)}</Td>
+                <Td>{user.email}</Td>
+                {(["", ...ROLES] as Role[]).map((r) => (
+                  <Td key={r || "no_access"} align="center">
+                    <span className="inline-flex justify-center">
+                      <Radio
+                        name={`project_users[${user.id}][role]`}
+                        id={`project_users_${user.id}_role_${r || "no_access"}`}
+                        label={<span className="sr-only">{`${fullName(user)}: ${r || "no access"}`}</span>}
+                        checked={role === r}
+                        onChange={() => {
+                          setRoles((prev) => ({ ...prev, [user.id]: r }));
+                          setTouched(true);
+                          save.reset();
+                        }}
+                      />
+                    </span>
+                  </Td>
+                ))}
+              </Tr>
+            ))}
+          </Table>
+        </Section>
       </Form>
     </div>
   );

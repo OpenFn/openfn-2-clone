@@ -1,10 +1,9 @@
 import { useState, type ReactNode } from "react";
-import { useRouter } from "../../routing/router";
 import type { SortState } from "../../types/lists";
 import type { WorkflowRow } from "../../types/workflows";
 import { cn } from "../../utils/cn";
 import EmptyState from "../primitives/EmptyState";
-import { Table, Td, Th, Tr } from "../primitives/Table";
+import { RowLink, Table, Td, Th, Tr } from "../primitives/Table";
 import Toggle from "../primitives/Toggle";
 import Tooltip from "../primitives/Tooltip";
 import DateTime from "../primitives/DateTime";
@@ -49,7 +48,6 @@ export default function WorkflowsTable({
   onToggle?: (workflowId: string, enabled: boolean) => void;
   onDelete?: (workflowId: string) => void | Promise<void>;
 }) {
-  const { navigate } = useRouter();
   const { href } = useUrlParams();
   const thProps = (key: string) => {
     const current = sort.key === key;
@@ -115,13 +113,14 @@ export default function WorkflowsTable({
           const wf = s.workflow;
           const on = s.triggerEnabled ?? wf.enabled;
           return (
-            <Tr key={wf.id} id={`workflow-${wf.id}`} onClick={() => navigate(`/projects/${projectId}/w/${wf.id}`)}>
-              <Td className="max-w-60">
+            <Tr key={wf.id} id={`workflow-${wf.id}`}>
+              <Td maxWidth={60}>
                 <Tooltip content={on ? wf.name : `${wf.name} (disabled)`}>
                   <p className={cn("workflow-name truncate font-medium", on ? "text-strong" : "text-faint")}>
-                    {wf.name}
+                    <RowLink to={`/projects/${projectId}/w/${wf.id}`}>{wf.name}</RowLink>
                   </p>
                 </Tooltip>
+                {/* eslint-disable-next-line local/primitive-classname -- debt: F525 margin (mt-1) */}
                 <Text as="p" variant="body-sm" className="mt-1">
                   Updated <DateTime value={wf.updatedAt} />
                 </Text>
@@ -189,6 +188,7 @@ function Count({ value, to, children }: { value: number; to: string; children: R
   return (
     <>
       <Text as="div" variant="stat-sm">{value > 0 ? <TextLink to={to}>{value}</TextLink> : <span className="text-faint">0</span>}</Text>{" "}
+      {/* eslint-disable-next-line local/primitive-classname -- debt: F525 margin (mt-1) */}
       <Text as="div" variant="body-sm" className="mt-1">{value > 0 ? children : "N/A"}</Text>
     </>
   );

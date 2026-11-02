@@ -28,7 +28,7 @@ function RowContent({ id, title, size }: { id: string; title: string; size: "sm"
       <AdaptorIcon name={pkg} size={size} />
       <div className="text-strong">
         {title}
-        <Text as="div" className="text-muted">Latest: {resolvedAdaptorVersion(pkg)}</Text>
+        <Text as="div" tone="muted">Latest: {resolvedAdaptorVersion(pkg)}</Text>
       </div>
     </>
   );

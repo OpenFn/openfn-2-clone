@@ -1,7 +1,6 @@
-import { useRouter } from "../../routing/router";
 import type { ProjectOverview } from "../../types/workflows";
 import EmptyState from "../primitives/EmptyState";
-import { Table, Td, Th, Tr } from "../primitives/Table";
+import { RowLink, Table, Td, Th, Tr } from "../primitives/Table";
 import DateTime from "../primitives/DateTime";
 import Button from "../primitives/Button";
 import TextLink from "../primitives/TextLink";
@@ -26,7 +25,6 @@ export default function ProjectsTable({
   /** Empty-state click. */
   onCreate?: () => void;
 }) {
-  const { navigate } = useRouter();
   const { rows, thProps } = useTableSort({ rows: projects, sortMap, initialKey: "name" });
 
   if (projects.length === 0) {
@@ -55,12 +53,10 @@ export default function ProjectsTable({
       }
     >
       {rows.map((project) => (
-        <Tr
-          key={project.id}
-          id={`projects-table-row-${project.id}`}
-          onClick={() => navigate(`/projects/${project.id}/w`)}
-        >
-          <Td>{project.name}</Td>
+        <Tr key={project.id} id={`projects-table-row-${project.id}`}>
+          <Td>
+            <RowLink to={`/projects/${project.id}/w`}>{project.name}</RowLink>
+          </Td>
           <Td>{capitalize(project.role)}</Td>
           <Td>{project.workflowsCount}</Td>
           <Td>

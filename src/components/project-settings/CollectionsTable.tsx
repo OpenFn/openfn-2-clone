@@ -56,7 +56,7 @@ export default function CollectionsTable({ collections, canManage, onCreate, onP
     >
       {rows.map((c) => (
         <Tr key={c.id} id={`collection-row-${c.id}`}>
-          <Td className="wrap-break-word max-w-60">{c.name}</Td>
+          <Td wrap maxWidth={60}>{c.name}</Td>
           <Td>{formatBytes(c.byteSizeSum)}</Td>
           <Td actions>
             <IconButton

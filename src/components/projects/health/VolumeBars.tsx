@@ -82,7 +82,7 @@ export default function VolumeBars({
   const totals = SERIES.map((s) => ({ ...s, value: rows.reduce((sum, r) => sum + r[s.key], 0) })).filter(
     ({ key, value }) => key !== "cancelled" || value > 0
   );
-  if (totals.every(({ value }) => value === 0)) return <Text as="p" className={EMPTY}>{emptyMessage}</Text>;
+  if (totals.every(({ value }) => value === 0)) return <Text as="p" tone="muted" className={EMPTY}>{emptyMessage}</Text>;
 
   const max = Math.max(...rows.map((r) => r.success + r.cancelled + r.failed));
   // A tenth of headroom, rounded up to four whole-number steps.
@@ -98,7 +98,7 @@ export default function VolumeBars({
   return (
     <>
       <div className={`${FRAME} flex`} aria-hidden="true">
-        <Text as="div" variant="body-sm" className="flex w-11 shrink-0 flex-col text-muted">
+        <Text as="div" variant="body-sm" tone="muted" className="flex w-11 shrink-0 flex-col">
           <div className="relative flex-1">
             {ticks.map((t, i) => (
               <span key={i} className="absolute right-2 translate-y-1/2" style={{ bottom: `${(t / ceiling) * 100}%` }}>
@@ -140,6 +140,7 @@ export default function VolumeBars({
               <Text
                 as="div"
                 variant="body-sm"
+                // eslint-disable-next-line local/primitive-classname -- debt: F529 state, F526 box (pointer-events-none rounded-lg border border-subtle bg-surface shadow-lg)
                 className="pointer-events-none absolute top-0 z-10 whitespace-nowrap rounded-lg border border-subtle bg-surface shadow-lg"
                 // Beside the bar, on the side with more room.
                 style={hovered < n / 2 ? { left: `${((hovered + 1) / n) * 100}%` } : { right: `${((n - hovered) / n) * 100}%` }}
@@ -157,8 +158,8 @@ export default function VolumeBars({
               </Text>
             )}
           </div>
-          {/* eslint-disable-next-line no-restricted-syntax -- chart geometry: bar gaps scale with the chart */}
-          <Text as="div" variant="body-sm" className="flex h-5 gap-[1%] pt-1 text-muted">
+          {/* eslint-disable-next-line no-restricted-syntax, local/primitive-classname -- chart geometry: bar gaps scale with the chart; debt: F526 box (pt-1) */}
+          <Text as="div" variant="body-sm" tone="muted" className="flex h-5 gap-[1%] pt-1">
             {rows.map((r, i) => (
               <span key={r.at} className="flex-1 truncate text-center">
                 {(n - 1 - i) % every === 0 ? tickLabel(r.at, hours, timezone) : ""}
@@ -168,7 +169,7 @@ export default function VolumeBars({
         </div>
       </div>
       <p className="sr-only">{`Window totals: ${totals.map(({ label, value }) => `${label} ${formatNumber(value)}`).join(", ")}.`}</p>
-      <Text as="ul" aria-hidden="true" className={LEGEND}>
+      <Text as="ul" aria-hidden="true" tone="body" className={LEGEND}>
         {totals.map(({ key, label, color }) => (
           <li key={key} className="flex items-center gap-2">
             <span className={DOT} style={{ backgroundColor: color }} />

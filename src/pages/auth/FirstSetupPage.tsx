@@ -40,7 +40,7 @@ export default function FirstSetupPage({ onSave }: FirstSetupPageProps) {
   });
 
   return (
-    <PageContent header={<Header title="Setup" loggedOut />}>
+    <PageContent header={<Header title="Setup" size="xl" />}>
       <Centered>
         <p>
           Looks like this is a fresh install of OpenFn Lightning. Create a superuser account to manage projects and
@@ -49,6 +49,7 @@ export default function FirstSetupPage({ onSave }: FirstSetupPageProps) {
         <Form
           id="superuser-registration-form"
           {...form.formProps(onSave)}
+          // eslint-disable-next-line local/primitive-classname -- debt: F525 margin (mt-4)
           className="mt-4 w-1/2"
           actions={
             <Button type="submit">

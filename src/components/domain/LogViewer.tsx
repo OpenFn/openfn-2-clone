@@ -113,6 +113,7 @@ export default function LogViewer({
       <div className={cn("flex grow", className)}>
         <div className="relative grow">
           {text === "" ? (
+            // eslint-disable-next-line local/primitive-classname -- debt: F526 box, F528 type (p-12 text-center)
             <Text as="div" variant="code-sm" className="p-12 text-center">
               <TextPingLoader>{waitingMessage}</TextPingLoader>
             </Text>

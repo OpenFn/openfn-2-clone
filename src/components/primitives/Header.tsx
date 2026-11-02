@@ -9,8 +9,8 @@ interface Props {
   breadcrumbs?: ReactNode;
   /** Right-aligned content: buttons, the period picker, etc. */
   children?: ReactNode;
-  /** Logged-out pages use the large title. */
-  loggedOut?: boolean;
+  /** Title size: `xl` for logged-out pages, `md` everywhere else. */
+  size?: "md" | "xl";
 }
 
 /**
@@ -20,10 +20,10 @@ interface Props {
  * title: the bar holds the breadcrumbs, and the title and actions take a row
  * beneath it, so every page names itself the same way.
  */
-export default function Header({ title, count, breadcrumbs, children, loggedOut = false }: Props) {
+export default function Header({ title, count, breadcrumbs, children, size = "md" }: Props) {
   // One title for both places, so the two can't drift apart.
   const heading = title && (
-    <h1 className={cn("min-w-0 text-strong", loggedOut ? "text-3xl font-bold" : "text-xl font-semibold")}>
+    <h1 className={cn("min-w-0 text-strong", size === "xl" ? "text-3xl font-bold" : "text-xl font-semibold")}>
       {title}
       {count !== undefined && (
         <>

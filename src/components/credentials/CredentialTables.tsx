@@ -1,8 +1,10 @@
 import type { ReactNode } from "react";
-import SectionHeader from "../primitives/SectionHeader";
+import Section from "../primitives/Section";
 import InfoTooltip from "../primitives/InfoTooltip";
 import Pill from "../primitives/Pill";
-import { Table, Td, Th, Tr } from "../primitives/Table";
+import CopyChip from "../primitives/CopyChip";
+import { Row } from "../primitives/Stack";
+import { Table, Td, Th, Tr, Truncated } from "../primitives/Table";
 import type { CredentialRow, KeychainCredentialRow, OauthClientRow } from "../../types/credentials";
 import Tooltip from "../primitives/Tooltip";
 
@@ -15,7 +17,7 @@ function ProjectBadges({ names }: { names: string[] }) {
   return (
     <div className="flex flex-wrap gap-1">
       {names.map((name) => (
-        <Pill key={name} color="primary" square>
+        <Pill key={name} color="primary" variant="square">
           {name}
         </Pill>
       ))}
@@ -23,13 +25,6 @@ function ProjectBadges({ names }: { names: string[] }) {
   );
 }
 
-function Code({ children }: { children: string }) {
-  return (
-    <Pill mono square title={children}>
-      {children}
-    </Pill>
-  );
-}
 
 /** The Type column (data_tables.ex `credential_type`): the client's name for OAuth. */
 function credentialType(credential: CredentialRow): string {
@@ -48,8 +43,7 @@ interface TableProps<T> {
 
 export function OauthClientsTable({ rows, showOwner = false, emptyState, actions }: TableProps<OauthClientRow>) {
   return (
-    <div id="oauth-clients-table-container" className="space-y-2">
-      <SectionHeader title="OAuth Clients" />
+    <Section id="oauth-clients-table-container" title="OAuth Clients">
       {rows.length === 0 ? (
         emptyState
       ) : (
@@ -67,25 +61,24 @@ export function OauthClientsTable({ rows, showOwner = false, emptyState, actions
         >
           {rows.map((client) => (
             <Tr key={client.id} id={`oauth-clients-${client.id}`}>
-              <Td className="wrap-break-word max-w-60">{client.name}</Td>
-              {showOwner && <Td className="wrap-break-word max-w-60">{client.global ? "GLOBAL" : client.ownerEmail}</Td>}
-              <Td className="wrap-break-word max-w-80">
+              <Td truncate maxWidth={60}>{client.name}</Td>
+              {showOwner && <Td truncate maxWidth={60}>{client.global ? "GLOBAL" : client.ownerEmail}</Td>}
+              <Td wrap maxWidth={80}>
                 <ProjectBadges names={client.global ? ["GLOBAL"] : client.projects.map((p) => p.name)} />
               </Td>
-              <Td className="wrap-break-word max-w-72">{client.authorizationEndpoint}</Td>
+              <Td wrap maxWidth={72}>{client.authorizationEndpoint}</Td>
               <Td actions>{actions?.(client)}</Td>
             </Tr>
           ))}
         </Table>
       )}
-    </div>
+    </Section>
   );
 }
 
 export function CredentialsTable({ rows, showOwner = false, emptyState, actions }: TableProps<CredentialRow>) {
   return (
-    <div id="credentials-table-container" className="space-y-2">
-      <SectionHeader title="Credentials" />
+    <Section id="credentials-table-container" title="Credentials">
       {rows.length === 0 ? (
         emptyState
       ) : (
@@ -105,24 +98,22 @@ export function CredentialsTable({ rows, showOwner = false, emptyState, actions 
         >
           {rows.map((credential) => (
             <Tr key={credential.id} id={`credentials-${credential.id}`}>
-              <Td className="wrap-break-word max-w-60">
-                {credential.name}
-                {credential.schema === "oauth" && !credential.oauthClient && (
-                  <InfoTooltip
-                    title="OAuth client not found"
-                    icon="hero-exclamation-triangle"
-                    iconClass="h-5 w-5"
-                    className="ml-2"
-                  />
-                )}
+              <Td>
+                {/* Only the name is cut off, so a long one can't push the warning out of sight. */}
+                <Row gap="sm" className="max-w-60">
+                  <Truncated className="min-w-0">{credential.name}</Truncated>
+                  {credential.schema === "oauth" && !credential.oauthClient && (
+                    <InfoTooltip title="OAuth client not found" icon="hero-exclamation-triangle" iconClass="h-5 w-5" />
+                  )}
+                </Row>
               </Td>
-              <Td className="wrap-break-word max-w-40">{credentialType(credential)}</Td>
-              {showOwner && <Td className="wrap-break-word max-w-60">{credential.ownerEmail}</Td>}
-              <Td className="wrap-break-word max-w-100">
+              <Td truncate maxWidth={40}>{credentialType(credential)}</Td>
+              {showOwner && <Td truncate maxWidth={60}>{credential.ownerEmail}</Td>}
+              <Td wrap maxWidth={100}>
                 <ProjectBadges names={credential.projects.map((p) => p.name)} />
               </Td>
-              <Td className="wrap-break-word max-w-48">
-                {credential.externalId ? <Code>{credential.externalId}</Code> : <span className="text-faint">-</span>}
+              <Td truncate maxWidth={48}>
+                {credential.externalId ? <CopyChip value={credential.externalId} /> : <span className="text-faint">-</span>}
               </Td>
               <Td>
                 <Tooltip content={credential.environments.join(", ")}>
@@ -134,14 +125,13 @@ export function CredentialsTable({ rows, showOwner = false, emptyState, actions 
           ))}
         </Table>
       )}
-    </div>
+    </Section>
   );
 }
 
 export function KeychainCredentialsTable({ rows, showOwner = true, emptyState, actions }: TableProps<KeychainCredentialRow>) {
   return (
-    <div id="keychain-credentials-table-container" className="space-y-2">
-      <SectionHeader title="Keychain Credentials" />
+    <Section id="keychain-credentials-table-container" title="Keychain Credentials">
       {rows.length === 0 ? (
         emptyState
       ) : (
@@ -159,19 +149,19 @@ export function KeychainCredentialsTable({ rows, showOwner = true, emptyState, a
         >
           {rows.map((kc) => (
             <Tr key={kc.id} id={`keychain-credentials-${kc.id}`}>
-              <Td className="wrap-break-word max-w-60">{kc.name}</Td>
-              <Td className="wrap-break-word max-w-100">
-                <Code>{kc.path}</Code>
+              <Td truncate maxWidth={60}>{kc.name}</Td>
+              <Td truncate maxWidth={100}>
+                <CopyChip value={kc.path} />
               </Td>
-              <Td className="wrap-break-word max-w-60">
+              <Td truncate maxWidth={60}>
                 {kc.defaultCredential ? kc.defaultCredential.name : <span className="text-faint">None</span>}
               </Td>
-              {showOwner && <Td className="wrap-break-word max-w-60">{kc.ownerEmail}</Td>}
+              {showOwner && <Td truncate maxWidth={60}>{kc.ownerEmail}</Td>}
               <Td actions>{actions?.(kc)}</Td>
             </Tr>
           ))}
         </Table>
       )}
-    </div>
+    </Section>
   );
 }

@@ -13,12 +13,14 @@ export default function MfaRequiredCard({ title = "MFA Required for Project" }: 
   return (
     <Card padding="lg" className="max-w-lg space-y-5">
       <div className="flex items-start gap-4">
+        {/* eslint-disable-next-line no-restricted-syntax -- debt: no fill role at 100 (F522) */}
         <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-danger-100">
+          {/* eslint-disable-next-line no-restricted-syntax -- debt: no icon role at 600 (F522) */}
           <span className="hero-exclamation-triangle h-6 w-6 text-danger-600" aria-hidden="true" />
         </span>
         <div className="space-y-2">
           <Heading>{title}</Heading>
-          <Text as="p" className="text-muted">
+          <Text as="p" tone="muted">
             This project requires all members to use multi-factor authentication. Please enable MFA for{" "}
             <TextLink to="/profile">your account</TextLink> in order to gain access.
           </Text>

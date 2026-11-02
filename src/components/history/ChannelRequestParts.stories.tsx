@@ -22,7 +22,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const RequestSection: Story = {
-  args: { title: "Request", padded: false, children: null },
+  args: { title: "Request", padding: "none", children: null },
   render: (args) => (
     <Disclosure {...args}>
       <Disclosure variant="section" title="Headers">
@@ -62,7 +62,7 @@ export const Badges: Story = {
 };
 
 export const NoResponse: Story = {
-  args: { title: "Response", padded: false, children: null },
+  args: { title: "Response", padding: "none", children: null },
   render: (args) => (
     <Disclosure {...args}>
       <ResponseEmpty
@@ -75,7 +75,7 @@ export const NoResponse: Story = {
 };
 
 export const CredentialError: Story = {
-  args: { title: "Response", padded: false, children: null },
+  args: { title: "Response", padding: "none", children: null },
   render: (args) => (
     <Disclosure {...args}>
       <ResponseEmpty
@@ -88,7 +88,7 @@ export const CredentialError: Story = {
 };
 
 export const RedactedHeader: Story = {
-  args: { title: "Headers", padded: false, children: null },
+  args: { title: "Headers", padding: "none", children: null },
   render: (args) => (
     <Disclosure {...args}>
       <HeadersList
@@ -103,7 +103,7 @@ export const RedactedHeader: Story = {
 
 const json: [string, string][] = [["content-type", "application/json"]];
 const body = (props: Parameters<typeof BodyViewer>[0]): Story => ({
-  args: { title: "Body", padded: false, children: null },
+  args: { title: "Body", padding: "none", children: null },
   render: (args) => (
     <Disclosure {...args}>
       <BodyViewer {...props} />

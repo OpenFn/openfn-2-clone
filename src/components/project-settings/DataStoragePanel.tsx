@@ -4,6 +4,8 @@ import Card from "../primitives/Card";
 import Form from "../primitives/Form";
 import { Field, Radio, Select } from "../primitives/Inputs";
 import SectionHeader from "../primitives/SectionHeader";
+import { Stack } from "../primitives/Stack";
+import PlanLimitNote from "../domain/PlanLimitNote";
 import TextLink from "../primitives/TextLink";
 import SandboxSettingsBanner from "./SandboxSettingsBanner";
 import type { DataStorageSettings, DataStorageValues } from "../../types/project-settings";
@@ -60,7 +62,7 @@ export default function DataStoragePanel({ dataStorage, sandbox, onSave }: Props
         permissionsSection={canEdit ? undefined : "data storage settings."}
       />
       {sandbox && <SandboxSettingsBanner scope="local" />}
-      {/* One card per setting, as elsewhere in settings; they save together, as in Lightning. */}
+      {/* One card per setting, each a Field named by its label (D253); they save together, as in Lightning. */}
       <Form
         id="retention-settings-form"
         actions={
@@ -81,77 +83,77 @@ export default function DataStoragePanel({ dataStorage, sandbox, onSave }: Props
             })
           )}
       >
-        <Card
-          title="History Retention Period"
-          description={
-            <>
-              Select how long your run history is stored in OpenFn before being removed from the servers.{" "}
-              <TextLink href="https://docs.openfn.org/documentation/manage-projects/retention-periods" external>
-                Learn more
-              </TextLink>
-              <span className="block">This includes all Work Orders, Runs, and Logs.</span>
-            </>
-          }
-        >
-          {/* The plan's note (why the periods are limited) is the dropdown's hint, so it's read with it. */}
+        <Card>
           <Select
             id="project_history_retention_period"
-            aria-label="History Retention Period"
+            label="History Retention Period"
+            hint={
+              <>
+                Select how long your run history is stored in OpenFn before being removed from the servers.{" "}
+                <TextLink href="https://docs.openfn.org/documentation/manage-projects/retention-periods" external>
+                  Learn more
+                </TextLink>
+                <span className="block">This includes all Work Orders, Runs, and Logs.</span>
+              </>
+            }
             prompt="Select Period"
             options={options}
             disabled={!canEdit || periods.length === 1}
             className="w-fit"
-            hint={limitMessage ?? undefined}
+            // The plan's note says why the periods are limited, under the dropdown and read with it.
+            note={limitMessage && <PlanLimitNote>{limitMessage}</PlanLimitNote>}
             {...form.fieldProps("historyRetentionPeriod")}
           />
         </Card>
-        <Card
-          title="Input/Output Data Storage Policy"
-          description={
-            <>
-              The input and output data associated with workflow runs and channel requests is useful for debugging.
-              However it can contain sensitive PII. Should OpenFn store this data?{" "}
-              <TextLink href="https://docs.openfn.org/documentation/manage-projects/io-data-storage" external>
-                Learn more
-              </TextLink>
-            </>
-          }
-        >
-          <Field group aria-label="Input/Output Data Storage Policy" disabled={!canEdit}>
-            <div className="space-y-2">
-              {policies.map(([value, text]) => (
-                <Radio
-                  key={value}
-                  id={value}
-                  name="retention_policy"
-                  value={value}
-                  label={text}
-                  checked={form.values.retentionPolicy === value}
-                  onChange={() => {
-                    form.set("retentionPolicy", value);
-                    // settings.ex `validate`: zero-persistence keeps no input/output data, so no period either.
-                    if (value === "erase_all") form.set("dataclipRetentionPeriod", "");
-                  }}
-                />
-              ))}
-            </div>
-          </Field>
-          {form.values.retentionPolicy !== "retain_all" && (
-            <Alert tone="warning" header="Heads Up!">
-              <p>
-                When enabled, you will no longer be able to retry workflow runs, and channel request/response payloads
-                will not be stored.
-              </p>
-            </Alert>
-          )}
+        <Card>
+          <Stack>
+            <Field
+              group
+              label="Input/Output Data Storage Policy"
+              hint={
+                <>
+                  The input and output data associated with workflow runs and channel requests is useful for debugging.
+                  However it can contain sensitive PII. Should OpenFn store this data?{" "}
+                  <TextLink href="https://docs.openfn.org/documentation/manage-projects/io-data-storage" external>
+                    Learn more
+                  </TextLink>
+                </>
+              }
+              disabled={!canEdit}
+            >
+              <Stack gap="sm">
+                {policies.map(([value, text]) => (
+                  <Radio
+                    key={value}
+                    id={value}
+                    name="retention_policy"
+                    value={value}
+                    label={text}
+                    checked={form.values.retentionPolicy === value}
+                    onChange={() => {
+                      form.set("retentionPolicy", value);
+                      // settings.ex `validate`: zero-persistence keeps no input/output data, so no period either.
+                      if (value === "erase_all") form.set("dataclipRetentionPeriod", "");
+                    }}
+                  />
+                ))}
+              </Stack>
+            </Field>
+            {form.values.retentionPolicy !== "retain_all" && (
+              <Alert tone="warning" header="Heads Up!">
+                <p>
+                  When enabled, you will no longer be able to retry workflow runs, and channel request/response payloads
+                  will not be stored.
+                </p>
+              </Alert>
+            )}
+          </Stack>
         </Card>
-        <Card
-          title="Input/Output Data Retention Period"
-          description="Select how long input/output data is stored. Once input/output data is removed for a given run, you will no longer be able to retry that run."
-        >
+        <Card>
           <Select
             id="project_dataclip_retention_period"
-            aria-label="Input/Output Data Retention Period"
+            label="Input/Output Data Retention Period"
+            hint="Select how long input/output data is stored. Once input/output data is removed for a given run, you will no longer be able to retry that run."
             prompt="Select Period"
             options={options}
             disabled={!canEdit || noHistory || eraseAll}

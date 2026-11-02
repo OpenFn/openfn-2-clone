@@ -1,9 +1,9 @@
-import type { ReactNode } from "react";
 import type { ChannelEvent, ChannelRequestChannel, ChannelRequestDetail } from "../../types/channels";
 import Card from "../primitives/Card";
 import DateTime from "../primitives/DateTime";
 import { DetailItem, DetailList } from "../primitives/DetailList";
 import Heading from "../primitives/Heading";
+import Section from "../primitives/Section";
 import TextLink from "../primitives/TextLink";
 import Text from "../primitives/Text";
 import { MethodBadge, RequestPathDisplay, StatusCodeBadge } from "./ChannelRequestParts";
@@ -11,17 +11,6 @@ import { ChannelStatePill } from "../domain/StatePill";
 import { humanizeError } from "./channelErrors";
 import { formatUs, shortUuid } from "../../utils/format";
 import CopyButton from "../primitives/CopyButton";
-
-function Group({ title, className, children }: { title: string; className?: string; children: ReactNode }) {
-  return (
-    <section className={className}>
-      <Heading size="xs" as="h2" className="mb-3 border-b border-subtle pb-1.5">
-        {title}
-      </Heading>
-      {children}
-    </section>
-  );
-}
 
 /**
  * The channel request page's summary card (channel_request_live/show.ex
@@ -47,6 +36,7 @@ export default function ChannelRequestSummary({
           state={request.state}
           title={request.state === "timeout" && event?.errorMessage ? humanizeError(event.errorMessage) : undefined}
         />
+        {/* eslint-disable-next-line local/primitive-classname -- debt: F525 margin (ml-auto) */}
         <Text as="div" variant="body-sm" className="ml-auto flex flex-wrap items-center gap-x-4 gap-y-1">
           <span className="flex items-center gap-1.5">
             <Heading size="xs" as="span">
@@ -65,7 +55,7 @@ export default function ChannelRequestSummary({
       </div>
 
       <div className="grid grid-cols-1 gap-x-8 gap-y-6 md:grid-cols-2">
-        <Group title="Client">
+        <Section variant="eyebrow" title="Client">
           <DetailList layout="grid" className="md:grid-cols-2">
             <DetailItem label="IP">{request.clientIdentity || "—"}</DetailItem>
             <DetailItem label="Auth">
@@ -73,10 +63,10 @@ export default function ChannelRequestSummary({
               {request.clientAuth}
             </DetailItem>
           </DetailList>
-        </Group>
-        <Group title="Destination">
+        </Section>
+        <Section variant="eyebrow" title="Destination">
           <DetailList layout="grid" className="md:grid-cols-2">
-            <DetailItem label="URL" mono>
+            <DetailItem label="URL" variant="code">
               {channel.destinationUrl}
             </DetailItem>
             <DetailItem label="Auth">
@@ -84,8 +74,8 @@ export default function ChannelRequestSummary({
               {request.destinationAuth}
             </DetailItem>
           </DetailList>
-        </Group>
-        <Group title="Timing" className="md:col-span-2">
+        </Section>
+        <Section variant="eyebrow" title="Timing" className="md:col-span-2">
           <DetailList layout="grid" className="md:grid-cols-3">
             <DetailItem label="Started">
               <DateTime value={request.startedAt} />
@@ -93,11 +83,11 @@ export default function ChannelRequestSummary({
             <DetailItem label="Completed">
               <DateTime value={request.completedAt} />
             </DetailItem>
-            <DetailItem label="Latency" mono>
+            <DetailItem label="Latency" variant="code">
               {event?.latencyUs != null ? `${formatUs(event.latencyUs)} ms` : "—"}
             </DetailItem>
           </DetailList>
-        </Group>
+        </Section>
       </div>
     </Card>
   );

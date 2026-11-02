@@ -8,7 +8,7 @@ import Button from "./Button";
 import { useFocusFirstError } from "./focusFirstError";
 import Modal from "./Modal";
 
-interface Props extends Omit<ComponentProps<typeof Modal>, "footer" | "bare"> {
+interface Props extends Omit<ComponentProps<typeof Modal>, "footer" | "variant"> {
   /** The form's id; the submit button points at it, so it works from the footer. Keep Lightning's ids. */
   formId: string;
   /**

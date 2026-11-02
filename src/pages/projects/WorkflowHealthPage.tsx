@@ -64,6 +64,7 @@ export default function WorkflowHealthPage({
         </Header>
       }
     >
+      {/* eslint-disable-next-line local/primitive-classname -- debt: F526 box (px-4) */}
       <Centered className="px-4">
         <div id="workflow-health">
           <WorkflowHealth

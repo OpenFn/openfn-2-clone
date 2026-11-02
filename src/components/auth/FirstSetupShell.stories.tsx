@@ -15,7 +15,7 @@ export const Default: Story = {
   args: {
     releaseLabel: "v2.19.1",
     children: (
-      <PageContent header={<Header title="Setup" loggedOut />}>
+      <PageContent header={<Header title="Setup" size="xl" />}>
         <Centered>
           <p>Page content</p>
         </Centered>

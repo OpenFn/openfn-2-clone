@@ -31,7 +31,7 @@ export default function AnnotationsPanel() {
             Annotations
           </Heading>
           <Tooltip content={ANNOTATIONS_BRANCH}>
-            <Text as="p" variant="body-sm" className="truncate text-muted">
+            <Text as="p" variant="body-sm" tone="muted" className="truncate">
               {pinnedId ? "Pinned" : "Following the mouse"} · copy of {ANNOTATIONS_BRANCH}
             </Text>
           </Tooltip>
@@ -48,6 +48,7 @@ export default function AnnotationsPanel() {
       </div>
 
       {pinnedId === null && currentId !== pageId && pageId && (
+        // eslint-disable-next-line local/primitive-classname -- debt: F526 box (border-b border-subtle bg-subtle px-5 py-2)
         <Text as="p" variant="body-sm" className="flex-none border-b border-subtle bg-subtle px-5 py-2">
           <TextLink onClick={() => pin(pageId)}>
             Page: <code>{pageId}</code>
@@ -65,7 +66,7 @@ export default function AnnotationsPanel() {
             onOpenId={pin}
           />
         ) : (
-          <Text as="p" className="text-muted">
+          <Text as="p" tone="muted">
             This page isn't in the inventory, and nothing under the mouse is annotated.
           </Text>
         )}

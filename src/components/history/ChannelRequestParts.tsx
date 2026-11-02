@@ -24,15 +24,16 @@ const methodColors: Record<string, PillColor> = {
 
 export function MethodBadge({ method }: { method: string | null | undefined }) {
   return (
-    <Pill square mono color={(method && methodColors[method]) || "gray"} className="font-bold uppercase">
-      {method || "—"}
+    // eslint-disable-next-line local/primitive-classname -- debt: F528 type (font-bold uppercase)
+    <Pill variant="square" color={(method && methodColors[method]) || "gray"} className="font-bold uppercase">
+      <code>{method || "—"}</code>
     </Pill>
   );
 }
 
 export function RequestPathDisplay({ event }: { event: ChannelEvent | undefined }) {
   return (
-    <Text variant="code-md" className="break-all text-strong">
+    <Text variant="code-md" tone="strong" className="break-all">
       {event?.requestPath}
       {event?.requestQueryString && <span className="text-muted">?{event.requestQueryString}</span>}
     </Text>
@@ -50,14 +51,15 @@ function statusTone(status: number | null | undefined): Tone {
 /** An HTTP status code chip, coloured by class (`status_code_display`, `status_code_badge`). */
 export function StatusCodeBadge({ status }: { status: number | null | undefined }) {
   return (
-    <Pill square mono tone={statusTone(status)} className="font-bold">
-      {status ?? "—"}
+    // eslint-disable-next-line local/primitive-classname -- debt: F528 type (font-bold)
+    <Pill variant="square" tone={statusTone(status)} className="font-bold">
+      <code>{status ?? "—"}</code>
     </Pill>
   );
 }
 
 export function SectionSizeBadge({ size }: { size: number }) {
-  return <Text variant="code-sm" className="text-faint">{formatBytes(size)}</Text>;
+  return <Text variant="code-sm" tone="faint">{formatBytes(size)}</Text>;
 }
 
 export function HeadersList({ headers }: { headers: [string, string][] }) {
@@ -65,7 +67,7 @@ export function HeadersList({ headers }: { headers: [string, string][] }) {
     <DetailList size="sm">
       {headers.map(([name, value], i) => (
         // Headers repeat (set-cookie, via), so the key is the position.
-        <DetailItem key={i} label={name} mono>
+        <DetailItem key={i} label={name} variant="code">
           <span className={cn("break-all", value === "[REDACTED]" && "italic text-faint")}>{value}</span>
         </DetailItem>
       ))}
@@ -107,12 +109,13 @@ export function BodyViewer({
   }
   if (ct && !isText(ct)) {
     return (
-      <Text as="div" className="flex items-center gap-2 py-4 text-muted">
-        <Pill square mono>
-          {contentTypeLabel(ct)}
+      // eslint-disable-next-line local/primitive-classname -- debt: F526 box (py-4)
+      <Text as="div" tone="muted" className="flex items-center gap-2 py-4">
+        <Pill variant="square">
+          <code>{contentTypeLabel(ct)}</code>
         </Pill>
         {size != null && <span>{formatBytes(size)}</span>}
-        {hash && <Text variant="code-sm" className="text-faint">SHA256: {hash}</Text>}
+        {hash && <Text variant="code-sm" tone="faint">SHA256: {hash}</Text>}
       </Text>
     );
   }
@@ -120,21 +123,24 @@ export function BodyViewer({
   const previewBytes = preview == null ? 0 : new TextEncoder().encode(preview).length;
   if (preview == null) {
     return (
-      <Text as="div" className="py-4 text-muted">
+      // eslint-disable-next-line local/primitive-classname -- debt: F526 box (py-4)
+      <Text as="div" tone="muted" className="py-4">
         Body not captured
-        {size != null && <Text variant="body-sm" className="ml-1 text-faint">({formatBytes(size)})</Text>}
+        {/* eslint-disable-next-line local/primitive-classname -- debt: F525 margin (ml-1) */}
+        {size != null && <Text variant="body-sm" tone="faint" className="ml-1">({formatBytes(size)})</Text>}
       </Text>
     );
   }
   return (
-    <Text as="div" variant="body-sm" className="space-y-1 text-faint">
-      <Card muted padding="none" className="relative">
+    <Text as="div" variant="body-sm" tone="faint" className="space-y-1">
+      <Card variant="muted" padding="none" className="relative">
         <div className="absolute right-2 top-2 flex items-center gap-1.5">
           {ct && (
-            <Pill square mono>
-              {contentTypeLabel(ct)}
+            <Pill variant="square">
+              <code>{contentTypeLabel(ct)}</code>
             </Pill>
           )}
+          {/* eslint-disable-next-line local/primitive-classname -- debt: F526 box (bg-white/80) */}
           <CopyButton value={preview} label="Copy body" size="xs" className="bg-white/80" />
         </div>
         <pre className="max-h-80 overflow-auto whitespace-pre-wrap break-all p-3 pr-20 font-mono text-body">{preview}</pre>
@@ -169,9 +175,10 @@ export function ResponseEmpty({
       ? ["hero-exclamation-triangle", "No response received"]
       : ["hero-lock-closed", "Request not sent — credential error"];
   return (
+    // eslint-disable-next-line local/primitive-classname -- debt: F526 box (border-t border-subtle)
     <EmptyState variant="plain" icon={icon} title={label} message={humanMessage} className="border-t border-subtle">
-      <Pill square mono>
-        {errorCode}
+      <Pill variant="square">
+        <code>{errorCode}</code>
       </Pill>
     </EmptyState>
   );

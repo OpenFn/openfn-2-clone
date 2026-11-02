@@ -39,6 +39,7 @@ export default function WorkOrderStatus({
         <span className={cn(TEXT[state], "font-medium")}>{text}</span>
       </div>
       {updatedAt && (
+        // eslint-disable-next-line local/primitive-classname -- debt: F525 margin (mt-1 ml-4)
         <Text variant="body-sm" className="mt-1 ml-4 block">
           <DateTime value={updatedAt} className="block" />
         </Text>

@@ -67,6 +67,7 @@ export default function LiveDashboardHome({
   return (
     // eslint-disable-next-line no-restricted-syntax -- copies Phoenix LiveDashboard's type
     <div className="min-h-screen bg-page text-sm text-body">
+      {/* eslint-disable-next-line local/primitive-classname -- debt: F526 box (rounded-none) */}
       <Alert tone="warning" className="rounded-none">
         <div className="flex justify-between gap-2">
           <span>
@@ -113,6 +114,7 @@ export default function LiveDashboardHome({
               <Stat label="Total input" value={data.totalInput} hasInfo />
               <Stat label="Total output" value={data.totalOutput} hasInfo />
             </div>
+            {/* eslint-disable-next-line local/primitive-classname -- debt: F526 box (pt-3) */}
             <Heading as="h2" size="lg" className="pt-3">Run queues</Heading>
             <div className="grid grid-cols-3 gap-6">
               <Stat label="Total" value={data.runQueues.total} hasInfo />
@@ -125,6 +127,7 @@ export default function LiveDashboardHome({
             {data.limits.map((l) => (
               <Limit key={l.label} {...l} />
             ))}
+            {/* eslint-disable-next-line local/primitive-classname -- debt: F526 box (pt-3) */}
             <Heading as="h2" size="lg" className="pt-3">Memory</Heading>
             <Card padding="lg" className="space-y-5">
               <div className="flex h-6 gap-0.5 overflow-hidden">
@@ -147,7 +150,8 @@ export default function LiveDashboardHome({
                   </DetailItem>
                 ))}
               </DetailList>
-              <Card muted padding="sm" className="text-center">
+              {/* eslint-disable-next-line local/primitive-classname -- debt: F528 type (text-center) */}
+              <Card variant="muted" padding="sm" className="text-center">
                 Total usage: {totalMemory.toFixed(1)} MB
               </Card>
             </Card>

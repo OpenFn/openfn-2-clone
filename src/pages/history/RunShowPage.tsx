@@ -128,6 +128,7 @@ export default function RunShowPage({
     return (
       <PageContent header={header}>
         <Centered className="@container/main h-full">
+          {/* eslint-disable-next-line local/primitive-classname -- debt: F529 state (animate-pulse) */}
           <DetailList id="run-loading" className="animate-pulse @5xl/main:w-1/3">
             {["w-16", "w-12", "w-12"].map((w, i) => (
               <DetailItem key={i} label={<span className={`inline-block h-3 ${w} rounded-full bg-emphasis`} />}>
@@ -188,7 +189,7 @@ export default function RunShowPage({
                   )}
                 </span>
               </DetailItem>
-              <DetailItem label="Work Order" mono>
+              <DetailItem label="Work Order" variant="code">
                 <TextLink to={`/projects/${project.id}/history?filters[workorder_id]=${run.workOrderId}`} title={run.workOrderId}>
                   {shortUuid(run.workOrderId)}
                 </TextLink>
@@ -196,7 +197,7 @@ export default function RunShowPage({
               {run.startedBy && <DetailItem label="Started by">{run.startedBy}</DetailItem>}
               <DetailItem label="Started">{run.startedAt && <DateTime value={run.startedAt} />}</DetailItem>
               <DetailItem label="Finished">{run.finishedAt && <DateTime value={run.finishedAt} />}</DetailItem>
-              <DetailItem label="Final Output" mono>
+              <DetailItem label="Final Output" variant="code">
                 {run.finalDataclipId && (
                   <TextLink to={`/projects/${project.id}/dataclips/${run.finalDataclipId}/show`}>
                     {shortUuid(run.finalDataclipId)}

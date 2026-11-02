@@ -30,7 +30,7 @@ export default function AuthLayout({ title, children }: { title: ReactNode; chil
     <main className="h-screen">
       <div className="flex flex-col h-full">
         <AuthNav />
-        <PageContent header={<Header title={title} loggedOut />}>
+        <PageContent header={<Header title={title} size="xl" />}>
           <Centered>{children}</Centered>
         </PageContent>
       </div>

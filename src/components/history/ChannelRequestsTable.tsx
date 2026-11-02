@@ -43,10 +43,12 @@ export default function ChannelRequestsTable({
         rows.map((r) => (
           <Tr key={r.id} id={`request-${r.id}`}>
             <Td>
+              {/* eslint-disable-next-line local/primitive-classname -- debt: F528 type (font-mono) */}
               <TextLink to={`/projects/${projectId}/history/channels/${r.id}`} title={r.requestId} className="font-mono">
                 {shortUuid(r.requestId)}
               </TextLink>
             </Td>
+            {/* eslint-disable-next-line local/primitive-classname -- debt: F527 colour (text-body) */}
             <Td className="text-body">{r.requestPath || "—"}</Td>
             <Td>
               <TextLink to={`/projects/${projectId}/history/channels?filters[channel_id]=${r.channelId}`}>{r.channelName}</TextLink>
@@ -57,7 +59,7 @@ export default function ChannelRequestsTable({
             <Td>
               <ChannelStatePill state={r.state} />
             </Td>
-            <Td className="max-w-xs truncate">{r.errorMessage}</Td>
+            <Td truncate maxWidth={80}>{r.errorMessage}</Td>
           </Tr>
         ))
       )}

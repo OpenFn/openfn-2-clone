@@ -53,6 +53,7 @@ export default function RunStepList<S extends Omit<RunStep, "insertedAt" | "snap
               )}
             >
               <StepIcon reason={step.exitReason} errorType={step.errorType ?? null} />
+              {/* eslint-disable-next-line local/primitive-classname -- debt: F526 box, F529 state (pr-1.5 opacity-50) */}
               <Text className={cn("flex min-w-0 flex-1 items-center gap-1 pr-1.5", isClone && "opacity-50")}>
                 {isClone && (
                   <Tooltip content={clonedStepMessage}>

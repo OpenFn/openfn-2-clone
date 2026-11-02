@@ -39,7 +39,7 @@ function IdList({ label, ids, onOpenId }: { label: string; ids: string[]; onOpen
     <Text as="div" variant="body-sm" className="flex flex-wrap items-center gap-1.5">
       <span className="text-muted">{label}</span>
       {ids.map((id) => (
-        // eslint-disable-next-line no-restricted-syntax -- debt: Button has no 12px mono size for ids
+        // eslint-disable-next-line no-restricted-syntax, local/primitive-classname -- debt: Button has no 12px mono size for ids; F528 type (font-mono text-xs)
         <Button key={id} variant="secondary" size="xs" className="font-mono text-xs" onClick={() => onOpenId?.(id)}>
           {id}
         </Button>
@@ -75,15 +75,15 @@ export default function AnnotationCard({ id, annotation, inventory, onOpenId, in
           )}
         </div>
         <div className="flex flex-wrap items-center gap-1.5">
-          <Pill square mono>
-            {id}
+          <Pill variant="square">
+            <code>{id}</code>
           </Pill>
           {annotation && <Pill color="primary">{annotation.folder.replace(/s$/, "")}</Pill>}
           {status && <Pill tone={statusTone(status)}>{status}</Pill>}
           {inventory && <Pill tone={statusTone(inventory.status)}>inventory: {inventory.status}</Pill>}
         </div>
         {inventory && (
-          <Text as="p" variant="body-sm" className="text-muted">
+          <Text as="p" variant="body-sm" tone="muted">
             {inventory.section} · <code>{inventory.route.replace(/`/g, "")}</code>
           </Text>
         )}
@@ -112,8 +112,9 @@ export default function AnnotationCard({ id, annotation, inventory, onOpenId, in
       {annotation && (
         <>
           {annotation.frontMatterRaw && (
-            <Disclosure title="Front matter" defaultOpen={false} padded={false}>
-              <Text as="pre" variant="code-sm" className="overflow-x-auto border-t border-subtle px-4 py-3 text-muted">
+            <Disclosure title="Front matter" defaultOpen={false} padding="none">
+              {/* eslint-disable-next-line local/primitive-classname -- debt: F526 box (border-t border-subtle px-4 py-3) */}
+              <Text as="pre" variant="code-sm" tone="muted" className="overflow-x-auto border-t border-subtle px-4 py-3">
                 {annotation.frontMatterRaw}
               </Text>
             </Disclosure>

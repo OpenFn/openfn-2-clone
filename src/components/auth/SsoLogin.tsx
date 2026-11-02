@@ -9,7 +9,7 @@ import type { SsoProvider } from "../../types/auth";
 export default function SsoLogin({ provider }: { provider: SsoProvider }) {
   return (
     <>
-      <Text as="div" variant="body-sm" className="flex items-center gap-2 text-body">
+      <Text as="div" variant="body-sm" tone="body" className="flex items-center gap-2">
         <hr className="flex-1 border-subtle" />
         or
         <hr className="flex-1 border-subtle" />

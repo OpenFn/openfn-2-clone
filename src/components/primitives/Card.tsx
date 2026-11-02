@@ -2,6 +2,8 @@ import type { HTMLAttributes, ReactNode } from "react";
 import { cn } from "../../utils/cn";
 import SectionHeader from "./SectionHeader";
 
+export type CardVariant = "default" | "muted" | "dashed";
+
 export type CardPadding = "none" | "sm" | "md" | "lg";
 
 const paddings: Record<CardPadding, string> = {
@@ -17,10 +19,11 @@ interface Props extends Omit<HTMLAttributes<HTMLElement>, "title"> {
   description?: ReactNode;
   action?: ReactNode;
   padding?: CardPadding;
-  /** Gray-50 fill, for a panel nested inside a white one. */
-  muted?: boolean;
-  /** Dashed outline, for drop zones and placeholders. */
-  dashed?: boolean;
+  /**
+   * `muted`: gray-50 fill, for a panel nested inside a white one.
+   * `dashed`: dashed outline, for drop zones and placeholders.
+   */
+  variant?: CardVariant;
   /** `button` makes the whole card one click target (option tiles, list choices). */
   as?: "div" | "section" | "ul" | "li" | "article" | "button";
   /** Inventory id for the annotations panel (`data-annotation`). */
@@ -39,8 +42,7 @@ export default function Card({
   description,
   action,
   padding = "md",
-  muted = false,
-  dashed = false,
+  variant = "default",
   as: Tag = "div",
   annotation,
   id,
@@ -58,8 +60,9 @@ export default function Card({
       data-annotation={annotation}
       className={cn(
         "rounded-lg",
-        dashed ? "border-2 border-dashed border-strong" : "border border-subtle",
-        muted ? "bg-subtle" : !dashed && "bg-surface shadow-xs",
+        variant === "dashed" ? "border-2 border-dashed border-strong" : "border border-subtle",
+        variant === "muted" && "bg-subtle",
+        variant === "default" && "bg-surface shadow-xs",
         paddings[padding],
         hasHeader && "space-y-4",
         Tag === "button" &&

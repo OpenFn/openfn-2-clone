@@ -52,9 +52,10 @@ export default function AdminCollectionsTable({ collections, onCreate, onEdit, o
     >
       {rows.map((collection) => (
         <Tr key={collection.id} id={`collections-table-row-${collection.id}`}>
-          <Td className="max-w-60 wrap-break-word text-strong">{collection.name}</Td>
-          <Td className="max-w-100 wrap-break-word">{collection.projectName}</Td>
-          <Td className="max-w-100 wrap-break-word">{formatBytes(collection.byteSizeSum)}</Td>
+          {/* eslint-disable-next-line local/primitive-classname -- debt: F527 colour (text-strong) */}
+          <Td wrap maxWidth={60} className="text-strong">{collection.name}</Td>
+          <Td wrap maxWidth={100}>{collection.projectName}</Td>
+          <Td wrap maxWidth={100}>{formatBytes(collection.byteSizeSum)}</Td>
           <Td actions>
             <Button
               id={`edit-collection-${collection.id}-button`}

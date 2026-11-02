@@ -10,7 +10,7 @@ export default function DataclipDetailsCard({ dataclip }: { dataclip: DataclipDe
   return (
     <Card title="Dataclip Details" padding="lg">
       <DetailList layout="grid">
-        <DetailItem label="ID" mono>
+        <DetailItem label="ID" variant="code">
           {dataclip.id}
         </DetailItem>
         <DetailItem label="Type">

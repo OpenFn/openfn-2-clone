@@ -9,31 +9,36 @@ export type AlertTone = Extract<Tone, "info" | "success" | "warning" | "danger">
 // Lightning's Common.alert_classes/1, written out in full for Tailwind.
 const classes: Record<AlertTone, { bg: string; icon: string; header: string; text: string; iconName: string }> = {
   success: {
-    bg: "bg-success-50",
+    bg: "bg-success",
+    // eslint-disable-next-line no-restricted-syntax -- debt: no icon role at 400 (F519)
     icon: "text-success-400",
-    header: "text-success-800",
-    text: "text-success-700",
+    header: "text-success-strong",
+    text: "text-success",
     iconName: "hero-check-circle-solid",
   },
   warning: {
+    // eslint-disable-next-line no-restricted-syntax -- debt: warning fill is 100, Alert's is 50 (F520)
     bg: "bg-warning-50",
+    // eslint-disable-next-line no-restricted-syntax -- debt: no icon role at 400 (F519)
     icon: "text-warning-400",
-    header: "text-warning-800",
-    text: "text-warning-700",
+    header: "text-warning-strong",
+    text: "text-warning",
     iconName: "hero-exclamation-triangle",
   },
   danger: {
-    bg: "bg-danger-50",
+    bg: "bg-danger",
+    // eslint-disable-next-line no-restricted-syntax -- debt: no icon role at 400 (F519)
     icon: "text-danger-400",
-    header: "text-danger-800",
-    text: "text-danger-700",
+    header: "text-danger-strong",
+    text: "text-danger",
     iconName: "hero-x-circle-solid",
   },
   info: {
-    bg: "bg-info-50",
+    bg: "bg-info",
+    // eslint-disable-next-line no-restricted-syntax -- debt: no icon role at 400 (F519)
     icon: "text-info-400",
-    header: "text-info-800",
-    text: "text-info-700",
+    header: "text-info-strong",
+    text: "text-info",
     iconName: "hero-information-circle-solid",
   },
 };

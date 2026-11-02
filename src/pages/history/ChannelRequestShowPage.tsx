@@ -95,7 +95,7 @@ export default function ChannelRequestShowPage({
                 variant="card"
                 id="request-section"
                 title="Request"
-                padded={false}
+                padding="none"
                 titleRight={event?.requestBodySize ? <SectionSizeBadge size={event.requestBodySize} /> : undefined}
               >
                 {event?.requestHeaders && (
@@ -119,7 +119,7 @@ export default function ChannelRequestShowPage({
                 variant="card"
                 id="response-section"
                 title="Response"
-                padded={false}
+                padding="none"
                 titleRight={
                   <>
                     {event?.responseStatus && <StatusCodeBadge status={event.responseStatus} />}
@@ -158,13 +158,14 @@ export default function ChannelRequestShowPage({
 
           <Disclosure variant="card" id="context-section" title="Context" defaultOpen={false}>
             <DetailList layout="grid" className="md:grid-cols-3">
-              <DetailItem label="Destination URL" mono>
+              <DetailItem label="Destination URL" variant="code">
                 {request.snapshot.destinationUrl}
               </DetailItem>
               <DetailItem label="Channel Name">{request.snapshot.name}</DetailItem>
               <DetailItem label="Config Version">
                 {request.snapshot.lockVersion}
                 {configChanged && (
+                  // eslint-disable-next-line local/primitive-classname -- debt: F525 margin (ml-2)
                   <Pill tone="warning" className="ml-2">
                     Config changed
                   </Pill>

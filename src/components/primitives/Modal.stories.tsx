@@ -29,7 +29,7 @@ export const ExtraLarge: Story = { args: { size: "xl" } };
 export const NoTitle: Story = { args: { title: undefined, description: undefined, label: "Example" } };
 export const Bare: Story = {
   args: {
-    bare: true,
+    variant: "bare",
     label: "Example",
     size: "xl",
     children: <div className="h-64 rounded-xl bg-subtle p-6 text-sm text-muted">A modal that lays out its own content.</div>,

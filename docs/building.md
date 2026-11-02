@@ -41,12 +41,15 @@ its stories; read the component before using it.
 | A timestamp | `DateTime` |
 | A tooltip | `Tooltip`; `InfoTooltip` for the info icon beside a label |
 | A short work order, run or dataclip id | `UuidChip` |
+| A value people copy (an external id, a path) | `CopyChip` |
+| Children in a column, or in a line, with a gap between them (4, 8, 16 or 24px) | `Stack`, `Row`; the parent owns the space, not the children's margins |
+| Why the plan locks a setting, under the control it locks | `PlanLimitNote` (domain) |
 | An on/off switch | `Toggle` |
 | An inline link | `TextLink` |
 | Read-only code, a log or a dataclip | `CodeViewer` |
 | Rendered markdown | `Markdown` |
 | A file upload or drop area | `FileDropZone` |
-| Tabular data | `Table` with `Tr`, `Th`, `Td`; `state` for a list that is loading or failed (a clickable `Tr` ignores clicks on links and buttons inside it) |
+| Tabular data | `Table` with `Tr`, `Th`, `Td`; `state` for a list that is loading or failed (a clickable row holds a `RowLink` in its first cell, or a `RowToggle` if it expands; a click elsewhere on the row clicks that control, so the keyboard reaches the same thing) |
 | Nothing to show yet: an empty list, panel or viewer | `EmptyState` (`fill` to centre in its box, `loading` to pulse) |
 | Sorting and filtering a small table in the browser | `useTableSort` |
 | A status message | `Alert` |
@@ -158,7 +161,7 @@ type (`PickerButton`) disables the rule on its line with the reason.
 | `code-md` / `code-sm` | 14px / 12px mono | Ids, paths, hashes, log lines |
 | `stat-lg` / `stat-md` / `stat-sm` | 30px / 24px / 18px | A metric's number, a chart total, a count in a cell |
 
-Colour is a class (`text-muted`). Emphasis inside a sentence is
+Colour is `tone` (`<Text tone="muted">`). Emphasis inside a sentence is
 `font-medium`, not a nested `Text`. A block of copy is one `Text`
 (`<Text as="div" className="space-y-3">` around its paragraphs). One size
 per piece of text: nothing grows with the viewport (`@md:text-base`).
@@ -180,7 +183,17 @@ Lightning's wording wins wherever Lightning has the screen.
   a settings tab opens with `SectionHeader size="lg"`.
 - Row actions go in `<Td actions>` as `Button size="xs" variant="secondary"`
   with Lightning's verb. More than two go in a `ButtonMenu` labelled
-  "Actions". A page with several tables heads each with `SectionHeader`.
+  "Actions". A page with several tables puts each in a `Section`.
+- A long value in a cell depends on what people do with it. A name they
+  open the record to read: `<Td truncate>`, one line with an ellipsis. A
+  value they paste elsewhere (an external id, a keychain path): a
+  `CopyChip`, which truncates, shows the whole value on hover and copies on
+  click. A value they need to read to check (a URL): `<Td wrap>`, shown in
+  full. Never hide what Lightning shows unless it is visible somewhere else.
+- A titled block with a body is a `Section` (`size`, `variant="eyebrow"`
+  for a group of facts inside a card); it owns the gaps. A bare
+  `SectionHeader` only when there is no body or the parent already owns
+  the gap.
 - An empty list is `EmptyState` with Lightning's message. If the list has a
   create action, the empty state is that action (`buttonText`, `onClick`),
   `disabled` when the user can't create. `variant="plain"` inside a card.
@@ -224,7 +237,11 @@ Examples: `Domain/UserDeletionModal` (Blocked), `Credentials/Modals`
 ### Settings
 
 A tab or page of settings starts with a `SectionHeader`, then one `Card` per
-group with `title` and `description`. A switch or select saves on change
+group with `title` and `description`. A card that holds a single setting
+has no title: the control's `Field` `label` and `hint` name and explain
+it, as in any form (`Project settings/DataStoragePanel`). SecurityPanel,
+ProjectSetupPanel, ExperimentalFeaturesCard and MaintenanceCard still have
+titles (G187 is open). A switch or select saves on change
 with `useChosenValue`; if the save fails, it goes back and an error toast
 says why. Text fields save with `useForm` and a Save button at the bottom of
 the card.

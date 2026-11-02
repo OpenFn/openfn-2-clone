@@ -4,13 +4,13 @@ import Button from "../primitives/Button";
 import Alert from "../primitives/Alert";
 import Card from "../primitives/Card";
 import ConfirmModal from "../primitives/ConfirmModal";
-import Heading from "../primitives/Heading";
 import IconButton from "../primitives/IconButton";
 import InfoTooltip from "../primitives/InfoTooltip";
 import { Checkbox, PasswordInput, Radio, TextArea, TextInput } from "../primitives/Inputs";
 import Tabs from "../primitives/Tabs";
 import Text from "../primitives/Text";
 import TextLink from "../primitives/TextLink";
+import Section from "../primitives/Section";
 import ProjectsPicker from "./ProjectsPicker";
 import { adaptorIconUrl } from "../../utils/adaptors";
 import { assetUrl } from "../../utils/assets";
@@ -428,6 +428,7 @@ export default function CredentialFormModal({
       before={
         schema === "oauth" &&
         !client && (
+          // eslint-disable-next-line local/primitive-classname -- debt: F525 margin (mb-4)
           <Alert tone="danger" header="OAuth client not found" className="mb-4">
             <p>The associated Oauth client for this credential cannot be found. Create a new client or contact your administrator.</p>
           </Alert>
@@ -527,6 +528,7 @@ export default function CredentialFormModal({
               label="Credential Body"
               required
               rows={8}
+              // eslint-disable-next-line local/primitive-classname -- debt: F528 type (font-mono)
               className="font-mono"
               value={env.body}
               onChange={(e) => patchEnv(env.key, { body: e.target.value })}
@@ -619,6 +621,7 @@ function SchemaInput({
           label={f.label}
           required={f.required}
           rows={4}
+          // eslint-disable-next-line local/primitive-classname -- debt: F528 type (font-mono)
           className="font-mono"
           value={code ?? (value === undefined ? "" : JSON.stringify(value, null, 2))}
           errors={code !== undefined && !parseJson(code).ok ? ["must be valid JSON"] : []}
@@ -689,7 +692,7 @@ function OauthFields({
   if (env.pending) {
     // Lightning has no way out of this; a closed popup would otherwise leave the tab waiting for good.
     status = (
-      <Text as="p" className="text-muted">
+      <Text as="p" tone="muted">
         Authenticating with {client.name}... <TextLink onClick={onSignIn}>Start again</TextLink>
       </Text>
     );
@@ -708,6 +711,7 @@ function OauthFields({
       <>
         <Alert tone="warning" header="Reauthentication Required">
           <p>You've changed the permissions for this credential.</p>
+          {/* eslint-disable-next-line local/primitive-classname -- debt: F525 margin (mt-2) */}
           <Text as="p" className="mt-2">
             Please reauthenticate with {client.name} to apply these changes.
           </Text>
@@ -732,7 +736,7 @@ function OauthFields({
             user info to verify. This app may not provide a user info endpoint, or your admin may not have configured it.
           </Alert>
         )}
-        <Text as="p" className="text-muted">
+        <Text as="p" tone="muted">
           If your credential isn't working as expected, you can{" "}
           <TextLink onClick={onSignIn}>reauthenticate with {client.name}</TextLink>
         </Text>
@@ -744,6 +748,7 @@ function OauthFields({
       <>
         <Alert tone="warning" header={`${client.name} is Having Issues`}>
           <p>{client.name} is experiencing technical difficulties.</p>
+          {/* eslint-disable-next-line local/primitive-classname -- debt: F525 margin (mt-2) */}
           <Text as="p" className="mt-2">
             This is temporary - please try again in a few minutes.
           </Text>
@@ -768,13 +773,17 @@ function OauthFields({
   return (
     <div className="space-y-4">
       {scopes.length > 0 && (
-        <div className="space-y-2">
-          <Heading size="sm">
-            Select permissions
-            <InfoTooltip title="Select permissions associated to your OAuth2 Token" />
-          </Heading>
+        <Section
+          size="sm"
+          title={
+            <>
+              Select permissions
+              <InfoTooltip title="Select permissions associated to your OAuth2 Token" />
+            </>
+          }
+        >
           {client.scopesDocUrl && (
-            <Text as="p" variant="body-sm" className="text-strong">
+            <Text as="p" variant="body-sm" tone="strong">
               Learn more about {client.name} permissions{" "}
               <TextLink to={client.scopesDocUrl} external>
                 here
@@ -795,7 +804,7 @@ function OauthFields({
               );
             })}
           </div>
-        </div>
+        </Section>
       )}
       {authorizeError && <Alert tone="danger">{errorMessage(authorizeError)}</Alert>}
       {status}

@@ -69,12 +69,13 @@ function Signature({ signature }: { signature: ErrorSignature }) {
         {color && <span aria-hidden="true" className={DOT} style={{ backgroundColor: color }} />}
         {state ?? errorTypeOf(signature)}
       </p>
-      <Text as="p" variant="code-md" className="border-l-2 border-strong pl-2 text-strong" style={{ borderColor: color }}>
+      {/* eslint-disable-next-line local/primitive-classname -- debt: F526 box (border-l-2 border-strong pl-2) */}
+      <Text as="p" variant="code-md" tone="strong" className="border-l-2 border-strong pl-2" style={{ borderColor: color }}>
         {signature.exit_reason}:{errorTypeOf(signature)}
         {signature.step_name && ` @ ${signature.step_name}`}
       </Text>
       {signature.adaptor && (
-        <Text as="p" variant="code-md" className="text-muted">
+        <Text as="p" variant="code-md" tone="muted">
           {adaptorLabel(signature.adaptor)}
         </Text>
       )}
@@ -105,7 +106,7 @@ export default function TriageTable({
   if (signatures.length === 0) {
     return (
       <Card padding="lg">
-        <Text as="p" className={EMPTY}>{emptyMessage}</Text>
+        <Text as="p" tone="muted" className={EMPTY}>{emptyMessage}</Text>
       </Card>
     );
   }
@@ -124,6 +125,7 @@ export default function TriageTable({
         {signatures.map((s) => (
           <Tr key={[s.exit_reason, s.error_type, s.step_name, s.adaptor, s.job_id].join("|")}>
             <Td>
+              {/* eslint-disable-next-line local/primitive-classname -- debt: F528 type (tabular-nums) */}
               <Pill className="tabular-nums">{formatNumber(s.count)}</Pill>
             </Td>
             <Td>

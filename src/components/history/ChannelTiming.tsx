@@ -89,6 +89,7 @@ export default function ChannelTiming({ event }: { event: ChannelEvent | undefin
 
   return (
     <Disclosure variant="card" id="timing-section" title="Timing">
+      {/* eslint-disable-next-line local/primitive-classname -- debt: F526 box (pt-1) */}
       <Text as="div" variant="body-sm" className="space-y-3 pt-1">
         <div className="relative">
           <div
@@ -103,7 +104,8 @@ export default function ChannelTiming({ event }: { event: ChannelEvent | undefin
                     style={{ width: `${s.pct}%`, minWidth: 20 }}
                   >
                     {s.badge && (
-                      <Pill color="orange" square className="absolute -top-5 left-1/2 -translate-x-1/2 px-1 py-0">
+                      // eslint-disable-next-line local/primitive-classname -- debt: F529 state, F526 box (-translate-x-1/2 px-1 py-0)
+                      <Pill color="orange" variant="square" className="absolute -top-5 left-1/2 -translate-x-1/2 px-1 py-0">
                         {s.badge}
                       </Pill>
                     )}

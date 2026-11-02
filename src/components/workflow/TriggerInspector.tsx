@@ -39,6 +39,7 @@ export function TriggerTypeBadge({ type = "webhook" }: { type?: "webhook" | "cro
 }
 
 function ReadOnlyField({ id, label, value }: { id: string; label: string; value: string }) {
+  // eslint-disable-next-line local/primitive-classname -- debt: F527 colour (text-muted)
   return <TextInput id={id} label={label} value={value} readOnly className="text-muted" />;
 }
 
@@ -68,6 +69,7 @@ function WizardBreadcrumb({ step, onChoose }: { step: "choose" | "configure"; on
     <nav aria-label="Wizard steps">
       <Text as="div" variant="body-sm" className="flex items-center gap-1.5">
         {step === "configure" && onChoose ? (
+          // eslint-disable-next-line local/primitive-classname -- debt: F527 colour (text-faint hover:text-muted)
           <TextLink onClick={onChoose} className="text-faint hover:text-muted">
             Choose
           </TextLink>
@@ -139,6 +141,7 @@ export default function TriggerInspector({ trigger, onChange, onClose }: Props) 
           <TriggerTypeBadge type={draft.type} />
           <Text>
             <TextLink
+              // eslint-disable-next-line local/primitive-classname -- debt: F528 type (font-semibold)
               className="font-semibold"
               onClick={() =>
                 setDraft((d) =>
@@ -177,7 +180,7 @@ export default function TriggerInspector({ trigger, onChange, onClose }: Props) 
           <>
             <WebhookUrlField>
               <Card padding="sm">
-                <Text as="div" variant="code-sm" className="break-all text-muted">
+                <Text as="div" variant="code-sm" tone="muted" className="break-all">
                   {webhookUrl(draft.id)}
                 </Text>
               </Card>
@@ -185,6 +188,7 @@ export default function TriggerInspector({ trigger, onChange, onClose }: Props) 
             <Field group label="Response">
               <div className="space-y-2">
                 {[IMMEDIATELY, ON_COMPLETE].map((o) => (
+                  // eslint-disable-next-line local/primitive-classname -- debt: F526 box (hover:bg-hover)
                   <Card key={o.value} padding="sm" className="hover:bg-hover">
                     <Radio
                       name="webhook-reply"
@@ -205,6 +209,7 @@ export default function TriggerInspector({ trigger, onChange, onClose }: Props) 
             hint="Minute, hour, day of month, month, day of week (UTC)."
             value={draft.cronExpression ?? ""}
             onChange={(e) => setDraft((d) => ({ ...d, cronExpression: e.target.value, cronDescription: e.target.value }))}
+            // eslint-disable-next-line local/primitive-classname -- debt: F528 type (font-mono)
             className="font-mono"
           />
         )}
@@ -235,7 +240,8 @@ export default function TriggerInspector({ trigger, onChange, onClose }: Props) 
             <Pill>Default</Pill>
             <CopyButton value={url} label="Copy Default URL" size="xs" />
           </div>
-          <Text as="div" variant="code-sm" className="mt-1 break-all text-muted">
+          {/* eslint-disable-next-line local/primitive-classname -- debt: F525 margin (mt-1) */}
+          <Text as="div" variant="code-sm" tone="muted" className="mt-1 break-all">
             {url}
           </Text>
         </Card>
@@ -243,13 +249,14 @@ export default function TriggerInspector({ trigger, onChange, onClose }: Props) 
       <Disclosure variant="inline" defaultOpen={false} title="Authentication" note={trigger.hasAuthMethod ? "1 configured" : "none configured"}>
         {trigger.hasAuthMethod ? (
           <Text as="div" variant="body-sm" className="flex items-center gap-2">
-            <span className="hero-shield-check-micro h-4 w-4 text-success-600" />
+            <span className="hero-shield-check-micro h-4 w-4 text-success-icon" />
             <span className="font-medium text-body">CommCare webhook key</span>
             <span className="text-faint">(API Key)</span>
           </Text>
         ) : (
-          <Text as="p" variant="body-sm" className="text-muted">
+          <Text as="p" variant="body-sm" tone="muted">
             No authentication configured.{" "}
+            {/* eslint-disable-next-line local/primitive-classname -- debt: F528 type (font-medium) */}
             <TextLink onClick={startEdit} className="font-medium">
               Add authentication
             </TextLink>
@@ -257,7 +264,7 @@ export default function TriggerInspector({ trigger, onChange, onClose }: Props) 
         )}
       </Disclosure>
       <Disclosure variant="inline" defaultOpen={false} title="Response">
-        <Text as="p" variant="body-sm" className="text-muted">
+        <Text as="p" variant="body-sm" tone="muted">
           {response.shortDescription}{" "}
           <TextLink to="https://docs.openfn.org/documentation/build/triggers#webhook-responses" external>
             learn more

@@ -16,6 +16,7 @@ import { urlSafeName } from "../../utils/format";
 import { useChosenValue } from "../../utils/useChosenValue";
 import { useForm } from "../../utils/useForm";
 import { blank } from "../../utils/validate";
+import PlanLimitNote from "../domain/PlanLimitNote";
 
 interface Props {
   setup: SetupSettings;
@@ -129,8 +130,8 @@ export default function ProjectSetupPanel({ setup, parent, onSaveIdentity, onSav
           disabled={!canEditProject || setup.concurrencyLimitMessage !== null}
           label="Disable parallel execution"
           note="(No more than one run at a time)"
-          // The plan's reason, shown under the switch it disables.
-          description={setup.concurrencyLimitMessage ?? undefined}
+          // The plan's reason, under the switch it locks and read with it.
+          description={setup.concurrencyLimitMessage && <PlanLimitNote>{setup.concurrencyLimitMessage}</PlanLimitNote>}
         />
         <ConfirmModal
           open={confirmingSerial}

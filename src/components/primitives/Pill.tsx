@@ -20,25 +20,28 @@ const colorClasses: Record<PillColor, string> = {
 
 const toneClasses: Record<Tone, string> = {
   neutral: "bg-sunken text-body",
-  info: "bg-info-100 text-info-700",
-  success: "bg-success-100 text-success-700",
-  warning: "bg-warning-100 text-warning-800",
-  danger: "bg-danger-100 text-danger-700",
+  // eslint-disable-next-line no-restricted-syntax -- debt: Pill's fill is 100, the fill role is 50 (F521)
+  info: "bg-info-100 text-info",
+  // eslint-disable-next-line no-restricted-syntax -- debt: Pill's fill is 100, the fill role is 50 (F521)
+  success: "bg-success-100 text-success",
+  warning: "bg-warning text-warning-strong",
+  // eslint-disable-next-line no-restricted-syntax -- debt: Pill's fill is 100, the fill role is 50 (F521)
+  danger: "bg-danger-100 text-danger",
 };
 
 /**
  * A small tag (Lightning's components/pills.ex `pill`): states, types,
  * versions, selected items. Always pale. `tone` says what it means; `color`
- * is only for tags that mean nothing. `square` gives it
- * rounded-md corners, `mono` the code font, and `onRemove` an x button.
+ * is only for tags that mean nothing. `variant="square"` gives it
+ * rounded-md corners and `onRemove` an x button. For the code font, put the
+ * text in `<code>`.
  */
 export default function Pill({
   id,
   "aria-label": ariaLabel,
   tone,
   color,
-  square = false,
-  mono = false,
+  variant = "round",
   title,
   onRemove,
   removeLabel = "Remove",
@@ -47,8 +50,7 @@ export default function Pill({
 }: {
   id?: string;
   "aria-label"?: string;
-  square?: boolean;
-  mono?: boolean;
+  variant?: "round" | "square";
   /** Hover text. */
   title?: string | undefined;
   /** Shows an x button that calls this. */
@@ -77,8 +79,7 @@ export default function Pill({
       data-tone={color ? undefined : tone}
       className={cn(
         "inline-flex items-center gap-1 whitespace-nowrap px-2 py-0.5 text-xs font-medium",
-        square ? "rounded-md" : "rounded-full",
-        mono && "font-mono",
+        variant === "square" ? "rounded-md" : "rounded-full",
         color ? colorClasses[color] : toneClasses[tone ?? "neutral"],
         onRemove && "pr-1",
         className

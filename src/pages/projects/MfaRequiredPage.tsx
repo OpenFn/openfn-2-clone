@@ -9,6 +9,7 @@ import MfaRequiredCard from "../../components/projects/MfaRequiredCard";
 export default function MfaRequiredPage() {
   return (
     <PageContent header={<Header />}>
+      {/* eslint-disable-next-line local/primitive-classname -- debt: F526 box (px-6 py-8) */}
       <Centered className="flex justify-center px-6 py-8">
         <MfaRequiredCard />
       </Centered>

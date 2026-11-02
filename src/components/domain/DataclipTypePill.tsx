@@ -12,8 +12,8 @@ const TYPE_COLORS: Record<DataclipType, PillColor> = {
 /** A dataclip's type as a coloured mono pill (Common.dataclip_type_pill). */
 export default function DataclipTypePill({ type }: { type: DataclipType }) {
   return (
-    <Pill color={TYPE_COLORS[type] ?? "gray"} mono>
-      {type}
+    <Pill color={TYPE_COLORS[type] ?? "gray"}>
+      <code>{type}</code>
     </Pill>
   );
 }

@@ -637,6 +637,9 @@ html[data-theme="gds"] {
     --color-danger-700: var(--color-red-800);
     --color-success-700: var(--color-green-800);
     --color-info-700: var(--color-blue-800);
+    --text-color-danger: var(--color-red-800);
+    --text-color-success: var(--color-green-800);
+    --text-color-info: var(--color-blue-800);
     border-radius: 0;
   }
 

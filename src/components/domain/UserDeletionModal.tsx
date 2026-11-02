@@ -47,7 +47,7 @@ export default function UserDeletionModal({
           </Button>
         }
       >
-        <Text as="div" className="space-y-3 text-muted">
+        <Text as="div" tone="muted" className="space-y-3">
           <p>
             {isCurrentUser ? "Your account" : "This user"} cannot be deleted until their auditable activities have
             also been purged.

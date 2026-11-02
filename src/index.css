@@ -110,7 +110,7 @@
 }
 
 @utility link-danger {
-  @apply text-danger-700 hover:text-danger-800;
+  @apply text-danger hover:text-danger-strong;
 }
 
 /* The side menu, then the theme tokens and the data-theme overrides

@@ -7,13 +7,14 @@ export default function AIDisclaimerFooter({ variant = "default" }: { variant?: 
   const muted = variant === "muted";
   return (
     <div className="flex items-center gap-1.5" data-testid="ai-disclaimer-footer">
-      {!muted && <span className="hero-shield-exclamation h-3.5 w-3.5 shrink-0 text-warning-500" />}
-      <Text variant={muted ? "body-sm" : "label-sm"} className="text-muted">
+      {!muted && <span className="hero-shield-exclamation h-3.5 w-3.5 shrink-0 text-warning-icon" />}
+      <Text variant={muted ? "body-sm" : "label-sm"} tone="muted">
         Please use AI responsibly. Never share PII.{" "}
         <TextLink
           variant="plain"
           to="https://www.openfn.org/ai"
           external
+          // eslint-disable-next-line local/primitive-classname -- debt: F528 type, F527 colour (underline hover:text-strong hover:text-body)
           className={cn("underline hover:text-strong", muted && "hover:text-body")}
         >
           Learn more.

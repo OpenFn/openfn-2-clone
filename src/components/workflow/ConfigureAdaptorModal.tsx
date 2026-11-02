@@ -65,6 +65,7 @@ export default function ConfigureAdaptorModal({
         <div className="grid grid-cols-3 gap-4">
           <Field className="col-span-2" label="Adaptor" info={ADAPTOR_HELP}>
             {/* As tall as the Version field beside it. */}
+            {/* eslint-disable-next-line local/primitive-classname -- debt: F526 box (py-1.5 pl-3 pr-1.5) */}
             <Card padding="none" className="flex items-center gap-2 py-1.5 pl-3 pr-1.5">
               <AdaptorIcon name={adaptor} size="sm" />
               <span className="flex-1 truncate font-medium text-strong">{adaptorDisplayName(adaptor)}</span>
@@ -89,12 +90,14 @@ export default function ConfigureAdaptorModal({
           aside={needsCredentials && <TextLink>New Credential</TextLink>}
         >
           {!needsCredentials ? (
-            <Card muted padding="lg" className="text-center text-muted">
+            // eslint-disable-next-line local/primitive-classname -- debt: F528 type, F527 colour (text-center text-muted)
+            <Card variant="muted" padding="lg" className="text-center text-muted">
               <Text as="p">This adaptor does not require credentials.</Text>
             </Card>
           ) : shown.length === 0 ? (
             <EmptyState message="No credentials found in this project" buttonText="Create a new credential" />
           ) : (
+            // eslint-disable-next-line local/primitive-classname -- debt: F526 box (divide-y divide-subtle)
             <Card padding="none" className="max-h-48 divide-y divide-subtle overflow-y-auto">
               {shown.map((c) => {
                 const selected = c.name === credentialName;

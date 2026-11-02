@@ -49,7 +49,7 @@ export default function Donut({
   centre: (total: number) => { value: string; label: string };
 }) {
   const total = slices.reduce((sum, { value }) => sum + value, 0);
-  if (total === 0) return <Text as="p" className={EMPTY}>{emptyMessage}</Text>;
+  if (total === 0) return <Text as="p" tone="muted" className={EMPTY}>{emptyMessage}</Text>;
 
   const drawn = slices.filter((s) => s.value > 0);
   const only = drawn.length === 1 ? drawn[0] : undefined;
@@ -81,11 +81,11 @@ export default function Donut({
           )}
         </svg>
         <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-          <Text variant="stat-md" className="text-strong">{middle.value}</Text>
-          <Text variant="body-sm" className="text-muted">{middle.label}</Text>
+          <Text variant="stat-md" tone="strong">{middle.value}</Text>
+          <Text variant="body-sm" tone="muted">{middle.label}</Text>
         </div>
       </div>
-      <Text as="ul" className={LEGEND}>
+      <Text as="ul" tone="body" className={LEGEND}>
         {slices.map(({ key, label, color, value, href }) => (
           <li key={key}>
             <TextLink to={href} variant="plain" className="flex items-center gap-1.5">

@@ -19,6 +19,7 @@ interface Props {
 
 function OptionCard({ icon, title, description, onClick, testId }: { icon: string; title: string; description: string; onClick: () => void; testId: string }) {
   return (
+    // eslint-disable-next-line local/primitive-classname -- debt: F527 colour (text-muted)
     <Card as="button" data-testid={testId} onClick={onClick} padding="lg" className="h-full text-muted">
       <div className="mb-3 w-fit rounded-lg bg-sunken p-2">
         <span className={cn("block h-5 w-5 text-body", icon)} />
@@ -26,6 +27,7 @@ function OptionCard({ icon, title, description, onClick, testId }: { icon: strin
       <Heading size="sm" as="p">
         {title}
       </Heading>
+      {/* eslint-disable-next-line local/primitive-classname -- debt: F525 margin (mt-1) */}
       <Text as="p" className="mt-1">
         {description}
       </Text>
@@ -64,6 +66,7 @@ export default function LandingScreen({ aiAssistantEnabled = true, onBuildWithAI
               </Pill>
             }
           >
+            {/* eslint-disable-next-line local/primitive-classname -- debt: F526 box (focus-within:shadow-card) */}
             <Card padding="none" className="focus-within:shadow-card">
               {/* eslint-disable-next-line no-restricted-syntax -- debt: chat composer; TextArea has no borderless variant (also AIAssistantPanel) */}
               <textarea
@@ -106,7 +109,8 @@ export default function LandingScreen({ aiAssistantEnabled = true, onBuildWithAI
             onClick={onBrowseTemplates}
           />
         </div>
-        <Text as="p" className="text-center text-muted">
+        {/* eslint-disable-next-line local/primitive-classname -- debt: F528 type (text-center) */}
+        <Text as="p" tone="muted" className="text-center">
           or{" "}
           <TextLink onClick={onImportYAML}>import a YAML file manually</TextLink>
         </Text>

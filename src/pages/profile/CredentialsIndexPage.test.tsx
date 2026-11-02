@@ -115,7 +115,7 @@ const addNew = async (item: string) => {
 /** Picks a type on "Add a credential" and waits for the form. */
 const configure = async (type: string) => {
   await addNew("Credential");
-  fireEvent.click(screen.getByLabelText(new RegExp(type)));
+  fireEvent.click(within(dialog()).getByLabelText(new RegExp(type)));
   fireEvent.click(within(dialog()).getByRole("button", { name: "Configure credential" }));
   // The picker leaves as the form arrives, so look for the form across the page.
   await screen.findByRole("button", { name: "Save Credential" });
