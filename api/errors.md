@@ -99,7 +99,7 @@ Everyone else hears 403 `forbidden`.
 | 409 | `concurrent_edit` | Another request changed or deleted this record. Fetch it again and retry. |
 | 409 | `in_use` | The credential has been used by runs and can't be deleted. |
 | 409 | `ambiguous_name` | More than one collection has this name. Add `project_id`. |
-| 409 | `export_conflict` | Two items in this project export under the same key, so it can't be written as a provisioning document. |
+| 409 | `export_conflict` | Two items in this project export under the same key. Listed in Lightning's codes but not sent yet: today a clash on `GET /api/provision/yaml` falls through to a 500. |
 | 413 | `content_too_large` | The body is too large. |
 | 414 | `uri_too_long` | The query string is too long. |
 | 415 | `unsupported_media_type` | The body must be JSON. |
