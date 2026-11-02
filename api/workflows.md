@@ -155,9 +155,8 @@ replaces those ids with new UUIDs in the response.
 Rules: every job and trigger has an id, edges form no cycle, at most one
 trigger is enabled, and exactly one enabled edge leaves the triggers. An edge
 from a trigger must be `always` or `js_expression`. Answers 201
-`{"workflow": <workflow>}`. A name another workflow in the project has, or a
-job or trigger id another workflow uses, answers 422 `invalid` with a `taken`
-entry. Every error in the body comes back in one 422. Enabling a trigger beyond
+`{"workflow": <workflow>}`. A name another workflow in the project has answers
+422 `invalid` with a `taken` entry. Every error in the body comes back in one 422. Enabling a trigger beyond
 the plan's limit answers 402 `exceeds_limit`, checked only once the body is
 valid.
 
@@ -192,7 +191,8 @@ PUT /api/projects/:project_id/workflows/:id
 Send the fields to change. A list you send (`jobs`, `triggers`, `edges`)
 replaces the stored one, so send every item you want to keep. New jobs and
 triggers need UUIDs you generate. Triggers can be changed or added but not
-removed. A body `id` or `project_id` that differs from the path answers 422.
+removed. A body `id` or `project_id` that differs from the path answers 422,
+and so does a job or trigger id another workflow uses (a `taken` entry).
 Answers 200 `{"workflow": <workflow>}`.
 
 `PUT` is an update like `PATCH`: it never creates, so an unknown id answers
