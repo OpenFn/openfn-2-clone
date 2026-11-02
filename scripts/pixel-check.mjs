@@ -73,7 +73,7 @@ function diff(a, b) {
   const A = PNG.sync.read(a), B = PNG.sync.read(b);
   const w = Math.max(A.width, B.width), h = Math.max(A.height, B.height);
   const out = new PNG({ width: w, height: h });
-  let changed = 0, x0 = w, y0 = h, x1 = -1, y1 = -1;
+  let changed = 0, delta = 0, x0 = w, y0 = h, x1 = -1, y1 = -1;
   for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
     const o = (y * w + x) * 4;
     const inA = x < A.width && y < A.height, inB = x < B.width && y < B.height;
@@ -84,11 +84,13 @@ function diff(a, b) {
       out.data.set([g, g, g, 255], o);
     } else {
       changed++;
+      if (inA && inB) for (let c = 0; c < 3; c++) delta = Math.max(delta, Math.abs(A.data[ia + c] - B.data[ib + c]));
+      else delta = 255;
       x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y);
       out.data.set([230, 0, 0, 255], o);
     }
   }
-  return { changed, image: PNG.sync.write(out), crop: changed && crop(A, B, x0, y0, x1, y1) };
+  return { changed, delta, image: PNG.sync.write(out), crop: changed && crop(A, B, x0, y0, x1, y1) };
 }
 
 // Before and after side by side, cut to the changed area plus a margin, so a
@@ -124,7 +126,8 @@ await Promise.all(Array.from({ length: workers }, async () => {
   for (let id; (id = queue.shift()); ) {
     if (++done % 100 === 0) console.log(`${done}/${all.length}`);
     try {
-      await compare(id);
+      // A story can time out when the machine is busy; one retry, then report it.
+      await compare(id).catch(() => compare(id));
     } catch (e) {
       // One story failing to load shouldn't lose the whole run.
       rows.push({ id, status: 'error', changed: 0 });
@@ -137,19 +140,20 @@ async function compare(id) {
   const a = idsA.includes(id) ? await shoot(browser, sa.address().port, id) : null;
   const b = idsB.includes(id) ? await shoot(browser, sb.address().port, id) : null;
   if (a && b && a.equals(b)) return;
-  let status = !a ? 'added' : !b ? 'removed' : 'changed', changed = 0;
+  let status = !a ? 'added' : !b ? 'removed' : 'changed', changed = 0, delta = 0;
   // A story that differs from itself (Monaco, random keys) can't be judged.
   if (a && b && !a.equals(await shoot(browser, sa.address().port, id))) status = 'flaky';
   if (a && b) {
     const d = diff(a, b);
     changed = d.changed;
+    delta = d.delta;
     if (!changed) return; // encoder noise, same pixels
     await writeFile(join(outDir, 'img', `${id}.diff.png`), d.image);
     await writeFile(join(outDir, 'img', `${id}.crop.png`), d.crop);
   }
   if (a) await writeFile(join(outDir, 'img', `${id}.before.png`), a);
   if (b) await writeFile(join(outDir, 'img', `${id}.after.png`), b);
-  rows.push({ id, status, changed });
+  rows.push({ id, status, changed, delta });
 }
 await browser.close();
 sa.close();
@@ -159,10 +163,10 @@ await writeReport(outDir, rows, all.length);
 console.log(`${rows.length} of ${all.length} stories differ: ${join(outDir, 'index.html')}`);
 
 async function writeReport(dir, rows, total) {
-  // Under this many changed pixels it's almost always an edge drawn half a
-  // pixel differently (a toggle's curve, an underline), not something you'd see.
-  const MINOR = 50;
-  for (const r of rows) if (r.status === 'changed' && r.changed < MINOR) r.status = 'minor';
+  // A few pixels that barely changed colour (an edge drawn half a pixel
+  // differently) can't be seen. A few pixels that changed a lot can: a planted
+  // 3px magenta mark has to count as a real change.
+  for (const r of rows) if (r.status === 'changed' && r.changed < 50 && r.delta <= 16) r.status = 'minor';
   const order = { changed: 0, added: 1, removed: 2, minor: 3, flaky: 4, error: 5 };
   rows.sort((x, y) => order[x.status] - order[y.status] || x.changed - y.changed);
   const firstMinor = rows.findIndex((r) => r.status === 'minor');
@@ -179,11 +183,11 @@ td{vertical-align:top;padding:8px;border-top:1px solid #ddd}td img{max-width:640
 #flags{white-space:pre;background:#f3f4f6;padding:8px}
 </style>
 <h1>Pixel check</h1>
-<p>${total} stories; ${rows.length} differ. Changed ones run smallest change first. Minor ones (under 50 px, almost always invisible edge shading) come after, then flaky ones that differ from themselves, and error ones that didn't load.</p>
+<p>${total} stories; ${rows.length} differ. Changed ones run smallest change first. Minor ones (under 50 px whose colour barely moved: edge shading you can't see) come after, then flaky ones that differ from themselves, and error ones that didn't load.</p>
 <p>Click a row to step through full size: <b>← →</b> next story, <b>1–4</b> diff / close-up / before / after, <b>F</b> flag it, <b>Esc</b> back to the list.</p>
 <details><summary>Flagged stories (<span id=n>0</span>)</summary><div id=flags></div></details>
 <table><tr><th>Story</th><th>Close-up (before | after)</th></tr>
-${rows.map((r, i) => `${i === firstMinor ? '<tr><th colspan=2 style="text-align:left;padding-top:24px">Minor: probably invisible (under 50 px)</th></tr>' : ''}<tr class=row data-i=${i}><td><b>${r.id}</b><br>${r.status}${r.changed ? `<br>${r.changed} px` : ''}</td><td>${r.changed ? `<img src="img/${r.id}.crop.png" loading=lazy>` : r.status === 'error' ? '' : r.status === 'removed' ? `<img src="img/${r.id}.before.png" loading=lazy>` : `<img src="img/${r.id}.after.png" loading=lazy>`}</td></tr>`).join('\n')}
+${rows.map((r, i) => `${i === firstMinor ? '<tr><th colspan=2 style="text-align:left;padding-top:24px">Minor: under 50 px, colour barely moved</th></tr>' : ''}<tr class=row data-i=${i}><td><b>${r.id}</b><br>${r.status}${r.changed ? `<br>${r.changed} px` : ''}</td><td>${r.changed ? `<img src="img/${r.id}.crop.png" loading=lazy>` : r.status === 'error' ? '' : r.status === 'removed' ? `<img src="img/${r.id}.before.png" loading=lazy>` : `<img src="img/${r.id}.after.png" loading=lazy>`}</td></tr>`).join('\n')}
 </table>
 <div id=v><div id=bar><button id=prev>←</button><span id=pos></span><button id=next>→</button><span class=id id=title></span><span id=meta></span><span class=grow></span>
 <button data-k=diff>1 Diff</button><button data-k=crop>2 Close-up</button><button data-k=before>3 Before</button><button data-k=after>4 After</button>
