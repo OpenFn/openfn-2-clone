@@ -10,7 +10,7 @@ import Heading from "../primitives/Heading";
 import CloseButton from "../primitives/CloseButton";
 import IconButton from "../primitives/IconButton";
 import { Field } from "../primitives/Inputs";
-import CodeEditor from "./CodeEditor";
+import CodeEditor from "../primitives/CodeEditor";
 import Tabs from "../primitives/Tabs";
 import InspectorLayout, { InspectorFooter } from "./InspectorLayout";
 import NewRunButton from "./NewRunButton";

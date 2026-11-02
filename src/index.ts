@@ -40,13 +40,7 @@ export type { FirstSetupPageProps } from "./pages/auth/FirstSetupPage";
 export type { ChannelRequestShowPageProps } from "./pages/history/ChannelRequestShowPage";
 export type { DataclipShowPageProps } from "./pages/history/DataclipShowPage";
 export type { HistoryChannelLogsPageProps } from "./pages/history/HistoryChannelLogsPage";
-export type {
-  ErrorSignatureFilter,
-  HistoryWorkflowRef,
-  HistoryWorkOrdersPageProps,
-  WorkOrderFilters,
-  WorkOrderTarget,
-} from "./pages/history/HistoryWorkOrdersPage";
+export type { HistoryWorkOrdersPageProps } from "./pages/history/HistoryWorkOrdersPage";
 export type { RunShowPageProps } from "./pages/history/RunShowPage";
 export type { ProjectSettingsPageProps } from "./pages/project-settings/ProjectSettingsPage";
 export type { BackupCodesPageProps } from "./pages/profile/BackupCodesPage";
@@ -110,6 +104,8 @@ export type {
 } from "./types/credentials";
 export type {
   DataclipBody,
+  ErrorSignatureFilter,
+  HistoryWorkflowRef,
   HistoryWorkOrderState,
   LogLine,
   RunRow,
@@ -118,7 +114,9 @@ export type {
   StepDataclip,
   StepExitReason,
   StepRow,
+  WorkOrderFilters,
   WorkOrderRow,
+  WorkOrderTarget,
 } from "./types/history";
 export type { PageInfo, SortState } from "./types/lists";
 export type {

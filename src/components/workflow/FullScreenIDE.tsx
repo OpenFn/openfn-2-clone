@@ -8,7 +8,7 @@ import IconButton from "../primitives/IconButton";
 import Tabs from "../primitives/Tabs";
 import AdaptorDisplay from "./AdaptorDisplay";
 import AdaptorDocs, { AdaptorMetadata } from "./AdaptorDocs";
-import CodeEditor from "./CodeEditor";
+import CodeEditor from "../primitives/CodeEditor";
 import JobSelector from "./JobSelector";
 import NewRunButton from "./NewRunButton";
 import RunBadge from "./RunBadge";
@@ -125,7 +125,7 @@ export default function FullScreenIDE({
         <div className={cn("flex h-full min-w-0 bg-page", vertical && "flex-col", panelState && !runStrip ? "w-7/10" : "flex-1")}>
           <div className={cn("overflow-hidden", docsCollapsed ? "flex-1" : vertical ? "h-3/5" : "w-3/5")}>
             {job ? (
-              <CodeEditor key={job.id} value={job.body} onChange={onBodyChange} options={{ minimap: { enabled: true } }} />
+              <CodeEditor key={job.id} value={job.body} onChange={onBodyChange} ariaLabel="Job code" options={{ minimap: { enabled: true } }} />
             ) : (
               <EmptyState
                 variant="plain"

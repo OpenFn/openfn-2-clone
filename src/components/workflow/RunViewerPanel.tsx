@@ -4,7 +4,7 @@ import type { Dataclip, Run, Step } from "../../mock-data/models/history";
 import { finalRunStates } from "../../constants";
 import { formatElapsed, formatLocalDateTime, uuidOf } from "../../utils/format";
 import { cn } from "../../utils/cn";
-import CodeEditor from "./CodeEditor";
+import CodeEditor from "../primitives/CodeEditor";
 import StatePill from "../domain/StatePill";
 import StepIcon from "../domain/StepIcon";
 import UuidChip from "../primitives/UuidChip";

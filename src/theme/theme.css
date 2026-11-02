@@ -16,9 +16,7 @@
  * A token swap can't reach everything (button shape, field borders,
  * focus states), so each theme may add a component layer. That layer
  * keys off the `data-ui` / `data-variant` / `data-tone` hooks the primitives emit
- * (button, link, field, form-group, label, label-row, hint, error-message, choice,
- * toggle, alert, tag, card, table, tabs, pagination, page-header,
- * page-title-row, page-body, sidebar)
+ * (`grep -rhoE "data-ui=\"[^\"]+\"" src/components` lists them)
  * plus the `--ui-*` variables, and is scoped to its own `data-theme`.
  * A toned button is still `data-variant="primary"`: a rule meant for the
  * plain primary button needs `:not([data-tone])`.

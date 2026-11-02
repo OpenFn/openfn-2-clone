@@ -15,60 +15,15 @@ import {
   type BulkSelection,
 } from "../../components/history/HistoryModals";
 import WorkOrdersTable from "../../components/history/WorkOrdersTable";
-import { allTicked } from "../../utils/history";
+import { allTicked, describeWorkOrderQuery, workOrderFilterParams } from "../../utils/history";
 import { useToast } from "../../components/primitives/Toast";
 import { historySearchFields, historyStatuses } from "../../constants";
-import type { HistoryWorkOrderState, RunState, SearchFieldId, WorkOrderRow } from "../../types/history";
+import type { HistoryWorkflowRef, HistoryWorkOrderState, WorkOrderFilters, WorkOrderRow, WorkOrderTarget } from "../../types/history";
 import type { PageInfo, SortState } from "../../types/lists";
 import type { CurrentProject } from "../../types/projects";
 import { errorMessage } from "../../utils/errors";
-import { capitalize, shortUuid } from "../../utils/format";
+import { capitalize, formatChipDateRange, formatRunRange, shortUuid } from "../../utils/format";
 import { useUrlParams, type ParamPatch } from "../../utils/useUrlParams";
-
-/** The error signature the workflow health page's triage row filters History to. */
-export interface ErrorSignatureFilter {
-  exitReason: string;
-  errorType: string | null;
-  /** Set for a step-level signature. */
-  jobId: string | null;
-  /** The job's name, null when it's unset or the job is gone. */
-  jobName: string | null;
-}
-
-/**
- * The search History is showing, read from the URL's `filters[…]`. Dates are
- * ISO 8601 in UTC; null is unset.
- */
-export interface WorkOrderFilters {
-  workflowId: string | null;
-  statuses: HistoryWorkOrderState[];
-  /** When the work order arrived (`wo_date_after` / `wo_date_before`). */
-  receivedAfter: string | null;
-  receivedBefore: string | null;
-  /** The work order's last activity (`date_after` / `date_before`). */
-  activityAfter: string | null;
-  activityBefore: string | null;
-  /** Only the health page's runs chart sets these; History can only clear them. */
-  runStatuses: RunState[];
-  runCreatedAfter: string | null;
-  runCreatedBefore: string | null;
-  workorderId: string | null;
-  errorSignature: ErrorSignatureFilter | null;
-  /** "" for no search. */
-  searchTerm: string;
-  searchFields: SearchFieldId[];
-}
-
-/** A workflow in the project: the filter's options, and the jobs "Retry from" offers. */
-export interface HistoryWorkflowRef {
-  id: string;
-  name: string;
-  /** In the order "Retry from" lists them. */
-  jobs: { id: string; name: string }[];
-}
-
-/** The ticked work orders' ids, or "all" for every one matching the filters. */
-export type WorkOrderTarget = string[] | "all";
 
 /** The contract between this page and whatever feeds it (the replica wrapper, later Lightning). */
 export interface HistoryWorkOrdersPageProps {
@@ -113,102 +68,6 @@ export interface HistoryWorkOrdersPageProps {
   onBulkRetry: (target: WorkOrderTarget, jobId: string | null) => Promise<void>;
   /** Starts the export of everything matching the filters. */
   onExport: () => Promise<void>;
-}
-
-const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-const pad = (n: number) => String(n).padStart(2, "0");
-
-/** "14-Oct", with the year when it isn't this one (index.ex `maybe_humanize_date`, in UTC). */
-function chipDate(iso: string) {
-  const d = new Date(iso);
-  const base = `${d.getUTCDate()}-${MONTHS[d.getUTCMonth()]}`;
-  return d.getUTCFullYear() === new Date().getUTCFullYear() ? base : `${base}-${d.getUTCFullYear()}`;
-}
-
-/** index.ex `format_date_range`. */
-function dateRange(after: string | null, before: string | null) {
-  if (after && before) return `${chipDate(after)} to ${chipDate(before)}`;
-  if (after) return `after ${chipDate(after)}`;
-  if (before) return `before ${chipDate(before)}`;
-  return "any time";
-}
-
-/** "14-Oct 09:05" (index.ex `run_stamp`); the range says UTC once, at the end. */
-const runStamp = (iso: string) => {
-  const d = new Date(iso);
-  return `${d.getUTCDate()}-${MONTHS[d.getUTCMonth()]} ${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}`;
-};
-
-function runRange(after: string | null, before: string | null) {
-  if (after && before) return `${runStamp(after)} – ${runStamp(before)} UTC`;
-  if (after) return `after ${runStamp(after)} UTC`;
-  return `before ${runStamp(before!)} UTC`;
-}
-
-/** "3/9/26 at 4:05pm" (components.ex `humanize_datetime`, in UTC). */
-function queryDate(iso: string) {
-  const d = new Date(iso);
-  const h = d.getUTCHours();
-  return `${d.getUTCDate()}/${d.getUTCMonth() + 1}/${String(d.getUTCFullYear()).slice(2)} at ${h % 12 || 12}:${pad(d.getUTCMinutes())}${h < 12 ? "am" : "pm"}`;
-}
-
-const fieldWords: Record<SearchFieldId, string> = { log: "Logs", body: "Input", dataclip_name: "Dataclip Name", id: "Id" };
-
-/**
- * The search in words, for "Rerun all matching" (components.ex
- * `humanize_search_params`, word for word, including its "between before
- * and after").
- */
-function describeQuery(f: WorkOrderFilters, workflows: HistoryWorkflowRef[]) {
-  const between = (after: string | null, before: string | null, lead: string) =>
-    after && before
-      ? `${lead} between ${queryDate(before)} and ${queryDate(after)}`
-      : after
-        ? `${lead} after ${queryDate(after)}`
-        : before
-          ? `${lead} before ${queryDate(before)}`
-          : "";
-  const workflow = workflows.find((w) => w.id === f.workflowId);
-  const statuses = f.statuses.map((s) => `'${capitalize(s)}'`);
-  return [
-    between(f.receivedAfter, f.receivedBefore, "received"),
-    workflow ? `for ${workflow.name} workflow` : "",
-    between(f.activityAfter, f.activityBefore, "which was last run"),
-    f.searchTerm && f.searchFields.length
-      ? `whose run ${f.searchFields.map((x) => fieldWords[x]).join(" and ")} contain ${f.searchTerm}`
-      : "",
-    statuses.length > 1 ? `having a status of either ${statuses.join(" or ")}` : statuses.length ? `having a status of ${statuses[0]}` : "",
-  ]
-    .filter(Boolean)
-    .join(", ");
-}
-
-/**
- * Every filter as the URL's `filters[…]` params, so a change keeps the rest
- * (index.ex "apply_filters" merges into the filters it holds). The run
- * statuses go as repeated `filters[run_status][]`, which a patch can't set,
- * so they're left as the URL has them.
- */
-function filterParams(f: WorkOrderFilters, sort: SortState): ParamPatch {
-  const flag = (on: boolean) => (on ? "true" : null);
-  return {
-    "filters[workflow_id]": f.workflowId,
-    ...Object.fromEntries(historyStatuses.map((s) => [`filters[${s.id}]`, flag(f.statuses.includes(s.id))])),
-    "filters[wo_date_after]": f.receivedAfter,
-    "filters[wo_date_before]": f.receivedBefore,
-    "filters[date_after]": f.activityAfter,
-    "filters[date_before]": f.activityBefore,
-    "filters[run_date_after]": f.runCreatedAfter,
-    "filters[run_date_before]": f.runCreatedBefore,
-    "filters[workorder_id]": f.workorderId,
-    "filters[error_signature_exit_reason]": f.errorSignature?.exitReason ?? null,
-    "filters[error_signature_error_type]": f.errorSignature?.errorType ?? null,
-    "filters[error_signature_job_id]": f.errorSignature?.jobId ?? null,
-    "filters[search_term]": f.searchTerm || null,
-    ...Object.fromEntries(historySearchFields.map((s) => [`filters[${s.id}]`, flag(f.searchFields.includes(s.id))])),
-    "filters[sort_by]": sort.key,
-    "filters[sort_direction]": sort.direction,
-  };
 }
 
 /** A datetime-local input's value: the UTC minutes, as Lightning reads it back. */
@@ -258,9 +117,9 @@ export default function HistoryWorkOrdersPage({
 
   // A new search starts at page 1.
   const apply = (change: Partial<WorkOrderFilters>, extra: ParamPatch = {}) =>
-    update({ ...filterParams({ ...filters, ...change }, sort), ...extra, page: null });
+    update({ ...workOrderFilterParams({ ...filters, ...change }, sort), ...extra, page: null });
   const sortHref = (key: string, direction: SortState["direction"]) =>
-    href({ ...filterParams(filters, { key, direction }), page: null });
+    href({ ...workOrderFilterParams(filters, { key, direction }), page: null });
 
   // Only rows still on the page stay ticked.
   const selectedIds = ticked.filter((id) => rows.some((r) => r.id === id));
@@ -353,7 +212,7 @@ export default function HistoryWorkOrdersPage({
               />
             )}
           >
-            Received {dateRange(filters.receivedAfter, filters.receivedBefore)}
+            Received {formatChipDateRange(filters.receivedAfter, filters.receivedBefore)}
           </FilterChip>
 
           <FilterChip
@@ -372,7 +231,7 @@ export default function HistoryWorkOrdersPage({
               />
             )}
           >
-            Last activity {dateRange(filters.activityAfter, filters.activityBefore)}
+            Last activity {formatChipDateRange(filters.activityAfter, filters.activityBefore)}
           </FilterChip>
 
           {filters.runStatuses.length > 0 && (
@@ -391,7 +250,7 @@ export default function HistoryWorkOrdersPage({
               active
               onClear={() => apply({ runCreatedAfter: null, runCreatedBefore: null })}
             >
-              Run created {runRange(filters.runCreatedAfter, filters.runCreatedBefore)}
+              Run created {formatRunRange(filters.runCreatedAfter, filters.runCreatedBefore)}
             </FilterChip>
           )}
 
@@ -470,7 +329,7 @@ export default function HistoryWorkOrdersPage({
           open={modal === "retry"}
           onClose={() => setModal(null)}
           selection={selection}
-          query={describeQuery(filters, workflows)}
+          query={describeWorkOrderQuery(filters, workflows)}
           onConfirm={async (scope) => {
             await onBulkRetry(target(scope), null);
             done();

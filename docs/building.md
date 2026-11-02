@@ -47,6 +47,7 @@ its stories; read the component before using it.
 | An on/off switch | `Toggle` |
 | An inline link | `TextLink` |
 | Read-only code, a log or a dataclip | `CodeViewer` |
+| Code the user edits (a job, YAML, a custom input) | `CodeEditor` (Monaco; give it an `ariaLabel`) |
 | Rendered markdown | `Markdown` |
 | A file upload or drop area | `FileDropZone` |
 | Tabular data | `Table` with `Tr`, `Th`, `Td`; `state` for a list that is loading or failed (a clickable row holds a `RowLink` in its first cell, or a `RowToggle` if it expands; a click elsewhere on the row clicks that control, so the keyboard reaches the same thing) |

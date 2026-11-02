@@ -6,7 +6,7 @@ import CodeEditor from "./CodeEditor";
 describe("CodeEditor", () => {
   it("shows the job in Monaco as JavaScript and reports what the user types", () => {
     const onChange = vi.fn();
-    render(<CodeEditor value={"fn(state => state);"} onChange={onChange} />);
+    render(<CodeEditor value={"fn(state => state);"} onChange={onChange} ariaLabel="Job code" />);
 
     const box = screen.getByRole("textbox", { name: "Job code" });
     expect(box.getAttribute("data-language")).toBe("javascript");
@@ -26,7 +26,7 @@ describe("CodeEditor", () => {
   });
 
   it("hides the suggestions and browser lib that Lightning's job editor hides", () => {
-    render(<CodeEditor value="" />);
+    render(<CodeEditor value="" ariaLabel="Job code" />);
 
     expect(editors.at(-1)!.options?.suggest).toEqual({
       showModules: true,

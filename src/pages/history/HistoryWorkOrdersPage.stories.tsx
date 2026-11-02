@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import HistoryWorkOrdersPage, { type WorkOrderFilters } from "./HistoryWorkOrdersPage";
+import HistoryWorkOrdersPage from "./HistoryWorkOrdersPage";
+import type { WorkOrderFilters } from "../../types/history";
 import { workOrdersIn } from "../../mock-data/history";
 import { workflowJobs, workOrderRow } from "../../mock-data/history-extra";
 import { projects } from "../../mock-data/projects";

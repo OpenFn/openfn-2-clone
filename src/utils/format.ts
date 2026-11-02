@@ -78,10 +78,38 @@ export function formatUtc(iso: string) {
   return new Date(iso).toISOString().replace("T", " ").replace(/(\.000)?Z$/, " UTC");
 }
 
-/** "14-Sep" (adds "-2025" outside the current year), as on the filter chips. */
-export function formatChipDate(d: Date) {
-  const base = `${d.getDate()}-${MONTHS_SHORT[d.getMonth()]}`;
-  return d.getFullYear() === new Date().getFullYear() ? base : `${base}-${d.getFullYear()}`;
+/** "14-Oct", with "-2025" outside the current year, in UTC (History's filter chips, index.ex `maybe_humanize_date`). */
+export function formatChipDate(iso: string, now: Date = new Date()) {
+  const d = new Date(iso);
+  const base = `${d.getUTCDate()}-${MONTHS_SHORT[d.getUTCMonth()]}`;
+  return d.getUTCFullYear() === now.getUTCFullYear() ? base : `${base}-${d.getUTCFullYear()}`;
+}
+
+/** "14-Oct to 20-Oct", "after 14-Oct", "before 20-Oct" or "any time" (index.ex `format_date_range`). */
+export function formatChipDateRange(after: string | null, before: string | null, now: Date = new Date()) {
+  if (after && before) return `${formatChipDate(after, now)} to ${formatChipDate(before, now)}`;
+  if (after) return `after ${formatChipDate(after, now)}`;
+  if (before) return `before ${formatChipDate(before, now)}`;
+  return "any time";
+}
+
+/** "14-Oct 09:05 – 14-Oct 10:00 UTC", or "after …" / "before …" with one end (index.ex `run_stamp`). */
+export function formatRunRange(after: string | null, before: string | null) {
+  const stamp = (iso: string) => {
+    const d = new Date(iso);
+    return `${d.getUTCDate()}-${MONTHS_SHORT[d.getUTCMonth()]} ${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}`;
+  };
+  if (after && before) return `${stamp(after)} – ${stamp(before)} UTC`;
+  if (after) return `after ${stamp(after)} UTC`;
+  if (before) return `before ${stamp(before)} UTC`;
+  return "";
+}
+
+/** "3/9/26 at 4:05pm", in UTC (components.ex `humanize_datetime`). */
+export function formatQueryDate(iso: string) {
+  const d = new Date(iso);
+  const h = d.getUTCHours();
+  return `${d.getUTCDate()}/${d.getUTCMonth() + 1}/${String(d.getUTCFullYear()).slice(2)} at ${h % 12 || 12}:${pad(d.getUTCMinutes())}${h < 12 ? "am" : "pm"}`;
 }
 
 /** ElapsedIndicator: "212 ms", "4 s", "2 m", or "Not started". */
