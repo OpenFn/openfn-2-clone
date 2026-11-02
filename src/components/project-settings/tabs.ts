@@ -4,6 +4,7 @@ import type { Tab } from "../primitives/Tabs";
 export const projectSettingsTabs: Tab[] = [
   { id: "project", to: "#project", label: "Setup", icon: "hero-clipboard" },
   { id: "credentials", to: "#credentials", label: "Credentials", icon: "hero-key" },
+  { id: "environments", to: "#environments", label: "Environments", icon: "hero-squares-2x2" },
   { id: "collections", to: "#collections", label: "Collections", icon: "hero-circle-stack" },
   { id: "webhook_security", to: "#webhook_security", label: "Webhook Security", icon: "hero-lock-closed" },
   { id: "collaboration", to: "#collaboration", label: "Collaboration", icon: "hero-users" },

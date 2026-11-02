@@ -7,6 +7,7 @@ import CredentialIndex from "../../components/credentials/CredentialIndex";
 import NewCredentialMenuButton, { projectCredentialMenuOptions } from "../../components/credentials/NewCredentialMenuButton";
 import CollaborationPanel from "../../components/project-settings/CollaborationPanel";
 import CollectionsPanel from "../../components/project-settings/CollectionsPanel";
+import EnvironmentsPanel from "../../components/project-settings/EnvironmentsPanel";
 import DataStoragePanel from "../../components/project-settings/DataStoragePanel";
 import GithubSyncPanel from "../../components/project-settings/GithubSyncPanel";
 import HistoryExportsPanel from "../../components/project-settings/HistoryExportsPanel";
@@ -144,6 +145,7 @@ export default function ProjectSettingsPage(props: ProjectSettingsPageProps) {
         />
       </>
     ),
+    environments: <EnvironmentsPanel projectId={project.id} sandbox={sandbox} parentName={parent?.name} />,
     collections: (
       <CollectionsPanel
         collections={props.collections}

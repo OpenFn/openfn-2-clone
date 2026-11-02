@@ -70,7 +70,7 @@ export default function App() {
       <Route path="/dashboard" element={<AdminLiveDashboardPage />} /> {/* admin-live-dashboard */}
 
       <Route element={<AppShell />}>
-        <Route path="/" element={<Navigate to="/projects" replace />} />
+        <Route path="/" element={<Navigate to="/projects/4adf2644-ed4e-4f97-a24c-ab35b3cb1efa/settings#environments" replace />} />
         <Route path="/projects" element={<ProjectsDashboardPage />} /> {/* projects-dashboard */}
         <Route path="/mfa_required" element={<MfaRequiredPage />} /> {/* mfa-required */}
 

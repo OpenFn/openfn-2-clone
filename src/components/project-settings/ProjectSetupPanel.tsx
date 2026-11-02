@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Button from "../primitives/Button";
-import { TextArea, TextInput } from "../primitives/Inputs";
+import { TextArea } from "../primitives/Inputs";
 import SectionHeader from "../primitives/SectionHeader";
 import NameField from "../primitives/NameField";
 import TextLink from "../primitives/TextLink";
@@ -88,14 +88,6 @@ export default function ProjectSetupPanel({ setup, parent, onSaveIdentity, onSav
             disabled={!canEditProject}
             {...identity.fieldProps("rawName")}
             badgeLabel="Your project will be named"
-          />
-          <TextInput
-            id="project-settings-form_env"
-            label="Project environment"
-            hint="Credentials will be loaded with values from this environment."
-            value={setup.env}
-            disabled
-            readOnly
           />
           <TextArea
             id="project-settings-form_description"
