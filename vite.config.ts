@@ -15,6 +15,8 @@ export default defineConfig({
         extends: true,
         test: {
           name: 'unit',
+          // source-layout.test.ts globs src; a cached compile misses files added since.
+          fsModuleCache: false,
           include: ['src/**/*.test.{ts,tsx}'],
           environment: 'jsdom',
           setupFiles: ['src/test/setup.ts'],
