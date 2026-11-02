@@ -234,6 +234,11 @@ goes back to Lightning's way.
 - **A modal's title has a normal line height.** Lightning squeezes it to
   20px (`modal.ex:109`); the replica uses `Heading size="lg"` as it is, so
   the title lines up with the close button.
+- **Workflow Health's "Triage - grouped by failure type" is a normal
+  section heading.** Lightning makes it a small grey uppercase label
+  (`assets/js/health/WorkflowHealth.tsx:172`), unlike the card titles
+  beside it; the replica uses `Section`'s heading, so it matches Outcomes
+  and Failure breakdown.
 
 ## Colour
 
