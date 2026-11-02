@@ -2,13 +2,19 @@
 
 ## Identifiers
 
-Every id is a UUID. A path id that isn't a UUID answers 404 `not_found`.
+Every id is a UUID. A path id that isn't a UUID answers 400
+`invalid_parameter` with a `path` entry naming the segment, but only to a
+caller who may learn which records exist. Anyone else hears 403 `forbidden`,
+as for any record they can't reach. See [order of checks](./errors.md#order-of-checks).
 
 ## Content type
 
 Send bodies as `Content-Type: application/json`. A body in a format Lightning
 doesn't read answers 415 `unsupported_media_type`. Invalid JSON, or JSON that
 isn't an object, answers 400 `malformed`.
+
+Send only the keys a route accepts. A route can refuse any other key with a
+422 `invalid` whose entry has the code `unknown_key`.
 
 ## Idempotent writes
 
