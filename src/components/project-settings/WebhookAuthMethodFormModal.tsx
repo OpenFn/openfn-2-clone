@@ -121,32 +121,33 @@ export default function WebhookAuthMethodFormModal({ authMethod, onCancel, onSav
             void reveal.run();
           }}
         >
-          {/* eslint-disable-next-line no-restricted-syntax -- debt: F557 Stack/Row can't render this element */}
-          <Text as="div" className="space-y-4">
-            <p>
-              You're required to reauthenticate yourself before viewing the webhook{" "}
-              {authType === "basic" ? "Password" : "API Key"}
-            </p>
-            <TextInput
-              id="user_password"
-              type="password"
-              label="Password"
-              autoComplete="new-password"
-              value={reauthValues.password}
-              onChange={(e) => setReauthValues({ ...reauthValues, password: e.target.value })}
-            />
-            <div className="flex items-center gap-2 text-muted">
-              <hr className="flex-1 border-strong" />
-              OR
-              <hr className="flex-1 border-strong" />
-            </div>
-            <TextInput
-              id="user_code"
-              label="2FA Code"
-              inputMode="numeric"
-              value={reauthValues.code}
-              onChange={(e) => setReauthValues({ ...reauthValues, code: e.target.value })}
-            />
+          <Text as="div">
+            <Stack gap="md">
+              <p>
+                You're required to reauthenticate yourself before viewing the webhook{" "}
+                {authType === "basic" ? "Password" : "API Key"}
+              </p>
+              <TextInput
+                id="user_password"
+                type="password"
+                label="Password"
+                autoComplete="new-password"
+                value={reauthValues.password}
+                onChange={(e) => setReauthValues({ ...reauthValues, password: e.target.value })}
+              />
+              <div className="flex items-center gap-2 text-muted">
+                <hr className="flex-1 border-strong" />
+                OR
+                <hr className="flex-1 border-strong" />
+              </div>
+              <TextInput
+                id="user_code"
+                label="2FA Code"
+                inputMode="numeric"
+                value={reauthValues.code}
+                onChange={(e) => setReauthValues({ ...reauthValues, code: e.target.value })}
+              />
+            </Stack>
           </Text>
         </Form>
       </Modal>

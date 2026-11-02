@@ -9,7 +9,7 @@ import type { Tone } from "../primitives/tone";
 import EmptyState from "../primitives/EmptyState";
 import TextLink from "../primitives/TextLink";
 import Markdown from "../primitives/Markdown";
-import { Stack } from "../primitives/Stack";
+import { Stack, Row } from "../primitives/Stack";
 
 interface Props {
   id: string;
@@ -37,15 +37,16 @@ function statusTone(status: string): Tone {
 function IdList({ label, ids, onOpenId }: { label: string; ids: string[]; onOpenId?: ((id: string) => void) | undefined }) {
   if (ids.length === 0) return null;
   return (
-    // eslint-disable-next-line no-restricted-syntax -- debt: F556 off-scale gap-1.5, waiting on Lucy's rounding
-    <Text as="div" variant="body-sm" className="flex flex-wrap items-center gap-1.5">
-      <span className="text-muted">{label}</span>
-      {ids.map((id) => (
-        // eslint-disable-next-line no-restricted-syntax, local/primitive-classname -- debt: Button has no 12px mono size for ids; F528 type (font-mono text-xs)
-        <Button key={id} variant="secondary" size="xs" className="font-mono text-xs" onClick={() => onOpenId?.(id)}>
-          {id}
-        </Button>
-      ))}
+    <Text as="div" variant="body-sm">
+      <Row gap="sm" wrap>
+        <span className="text-muted">{label}</span>
+        {ids.map((id) => (
+          // eslint-disable-next-line no-restricted-syntax, local/primitive-classname -- debt: Button has no 12px mono size for ids; F528 type (font-mono text-xs)
+          <Button key={id} variant="secondary" size="xs" className="font-mono text-xs" onClick={() => onOpenId?.(id)}>
+            {id}
+          </Button>
+        ))}
+      </Row>
     </Text>
   );
 }
@@ -77,15 +78,14 @@ export default function AnnotationCard({ id, annotation, inventory, onOpenId, in
             />
           )}
         </div>
-        {/* eslint-disable-next-line no-restricted-syntax -- debt: F556 off-scale gap-1.5, waiting on Lucy's rounding */}
-        <div className="flex flex-wrap items-center gap-1.5">
+        <Row gap="sm" wrap>
           <Pill variant="square">
             <code>{id}</code>
           </Pill>
           {annotation && <Pill color="primary">{annotation.folder.replace(/s$/, "")}</Pill>}
           {status && <Pill tone={statusTone(status)}>{status}</Pill>}
           {inventory && <Pill tone={statusTone(inventory.status)}>inventory: {inventory.status}</Pill>}
-        </div>
+        </Row>
         {inventory && (
           <Text as="p" variant="body-sm" tone="muted">
             {inventory.section} · <code>{inventory.route.replace(/`/g, "")}</code>

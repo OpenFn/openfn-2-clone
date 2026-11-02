@@ -68,20 +68,21 @@ function EditFooter({ onEdit }: { onEdit: () => void }) {
 function WizardBreadcrumb({ step, onChoose }: { step: "choose" | "configure"; onChoose?: () => void }) {
   return (
     <nav aria-label="Wizard steps">
-      {/* eslint-disable-next-line no-restricted-syntax -- debt: F556 off-scale gap-1.5, waiting on Lucy's rounding */}
-      <Text as="div" variant="body-sm" className="flex items-center gap-1.5">
-        {step === "configure" && onChoose ? (
-          // eslint-disable-next-line local/primitive-classname -- debt: F527 colour (text-faint hover:text-muted)
-          <TextLink onClick={onChoose} className="text-faint hover:text-muted">
-            Choose
-          </TextLink>
-        ) : (
-          <span className={step === "choose" ? "font-semibold text-strong underline" : "text-faint"}>Choose</span>
-        )}
-        <span aria-hidden="true" className="text-faint">
-          ›
-        </span>
-        <span className={step === "configure" ? "font-semibold text-strong underline" : "text-faint"}>Configure</span>
+      <Text as="div" variant="body-sm">
+        <Row gap="sm">
+          {step === "configure" && onChoose ? (
+            // eslint-disable-next-line local/primitive-classname -- debt: F527 colour (text-faint hover:text-muted)
+            <TextLink onClick={onChoose} className="text-faint hover:text-muted">
+              Choose
+            </TextLink>
+          ) : (
+            <span className={step === "choose" ? "font-semibold text-strong underline" : "text-faint"}>Choose</span>
+          )}
+          <span aria-hidden="true" className="text-faint">
+            ›
+          </span>
+          <span className={step === "configure" ? "font-semibold text-strong underline" : "text-faint"}>Configure</span>
+        </Row>
       </Text>
     </nav>
   );
@@ -251,11 +252,12 @@ export default function TriggerInspector({ trigger, onChange, onClose }: Props) 
       </WebhookUrlField>
       <Disclosure variant="inline" defaultOpen={false} title="Authentication" note={trigger.hasAuthMethod ? "1 configured" : "none configured"}>
         {trigger.hasAuthMethod ? (
-          // eslint-disable-next-line no-restricted-syntax -- debt: F557 Stack/Row can't render this element
-          <Text as="div" variant="body-sm" className="flex items-center gap-2">
-            <span className="hero-shield-check-micro h-4 w-4 text-success-icon" />
-            <span className="font-medium text-body">CommCare webhook key</span>
-            <span className="text-faint">(API Key)</span>
+          <Text as="div" variant="body-sm">
+            <Row gap="sm">
+              <span className="hero-shield-check-micro h-4 w-4 text-success-icon" />
+              <span className="font-medium text-body">CommCare webhook key</span>
+              <span className="text-faint">(API Key)</span>
+            </Row>
           </Text>
         ) : (
           <Text as="p" variant="body-sm" tone="muted">

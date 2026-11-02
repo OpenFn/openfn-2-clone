@@ -173,11 +173,12 @@ export default function ManualRunPanel({
             <Heading className="min-w-0 wrap-break-word">{selected.name || "Unnamed"}</Heading>
             <IconButton icon="hero-pencil" label="Rename" size="xs" />
           </Row>
-          {/* eslint-disable-next-line no-restricted-syntax -- debt: F557 Stack/Row can't render this element */}
-          <Text as="div" variant="body-sm" tone="muted" className="flex items-center gap-2">
-            <span className="capitalize">{selected.type.replace("_", " ")}</span>
-            <span>•</span>
-            <span>{formatLocalDate(selected.insertedAt)}</span>
+          <Text as="div" variant="body-sm" tone="muted">
+            <Row gap="sm">
+              <span className="capitalize">{selected.type.replace("_", " ")}</span>
+              <span>•</span>
+              <span>{formatLocalDate(selected.insertedAt)}</span>
+            </Row>
           </Text>
         </div>
         <IconButton icon="hero-x-mark" label="Unselect dataclip" onClick={() => setSelected(null)} />

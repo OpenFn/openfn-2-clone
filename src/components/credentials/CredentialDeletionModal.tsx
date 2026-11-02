@@ -4,6 +4,7 @@ import ConfirmModal from "../primitives/ConfirmModal";
 import Modal from "../primitives/Modal";
 import Text from "../primitives/Text";
 import type { CredentialRow } from "../../types/credentials";
+import { Stack } from "../primitives/Stack";
 
 interface Props {
   onClose: () => void;
@@ -37,10 +38,11 @@ export default function CredentialDeletionModal({ onClose, credential, onDelete 
           </Button>
         }
       >
-        {/* eslint-disable-next-line no-restricted-syntax -- debt: F556 off-scale space-y-3, waiting on Lucy's rounding */}
-        <Text as="div" tone="muted" className="space-y-3">
-          <p>{activityNote}</p>
-          <p>Contact your instance administrator for more details.</p>
+        <Text as="div" tone="muted">
+          <Stack gap="md">
+            <p>{activityNote}</p>
+            <p>Contact your instance administrator for more details.</p>
+          </Stack>
         </Text>
       </Modal>
     );

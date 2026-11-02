@@ -16,6 +16,7 @@ import SearchInput from "../primitives/SearchInput";
 import { matchesQuery } from "../../utils/search";
 import { formatSessionAge } from "../../utils/format";
 import Text from "../primitives/Text";
+import { Stack, Row } from "../primitives/Stack";
 
 interface Props {
   sessions: AISession[];
@@ -178,10 +179,11 @@ export default function AIAssistantPanel({ sessions, onClose }: Props) {
                     <Heading size="sm" as="h3" className="truncate">
                       {s.title}
                     </Heading>
-                    {/* eslint-disable-next-line no-restricted-syntax -- debt: F556 off-scale gap-3, waiting on Lucy's rounding */}
-                    <Text as="div" variant="body-sm" tone="muted" className="flex items-center justify-between gap-3">
-                      {formatSessionAge(s.updatedAt)}
-                      <Pill>{s.messages.length}</Pill>
+                    <Text as="div" variant="body-sm" tone="muted">
+                      <Row gap="md" justify="between">
+                        {formatSessionAge(s.updatedAt)}
+                        <Pill>{s.messages.length}</Pill>
+                      </Row>
                     </Text>
                   </button>
                 ))}
@@ -232,29 +234,30 @@ export default function AIAssistantPanel({ sessions, onClose }: Props) {
       </div>
 
       <Modal open={aboutOpen} onClose={() => setAboutOpen(false)} title="About the AI Assistant" size="md">
-        {/* eslint-disable-next-line no-restricted-syntax -- debt: F557 Stack/Row can't render this element */}
-        <Text as="div" className="space-y-4">
-          <p>The OpenFn AI Assistant helps you build workflows and write job code. It can:</p>
-          <ul className="list-inside list-disc space-y-1 pl-4">
-            <li>Generate complete workflow templates</li>
-            <li>Write and explain job code for any adaptor</li>
-            <li>Debug errors and explain what went wrong</li>
-            <li>Answer questions about OpenFn and adaptors</li>
-            <li>Suggest improvements to your code</li>
-          </ul>
-          <p className="text-muted">Messages are saved unencrypted to the OpenFn database and may be monitored for quality control.</p>
-          {/* eslint-disable-next-line local/primitive-classname -- debt: F526 box (pt-2) */}
-          <Heading size="sm" as="h3" className="pt-2">
-            Using The Assistant Safely
-          </Heading>
-          <p>
-            Although we continuously monitor and improve the model, the Assistant can sometimes provide incorrect or misleading responses.
-            Always review and verify the output.
-          </p>
-          <p>
-            <strong>Important:</strong> Do not deploy auto-generated code in production without thorough testing. Do not include real user
-            data, personally identifiable information, or sensitive business data in your queries.
-          </p>
+        <Text as="div">
+          <Stack gap="md">
+            <p>The OpenFn AI Assistant helps you build workflows and write job code. It can:</p>
+            <ul className="list-inside list-disc space-y-1 pl-4">
+              <li>Generate complete workflow templates</li>
+              <li>Write and explain job code for any adaptor</li>
+              <li>Debug errors and explain what went wrong</li>
+              <li>Answer questions about OpenFn and adaptors</li>
+              <li>Suggest improvements to your code</li>
+            </ul>
+            <p className="text-muted">Messages are saved unencrypted to the OpenFn database and may be monitored for quality control.</p>
+            {/* eslint-disable-next-line local/primitive-classname -- debt: F526 box (pt-2) */}
+            <Heading size="sm" as="h3" className="pt-2">
+              Using The Assistant Safely
+            </Heading>
+            <p>
+              Although we continuously monitor and improve the model, the Assistant can sometimes provide incorrect or misleading responses.
+              Always review and verify the output.
+            </p>
+            <p>
+              <strong>Important:</strong> Do not deploy auto-generated code in production without thorough testing. Do not include real user
+              data, personally identifiable information, or sensitive business data in your queries.
+            </p>
+          </Stack>
         </Text>
       </Modal>
     </aside>

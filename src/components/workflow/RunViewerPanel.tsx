@@ -14,7 +14,7 @@ import Heading from "../primitives/Heading";
 import InfoTooltip from "../primitives/InfoTooltip";
 import EmptyState from "../primitives/EmptyState";
 import Text from "../primitives/Text";
-import { Stack } from "../primitives/Stack";
+import { Stack, Row } from "../primitives/Stack";
 
 export type RunViewerTab = "log" | "input" | "output";
 
@@ -74,12 +74,12 @@ export default function RunViewerPanel({ projectId, run, startedBy, steps, logs,
             {startedBy && <DetailItem label="Started by">{startedBy}</DetailItem>}
           </DetailList>
         </div>
-        {/* eslint-disable-next-line no-restricted-syntax -- debt: F556 off-scale gap-3, waiting on Lucy's rounding */}
-        <div className="flex flex-col gap-3">
-          {/* eslint-disable-next-line no-restricted-syntax -- debt: F557 Stack/Row can't render this element */}
-          <Heading size="sm" as="p" className="flex items-center gap-1">
-            Run Steps
-            <InfoTooltip title="This run may not have executed all steps in the workflow. Only the steps that were executed in this specific run are shown here." />
+        <Stack gap="md">
+          <Heading size="sm" as="p">
+            <Row as="span" gap="xs">
+              Run Steps
+              <InfoTooltip title="This run may not have executed all steps in the workflow. Only the steps that were executed in this specific run are shown here." />
+            </Row>
           </Heading>
           {steps.length === 0 ? (
             <EmptyState variant="plain" message="No steps yet" />
@@ -110,7 +110,7 @@ export default function RunViewerPanel({ projectId, run, startedBy, steps, logs,
               })}
             </Stack>
           )}
-        </div>
+        </Stack>
       </div>
       <div className="min-h-0 flex-1">
         {activeTab === "log" && (

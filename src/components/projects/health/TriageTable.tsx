@@ -7,6 +7,7 @@ import Pill from "../../primitives/Pill";
 import { Table, Td, Th, Tr } from "../../primitives/Table";
 import Text from "../../primitives/Text";
 import { DOT, EMPTY, FAILURE_COLORS, adaptorLabel } from "./palette";
+import { Stack } from "../../primitives/Stack";
 
 // One tip per error type the worker reports (TriageTable.tsx `TIPS`).
 const TIPS: Record<string, string> = {
@@ -64,8 +65,7 @@ function Signature({ signature }: { signature: ErrorSignature }) {
   const state = OUTCOMES[signature.exit_reason];
   const color = state && FAILURE_COLORS[state];
   return (
-    // eslint-disable-next-line no-restricted-syntax -- debt: F556 off-scale space-y-1.5, waiting on Lucy's rounding
-    <div className="space-y-1.5">
+    <Stack gap="sm">
       <p className="flex items-center gap-2 font-medium text-strong capitalize">
         {color && <span aria-hidden="true" className={DOT} style={{ backgroundColor: color }} />}
         {state ?? errorTypeOf(signature)}
@@ -80,7 +80,7 @@ function Signature({ signature }: { signature: ErrorSignature }) {
           {adaptorLabel(signature.adaptor)}
         </Text>
       )}
-    </div>
+    </Stack>
   );
 }
 

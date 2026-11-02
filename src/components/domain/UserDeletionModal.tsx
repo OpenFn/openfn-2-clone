@@ -2,6 +2,7 @@ import Button from "../primitives/Button";
 import ConfirmModal from "../primitives/ConfirmModal";
 import Modal from "../primitives/Modal";
 import Text from "../primitives/Text";
+import { Stack } from "../primitives/Stack";
 
 interface Props {
   open?: boolean;
@@ -47,13 +48,14 @@ export default function UserDeletionModal({
           </Button>
         }
       >
-        {/* eslint-disable-next-line no-restricted-syntax -- debt: F556 off-scale space-y-3, waiting on Lucy's rounding */}
-        <Text as="div" tone="muted" className="space-y-3">
-          <p>
-            {isCurrentUser ? "Your account" : "This user"} cannot be deleted until their auditable activities have
-            also been purged.
-          </p>
-          <p>Audit trails are removed on a project-basis and may be controlled by the project owner or a superuser.</p>
+        <Text as="div" tone="muted">
+          <Stack gap="md">
+            <p>
+              {isCurrentUser ? "Your account" : "This user"} cannot be deleted until their auditable activities have
+              also been purged.
+            </p>
+            <p>Audit trails are removed on a project-basis and may be controlled by the project owner or a superuser.</p>
+          </Stack>
         </Text>
       </Modal>
     );

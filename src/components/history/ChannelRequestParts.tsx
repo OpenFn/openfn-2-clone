@@ -8,6 +8,7 @@ import { formatBinaryBytes as formatBytes } from "../../utils/format";
 import CopyButton from "../primitives/CopyButton";
 import EmptyState from "../primitives/EmptyState";
 import Text from "../primitives/Text";
+import { Stack } from "../primitives/Stack";
 
 /*
  * Building blocks of the channel request page
@@ -132,31 +133,32 @@ export function BodyViewer({
     );
   }
   return (
-    // eslint-disable-next-line no-restricted-syntax -- debt: F557 Stack/Row can't render this element
-    <Text as="div" variant="body-sm" tone="faint" className="space-y-1">
-      <Card variant="muted" padding="none" className="relative">
-        <div className="absolute right-2 top-2 flex items-center gap-1.5">
-          {ct && (
-            <Pill variant="square">
-              <code>{contentTypeLabel(ct)}</code>
-            </Pill>
-          )}
-          {/* eslint-disable-next-line local/primitive-classname -- debt: F526 box (bg-white/80) */}
-          <CopyButton value={preview} label="Copy body" size="xs" className="bg-white/80" />
-        </div>
-        <pre className="max-h-80 overflow-auto whitespace-pre-wrap break-all p-3 pr-20 font-mono text-body">{preview}</pre>
-      </Card>
-      {hash && (
-        <div className="flex items-center gap-2 pt-1">
-          <span className="font-mono">SHA256: {hash.slice(0, 16)}...</span>
-          <CopyButton value={hash} label="Copy hash" size="xs" />
-        </div>
-      )}
-      {size != null && size > previewBytes && (
-        <div>
-          Preview: {formatBytes(previewBytes)} of {formatBytes(size)}
-        </div>
-      )}
+    <Text as="div" variant="body-sm" tone="faint">
+      <Stack gap="xs">
+        <Card variant="muted" padding="none" className="relative">
+          <div className="absolute right-2 top-2 flex items-center gap-1.5">
+            {ct && (
+              <Pill variant="square">
+                <code>{contentTypeLabel(ct)}</code>
+              </Pill>
+            )}
+            {/* eslint-disable-next-line local/primitive-classname -- debt: F526 box (bg-white/80) */}
+            <CopyButton value={preview} label="Copy body" size="xs" className="bg-white/80" />
+          </div>
+          <pre className="max-h-80 overflow-auto whitespace-pre-wrap break-all p-3 pr-20 font-mono text-body">{preview}</pre>
+        </Card>
+        {hash && (
+          <div className="flex items-center gap-2 pt-1">
+            <span className="font-mono">SHA256: {hash.slice(0, 16)}...</span>
+            <CopyButton value={hash} label="Copy hash" size="xs" />
+          </div>
+        )}
+        {size != null && size > previewBytes && (
+          <div>
+            Preview: {formatBytes(previewBytes)} of {formatBytes(size)}
+          </div>
+        )}
+      </Stack>
     </Text>
   );
 }

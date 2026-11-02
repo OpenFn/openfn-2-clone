@@ -1,13 +1,13 @@
 import { cn } from "../../utils/cn";
 import TextLink from "../primitives/TextLink";
 import Text from "../primitives/Text";
+import { Row } from "../primitives/Stack";
 
 /** "Please use AI responsibly. Never share PII." (AIDisclaimerFooter.tsx). `muted` is the quieter one, without the icon. */
 export default function AIDisclaimerFooter({ variant = "default" }: { variant?: "default" | "muted" }) {
   const muted = variant === "muted";
   return (
-    // eslint-disable-next-line no-restricted-syntax -- debt: F556 off-scale gap-1.5, waiting on Lucy's rounding
-    <div className="flex items-center gap-1.5" data-testid="ai-disclaimer-footer">
+    <Row gap="sm" data-testid="ai-disclaimer-footer">
       {!muted && <span className="hero-shield-exclamation h-3.5 w-3.5 shrink-0 text-warning-icon" />}
       <Text variant={muted ? "body-sm" : "label-sm"} tone="muted">
         Please use AI responsibly. Never share PII.{" "}
@@ -21,6 +21,6 @@ export default function AIDisclaimerFooter({ variant = "default" }: { variant?: 
           Learn more.
         </TextLink>
       </Text>
-    </div>
+    </Row>
   );
 }

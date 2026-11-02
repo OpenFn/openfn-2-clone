@@ -3,6 +3,7 @@ import type { CredentialProjectRef } from "../../types/credentials";
 import ConfirmModal from "../primitives/ConfirmModal";
 import { Select } from "../primitives/Inputs";
 import Pill from "../primitives/Pill";
+import { Stack } from "../primitives/Stack";
 
 interface Props {
   id: string;
@@ -34,8 +35,7 @@ export default function ProjectsPicker({ id, type, projects, granted = [], selec
   const remove = (pid: string) => onChange(selectedIds.filter((x) => x !== pid));
 
   return (
-    // eslint-disable-next-line no-restricted-syntax -- debt: F556 off-scale space-y-3, waiting on Lucy's rounding
-    <div className="space-y-3">
+    <Stack gap="md">
       <Select
         id={selectId}
         value=""
@@ -84,6 +84,6 @@ export default function ProjectsPicker({ id, type, projects, granted = [], selec
           </p>
         </ConfirmModal>
       )}
-    </div>
+    </Stack>
   );
 }

@@ -14,7 +14,7 @@ import TextLink from "../primitives/TextLink";
 import { ADAPTOR_HELP } from "./AdaptorDisplay";
 import AdaptorIcon from "./AdaptorIcon";
 import Text from "../primitives/Text";
-import { Stack } from "../primitives/Stack";
+import { Stack, Row } from "../primitives/Stack";
 
 const CREDENTIALS_HELP =
   "If the system you're working with requires authentication, choose a credential with login details (secrets) that will allow this job to connect. If you're not connecting to an external system you don't need a credential.";
@@ -110,10 +110,11 @@ export default function ConfigureAdaptorModal({
                       onChange={() => onCredentialChange(c.name)}
                       label={<span className="font-medium text-strong">{c.name}</span>}
                       hint={
-                        // eslint-disable-next-line no-restricted-syntax -- debt: F557 Stack/Row can't render this element
-                        <Text className="flex items-center gap-1">
-                          <span className="hero-user-solid h-4 w-4" />
-                          {ownerEmail(c.ownerId)}
+                        <Text>
+                          <Row as="span" gap="xs">
+                            <span className="hero-user-solid h-4 w-4" />
+                            {ownerEmail(c.ownerId)}
+                          </Row>
                         </Text>
                       }
                     />
