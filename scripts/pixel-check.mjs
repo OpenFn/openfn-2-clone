@@ -3,9 +3,13 @@
 // should look the same is reviewed by what actually changed on screen.
 //
 //   npx storybook build -o <dir>   (once per commit)
-//   node scripts/pixel-check.mjs <before-dir> <after-dir> <out-dir>
+//   npm run pixel-check -- <before-dir> <after-dir> <name>
+//   ... --only stack,tokenspage   (just the stories whose id contains one of these)
+//   npm run pixel-check:clear   (delete every saved run)
 //
-// Writes <out-dir>/index.html: one row per changed, added or removed story.
+// Everything goes in pixel-check-screenshots/<name>/ (git ignores it):
+// index.html, one row per changed, added or removed story, and img/ with a
+// before, after, diff and close-up PNG for each.
 // Click a row to step through them full size: ← → move between stories,
 // 1–4 switch diff / close-up / before / after, F flags one, Esc closes.
 import { createServer } from 'node:http';
@@ -14,9 +18,13 @@ import { join, extname, resolve, sep } from 'node:path';
 import { chromium } from 'playwright';
 import { PNG } from 'pngjs';
 
-const [beforeDir, afterDir, outDir] = process.argv.slice(2);
-if (!outDir) {
-  console.error('usage: pixel-check.mjs <before-dir> <after-dir> <out-dir>');
+const args = process.argv.slice(2);
+const onlyAt = args.indexOf('--only');
+const only = onlyAt === -1 ? [] : args.splice(onlyAt, 2)[1].split(',');
+const [beforeDir, afterDir, name] = args;
+const outDir = join('pixel-check-screenshots', name ?? '');
+if (!name) {
+  console.error('usage: pixel-check.mjs <before-dir> <after-dir> <name> [--only <story-id part>,...]');
   process.exit(1);
 }
 
@@ -43,6 +51,8 @@ const storyIds = async (dir) =>
     .filter((e) => e.type === 'story')
     .map((e) => e.id);
 
+// A fresh tab (and so fresh localStorage) per shot: reusing one let a story's
+// saved settings leak into the next.
 async function shoot(browser, port, id) {
   const page = await browser.newPage({ viewport: { width: 1280, height: 800 }, reducedMotion: 'reduce' });
   try {
@@ -101,15 +111,16 @@ function crop(A, B, x0, y0, x1, y1) {
 
 const [sa, sb] = await Promise.all([serve(beforeDir), serve(afterDir)]);
 const [idsA, idsB] = await Promise.all([storyIds(beforeDir), storyIds(afterDir)]);
-const all = [...new Set([...idsA, ...idsB])].sort();
+const all = [...new Set([...idsA, ...idsB])].filter((id) => !only.length || only.some((o) => id.includes(o))).sort();
 await mkdir(join(outDir, 'img'), { recursive: true });
 const browser = await chromium.launch();
 const rows = [];
 let done = 0;
 
-// ponytail: 4 stories at a time; raise if the machine has room.
+// Stories at a time; PIXEL_WORKERS=4 if the machine struggles.
+const workers = Number(process.env.PIXEL_WORKERS) || 8;
 const queue = [...all];
-await Promise.all(Array.from({ length: 4 }, async () => {
+await Promise.all(Array.from({ length: workers }, async () => {
   for (let id; (id = queue.shift()); ) {
     if (++done % 100 === 0) console.log(`${done}/${all.length}`);
     try {

@@ -27,14 +27,17 @@ data, comments, lint) and loads by itself when you touch one.
   `npm run build` (typechecks) and `npm test`.
 - Changed a component or a story: also `npm run test:stories`, which
   renders every story and runs axe on it. Stop Storybook first.
-- Changed a primitive, or a sweep that should look the same: run the pixel
-  check (a local Chromatic) and give the reviewer its report, not the diff. It screenshots every
-  story before and after and lists only the ones that changed. Build
-  Storybook at main (`git worktree add --detach <dir> origin/main`, then
-  `npx storybook build -o <dir>/sb` there) and on your branch
-  (`npx storybook build -o <after>`), then
-  `node scripts/pixel-check.mjs <dir>/sb <after> .context/pixel-check/<name>`
-  and serve that folder. Every changed story should be one you meant.
+- The pixel check is a local Chromatic, for big sweeps across many screens
+  that should mostly look the same; don't run it for a normal change. It
+  screenshots every story before and after and lists only the ones that
+  changed, so the reviewer reads its report instead of the diff. A full run
+  takes several minutes; `--only <id part>,…` checks just those stories in
+  seconds. Build Storybook at main (`git worktree add --detach <dir>
+  origin/main`, then `npx storybook build -o <dir>/sb` there) and on your
+  branch (`npx storybook build -o <after>`), then
+  `npm run pixel-check -- <dir>/sb <after> <name>`. The report and its
+  screenshots land in `pixel-check-screenshots/<name>/` (git ignores it);
+  serve that folder. `npm run pixel-check:clear` deletes every saved run.
 - A lint exception is disabled on its line with a reason after ` -- `;
   `debt:` marks one to fix.
 

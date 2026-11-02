@@ -21,7 +21,9 @@
     "compare": "node scripts/compare-lightning/compare.mjs",
     "kickstart:sync": "node kickstart/sync.mjs",
     "compare:all": "scripts/compare-lightning/run-all.sh",
-    "test:stories": "vitest run --project storybook"
+    "test:stories": "vitest run --project storybook",
+    "pixel-check": "node scripts/pixel-check.mjs",
+    "pixel-check:clear": "node -e \"require('fs').rmSync('pixel-check-screenshots', { recursive: true, force: true })\""
   },
   "dependencies": {
     "@floating-ui/react": "^0.26.28",
