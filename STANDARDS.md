@@ -82,7 +82,7 @@ field errors: `useForm` (`src/utils/useForm.ts`).
   where the form says `password`), the submit fails with the error's
   message, so nothing is lost silently. Lightning's changeset messages
   ("can't be blank", "has already been taken") are used verbatim.
-- Submit is never disabled because the form is invalid: submitting shows
+- Submit, and Next in a step-by-step pop-up, is never disabled because the form is invalid: submitting shows
   every error and doesn't save, so the user can always find out why.
   (Lightning disables it, and the reason can sit on a field you haven't
   touched.)
@@ -111,7 +111,7 @@ query, not the rows.
 - The page links to its own query string only (`useUrlParams().href`),
   never a path, so it knows no routes. A link to another page is an `…Href`
   prop from the host.
-- The page turns the URL into a query (today: a mock-data function that
+- The host (the `.replica.tsx` wrapper) turns the URL into a query (today: a mock-data function that
   filters fixtures; later: a request) and gets back `{ rows, total, page,
   pageSize }`.
 - `Table` takes rows and a `state: "loading" | "error" | "ready"`, and shows
@@ -171,7 +171,8 @@ A dialog that can only explain why the action can't happen yet (a
 scheduled credential with audited runs, a user with activity) is a plain
 `Modal` with one dismiss button, beside the `ConfirmModal`, as
 `CredentialDeletionModal` and `UserDeletionModal` do. Type-to-confirm is
-used only where Lightning asks for typing; it doesn't for credentials.
+used where Lightning asks for typing (not for credentials), and for a new
+action that deletes a project or account or stops data being kept.
 The `/…/delete` routes stay, because Lightning has them; they open a
 `ConfirmModal`.
 

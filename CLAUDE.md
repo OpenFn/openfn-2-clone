@@ -23,7 +23,9 @@ data, comments) and loads when you touch one.
 
 ## Commands
 
-- `npm run dev`, `npm run build` (typecheck and build), `npm test` (Vitest)
+- `npm run dev`, `npm run build` (typecheck and build), `npm test` (Vitest).
+  The dev app is a hash router under `/openfn-3-poc/`: open
+  `http://localhost:5173/openfn-3-poc/#/projects`, not `/projects`.
 - `npm run lint`: warnings fail too. An exception is disabled on its line
   with a reason after ` -- `; `debt:` marks one to fix.
 - `npm run storybook` (port 6006); `npm run test:stories` renders every

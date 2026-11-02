@@ -94,6 +94,10 @@ redesigned on purpose, and each is listed in
 [docs/lightning-differences.md](./docs/lightning-differences.md) when it
 lands. Until then, copy Lightning.
 
+They apply in full, now, to anything Lightning doesn't have (a new page,
+action or flow) and to any task that asks for a redesign. A redesign listed
+in `lightning-differences.md` overrides an annotation's `preserve`.
+
 - Row actions beyond two go in a ••• menu, not one labelled "Actions".
 - A confirm button repeats the action ("Remove collaborator"), never
   "Confirm".
@@ -106,7 +110,7 @@ lands. Until then, copy Lightning.
 - Undo for anything reversible. Type the name to delete a project or account.
 - Step-by-step pop-ups show "Step 1 of 2", keep their size, Back left, Next
   right.
-- Lists paginate from 25 rows.
+- Lists show 25 rows a page. Ported pages keep Lightning's 10 until then.
 - One "search everything" on Ctrl/Cmd+K, and a project switcher on every
   page.
 - Sentence case. Buttons are a verb and a noun. One word per thing, from a
