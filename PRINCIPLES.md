@@ -17,7 +17,9 @@ this is in [docs/building.md](./docs/building.md).
 ## Components
 
 - One job, one component. When two do the same thing, delete one.
-- Name it for what it does (clear to both agents and humans)
+- Name it for its job, never its look or the page it was first used on: a
+  name holding a colour, size or page name gets renamed (`RedModal` →
+  `ConfirmModal`, `HistoryPill` → `RunStatePill`).
 - Compose, don't configure: content through `children` and named slots
   (`title`, `footer`), not boolean props that change what it does.
 - A prop that changes the look is one `variant`, not a boolean; `can*`
@@ -33,12 +35,20 @@ this is in [docs/building.md](./docs/building.md).
 
 ## Look and behaviour
 
-- Tokens only, and colour by meaning: status colours for messages, run
-  colours for run states, `tone="danger"` for destructive actions.
+- Tokens only.
+- Colour means something: red is an error or a destructive action, yellow a
+  warning, green success, blue information; run states use run colours.
+  If taking the colour away loses nothing, it's grey.
 - Contrast 4.5:1 for text, 3:1 for large text and icons. Colour is never the
   only signal.
-- A control that can't be used right now stays focusable and says why.
-- Design for the longest real value, not the fixture. Long names wrap or truncate; empty ones don't break the layout
+- A control the user is blocked from (by permission, plan or state) stays
+  focusable and its tooltip says why ("Only owners can delete projects").
+  Native `disabled` only when there's nothing to explain.
+- Text a user typed has a known home. In a one-line slot (table cell,
+  breadcrumb, pill, tab, menu item, button) it truncates and shows the whole
+  value on hover, through `Td truncate` or `Truncated`, never by hand. In a
+  block (heading, detail list, description, toast) it wraps, breaking long
+  words and URLs. Every story with user text has a Long variant.
 - Every list has an empty state. Every action has pending and error states.
 
 ## One way to do each thing
