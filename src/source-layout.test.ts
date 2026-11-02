@@ -81,10 +81,12 @@ describe("every page and component can be seen and checked", () => {
   it("every primitive gives themes a data-ui hook", () => {
     // One whose root is another primitive (IconButton renders Button) already
     // carries that one's hook; its own would replace it and break theme rules.
+    // Every JSX root the default export returns must be one; `return null` is fine.
     const wrapsPrimitive = (text: string) => {
       const body = text.slice(text.indexOf("export default function"));
-      const root = /return \(?\s*(?:\/\/[^\n]*\n\s*)*<([A-Z]\w*)/.exec(body)?.[1];
-      return root !== undefined && new RegExp(`^import ${root}\\b.* from "\\./`, "m").test(text);
+      const roots = [...body.matchAll(/return \(?\s*(?:\/\/[^\n]*\n\s*)*<(\w*)/g)].map((m) => m[1]!);
+      const imported = (tag: string) => new RegExp(`^import ${tag}\\b.* from "\\./`, "m").test(text);
+      return roots.length > 0 && roots.every(imported);
     };
     const missing = components.filter(
       (path) => path.startsWith("./components/primitives/") && !sources[path]!.includes("data-ui") && !wrapsPrimitive(sources[path]!)

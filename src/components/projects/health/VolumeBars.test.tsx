@@ -1,6 +1,7 @@
 import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import type { RunBucket } from "../../../types/workflow-health";
+import { formatMonthDayIn } from "../../../utils/format";
 import { bucket } from "./fixtures";
 import VolumeBars from "./VolumeBars";
 
@@ -9,8 +10,7 @@ const links = { projectId: "proj-1", workflowId: "wf-1" };
 const bars = (buckets: RunBucket[], { hours = 2, timezone = "Etc/UTC", emptyMessage = "No runs" } = {}) =>
   render(<VolumeBars buckets={buckets} hours={hours} timezone={timezone} emptyMessage={emptyMessage} {...links} />);
 
-const day = (at: string, timezone: string) =>
-  new Date(at).toLocaleDateString(undefined, { month: "short", day: "numeric", timeZone: timezone });
+const day = formatMonthDayIn;
 const params = (a: Element) => new URL(a.getAttribute("href")!, "http://x").searchParams;
 const hover = (container: HTMLElement, index: number) =>
   fireEvent.mouseEnter(container.querySelectorAll("svg")[index]!.parentElement!);

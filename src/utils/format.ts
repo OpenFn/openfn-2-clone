@@ -242,8 +242,8 @@ export function hourIn(iso: string, timeZone: string): number {
 }
 
 /** The browser's hour now, 0 to 23. */
-export function localHour(now: Date = new Date()): number {
-  return now.getHours();
+export function localHour(): number {
+  return new Date().getHours();
 }
 
 /**
