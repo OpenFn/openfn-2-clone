@@ -143,6 +143,8 @@ A component never copies a record list into local state and mutates it.
 
 ## 5. Resource loading states
 
+**Not built yet. Don't build it without asking.**
+
 Any page or panel built around one record (a project, a run, a credential)
 needs the same four treatments: loading, not found, forbidden, error.
 
@@ -191,6 +193,8 @@ The `/…/delete` routes stay, because Lightning has them; they open a
 
 ## 8. Live updates
 
+**Not built yet. Don't build it without asking.**
+
 History and run show update in place in Lightning (PubSub). The component
 contract from pattern 3 must not assume rows are static: rows are keyed by
 id, and a subscription hook replaces or inserts rows in the same query
@@ -205,6 +209,8 @@ reason is `Button`'s `tooltip` or `SectionHeader`'s `permissionsSection`.
 No inline role checks in components.
 
 ## 10. Session and route guards
+
+**Not built yet. Don't build it without asking.**
 
 `SessionProvider` supplies the user and instance. Still needed, once at the
 router: redirect to login when signed out, to `/users/two-factor` when 2FA is

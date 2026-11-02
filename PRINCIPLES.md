@@ -1,12 +1,32 @@
 # Design system principles
 
-The goal: A person or an agent can build a new Lightning screen fast, from parts that
-already exist, and it looks and behaves like every other screen. If a page
-needs its own styling, the system has failed, not the page.
+## What good looks like
 
-We know it's working when there's one way to do each thing, pages hold no
-styling (`className` only for placement), and agents applying these
-principles agree on a finding 95% of the time.
+**Why.** The design system makes the frontend look and feel consistent,
+with defined patterns shared across screens. It moves us to a cleaner
+frontend with less styling debt than Lightning has today. Without defined
+patterns, building with AI gets messy, as the collab editor did.
+
+**Lightning.** Same words and behaviour as Lightning, with one consistent
+look. Where Lightning harms the user (it's inaccessible, hides why something
+failed, or loses work) and the fix lives in a shared part, we fix it and
+write it down in [docs/lightning-differences.md](./docs/lightning-differences.md).
+
+**Tokens.** Anything common comes from tokens, never raw values. Colour
+and type do, and lint enforces it. Spacing and radius should too; they
+aren't checked yet.
+
+**Where things go.** Search first, and say what you found. Something other
+design systems have is a primitive. Something Lightning-specific that two
+screens use is domain. A one-off gets its own small file in the area folder,
+never written inline in a page.
+
+**Debt.** `debt:` is never used in new work: code that can't pass lint isn't
+finished. It only freezes old code when a new rule lands, with a human's yes.
+
+**How we know it works.** The numbers go down, below today's. Agents given
+a new screen get it right first time. The screens look like one product. And
+the structure is easy to explain to a developer.
 
 Organise first, then improve the look: once pages hold no styling, a better
 look is a change to the primitives. General web and accessibility rules are
@@ -28,14 +48,12 @@ this is in [docs/building.md](./docs/building.md).
   or sandbox logic.
 - `className` on a primitive is layout and sizing only (`flex-1`, `w-full`,
   `min-w-0`), never for how it looks. The list is in src/components/CLAUDE.md.
-- Never work around a primitive. If it can't do the job, extend it (within reason!)
 - The parent owns the space between children. No outer margins.
 - A component's stories are its spec: one per state (empty, loading, error,
   disabled, pending, long text).
 
 ## Look and behaviour
 
-- Tokens only.
 - Colour means something: red is an error or a destructive action, yellow a
   warning, green success, blue information; run states use run colours.
   If taking the colour away loses nothing, it's grey.
@@ -50,6 +68,7 @@ this is in [docs/building.md](./docs/building.md).
   block (heading, detail list, description, toast) it wraps, breaking long
   words and URLs. Every story with user text has a Long variant.
 - Every list has an empty state. Every action has pending and error states.
+- Success messages fade; errors stay until dismissed and say what to do.
 
 ## One way to do each thing
 
@@ -89,14 +108,12 @@ out labels, errors or buttons itself.
 
 ## Where we're heading
 
-These change what Lightning does or says, so they wait until a page is
-redesigned on purpose, and each is listed in
+These change how Lightning looks or what it says. They apply to anything
+Lightning doesn't have (a new page, action or flow) and to any page being
+redesigned on purpose. Everywhere else, copy Lightning until that page's
+redesign. Each one is listed in
 [docs/lightning-differences.md](./docs/lightning-differences.md) when it
-lands. Until then, copy Lightning.
-
-They apply in full, now, to anything Lightning doesn't have (a new page,
-action or flow) and to any task that asks for a redesign. A redesign listed
-in `lightning-differences.md` overrides an annotation's `preserve`.
+lands, and a listed redesign overrides an annotation's `preserve`.
 
 - Row actions beyond two go in a ••• menu, not one labelled "Actions".
 - A confirm button repeats the action ("Remove collaborator"), never
@@ -104,15 +121,10 @@ in `lightning-differences.md` overrides an annotation's `preserve`.
 - Choose the container by the size of the task: a menu to pick, a side
   panel to edit what's selected, a pop-up for one short task, a step-by-step
   pop-up for set-up, a page for anything long. A pop-up never opens another.
-- Switches save instantly and offer Undo; forms use Save and Cancel; the
-  editor shows "Unsaved changes" or "Saved".
-- Success messages fade; errors stay until dismissed and say what to do.
-- Undo for anything reversible. Type the name to delete a project or account.
+- Type the name to delete a project or account.
 - Step-by-step pop-ups show "Step 1 of 2", keep their size, Back left, Next
   right.
 - Lists show 25 rows a page. Ported pages keep Lightning's 10 until then.
-- One "search everything" on Ctrl/Cmd+K, and a project switcher on every
-  page.
 - Sentence case. Buttons are a verb and a noun. One word per thing, from a
   shared glossary.
 - One primary action per screen.

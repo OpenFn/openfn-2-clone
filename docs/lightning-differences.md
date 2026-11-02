@@ -200,6 +200,13 @@ goes back to Lightning's way.
 - **"Only 1 file can be uploaded".** Lightning's manual run says "Only 1 files
   can be uploaded".
 
+## Toasts
+
+- **An error toast stays until dismissed.** Lightning hides every toast
+  after 5 seconds, so a failure reported after a redirect is easy to miss
+  (its own audit flags this: `shared-flash-messages.md`, section 6.2).
+  Success toasts still fade after 5 seconds.
+
 ## Empty states
 
 - **One look for "nothing here" and "loading".** Lightning builds them a
