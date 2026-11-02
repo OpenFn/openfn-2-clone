@@ -231,6 +231,21 @@ export function formatLocalDate(iso: string): string {
   return new Date(iso).toLocaleDateString();
 }
 
+/** "Oct 14": a day in the given time zone, in the browser's locale. */
+export function formatMonthDayIn(iso: string, timeZone: string): string {
+  return new Date(iso).toLocaleDateString(undefined, { month: "short", day: "numeric", timeZone });
+}
+
+/** The hour, 0 to 23, of a moment in the given time zone. */
+export function hourIn(iso: string, timeZone: string): number {
+  return Number(new Date(iso).toLocaleString("en-GB", { hour: "2-digit", hourCycle: "h23", timeZone }));
+}
+
+/** The browser's hour now, 0 to 23. */
+export function localHour(now: Date = new Date()): number {
+  return now.getHours();
+}
+
 /**
  * The AI assistant's session list age: "just now", "5 minutes ago",
  * "2 days ago", then "Oct 3" after a week.

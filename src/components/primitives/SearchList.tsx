@@ -22,21 +22,18 @@ export interface SearchListItemState {
 }
 
 interface Props<T> {
-  /** A flat list. Use `sections` instead for headed groups. */
-  items?: T[];
-  sections?: SearchListSection<T>[];
+  /** One section with no heading gives a flat list. */
+  sections: SearchListSection<T>[];
   getKey: (item: T) => string;
   /** The row's content. The row itself (padding, highlight) comes from `variant`. */
   renderItem: (item: T, state: SearchListItemState) => ReactNode;
   isSelected?: (item: T) => boolean;
-  /** The search text. The caller filters `items` / `sections` with it. */
+  /** The search text. The caller filters `sections` with it. */
   query: string;
   onQueryChange: (query: string) => void;
   /** Click or Enter on a row. */
   onSelect: (item: T) => void;
   placeholder?: string;
-  /** Shown when there are no items at all. */
-  emptyState?: ReactNode;
   /** Content between the search box and the rows, e.g. an alert. */
   header?: ReactNode;
   /** Extra content at the end of the search box (palette only), e.g. a keyboard hint. */
@@ -53,7 +50,6 @@ interface Props<T> {
   listId?: string;
   /** Accessible name for the list. */
   listLabel?: string;
-  autoFocus?: boolean;
 }
 
 const looks = {
@@ -84,11 +80,10 @@ function leaveToBrowser(e: KeyboardEvent) {
  * A search box over a list you pick from with the mouse or the keyboard
  * (Headless UI `Combobox`, always open). Arrow keys move the highlight and
  * wrap around at either end, Enter picks, Escape is left to the modal.
- * Filtering is the caller's: pass the matching `items` or `sections`.
+ * Filtering is the caller's: pass the matching `sections`.
  */
 export default function SearchList<T>({
-  items,
-  sections: sectionsProp,
+  sections,
   getKey,
   renderItem,
   isSelected = () => false,
@@ -96,19 +91,15 @@ export default function SearchList<T>({
   onQueryChange,
   onSelect,
   placeholder = "Search",
-  emptyState,
   header,
   inputAddon,
   initialActive,
   variant = "palette",
   listId,
   listLabel,
-  autoFocus = true,
 }: Props<T>) {
   const look = looks[variant];
   const listRef = useRef<HTMLDivElement>(null);
-  const sections: SearchListSection<T>[] = sectionsProp ?? [{ key: "items", items: items ?? [] }];
-  const total = sections.reduce((n, s) => n + s.items.length, 0);
 
   const onKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Tab" || e.key === "Escape") return leaveToBrowser(e);
@@ -126,13 +117,13 @@ export default function SearchList<T>({
   };
 
   const inputProps = {
-    autoFocus,
+    autoFocus: true,
     onKeyDown,
     // Keeps the box in step with `query` whenever Headless UI resets it.
     displayValue: () => query,
   };
 
-  let shownBefore = false;
+  const shown = sections.filter((section) => section.items.length > 0 || section.empty);
   return (
     // `value` only seeds the highlight: Headless UI opens on the row matching it.
     <Combobox value={initialActive ?? null} onChange={(item: T | null) => item !== null && onSelect(item)} immediate>
@@ -157,39 +148,33 @@ export default function SearchList<T>({
         )}
         <ComboboxOptions static ref={listRef} id={listId} aria-label={listLabel} className={look.list}>
           {header}
-          {total === 0 && emptyState !== undefined ? (
-            <EmptyState variant="plain" message={emptyState} />
-          ) : (
-            sections.map((section) => {
-              if (section.items.length === 0 && !section.empty) return null;
-              const divider = variant === "palette" && shownBefore && section.items.length > 0;
-              shownBefore = true;
-              // A border, not a separator element: a listbox may hold only options and groups.
-              return (
-                <div key={section.key} role="group" className={cn(look.section, divider && "mt-2 border-t border-subtle pt-2")}>
-                  {section.heading && (
-                    <Heading size="xs" className={look.heading}>
-                      {section.heading}
-                    </Heading>
-                  )}
-                  {section.items.length === 0 && <EmptyState variant="plain" message={section.empty} />}
-                  {section.items.map((item) => {
-                    const selected = isSelected(item);
-                    return (
-                      <ComboboxOption
-                        key={getKey(item)}
-                        value={item}
-                        aria-selected={selected}
-                        className={look.option}
-                      >
-                        {({ focus }) => <>{renderItem(item, { active: focus, selected })}</>}
-                      </ComboboxOption>
-                    );
-                  })}
-                </div>
-              );
-            })
-          )}
+          {shown.map((section, i) => {
+            const divider = variant === "palette" && i > 0 && section.items.length > 0;
+            // A border, not a separator element: a listbox may hold only options and groups.
+            return (
+              <div key={section.key} role="group" className={cn(look.section, divider && "mt-2 border-t border-subtle pt-2")}>
+                {section.heading && (
+                  <Heading size="xs" className={look.heading}>
+                    {section.heading}
+                  </Heading>
+                )}
+                {section.items.length === 0 && <EmptyState variant="plain" message={section.empty} />}
+                {section.items.map((item) => {
+                  const selected = isSelected(item);
+                  return (
+                    <ComboboxOption
+                      key={getKey(item)}
+                      value={item}
+                      aria-selected={selected}
+                      className={look.option}
+                    >
+                      {({ focus }) => <>{renderItem(item, { active: focus, selected })}</>}
+                    </ComboboxOption>
+                  );
+                })}
+              </div>
+            );
+          })}
         </ComboboxOptions>
       </div>
     </Combobox>

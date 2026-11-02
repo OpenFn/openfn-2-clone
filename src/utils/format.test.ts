@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formatChipDate, formatChipDateRange, formatQueryDate, formatRunRange, prettyJson } from "./format";
+import { formatChipDate, formatChipDateRange, formatQueryDate, formatRunRange, hourIn, prettyJson } from "./format";
 
 describe("prettyJson", () => {
   it("indents a JSON object or array, and leaves anything else as it was", () => {
@@ -35,5 +35,13 @@ describe("History's filter dates", () => {
   it("writes a search's date as day/month/year at a 12-hour time", () => {
     expect(formatQueryDate("2026-09-03T16:05:00Z")).toBe("3/9/26 at 4:05pm");
     expect(formatQueryDate("2026-09-03T00:07:00Z")).toBe("3/9/26 at 12:07am");
+  });
+});
+
+describe("hourIn", () => {
+  it("reads the hour in the given time zone, midnight as 0", () => {
+    expect(hourIn("2026-10-14T23:30:00Z", "UTC")).toBe(23);
+    expect(hourIn("2026-10-14T23:30:00Z", "Africa/Nairobi")).toBe(2);
+    expect(hourIn("2026-10-14T00:15:00Z", "UTC")).toBe(0);
   });
 });
