@@ -54,7 +54,7 @@ editor/               the workflow editor: a feature of its own, not a page (Bra
 - **Only `*.route.tsx` fetches.** It calls the client, maps the answer with `*.data.ts`, and hands props to the page. That's the one file that changes when the data moves from fake to real, or from LiveView to the API.
 - **Pages don't import each other.** Something two pages share moves to `components/` (looks) or `lib/` (logic).
 - **`components/` knows nothing about OpenFn.** No product words, no permissions. A component that's OpenFn-specific (run status, adaptor icon) sits in `components/openfn/`.
-- **Lint enforces the lines**, not a doc: pages can't import the client, nothing imports from `pages/` except `app/`, no raw colours or sizes outside `components/`.
+- **Lint enforces the lines**, not a doc: a page's `*.route.tsx` is the only file in it that may import the client; its `*.data.ts` may import API types only; nothing imports from `pages/` except `app/`; no raw colours, hex or one-off sizes outside `src/theme/`.
 
 ## How we know it works
 

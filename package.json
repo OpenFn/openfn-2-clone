@@ -1,0 +1,43 @@
+{
+  "name": "openfn-v3",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "engines": {
+    "node": "^22.12.0 || >=24"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "lint": "eslint . --max-warnings 0",
+    "test": "vitest run --project unit --passWithNoTests",
+    "storybook": "storybook dev -p 6006",
+    "test:stories": "STORYBOOK_THEME=basic vitest run --project storybook --passWithNoTests && STORYBOOK_THEME=dark vitest run --project storybook --passWithNoTests"
+  },
+  "dependencies": {
+    "react": "19.2.4",
+    "react-dom": "19.2.4"
+  },
+  "devDependencies": {
+    "@eslint/js": "9.39.4",
+    "@storybook/addon-a11y": "10.6.3",
+    "@storybook/addon-vitest": "10.6.3",
+    "@storybook/react-vite": "10.6.3",
+    "@tailwindcss/vite": "4.2.2",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "6.0.1",
+    "@vitest/browser-playwright": "5.0.5",
+    "eslint": "9.39.4",
+    "eslint-plugin-react-hooks": "7.0.1",
+    "globals": "17.4.0",
+    "heroicons": "2.2.0",
+    "playwright": "1.56.0",
+    "storybook": "10.6.3",
+    "tailwindcss": "4.2.2",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.57.2",
+    "vite": "8.3.5",
+    "vitest": "5.0.5"
+  }
+}

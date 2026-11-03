@@ -1,0 +1,25 @@
+name: CI
+
+# Every check, on every push and PR to v3-real. Warnings fail lint; the story
+# checks render every story and run axe on it, once per theme.
+on:
+  push:
+    branches: [v3-real]
+  pull_request:
+    branches: [v3-real]
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run build
+      - run: npm test
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:stories
