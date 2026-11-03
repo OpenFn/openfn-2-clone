@@ -74,7 +74,7 @@ interface MenuItemProps {
 export function MenuItem({ icon, to, href, onClick, selected, tone, disabled = false, description, children }: MenuItemProps) {
   const className = cn(
     "group flex w-full items-start gap-x-3 px-4 py-2 text-left text-sm cursor-pointer",
-    "data-focus:bg-hover data-focus:outline-none data-disabled:cursor-not-allowed data-disabled:opacity-50",
+    "data-focus:bg-hover data-focus:outline-none data-disabled:cursor-not-allowed data-disabled:text-disabled",
     tone === "danger" ? "text-danger" : "text-body data-focus:text-strong"
   );
   const content = (

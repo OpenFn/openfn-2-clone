@@ -24,22 +24,21 @@ const iconClasses: Record<ButtonSize, string> = { xs: "h-4 w-4", sm: "h-4 w-4", 
 // Lightning's button colours, keyed by the tone if there is one, else the variant. `plain` is
 // text on nothing: hover darkens the text only, so an icon sits on any surface, white or grey.
 // Text needs a white surface: on the grey page plain (4.39:1) and plain danger (4.33:1) fall
-// below 4.5:1. A pressed toggle (`aria-pressed`) gets a tint. Disabled is the same colour at half
-// strength for every look, with no hover, not Lightning's 300 shades (its disabled green is a loud
-// mint with white text). Plain writes its hover as `hover:` with `disabled:` undoing it, so a
+// below 4.5:1. A pressed toggle (`aria-pressed`) gets a tint. Disabled has its own colours
+// (docs/colour.md), with no hover. Plain writes its hover as `hover:` with `disabled:` undoing it, so a
 // caller's own `hover:` colour replaces it; a `not-disabled:hover:` class would outrank it.
 const lookClasses = {
-  primary: "bg-brand not-disabled:hover:bg-brand-hover text-on-brand shadow-xs",
-  secondary: "bg-surface not-disabled:hover:bg-hover text-strong ring-1 ring-strong ring-inset shadow-xs",
-  plain: "text-muted hover:text-body disabled:text-muted aria-pressed:bg-selected aria-pressed:text-selected",
-  danger: "bg-danger-strong not-disabled:hover:bg-danger-hover text-on-brand shadow-xs",
-  success: "bg-success-strong not-disabled:hover:bg-success-hover text-on-brand shadow-xs",
-  "plain-danger": "text-danger hover:text-danger-strong disabled:text-danger",
+  primary: "bg-brand not-disabled:hover:bg-brand-hover disabled:bg-brand-disabled text-on-brand shadow-xs",
+  secondary: "bg-surface not-disabled:hover:bg-hover disabled:bg-disabled text-strong disabled:text-disabled ring-1 ring-strong ring-inset shadow-xs",
+  plain: "text-muted hover:text-body disabled:text-disabled aria-pressed:bg-selected aria-pressed:text-selected",
+  danger: "bg-danger-strong not-disabled:hover:bg-danger-hover disabled:bg-danger-disabled text-on-brand shadow-xs",
+  success: "bg-success-strong not-disabled:hover:bg-success-hover disabled:bg-success-disabled text-on-brand shadow-xs",
+  "plain-danger": "text-danger hover:text-danger-strong disabled:text-disabled",
 };
 
 function buttonClasses(look: keyof typeof lookClasses, size: ButtonSize = "md", className?: string) {
   return cn(
-    "rounded-md text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus inline-flex items-center justify-center gap-x-1.5 disabled:cursor-not-allowed disabled:opacity-50",
+    "rounded-md text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus inline-flex items-center justify-center gap-x-1.5 disabled:cursor-not-allowed disabled:shadow-none",
     sizeClasses[size],
     lookClasses[look],
     className

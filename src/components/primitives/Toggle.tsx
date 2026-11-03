@@ -54,8 +54,8 @@ export default function Toggle({ checked, onChange, label, note, description, di
       className={cn(
         "relative inline-flex h-6 w-11 shrink-0 rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out",
         "focus:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2",
-        checked ? "bg-brand" : "bg-emphasis",
-        "disabled:cursor-not-allowed disabled:opacity-50",
+        checked ? "bg-brand disabled:bg-brand-disabled" : "bg-emphasis disabled:bg-disabled",
+        "disabled:cursor-not-allowed",
         "aria-invalid:ring-2 aria-invalid:ring-invalid aria-invalid:ring-offset-2"
       )}
     >

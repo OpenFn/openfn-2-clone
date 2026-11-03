@@ -389,7 +389,7 @@ type ChoiceProps = { label: ReactNode; hint?: ReactNode; ref?: Ref<HTMLInputElem
 
 const choiceClasses = cn(
   "h-4 w-4 border-strong text-selected focus:ring-focus transition duration-200 cursor-pointer",
-  "disabled:cursor-not-allowed disabled:border-subtle disabled:bg-subtle disabled:checked:bg-emphasis",
+  "disabled:cursor-not-allowed disabled:border-subtle disabled:bg-disabled disabled:checked:bg-emphasis",
   "aria-invalid:border-invalid"
 );
 

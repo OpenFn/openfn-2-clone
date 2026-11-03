@@ -102,8 +102,6 @@ export default function WorkOrdersTable({
                 indeterminate={partial}
                 disabled={rows.length === 0}
                 onChange={(e) => onSelectionChange(e.target.checked ? selectable.map((w) => w.id) : [])}
-                // eslint-disable-next-line local/primitive-classname -- debt: F529 state (disabled:opacity-50)
-                className="disabled:opacity-50"
               />
               {selected.length > 0 && (
                 <div className="absolute left-full top-1/2 ml-3 flex -translate-y-1/2 gap-1 whitespace-nowrap bg-subtle">

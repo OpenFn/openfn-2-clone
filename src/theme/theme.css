@@ -40,6 +40,13 @@
      read by components/workflow/diagramGeometry.ts). */
   --ui-diagram-selected: #4f46e5;
   --ui-diagram-selected-disabled: #bdbaf3;
+  --ui-diagram-edge: #b1b1b7;
+  --ui-diagram-edge-disabled: #e1e1e1;
+  --ui-diagram-edge-didnt-run: #dfe0e3;
+  --ui-diagram-dot: #91919a;
+  /* React Flow's minimap defaults. */
+  --ui-diagram-minimap-stroke: #ccc;
+  --ui-diagram-minimap-mask: rgb(240 240 240 / 0.6);
 }
 
 body {

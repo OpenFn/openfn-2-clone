@@ -37,8 +37,8 @@ export default function SettingsMenu() {
             label="Open settings"
             tooltip="Settings"
             data-ui="settings-trigger"
-            // eslint-disable-next-line local/primitive-classname -- debt: F526 box, F527 colour (rounded-full bg-inverse text-inverse shadow-lg hover:bg-inverse/90)
-            className="h-12 w-12 rounded-full bg-inverse text-inverse shadow-lg hover:bg-inverse/90"
+            // eslint-disable-next-line local/primitive-classname -- debt: F526 box, F527 colour (rounded-full bg-inverse text-inverse shadow-lg hover:opacity-90)
+            className="h-12 w-12 rounded-full bg-inverse text-inverse shadow-lg hover:opacity-90"
           />
         }
       >

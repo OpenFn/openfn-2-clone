@@ -62,9 +62,10 @@ function computeTiming(event: ChannelEvent | undefined): TimingData | null {
   };
 }
 
-// timing.ex @hatch_gradient_style, kept as Lightning writes it.
-const hatch =
-  "repeating-linear-gradient(-45deg, rgba(156, 163, 175, 0.18) 0px, rgba(156, 163, 175, 0.18) 3px, rgba(209, 213, 219, 0.55) 3px, rgba(209, 213, 219, 0.55) 6px)";
+// timing.ex @hatch_gradient_style: Lightning's gray-400 and gray-300 stripes, from the border roles.
+const stripeA = "color-mix(in oklab, var(--border-color-emphasis) 18%, transparent)";
+const stripeB = "color-mix(in oklab, var(--border-color-strong) 55%, transparent)";
+const hatch = `repeating-linear-gradient(-45deg, ${stripeA} 0px, ${stripeA} 3px, ${stripeB} 3px, ${stripeB} 6px)`;
 
 function segmentLabel(s: Segment) {
   if (s.badge || s.us === 0) return "";
