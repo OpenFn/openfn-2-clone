@@ -42,6 +42,10 @@
   --background-color-brand-hover: color-mix(in oklab, var(--dk-indigo) 85%, black);
   --text-color-on-brand: white;
 
+  /* Selected */
+  --background-color-selected: color-mix(in oklab, var(--dk-indigo) 18%, var(--dk-surface));
+  --text-color-selected: oklch(85% 0.08 275);
+
   /* Danger */
   --background-color-danger-strong: var(--dk-red-fill);
   --background-color-danger-hover: color-mix(in oklab, var(--dk-red-fill) 88%, white);

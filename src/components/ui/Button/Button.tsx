@@ -1,6 +1,7 @@
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 import type { Icon } from "@/components/ui/icons";
 import { cn } from "@/components/ui/cn";
+import { Spinner } from "@/components/ui/Spinner/Spinner";
 
 /** How loud the button is: one `primary` per page as a rule, `secondary` for the rest, `plain` for minor actions. */
 export type ButtonVariant = "primary" | "secondary" | "plain";
@@ -35,6 +36,11 @@ type ButtonProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, "className"> & 
   size?: ButtonSize;
   /** Shown before the words. */
   icon?: Icon;
+  /**
+   * The action is under way: a spinner takes the icon's place and clicks do nothing. Unlike `disabled`, the
+   * button keeps its look and its focus, so a keyboard user isn't thrown back to the top of the page.
+   */
+  pending?: boolean;
   /** Layout only (`w-full`, `self-end`), never how it looks. */
   className?: string;
   children: ReactNode;
@@ -45,21 +51,23 @@ type ButtonProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, "className"> & 
  * list is `secondary` + `danger`, with its word. Every variant has a border, transparent when there's no edge, so
  * buttons of one size are the same height whatever their variant.
  */
-export function Button({ variant = "primary", tone, size = "md", icon: Icon, className, type = "button", children, ...rest }: ButtonProps) {
+export function Button({ variant = "primary", tone, size = "md", icon: Icon, pending, className, type = "button", onClick, children, ...rest }: ButtonProps) {
   return (
     <button
       type={type}
       className={cn(
         "inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-md border font-medium transition-colors",
         "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus",
-        "disabled:cursor-not-allowed",
+        "disabled:cursor-not-allowed aria-busy:cursor-wait",
         looks[variant][tone ?? "none"],
         sizes[size],
         className,
       )}
+      aria-busy={pending || undefined}
+      onClick={pending ? (event) => event.preventDefault() : onClick}
       {...rest}
     >
-      {Icon && <Icon size={14} aria-hidden />}
+      {pending ? <Spinner /> : Icon && <Icon size={14} aria-hidden />}
       {children}
     </button>
   );

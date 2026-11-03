@@ -54,6 +54,12 @@ const groups: { title: string; roles: Role[] }[] = [
     ],
   },
   {
+    title: "Selected",
+    roles: [
+      { name: "bg-selected, text-selected", job: "The chosen item in a set: the current page in a side menu", chips: [{ className: "bg-selected text-selected", label: "API tokens" }] },
+    ],
+  },
+  {
     title: "Brand",
     roles: [
       { name: "bg-brand", job: "Primary button", chips: [{ className: "bg-brand text-on-brand", label: "Generate" }] },

@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect, fn, userEvent } from "storybook/test";
 import { GitBranch, Plus, ShieldX, Trash2 } from "@/components/ui/icons";
 import { Button } from "./Button";
 
@@ -39,4 +40,14 @@ export const Disabled: Story = {
 };
 export const LongText: Story = {
   args: { children: "Connect the Ministry of Health production DHIS2 instance to this project", variant: "secondary", icon: Plus },
+};
+/** The action is under way: a spinner, still focusable, clicks ignored. */
+export const Pending: Story = {
+  args: { children: "Delete token", tone: "danger", pending: true, onClick: fn() },
+  play: async ({ canvas, args }) => {
+    const button = canvas.getByRole("button", { name: "Delete token" });
+    await userEvent.click(button);
+    await expect(args.onClick).not.toHaveBeenCalled();
+    await expect(button).toHaveFocus();
+  },
 };

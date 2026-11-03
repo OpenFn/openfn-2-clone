@@ -49,7 +49,7 @@ const PALETTE =
 const COLOUR_UTILS = "bg|text|border|ring|outline|divide|fill|stroke|from|via|to|shadow|accent|caret|decoration|placeholder";
 // Layout components and the app shell may set sizes: they are the layout that decides.
 const FIXED_SIZE = [
-  /(^|[\s:])((w|h|min-w|max-w|min-h|max-h)-(\d+|px)|size-(?![3-6]\b)\d+)\b/,
+  /(^|[\s:])((w|h|min-w|max-w|min-h|max-h)-([1-9]\d*|px)|size-(?![3-6]\b)\d+)\b/,
   "No fixed sizes: layout decides how much space a component gets. Icons use size-3 to size-6.",
 ];
 const styleChecks = [

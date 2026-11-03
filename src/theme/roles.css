@@ -46,6 +46,10 @@
   --background-color-brand-hover: var(--color-indigo-700); /* primary button, hovered */
   --text-color-on-brand: var(--color-white); /* text and icons on the brand fill */
 
+  /* Selected: the chosen item in a set (the current page in a side menu). */
+  --background-color-selected: var(--color-indigo-50); /* the chosen item's fill */
+  --text-color-selected: var(--color-indigo-700); /* the chosen item's words and icon */
+
   /* Danger */
   --background-color-danger-strong: var(--bj-red-600); /* the danger solid: a destructive button */
   --background-color-danger-hover: var(--bj-red-700); /* the danger solid, hovered */
