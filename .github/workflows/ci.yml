@@ -12,8 +12,9 @@ on:
       - "!.claude/**"
       - "annotations/**"
 
+# Three jobs that start together, so CI takes as long as the slowest one.
 jobs:
-  build:
+  lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -25,6 +26,26 @@ jobs:
       - run: npm run lint
       # The design-system numbers and debt: lines only go down (scripts/design-system-baseline.json).
       - run: node scripts/design-system-metrics.mjs --check
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
       - run: npm run build
       - run: npm test
+
+  storybook:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
       - run: npm run build-storybook
