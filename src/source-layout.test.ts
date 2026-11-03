@@ -62,7 +62,6 @@ describe("every page and component can be seen and checked", () => {
       "./pages/admin/AdminLiveDashboardPage.tsx",
       "./pages/auth/AuthConfirmAccountPage.tsx",
       "./pages/auth/AuthResetPasswordPage.tsx",
-      "./pages/auth/AuthTwoFactorPage.tsx",
       "./pages/profile/TokensPage.tsx",
       "./pages/projects/MfaRequiredPage.tsx",
     ]);

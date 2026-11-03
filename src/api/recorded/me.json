@@ -1,0 +1,30 @@
+{
+  "data": {
+    "attributes": {
+      "github": {
+        "connected": false,
+        "expires_at": null
+      },
+      "role": "user",
+      "first_name": "Amy",
+      "email": "demo@openfn.org",
+      "last_name": "Admin",
+      "inserted_at": "2026-11-03T16:03:48Z",
+      "confirmed_at": "2026-11-03T16:03:49Z",
+      "pending_email": null,
+      "contact_preference": "critical",
+      "mfa_enabled": false,
+      "ai_disclaimer_accepted_at": null,
+      "consent": null,
+      "experimental_features": false,
+      "has_activity_in_projects": false,
+      "has_password": true,
+      "identities": []
+    },
+    "id": "eb6a48a2-a1db-4c1b-a80b-8d7f40300564",
+    "links": {
+      "self": "http://localhost:4000/api/users/eb6a48a2-a1db-4c1b-a80b-8d7f40300564"
+    },
+    "type": "users"
+  }
+}

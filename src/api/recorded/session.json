@@ -1,0 +1,9 @@
+{
+  "data": {
+    "state": "signed_in",
+    "user_id": "eb6a48a2-a1db-4c1b-a80b-8d7f40300564",
+    "stepped_up_until": null,
+    "csrf_token": "not-recorded",
+    "pending_signup": null
+  }
+}
