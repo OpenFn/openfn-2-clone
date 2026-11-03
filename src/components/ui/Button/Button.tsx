@@ -1,4 +1,4 @@
-import type { ButtonHTMLAttributes, ReactNode } from "react";
+import type { ComponentProps, ReactNode } from "react";
 import type { Icon } from "@/components/ui/icons";
 import { cn } from "@/components/ui/cn";
 import { Spinner } from "@/components/ui/Spinner/Spinner";
@@ -30,7 +30,7 @@ const sizes: Record<ButtonSize, string> = {
   md: "px-4 py-2 text-sm",
 };
 
-type ButtonProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, "className"> & {
+type ButtonProps = Omit<ComponentProps<"button">, "className"> & {
   variant?: ButtonVariant;
   tone?: ButtonTone;
   size?: ButtonSize;

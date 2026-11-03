@@ -4,15 +4,21 @@ import { expect, userEvent, within } from "storybook/test";
 import { failNext, resetFakeApi } from "@/lib/api/client";
 import { TokensRoute } from "./tokens.route";
 
+// A fresh client per story, made before it renders, so a re-render (a theme switch) keeps its cache.
+let client: QueryClient;
+
 // The page on the stand-in API, through the real client and TanStack Query: what the app runs.
 const meta = {
   title: "pages/Tokens/On the API",
   component: TokensRoute,
   parameters: { layout: "fullscreen" },
-  beforeEach: resetFakeApi,
+  beforeEach: () => {
+    resetFakeApi();
+    client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+  },
   decorators: [
     (Story) => (
-      <QueryClientProvider client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}>
+      <QueryClientProvider client={client}>
         <Story />
       </QueryClientProvider>
     ),

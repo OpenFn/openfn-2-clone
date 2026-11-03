@@ -5,7 +5,7 @@ type Align = { align?: "start" | "end" };
 
 /**
  * A bordered table of records. Compose it: `Table` > `TableHead` (of `TableHeader`s) and `TableBody` (of
- * `TableRow`s of `TableCell`s). Name it with `aria-label` when no heading right above says what it lists.
+ * `TableRow`s, each a `TableRowHeader` then `TableCell`s). Name it with `aria-label` when no heading right above says what it lists.
  */
 export function Table({ children, "aria-label": label }: { children: ReactNode; "aria-label"?: string }) {
   return (
@@ -42,9 +42,15 @@ export function TableRow({ children }: { children: ReactNode }) {
   return <tr className="hover:bg-hover">{children}</tr>;
 }
 
-/** `strong` for the cell that names the row; the rest are quieter. */
-export function TableCell({ children, align = "start", strong }: { children: ReactNode; strong?: boolean } & Align) {
+export function TableCell({ children, align = "start" }: { children: ReactNode } & Align) {
+  return <td className={cn("px-4 py-3 text-sm text-muted", align === "end" && "text-right")}>{children}</td>;
+}
+
+/** The cell that names its row, so a screen reader says it with each of the row's other cells. */
+export function TableRowHeader({ children }: { children: ReactNode }) {
   return (
-    <td className={cn("px-4 py-3 text-sm", strong ? "text-strong" : "text-muted", align === "end" && "text-right")}>{children}</td>
+    <th scope="row" className="px-4 py-3 text-left text-sm font-normal text-strong">
+      {children}
+    </th>
   );
 }

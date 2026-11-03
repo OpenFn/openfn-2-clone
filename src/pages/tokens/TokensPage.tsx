@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   Breadcrumbs,
   Button,
@@ -19,6 +19,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  TableRowHeader,
 } from "@/components";
 import { formatDate } from "@/lib/format";
 
@@ -46,6 +47,8 @@ export function TokensPage({ status, tokens, onGenerate, onDelete, onRetry }: To
   const [generateError, setGenerateError] = useState<string>();
   const [deleting, setDeleting] = useState<TokenRow>();
   const [announcement, setAnnouncement] = useState("");
+  // The header's Generate button: where focus goes when what had it (a dismissed error) disappears.
+  const generateButton = useRef<HTMLButtonElement>(null);
 
   const generate = async () => {
     setGenerating(true);
@@ -59,11 +62,7 @@ export function TokensPage({ status, tokens, onGenerate, onDelete, onRetry }: To
     }
   };
 
-  const generateButton = (
-    <Button size="sm" icon={icons.Plus} pending={generating} onClick={generate}>
-      Generate new token
-    </Button>
-  );
+  const generateButtonProps = { icon: icons.Plus, pending: generating, onClick: generate, children: "Generate new token" };
 
   return (
     <SettingsLayout
@@ -80,7 +79,8 @@ export function TokensPage({ status, tokens, onGenerate, onDelete, onRetry }: To
         </SettingsNav>
       }
     >
-      <SectionHeading title="API tokens" description="Personal access tokens let the OpenFn CLI and API act as you." action={generateButton} />
+      <SectionHeading title="API tokens" description="Personal access tokens let the OpenFn CLI and API act as you." action={<Button ref={generateButton} size="sm" {...generateButtonProps} />}
+      />
 
       {generateError && (
         <Callout
@@ -88,7 +88,14 @@ export function TokensPage({ status, tokens, onGenerate, onDelete, onRetry }: To
           role="alert"
           title="Couldn't generate a token"
           actions={
-            <Button variant="secondary" size="xs" onClick={() => setGenerateError(undefined)}>
+            <Button
+              variant="secondary"
+              size="xs"
+              onClick={() => {
+                setGenerateError(undefined);
+                generateButton.current?.focus();
+              }}
+            >
               Dismiss
             </Button>
           }
@@ -99,7 +106,8 @@ export function TokensPage({ status, tokens, onGenerate, onDelete, onRetry }: To
 
       {newToken && (
         <Callout title="Copy your token now. You won't be able to see it again.">
-          <CopyValue value={newToken} label="New token" />
+          {/* Keyed, so a second new token is focused too. */}
+          <CopyValue key={newToken} value={newToken} label="New token" autoFocus />
         </Callout>
       )}
 
@@ -108,6 +116,7 @@ export function TokensPage({ status, tokens, onGenerate, onDelete, onRetry }: To
       {status.state === "error" && (
         <Callout
           tone="danger"
+          role="alert"
           title="Couldn't load your tokens"
           actions={
             <Button variant="secondary" size="xs" onClick={onRetry}>
@@ -124,7 +133,7 @@ export function TokensPage({ status, tokens, onGenerate, onDelete, onRetry }: To
           icon={icons.Fingerprint}
           title="No personal access tokens"
           description="Get started by creating a new access token."
-          action={generateButton}
+          action={<Button {...generateButtonProps} />}
         />
       )}
 
@@ -141,9 +150,9 @@ export function TokensPage({ status, tokens, onGenerate, onDelete, onRetry }: To
           <TableBody>
             {tokens.map((token) => (
               <TableRow key={token.id}>
-                <TableCell strong>
+                <TableRowHeader>
                   <code>{token.masked}</code>
-                </TableCell>
+                </TableRowHeader>
                 <TableCell>{formatDate(token.createdAt)}</TableCell>
                 <TableCell>{token.lastUsedAt ? formatDate(token.lastUsedAt) : "Never used"}</TableCell>
                 <TableCell align="end">

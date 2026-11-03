@@ -51,17 +51,18 @@ export const LongValues: Story = {
     ],
   },
 };
-/** Generate: the new token shows once, ready to copy, and Copy says Copied. */
+/** Generate: the new token shows once, focused and ready to copy, and Copy says Copied. */
 export const Generate: Story = {
   play: async ({ canvas }) => {
     await userEvent.click(canvas.getByRole("button", { name: "Generate new token" }));
     await expect(await canvas.findByText("Copy your token now. You won't be able to see it again.")).toBeVisible();
+    await expect(canvas.getByRole("textbox", { name: "New token" })).toHaveFocus();
     await expect(canvas.getByRole("textbox", { name: "New token" })).toHaveValue("demo.fake-token-not-real.4f1c9a2b-7d3e-4b8a-9c1f-2e6d5a0b3c7e");
     await userEvent.click(canvas.getByRole("button", { name: "Copy" }));
     await expect(await canvas.findByRole("button", { name: "Copied" })).toBeVisible();
   },
 };
-/** Lightning wants your password again first (not built yet): the error sits above the table until dismissed. */
+/** Lightning wants your password again first (not built yet): the error sits above the table until dismissed, then focus goes back to Generate. */
 export const GenerateRefused: Story = {
   args: {
     onGenerate: fn(() => Promise.reject(new Error("Enter your password or an MFA code again to do this. Asking for it here isn't built yet."))),
@@ -71,6 +72,7 @@ export const GenerateRefused: Story = {
     await expect(await canvas.findByRole("alert")).toHaveTextContent("Couldn't generate a token");
     await userEvent.click(canvas.getByRole("button", { name: "Dismiss" }));
     await expect(canvas.queryByRole("alert")).not.toBeInTheDocument();
+    await expect(canvas.getByRole("button", { name: "Generate new token" })).toHaveFocus();
   },
 };
 /** By keyboard: Delete asks first, Delete token deletes, and a screen reader hears it went. */

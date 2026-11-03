@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Button } from "@/components/ui/Button/Button";
 import { Trash2 } from "@/components/ui/icons";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./Table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, TableRowHeader } from "./Table";
 
 const meta = { title: "ui/Table", component: Table } satisfies Meta<typeof Table>;
 export default meta;
@@ -23,7 +23,7 @@ const render = (list: typeof rows) => (
     <TableBody>
       {list.map((row) => (
         <TableRow key={row.id}>
-          <TableCell strong>{row.token}</TableCell>
+          <TableRowHeader>{row.token}</TableRowHeader>
           <TableCell>{row.created}</TableCell>
           <TableCell>{row.used}</TableCell>
           <TableCell align="end">

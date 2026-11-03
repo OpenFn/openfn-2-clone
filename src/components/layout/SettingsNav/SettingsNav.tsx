@@ -27,7 +27,7 @@ export function SettingsNavItem({ icon: Icon, children, href, current }: Setting
   );
   const content = (
     <>
-      <Icon size={14} aria-hidden className={current ? "text-selected" : undefined} />
+      <Icon size={14} aria-hidden className={current ? "text-selected" : "text-muted"} />
       {children}
     </>
   );
@@ -38,9 +38,10 @@ export function SettingsNavItem({ icon: Icon, children, href, current }: Setting
           {content}
         </a>
       ) : (
-        // A link with no href: still read out in the list, never focused or followed.
-        <a aria-disabled="true" className={look}>
+        // A link with no href: read out as an unavailable link, never focused or followed.
+        <a role="link" aria-disabled="true" className={look}>
           {content}
+          <span className="sr-only"> (not built yet)</span>
         </a>
       )}
     </li>

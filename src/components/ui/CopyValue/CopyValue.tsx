@@ -8,6 +8,8 @@ type CopyValueProps = {
   value: string;
   /** Names the box for a screen reader ("New token"). */
   label: string;
+  /** Focus the value when it appears, for a value that's just been made. */
+  autoFocus?: boolean;
 };
 
 /** How long the button says "Copied" before it goes back to "Copy". */
@@ -15,28 +17,35 @@ const COPIED_FOR_MS = 2000;
 
 /**
  * A value to paste somewhere else, with a button that copies it. The button says "Copied" with a tick for two
- * seconds and a screen reader hears it. If the browser won't copy, the value is selected for the person to copy.
+ * seconds and a screen reader hears it. If the browser won't copy, the value is focused and selected, and it says so.
  */
-export function CopyValue({ value, label }: CopyValueProps) {
+export function CopyValue({ value, label, autoFocus }: CopyValueProps) {
   const input = useRef<HTMLInputElement>(null);
-  const [copied, setCopied] = useState(false);
+  const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const [result, setResult] = useState<"copied" | "failed">();
 
   const copy = () =>
     navigator.clipboard.writeText(value).then(
       () => {
-        setCopied(true);
-        setTimeout(() => setCopied(false), COPIED_FOR_MS);
+        clearTimeout(timer.current);
+        setResult("copied");
+        timer.current = setTimeout(() => setResult(undefined), COPIED_FOR_MS);
       },
-      () => input.current?.select(),
+      () => {
+        input.current?.focus();
+        input.current?.select();
+        setResult("failed");
+      },
     );
 
+  const copied = result === "copied";
   return (
     <div className="flex gap-2">
-      <TextInput ref={input} readOnly value={value} aria-label={label} monospace className="flex-1" />
+      <TextInput ref={input} readOnly value={value} aria-label={label} monospace autoFocus={autoFocus} className="flex-1" />
       <Button variant="secondary" icon={copied ? Check : Copy} onClick={copy}>
         {copied ? "Copied" : "Copy"}
       </Button>
-      <StatusMessage>{copied ? "Copied" : ""}</StatusMessage>
+      <StatusMessage>{copied ? "Copied" : result === "failed" ? "Couldn't copy. It's selected for you to copy yourself." : ""}</StatusMessage>
     </div>
   );
 }

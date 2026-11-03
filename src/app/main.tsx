@@ -1,6 +1,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import { ApiError } from "@/lib/api/client";
 import { TokensRoute } from "@/pages/tokens/tokens.route";
 import "@/theme/index.css";
 
@@ -9,7 +10,10 @@ const routes = { "/user-settings/api-tokens": TokensRoute };
 const Route = routes[location.pathname as keyof typeof routes];
 if (!Route) location.replace("/user-settings/api-tokens");
 
-const queryClient = new QueryClient();
+// A refusal (4xx) won't change on a retry; only a failure to answer might.
+const queryClient = new QueryClient({
+  defaultOptions: { queries: { retry: (count, error) => !(error instanceof ApiError && error.status < 500) && count < 3 } },
+});
 
 const root = document.getElementById("root");
 if (root && Route) {

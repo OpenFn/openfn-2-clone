@@ -12,10 +12,10 @@ type EmptyStateProps = {
 /** A list with nothing in it yet. Never for a list that failed to load: that's a danger Callout. */
 export function EmptyState({ icon: Icon, title, description, action }: EmptyStateProps) {
   return (
-    <div className="flex flex-col items-center gap-1 rounded-lg border-2 border-dashed border-strong bg-subtle p-8 text-center">
+    <div className="flex flex-col items-center gap-1 rounded-lg border-2 border-dashed border-subtle bg-subtle p-8 text-center">
       {Icon && <Icon size={24} aria-hidden className="mb-1 text-muted" />}
-      <p className="text-sm font-medium text-strong">{title}</p>
-      {description && <p className="text-sm text-muted">{description}</p>}
+      <p className="text-sm text-muted">{title}</p>
+      {description && <p className="text-xs text-muted">{description}</p>}
       {action && <div className="mt-3">{action}</div>}
     </div>
   );

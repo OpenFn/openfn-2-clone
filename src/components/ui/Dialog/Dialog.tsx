@@ -46,11 +46,13 @@ function keys(event: KeyboardEvent<HTMLDialogElement>, onClose: () => void) {
  */
 export function Dialog({ title, onClose, children, footer }: DialogProps) {
   const titleId = useId();
+  const bodyId = useId();
 
   return (
     <dialog
       ref={open}
       aria-labelledby={titleId}
+      aria-describedby={bodyId}
       onKeyDown={(event) => keys(event, onClose)}
       // Any other way the browser asks to close it (a phone's back gesture): the parent decides, so React stays in charge.
       onCancel={(event) => {
@@ -65,7 +67,9 @@ export function Dialog({ title, onClose, children, footer }: DialogProps) {
         <h2 id={titleId} className="text-base font-semibold text-strong">
           {title}
         </h2>
-        <div className="flex flex-col gap-3 text-sm text-body">{children}</div>
+        <div id={bodyId} className="flex flex-col gap-3 text-sm text-body">
+          {children}
+        </div>
         {footer && <div className="flex justify-end gap-2">{footer}</div>}
       </div>
     </dialog>

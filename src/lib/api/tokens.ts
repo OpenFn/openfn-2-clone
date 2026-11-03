@@ -22,16 +22,18 @@ export const tokenKeys = { all: ["tokens"] as const };
 
 export type LoadStatus = { state: "loading" } | { state: "ready" } | { state: "error"; message: string };
 
-/** Your tokens, newest first. A failed reload keeps the tokens already on screen. */
+const selectTokens = (answer: { data: ApiToken[] }) => answer.data.map(toToken);
+
+/** Your tokens, newest first. A failed reload keeps the tokens already on screen; trying again shows as loading. */
 export function useTokens() {
   const query = useQuery({
     queryKey: tokenKeys.all,
     queryFn: () => request<{ data: ApiToken[] }>("GET", "/api/me/tokens"),
-    select: (answer) => answer.data.map(toToken),
+    select: selectTokens,
   });
   const status: LoadStatus = query.data
     ? { state: "ready" }
-    : query.isError
+    : query.isError && !query.isFetching
       ? { state: "error", message: query.error.message }
       : { state: "loading" };
   return { status, tokens: query.data ?? [], retry: () => void query.refetch() };
