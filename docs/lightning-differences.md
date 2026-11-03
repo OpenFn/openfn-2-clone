@@ -262,8 +262,8 @@ goes back to Lightning's way.
   users with no role (`opacity-60`); the replica writes them in muted or
   faint text, which reads as quieter but meets AA.
 - **The channel timing bars are a shade lighter.** Lightning draws them in
-  orange-400 and blue-400 behind 900 text (`timing.ex:277-388`); the replica
-  uses the 300s, so the text on them meets AA.
+  orange-400, blue-400 and green-400 behind 900 text (`timing.ex:277-388`);
+  the replica uses the 300s, so the text on them meets AA in every theme.
 - **A danger link darkens on hover.** Lightning lightens it to red-600
   (`app.css:176`), below AA on the grey page; the replica goes to
   danger-800, as other links go darker on hover.

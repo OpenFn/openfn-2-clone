@@ -40,6 +40,33 @@
      read by components/workflow/diagramGeometry.ts). */
   --ui-diagram-selected: #4f46e5;
   --ui-diagram-selected-disabled: #bdbaf3;
+  --ui-diagram-edge: #b1b1b7;
+  --ui-diagram-edge-disabled: #e1e1e1;
+  --ui-diagram-edge-didnt-run: #dfe0e3;
+  --ui-diagram-dot: #91919a;
+  /* React Flow's minimap defaults. */
+  --ui-diagram-minimap-stroke: #ccc;
+  --ui-diagram-minimap-mask: rgb(240 240 240 / 0.6);
+}
+
+/* Markdown (the typography plugin) in the theme's own text colours. */
+.prose {
+  --tw-prose-body: var(--text-color-body);
+  --tw-prose-headings: var(--text-color-strong);
+  --tw-prose-lead: var(--text-color-body);
+  --tw-prose-links: var(--text-color-link);
+  --tw-prose-bold: var(--text-color-strong);
+  --tw-prose-counters: var(--text-color-muted);
+  --tw-prose-bullets: var(--border-color-strong);
+  --tw-prose-hr: var(--border-color-subtle);
+  --tw-prose-quotes: var(--text-color-strong);
+  --tw-prose-quote-borders: var(--border-color-subtle);
+  --tw-prose-captions: var(--text-color-muted);
+  --tw-prose-code: var(--text-color-strong);
+  --tw-prose-pre-code: var(--text-color-code);
+  --tw-prose-pre-bg: var(--background-color-code);
+  --tw-prose-th-borders: var(--border-color-strong);
+  --tw-prose-td-borders: var(--border-color-subtle);
 }
 
 body {
@@ -83,9 +110,9 @@ html[data-theme="lightning-v2"] {
 /*    text, as Geist is drawn for.                                */
 /*  - Focus is a soft blurple halo rather than a hard outline.    */
 /* ============================================================== */
-html[data-theme="light"] {
-  --app-bg: #ffffff;
-  --app-fg: #1a1b25;
+html:is([data-theme="light"], [data-theme="dark"]) {
+  --app-bg: var(--background-color-surface);
+  --app-fg: var(--text-color-strong);
 
   --font-sans: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
     sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
@@ -123,17 +150,17 @@ html[data-theme="light"] {
   --color-indigo-900: #37329a;
   --color-indigo-950: #221f60;
 
-  --ui-text: #1a1b25;
-  --ui-secondary-text: #6c7688;
-  --ui-border: #e3e7ec;
-  --ui-brand: #635bff;
-  --ui-brand-hover: #554dea;
-  --ui-halo: 0 0 0 4px rgb(99 91 255 / 0.18);
-  --ui-surface: #f7f8fa;
+  --ui-text: var(--color-gray-900);
+  --ui-secondary-text: var(--color-gray-500);
+  --ui-border: var(--color-gray-200);
+  --ui-brand: var(--color-indigo-600);
+  --ui-brand-hover: var(--color-indigo-700);
+  --ui-halo: 0 0 0 4px color-mix(in oklab, var(--ui-brand) 18%, transparent);
+  --ui-surface: var(--color-gray-50);
 
   /* Workflow canvas: blurple selection. */
-  --ui-diagram-selected: #635bff;
-  --ui-diagram-selected-disabled: #d6d3ff;
+  --ui-diagram-selected: var(--color-indigo-600);
+  --ui-diagram-selected-disabled: var(--color-indigo-200);
 
   /* Slightly softer corners than Lightning's. */
   --radius-xs: 0.1875rem;
@@ -155,23 +182,24 @@ html[data-theme="light"] {
 
 /* Side menu: a pale column ruled off from the page, grey links and
    the current page in blurple. Admin pages look the same. */
-html[data-theme="light"],
-html[data-theme="light"] .sudo-variant {
-  --ui-sidebar-bg: #f7f8fa;
-  --ui-sidebar-bg-dark: #f7f8fa;
-  --ui-sidebar-text: #1a1b25;
-  --ui-sidebar-text-light: #545b6b;
-  --ui-sidebar-text-lighter: #635bff;
+html:is([data-theme="light"], [data-theme="dark"]),
+html:is([data-theme="light"], [data-theme="dark"]) .sudo-variant {
+  --ui-sidebar-bg: var(--color-gray-50);
+  --ui-sidebar-bg-dark: var(--color-gray-50);
+  --ui-sidebar-text: var(--color-gray-900);
+  --ui-sidebar-text-light: var(--color-gray-600);
+  --ui-sidebar-text-lighter: var(--color-indigo-600);
 }
 
 /* ============================================================== */
-/* Light component layer. Selectors target the `data-ui` hooks.   */
+/* Light component layer, shared with Dark. Selectors target the  */
+/* `data-ui` hooks.                                               */
 /* ============================================================== */
-html[data-theme="light"] {
+html:is([data-theme="light"], [data-theme="dark"]) {
   /* ---- Page frame -------------------------------------------- */
 
   [data-ui="page-body"],
-  [data-ui="page-title-row"] { background-color: #ffffff; }
+  [data-ui="page-title-row"] { background-color: var(--background-color-surface); }
   [data-ui="page-header"] {
     border-bottom-color: var(--ui-border);
     box-shadow: none;
@@ -211,7 +239,32 @@ html[data-theme="light"] {
 
   [data-ui="tag"] { font-weight: 500; }
 
-  [data-ui="alert"] { border-radius: var(--radius-lg); }
+  /* Alerts: the tone is in the wash, the line and the icon; the words
+     are in the ordinary text colours, so a warning doesn't shout. */
+  [data-ui="alert"] {
+    border-radius: var(--radius-lg);
+    --_tone: var(--color-info-500);
+    &[data-tone="success"] { --_tone: var(--color-success-500); }
+    &[data-tone="warning"] { --_tone: var(--color-warning-500); }
+    &[data-tone="danger"] { --_tone: var(--color-danger-500); }
+    background-color: color-mix(in oklab, var(--_tone) 10%, var(--background-color-surface));
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--_tone) 30%, transparent);
+    --text-color-danger: var(--text-color-body);
+    --text-color-success: var(--text-color-body);
+    --text-color-warning: var(--text-color-body);
+    --text-color-info: var(--text-color-body);
+    --text-color-danger-strong: var(--text-color-strong);
+    --text-color-success-strong: var(--text-color-strong);
+    --text-color-warning-strong: var(--text-color-strong);
+    --text-color-info-strong: var(--text-color-strong);
+    [class*="hero-"] { color: var(--_tone); }
+    /* Light's link blurple is 4.4:1 on the wash; one shade further from
+       the page in either mode. */
+    [data-ui="link"] {
+      --text-color-link: var(--color-indigo-700);
+      --text-color-link-hover: var(--color-indigo-800);
+    }
+  }
 
   /* ---- Containers -------------------------------------------- */
 
@@ -220,9 +273,9 @@ html[data-theme="light"] {
   /* Table: white throughout, a hairline round the edge and between
      rows, quiet grey headers. */
   [data-ui="table"] {
-    background-color: #ffffff;
+    background-color: var(--background-color-surface);
     box-shadow: 0 0 0 1px var(--ui-border), var(--shadow-xs);
-    thead { background-color: #ffffff; }
+    thead { background-color: var(--background-color-surface); }
     th { color: var(--ui-secondary-text); font-weight: 500; }
     tbody tr { transition: background-color 0.1s ease; }
   }
@@ -245,13 +298,13 @@ html[data-theme="light"] {
       color: var(--ui-text);
     }
     .menu-item-active {
-      background-color: #ffffff;
+      background-color: var(--background-color-surface);
       box-shadow: 0 0 0 1px var(--ui-border), var(--shadow-xs);
       font-weight: 500;
     }
 
     .user-menu-trigger {
-      background-color: #ffffff;
+      background-color: var(--background-color-surface);
       color: var(--ui-text);
       box-shadow: 0 0 0 1px var(--ui-border), var(--shadow-xs);
     }
@@ -281,7 +334,7 @@ html[data-theme="light"] {
   }
   [data-ui="field"][aria-invalid="true"]:focus {
     border-color: var(--border-color-invalid);
-    box-shadow: 0 0 0 4px rgb(239 68 68 / 0.15);
+    box-shadow: 0 0 0 4px color-mix(in oklab, var(--color-danger-500) 15%, transparent);
   }
 
   :is([data-ui="choice"], input[type="checkbox"], input[type="radio"]) {
@@ -300,6 +353,319 @@ html[data-theme="light"] {
     outline: none;
     box-shadow: var(--ui-halo);
   }
+}
+
+/* ============================================================== */
+/* Dark — slate charcoal, after Linear and GitHub's dimmed theme, */
+/* with an indigo that glows. It shares Light's tokens and        */
+/* component layer, the rules below, and sets its palette last:   */
+/*                                                                */
+/*   - Every hue scale is mirrored round its 500 (50 swaps with   */
+/*     950, 100 with 900), so a tinted pill that reads in Light   */
+/*     (`bg-danger-50 text-danger-700`) is the same pair turned   */
+/*     over here.                                                 */
+/*   - Grey is its own ramp. The page and cards are               */
+/*     `--dk-surface`; the side menu and canvas sit on the darker */
+/*     `--dk-canvas`. Lines are white at low alpha, so they read  */
+/*     the same on every grey.                                    */
+/*   - Brand 600 is the light shade, for links and icons. Buttons */
+/*     and switches fill with `--dk-solid` (and `--dk-danger`,    */
+/*     `--dk-success`), saturated, with white text, in the layer  */
+/*     below.                                                     */
+/*   - White and black stay put: they meet colours that don't     */
+/*     change with the theme (sandbox colours, charts).           */
+/* ============================================================== */
+html[data-theme="dark"] {
+  color-scheme: dark;
+
+  --app-bg: var(--dk-canvas);
+
+  /* The page and every card. Text on a light fill (a dark badge, a
+     highlighted option) is the page colour. */
+  --background-color-surface: var(--dk-surface);
+  --background-color-page: var(--dk-canvas);
+  --text-color-inverse: var(--dk-surface);
+  --text-color-on-light: var(--dk-surface);
+
+  /* Lines: white at low alpha. */
+  --border-color-subtle: color-mix(in oklab, var(--color-white) 8%, transparent);
+  --border-color-strong: color-mix(in oklab, var(--color-white) 14%, transparent);
+  --border-color-emphasis: color-mix(in oklab, var(--color-white) 24%, transparent);
+  --ring-color-subtle: var(--border-color-subtle);
+  --ring-color-strong: var(--border-color-strong);
+  --ring-color-emphasis: var(--border-color-emphasis);
+  --ui-border: var(--border-color-subtle);
+
+  /* The roles a straight flip gets wrong: code viewers stay dark, as
+     Monaco does, and the scrim darkens. */
+  --background-color-code: var(--color-gray-100);
+  --text-color-code: var(--color-gray-800);
+  --background-color-overlay: color-mix(in oklab, var(--color-black) 70%, transparent);
+
+  /* Status panels: a faint wash of the colour over the page and a line
+     in it, not the 50s turned over, which are heavy brown and maroon
+     blocks. */
+  --background-color-danger: color-mix(in oklab, var(--color-danger-500) 10%, var(--dk-surface));
+  --border-color-danger: color-mix(in oklab, var(--color-danger-500) 30%, transparent);
+  --ring-color-danger: var(--border-color-danger);
+  --background-color-success: color-mix(in oklab, var(--color-success-500) 10%, var(--dk-surface));
+  --border-color-success: color-mix(in oklab, var(--color-success-500) 30%, transparent);
+  --ring-color-success: var(--border-color-success);
+  --background-color-warning: color-mix(in oklab, var(--color-warning-500) 10%, var(--dk-surface));
+  --border-color-warning: color-mix(in oklab, var(--color-warning-500) 30%, transparent);
+  --ring-color-warning: var(--border-color-warning);
+  --background-color-info: color-mix(in oklab, var(--color-info-500) 10%, var(--dk-surface));
+  --border-color-info: color-mix(in oklab, var(--color-info-500) 30%, transparent);
+  --ring-color-info: var(--border-color-info);
+
+  --ui-brand: var(--dk-accent);
+  /* Light's layer paints the primary button's hover with this. */
+  --ui-brand-hover: color-mix(in oklab, var(--dk-solid) 88%, var(--color-white));
+  --ui-halo: 0 0 0 3px color-mix(in oklab, var(--dk-accent) 45%, transparent);
+  --ui-surface: var(--color-gray-50);
+
+  /* Workflow canvas. */
+  --ui-diagram-edge: var(--color-gray-500);
+  --ui-diagram-edge-disabled: var(--color-gray-300);
+  --ui-diagram-edge-didnt-run: var(--color-gray-300);
+  --ui-diagram-dot: var(--color-gray-300);
+  --ui-diagram-minimap-stroke: var(--color-gray-400);
+  --ui-diagram-minimap-mask: color-mix(in oklab, var(--color-black) 55%, transparent);
+
+  --shadow-xs: 0 1px 2px rgb(0 0 0 / 0.4);
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.4), 0 2px 6px rgb(0 0 0 / 0.25);
+  --shadow-md: 0 2px 6px rgb(0 0 0 / 0.35), 0 8px 20px rgb(0 0 0 / 0.3);
+  --shadow-card: var(--shadow-md);
+  --shadow-lg: 0 0 0 1px var(--border-color-subtle), 0 8px 20px rgb(0 0 0 / 0.4), 0 20px 48px rgb(0 0 0 / 0.45);
+  --shadow-xl: 0 0 0 1px var(--border-color-subtle), 0 16px 40px rgb(0 0 0 / 0.5), 0 48px 96px rgb(0 0 0 / 0.5);
+
+  /* Shared fills, white text on each. */
+  --dk-danger: oklch(53% 0.2 26);
+  --dk-success: oklch(50% 0.13 155);
+
+  --color-red-50: oklch(25.8% 0.092 26.042);
+  --color-red-100: oklch(39.6% 0.141 25.723);
+  --color-red-200: oklch(44.4% 0.177 26.899);
+  --color-red-300: oklch(50.5% 0.213 27.518);
+  --color-red-400: oklch(57.7% 0.245 27.325);
+  --color-red-500: oklch(63.7% 0.237 25.331);
+  --color-red-600: oklch(70.4% 0.191 22.216);
+  --color-red-700: oklch(80.8% 0.114 19.571);
+  --color-red-800: oklch(88.5% 0.062 18.334);
+  --color-red-900: oklch(93.6% 0.032 17.717);
+  --color-red-950: oklch(97.1% 0.013 17.38);
+
+  --color-orange-50: oklch(26.6% 0.079 36.259);
+  --color-orange-100: oklch(40.8% 0.123 38.172);
+  --color-orange-200: oklch(47% 0.157 37.304);
+  --color-orange-300: oklch(55.3% 0.195 38.402);
+  --color-orange-400: oklch(64.6% 0.222 41.116);
+  --color-orange-500: oklch(70.5% 0.213 47.604);
+  --color-orange-600: oklch(75% 0.183 55.934);
+  --color-orange-700: oklch(83.7% 0.128 66.29);
+  --color-orange-800: oklch(90.1% 0.076 70.697);
+  --color-orange-900: oklch(95.4% 0.038 75.164);
+  --color-orange-950: oklch(98% 0.016 73.684);
+
+  --color-amber-50: oklch(27.9% 0.077 45.635);
+  --color-amber-100: oklch(41.4% 0.112 45.904);
+  --color-amber-200: oklch(47.3% 0.137 46.201);
+  --color-amber-300: oklch(55.5% 0.163 48.998);
+  --color-amber-400: oklch(66.6% 0.179 58.318);
+  --color-amber-500: oklch(76.9% 0.188 70.08);
+  --color-amber-600: oklch(82.8% 0.189 84.429);
+  --color-amber-700: oklch(87.9% 0.169 91.605);
+  --color-amber-800: oklch(92.4% 0.12 95.746);
+  --color-amber-900: oklch(96.2% 0.059 95.617);
+  --color-amber-950: oklch(98.7% 0.022 95.277);
+
+  --color-yellow-50: oklch(28.6% 0.066 53.813);
+  --color-yellow-100: oklch(42.1% 0.095 57.708);
+  --color-yellow-200: oklch(47.6% 0.114 61.907);
+  --color-yellow-300: oklch(55.4% 0.135 66.442);
+  --color-yellow-400: oklch(68.1% 0.162 75.834);
+  --color-yellow-500: oklch(79.5% 0.184 86.047);
+  --color-yellow-600: oklch(85.2% 0.199 91.936);
+  --color-yellow-700: oklch(90.5% 0.182 98.111);
+  --color-yellow-800: oklch(94.5% 0.129 101.54);
+  --color-yellow-900: oklch(97.3% 0.071 103.193);
+  --color-yellow-950: oklch(98.7% 0.026 102.212);
+
+  --color-green-50: oklch(26.6% 0.065 152.934);
+  --color-green-100: oklch(39.3% 0.095 152.535);
+  --color-green-200: oklch(44.8% 0.119 151.328);
+  --color-green-300: oklch(52.7% 0.154 150.069);
+  --color-green-400: oklch(62.7% 0.194 149.214);
+  --color-green-500: oklch(72.3% 0.219 149.579);
+  --color-green-600: oklch(79.2% 0.209 151.711);
+  --color-green-700: oklch(87.1% 0.15 154.449);
+  --color-green-800: oklch(92.5% 0.084 155.995);
+  --color-green-900: oklch(96.2% 0.044 156.743);
+  --color-green-950: oklch(98.2% 0.018 155.826);
+
+  --color-sky-50: oklch(29.3% 0.066 243.157);
+  --color-sky-100: oklch(39.1% 0.09 240.876);
+  --color-sky-200: oklch(44.3% 0.11 240.79);
+  --color-sky-300: oklch(50% 0.134 242.749);
+  --color-sky-400: oklch(58.8% 0.158 241.966);
+  --color-sky-500: oklch(68.5% 0.169 237.323);
+  --color-sky-600: oklch(74.6% 0.16 232.661);
+  --color-sky-700: oklch(82.8% 0.111 230.318);
+  --color-sky-800: oklch(90.1% 0.058 230.902);
+  --color-sky-900: oklch(95.1% 0.026 236.824);
+  --color-sky-950: oklch(97.7% 0.013 236.62);
+
+  --color-blue-50: oklch(28.2% 0.091 267.935);
+  --color-blue-100: oklch(37.9% 0.146 265.522);
+  --color-blue-200: oklch(42.4% 0.199 265.638);
+  --color-blue-300: oklch(48.8% 0.243 264.376);
+  --color-blue-400: oklch(54.6% 0.245 262.881);
+  --color-blue-500: oklch(62.3% 0.214 259.815);
+  --color-blue-600: oklch(70.7% 0.165 254.624);
+  --color-blue-700: oklch(80.9% 0.105 251.813);
+  --color-blue-800: oklch(88.2% 0.059 254.128);
+  --color-blue-900: oklch(93.2% 0.032 255.585);
+  --color-blue-950: oklch(97% 0.014 254.604);
+
+  --color-purple-50: oklch(29.1% 0.149 302.717);
+  --color-purple-100: oklch(38.1% 0.176 304.987);
+  --color-purple-200: oklch(43.8% 0.218 303.724);
+  --color-purple-300: oklch(49.6% 0.265 301.924);
+  --color-purple-400: oklch(55.8% 0.288 302.321);
+  --color-purple-500: oklch(62.7% 0.265 303.9);
+  --color-purple-600: oklch(71.4% 0.203 305.504);
+  --color-purple-700: oklch(82.7% 0.119 306.383);
+  --color-purple-800: oklch(90.2% 0.063 306.703);
+  --color-purple-900: oklch(94.6% 0.033 307.174);
+  --color-purple-950: oklch(97.7% 0.014 308.299);
+
+  --color-pink-50: oklch(28.4% 0.109 3.907);
+  --color-pink-100: oklch(40.8% 0.153 2.432);
+  --color-pink-200: oklch(45.9% 0.187 3.815);
+  --color-pink-300: oklch(52.5% 0.223 3.958);
+  --color-pink-400: oklch(59.2% 0.249 0.584);
+  --color-pink-500: oklch(65.6% 0.241 354.308);
+  --color-pink-600: oklch(71.8% 0.202 349.761);
+  --color-pink-700: oklch(82.3% 0.12 346.018);
+  --color-pink-800: oklch(89.9% 0.061 343.231);
+  --color-pink-900: oklch(94.8% 0.028 342.258);
+  --color-pink-950: oklch(97.1% 0.014 343.198);
+}
+
+/* Side menu: the canvas colour, the current page in white. Admin
+   pages look the same. */
+html[data-theme="dark"],
+html[data-theme="dark"] .sudo-variant {
+  --ui-sidebar-bg: var(--dk-canvas);
+  --ui-sidebar-bg-dark: var(--dk-canvas);
+  --ui-sidebar-text: var(--color-gray-900);
+  --ui-sidebar-text-light: var(--color-gray-600);
+  --ui-sidebar-text-lighter: var(--color-gray-900);
+}
+
+/* Dark component layer: the saturated fills and the glass. */
+html[data-theme="dark"] {
+  ::selection { background-color: color-mix(in oklab, var(--dk-accent) 40%, transparent); }
+
+  /* The bar above each page: frosted over what scrolls under it. */
+  [data-ui="page-header"] {
+    background-color: color-mix(in oklab, var(--dk-surface) 80%, transparent);
+    backdrop-filter: blur(12px) saturate(150%);
+  }
+
+  /* Buttons: a filled button is the variant's solid with a soft top
+     sheen and a glow in its own colour. */
+  [data-ui="button"]:where(:not([data-variant="plain"])) {
+    &[data-variant="primary"] {
+      --_fill: var(--dk-solid);
+      --_text: var(--dk-solid-text);
+      &[data-tone="danger"] { --_fill: var(--dk-danger); --_text: var(--color-white); }
+      &[data-tone="success"] { --_fill: var(--dk-success); --_text: var(--color-white); }
+      background-color: var(--_fill);
+      background-image: linear-gradient(to bottom, color-mix(in oklab, var(--color-white) 14%, transparent), transparent 70%);
+      color: var(--_text);
+      box-shadow:
+        inset 0 1px 0 color-mix(in oklab, var(--color-white) 18%, transparent),
+        0 0 0 1px color-mix(in oklab, var(--_fill) 70%, var(--color-black)),
+        0 4px 16px -4px color-mix(in oklab, var(--_fill) var(--dk-glow), transparent);
+    }
+    &[data-variant="primary"]:hover:not(:is(:disabled, [aria-disabled="true"])) {
+      background-color: color-mix(in oklab, var(--_fill) 88%, var(--color-white));
+    }
+    &[data-variant="secondary"] {
+      background-color: color-mix(in oklab, var(--color-white) 4%, transparent);
+      box-shadow: 0 0 0 1px var(--border-color-strong), var(--shadow-xs);
+      &:hover:not(:is(:disabled, [aria-disabled="true"])) {
+        background-color: color-mix(in oklab, var(--color-white) 8%, transparent);
+      }
+    }
+    &:is(:disabled, [aria-disabled="true"]) { box-shadow: none; background-image: none; }
+  }
+
+  [data-ui="toggle"][aria-checked="true"] { background-color: var(--dk-accent); }
+
+  [data-ui="link"] {
+    --text-color-link: var(--color-indigo-600);
+    --text-color-link-hover: var(--color-indigo-700);
+  }
+
+  /* Cards and tables: a faint top highlight, like light catching an edge. */
+  [data-ui="card"],
+  [data-ui="table"] {
+    box-shadow: inset 0 1px 0 color-mix(in oklab, var(--color-white) 4%, transparent), 0 0 0 1px var(--border-color-subtle);
+  }
+
+  [data-ui="field"] {
+    background-color: color-mix(in oklab, var(--color-white) 3%, transparent);
+  }
+
+  [data-ui="sidebar"] {
+    .menu-item-inactive:hover { background-color: color-mix(in oklab, var(--color-white) 5%, transparent); }
+    .menu-item-active {
+      background-color: color-mix(in oklab, var(--color-white) 8%, transparent);
+      box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--color-white) 6%, transparent);
+    }
+    .user-menu-trigger {
+      background-color: color-mix(in oklab, var(--color-white) 5%, transparent);
+      box-shadow: inset 0 0 0 1px var(--border-color-subtle);
+    }
+    .user-menu-trigger:hover,
+    .sidebar-toggle-btn:hover { background-color: color-mix(in oklab, var(--color-white) 8%, transparent); }
+  }
+}
+
+/* The palette: slate charcoal, after Linear and GitHub's dimmed theme. */
+html[data-theme="dark"] {
+  --dk-canvas: #15171c;
+  --dk-surface: #1b1e24;
+  --dk-solid: #5e6ad2;
+  --dk-solid-text: var(--color-white);
+  --dk-accent: #5e6ad2;
+  --dk-glow: 55%;
+
+  --color-gray-50: #22252c;
+  --color-gray-100: #282c34;
+  --color-gray-200: #323640;
+  --color-gray-300: #3f4450;
+  --color-gray-400: #555b68;
+  --color-gray-500: #9aa1b0;
+  --color-gray-600: #afb5c1;
+  --color-gray-700: #ccd1da;
+  --color-gray-800: #e2e5ea;
+  --color-gray-900: #f3f4f6;
+  --color-gray-950: #ffffff;
+
+  --color-indigo-50: #1d2040;
+  --color-indigo-100: #252a52;
+  --color-indigo-200: #2f3570;
+  --color-indigo-300: #3a4090;
+  --color-indigo-400: #4f58c0;
+  --color-indigo-500: #5e6ad2;
+  --color-indigo-600: #9ba3ff;
+  --color-indigo-700: #b6bcff;
+  --color-indigo-800: #cfd3ff;
+  --color-indigo-900: #e3e6ff;
+  --color-indigo-950: #f1f2ff;
 }
 
 /* ============================================================== */

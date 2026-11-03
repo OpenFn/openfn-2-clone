@@ -31,6 +31,10 @@
   --text-color-link: var(--color-primary-600);
   --text-color-link-hover: var(--color-primary-700);
   --text-color-code: var(--color-gray-200); /* on the dark code background */
+  /* On a colour that doesn't change with the theme (a sandbox colour,
+     a swatch): text-on-light on a pale one, text-on-dark on a deep one. */
+  --text-color-on-light: var(--color-gray-900);
+  --text-color-on-dark: var(--color-white);
 
   /* Backgrounds */
   --background-color-page: var(--color-gray-100);

@@ -39,7 +39,7 @@ function computeTiming(event: ChannelEvent | undefined): TimingData | null {
     segments.push(
       { label: "Send", us: event.requestSendUs, color: "bg-blue-300", textColor: "text-blue-900" },
       { label: "Processing", us: wait, color: "bg-gray-300", textColor: "text-gray-700" },
-      { label: "Recv", us: event.responseDurationUs, color: "bg-green-400", textColor: "text-green-900" }
+      { label: "Recv", us: event.responseDurationUs, color: "bg-green-300", textColor: "text-green-900" }
     );
     return { segments, totalUs: latencyUs, ttfbUs, tier: "full" };
   }
@@ -47,7 +47,7 @@ function computeTiming(event: ChannelEvent | undefined): TimingData | null {
     return {
       segments: [
         { label: "TTFB", us: ttfbUs, color: "bg-blue-300", textColor: "text-blue-900" },
-        { label: "Download", us: Math.max(latencyUs - ttfbUs, 0), color: "bg-green-400", textColor: "text-green-900" },
+        { label: "Download", us: Math.max(latencyUs - ttfbUs, 0), color: "bg-green-300", textColor: "text-green-900" },
       ],
       totalUs: latencyUs,
       ttfbUs,

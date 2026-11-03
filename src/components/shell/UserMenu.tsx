@@ -37,7 +37,7 @@ export default function UserMenu({ user }: { user: MenuUser }) {
             type="button"
             data-ui="account-trigger"
             // eslint-disable-next-line no-restricted-syntax -- a control that owns its type: the account button
-            className="user-menu-trigger flex h-10 w-full items-center rounded-lg bg-white/10 text-sm font-medium text-inverse transition-colors hover:bg-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30"
+            className="user-menu-trigger flex h-10 w-full items-center rounded-lg bg-white/10 text-sm font-medium transition-colors hover:bg-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30"
           >
             <div className="user-menu-content flex w-full min-w-0 items-center">
               <UserAvatar firstName={user.firstName} lastName={user.lastName} className="shrink-0" />

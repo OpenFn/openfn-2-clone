@@ -1,3 +1,4 @@
+/// <reference types="vite/client" />
 import type { Preview, Decorator } from "@storybook/react";
 import "../src/index.css";
 import "../src/monacoSetup";
@@ -43,7 +44,8 @@ const preview: Preview = {
   globalTypes: {
     theme: {
       description: "App theme",
-      defaultValue: DEFAULT_THEME_ID,
+      // STORYBOOK_THEME=dark npm run test:stories runs axe under another theme.
+      defaultValue: import.meta.env.STORYBOOK_THEME ?? DEFAULT_THEME_ID,
       toolbar: {
         title: "Theme",
         icon: "paintbrush",

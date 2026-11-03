@@ -242,8 +242,7 @@ export default function WorkflowDiagram({
       ref={ref}
       className="relative h-full w-full overflow-hidden bg-page select-none touch-none"
       style={{
-        // eslint-disable-next-line no-restricted-syntax -- Lightning's canvas dot grid (React Flow's Background), kept for parity
-        backgroundImage: `radial-gradient(circle, #91919a ${dot}px, transparent ${dot}px)`,
+        backgroundImage: `radial-gradient(circle, var(--ui-diagram-dot) ${dot}px, transparent ${dot}px)`,
         backgroundSize: `${gap}px ${gap}px`,
         backgroundPosition: `${viewport.x % gap}px ${viewport.y % gap}px`,
         cursor: drag.current?.moved ? "grabbing" : "grab",
