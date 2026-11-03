@@ -248,7 +248,7 @@ export function useProjectMemberSaves(projectId: string) {
 
   return {
     // useSave doesn't carry the answer's type through.
-    onAddCollaborators: (values: CollaboratorValues[]) => add([values]) as Promise<AddCollaboratorsResult>,
+    onAddCollaborators: (values: CollaboratorValues[]) => add([values]),
     onInviteCollaborators: async (values: InviteValues[]) => void (await invite([values])),
     onRemoveCollaborator: async (id: string) => void (await remove([id])),
     onSetFailureAlert: async (id: string, on: boolean) => void (await notify([id, { failure_alert: on }])),

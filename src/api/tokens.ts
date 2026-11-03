@@ -65,7 +65,7 @@ export function useTokenSaves() {
   const remove = useSave([tokenKeys.all], (id: string) => request("DELETE", `/api/me/tokens/${encodeURIComponent(id)}`));
   return {
     // useSave doesn't carry the answer's type through.
-    generate: () => generate([]) as Promise<string>,
+    generate: () => generate([]),
     onDelete: async (id: string) => void (await remove([id])),
   };
 }

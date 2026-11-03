@@ -56,7 +56,7 @@ export function statusOf(...queries: UseQueryResult[]): ResourceStatus {
  * `changes` has reloaded, and rejects with the ApiError the form shows.
  * List every key whose data the save can change, on any page.
  */
-export function useSave<A extends unknown[]>(changes: QueryKey[], fn: (...args: A) => Promise<unknown>) {
+export function useSave<A extends unknown[], R>(changes: QueryKey[], fn: (...args: A) => Promise<R>) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (args: A) => fn(...args),
