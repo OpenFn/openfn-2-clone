@@ -4,7 +4,7 @@
 
 This project is the decoupled frontend of Lightning. We have previously proved that migrating to a new frontend with AI is possible. We have built tests, verification checks and defined principles to help us make sure we are confident that we are building something high quality that does not lose functionality.
 
-This branch stands alone and is the source of truth. It should not use main as a reference point: don't read main's code, copy from it or import from it. Nothing from main or anywhere else applies here until it's been brought in on purpose.
+This branch stands alone and is the source of truth. It should not use main as a reference point: don't read main's code, copy from it or import from it. Nothing from main or anywhere else applies here until it's been brought in on purpose. One exception: for the data layer (`src/lib/api/`, `src/fake-api/`), PR 79 (branch `api-demo`, `src/api/`) is the guide. Read it for how it's laid out; rebuild, don't copy.
 
 Built with React 19, TypeScript, Vite, Tailwind 4 and Storybook. No backend yet: pages run on fake data shaped like the API contract in `api/`.
 
@@ -56,6 +56,7 @@ I really don't want to iterate with Claude and create a lot of mess. I want us t
 
 - Build only what PRINCIPLES.md and STRUCTURE.md cover. When the work needs a rule they don't have, stop and ask. A guess copied across ten files is expensive to undo.
 - Working unattended (Lucy has kicked off a run and gone): don't stop at a gap. Take the simplest choice that's cheap to undo, keep going, and write each assumption down as you make it in `notes/assumptions.md`: what you assumed, where in the code, and what would change if it's wrong. Keep the assumption in one place rather than copying it across files. If a gap would force a choice that's expensive to undo, build around it and leave it for Lucy. The hand-back starts with that list.
+- When Brandon has no design for something and PRINCIPLES.md doesn't settle it, look in this order: how it should behave from the [ARIA Authoring Practices](https://www.w3.org/WAI/ARIA/apg/patterns/) pattern; how it should look and read from [GitHub's Primer](https://primer.style/product/components/) (a design system for a developer tool, like ours, with each component's accessibility written down). Take the idea, never the code, and log it as an assumption.
 - A component is done when it looks like Brandon's in the same state and every check passes. Where his look and a principle clash, stop and ask.
 - This file stays short and points to PRINCIPLES.md. Rules for one kind of file sit next to that kind of file.
 - A new rule comes with an example of it done right.

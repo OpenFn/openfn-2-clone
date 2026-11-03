@@ -9,15 +9,16 @@ v3-real/
   src/
     app/             routes, the shell (sidebar, header), providers. Nothing else
     components/      the design system: Brandon's components on our tokens, each with stories
-    lib/             the API client, formatters, small helpers. No React
+    lib/
+      api/           the API client, then one file per resource (tokens.ts): the API's shape, the mapper to page props, query keys, and the TanStack hooks a route calls. No components
+      …              formatters, small helpers. No React
     pages/
       tokens/
         TokensPage.tsx           the page: takes props, renders, no fetching
         TokensPage.stories.tsx   one story per state
-        tokens.data.ts           API answer in, page props out (plain functions)
-        tokens.route.tsx         the one file that fetches and passes props down
+        tokens.route.tsx         calls the hooks in lib/api/tokens.ts and passes props down
         tokens.test.ts
-    fake-api/        made-up answers shaped like api/, so it runs with no server
+    fake-api/        made-up answers shaped like api/, so it runs with no server. Kept apart from lib/api/, so going real deletes this folder and touches nothing else
 ```
 
 ## The components folder
@@ -51,10 +52,10 @@ editor/               the workflow editor: a feature of its own, not a page (Bra
 ## What goes where
 
 - **A page is one folder.** Everything about it lives there. Delete the folder and the page is gone, with nothing left behind.
-- **Only `*.route.tsx` fetches.** It calls the client, maps the answer with `*.data.ts`, and hands props to the page. That's the one file that changes when the data moves from fake to real, or from LiveView to the API.
+- **Only `*.route.tsx` gets data, and only through `lib/api/`.** It calls the resource's hooks (`useTokens()`) and hands props to the page. Everything about a resource (its shape, mapper, keys, queries, saves) lives in its one `lib/api/` file, so two pages using it share it. Fake answers live in `fake-api/`, never in `lib/api/`.
 - **Pages don't import each other.** Something two pages share moves to `components/` (looks) or `lib/` (logic).
 - **`components/` knows nothing about OpenFn.** No product words, no permissions. A component that's OpenFn-specific (run status, adaptor icon) sits in `components/openfn/`.
-- **Lint enforces the lines**, not a doc: a page's `*.route.tsx` is the only file in it that may import the client; its `*.data.ts` may import API types only; nothing imports from `pages/` except `app/`; no raw colours, hex or one-off sizes outside `src/theme/`.
+- **Lint enforces the lines**, not a doc: a page's `*.route.tsx` is the only file in it that may import `lib/api/`; only `lib/api/client.ts` may import `fake-api/`; nothing imports from `pages/` except `app/`; no raw colours, hex or one-off sizes outside `src/theme/`.
 
 ## How we know it works
 

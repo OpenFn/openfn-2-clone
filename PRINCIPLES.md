@@ -26,7 +26,7 @@ Each area can change without the others changing. Lint stops imports crossing th
 
 - A page doesn't know what hosts it. It takes props, whether they come from LiveView or a React route.
 - A page is one folder. Everything about it lives there. Delete the folder and nothing is left behind. ([Bulletproof React](https://github.com/alan2207/bulletproof-react))
-- Pages take everything as props: data, the user, what they're allowed to do. One file per page fetches; swapping fake data for real touches only that file.
+- Pages take everything as props: data, the user, what they're allowed to do. One file per page gets the data, through `src/lib/api/`, and hands it down. Swapping fake data for real touches only the data area, never a page.
 - Pages hold no styling. They arrange components. Once that's true, a better look is a change to the components, not to every page.
 - Pages don't import each other. Something two pages share moves to a shared place.
 - Every page has the same frame: breadcrumb, title, main action on the right, then content.
@@ -95,6 +95,7 @@ We meet [WCAG 2.2 level AA](https://www.w3.org/TR/WCAG22/). The story checks run
 
 - Contrast 4.5:1 for text. Colour is never the only signal.
 - A blocked control stays visible and says why ("Only owners can delete projects"). It's hidden only if this person could never do it.
+- A result you can't see happen (copied, deleted, saved) shows where you acted and is announced (`role="status"`, [WCAG 4.1.3](https://www.w3.org/WAI/WCAG22/Understanding/status-messages.html)). Tooltips explain a control; they never report what happened. Copy says "Copied" on the button itself.
 - Everything works by keyboard. A shortcut does exactly what its button does, and never fires while you're typing.
 - A dialog keeps focus inside while it's open and gives it back when it closes. A menu moves with the arrow keys. Every input has a label.
 - General web rules follow Vercel's [web interface guidelines](https://github.com/vercel-labs/web-interface-guidelines). Where they clash with Lightning's wording, ask if Lightning wins.

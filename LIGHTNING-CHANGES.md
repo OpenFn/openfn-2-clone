@@ -8,3 +8,6 @@ One line each: the page, what Lightning does, what we do instead, and why.
 
 | Page | Lightning | Here | Why |
 |---|---|---|---|
+| API tokens | Flashes "Token created successfully" and "Token deleted successfully" | No toast: the new-token box is the create message; the row going (announced) is the delete message | Show a result where it happened (notes/inbox.md); Brandon's design has no toast |
+| API tokens | "Copied!" tooltip after copying | The Copy button says "Copied" and announces it | Tooltips explain, they don't report (PRINCIPLES.md, WCAG 4.1.3) |
+| API tokens | Delete modal buttons "Yes" / "Cancel" | "Delete token" / "Cancel" | A button says what it does (PRINCIPLES.md, Words) |
