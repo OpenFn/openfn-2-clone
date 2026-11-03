@@ -82,6 +82,9 @@ export async function withFieldNames(send: Promise<unknown>, field: (pointer: st
   }
 }
 
+/** Lightning wants the person to enter their password or an MFA code again first (`POST /api/session`, then retry). */
+export const isStepUpRequired = (error: unknown) => error instanceof ApiError && error.code === "step_up_required";
+
 // Errors.
 
 /** One entry of a problem document's `errors` (api/errors.md): a `code`, a `detail` and one location. */
@@ -168,7 +171,7 @@ export function renewCsrfToken(token: string | null) {
   csrfToken = token ? Promise.resolve(token) : null;
 }
 
-const withToken =(token: string): Record<string, string> => (token ? { "x-csrf-token": token } : {});
+const withToken = (token: string): Record<string, string> => (token ? { "x-csrf-token": token } : {});
 
 async function fetchLightning<T>(method: Method, path: string, body: unknown): Promise<T> {
   if (method === "GET") return send<T>(method, path, body, {});

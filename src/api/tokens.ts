@@ -6,7 +6,8 @@
 import { useQuery } from "@tanstack/react-query";
 import type { ResourceStatus } from "../types/resource";
 import type { ApiToken } from "../types/tokens";
-import { request, standIn, statusOf, useSave } from "./client";
+import { ApiError, request, standIn, statusOf, useSave } from "./client";
+import { standInAccount } from "./me";
 import recorded from "./recorded/tokens.json";
 
 // The API's shape.
@@ -38,7 +39,7 @@ const listTokens = () => request<{ data: ApiAccessToken[] }>("GET", "/api/me/tok
 /**
  * `POST /api/me/tokens`, answering with the whole token, which is never shown
  * again. Lightning refuses it with 403 `step_up_required` unless the person
- * entered their password in the last five minutes; the page shows that refusal.
+ * entered their password in the last five minutes (`isStepUpRequired`).
  */
 const createToken = () => request<{ data: ApiAccessToken }>("POST", "/api/me/tokens").then((r) => r.data.token);
 
@@ -77,6 +78,7 @@ const mask = (token: string) => `${token.slice(0, 5)}…${token.slice(-5)}`;
 
 standIn("GET", "/api/me/tokens", () => ({ data: stored }));
 standIn("POST", "/api/me/tokens", () => {
+  if (standInAccount.steppedUpUntil < Date.now()) throw new ApiError(403, "step_up_required", "Enter your password or an MFA code again to do this.");
   // An obviously fake token, never a real one.
   const token: ApiAccessToken = {
     id: crypto.randomUUID(),

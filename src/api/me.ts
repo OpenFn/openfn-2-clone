@@ -69,7 +69,8 @@ export const meQuery = {
 // fixture user gets the recorded answer with their own details.
 
 /** Who the stand-in has signed in; session.ts signs people in and out. */
-export const standInAccount: { user: User | null } = { user: fixtureSession.user };
+/** The stand-in's session: who is signed in, and until when they've stepped up (ms; 0 for not). */
+export const standInAccount: { user: User | null; steppedUpUntil: number } = { user: fixtureSession.user, steppedUpUntil: 0 };
 
 /** The fixture user with this email, so pages still on the fixtures find the user they know. */
 export const fixtureUserFor = (me: ApiMe): User | undefined => fixtureUsers.find((u) => u.email === me.attributes.email);

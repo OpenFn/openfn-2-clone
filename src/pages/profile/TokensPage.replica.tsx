@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { isStepUpRequired } from "../../api/client";
 import { useTokenSaves, useTokens } from "../../api/tokens";
 import { useToast } from "../../components/primitives/Toast";
 import TokensPage from "./TokensPage";
@@ -7,7 +8,8 @@ import TokensPage from "./TokensPage";
 /**
  * The replica's side of TokensPage: the tokens come from Lightning's API (or
  * its stand-in), the delete modal's token from the URL, and the success
- * toasts are Lightning's flashes. The new token's whole value arrives once,
+ * toasts are Lightning's flashes. When Lightning's API wants the password
+ * again before creating a token, Generate goes to confirm access first. The new token's whole value arrives once,
  * in the answer that creates it, so it's held here for the banner. Lightning
  * will replace this file with a LiveView wrapper; TokensPage stays as it is.
  */
@@ -26,7 +28,14 @@ export default function TokensPageReplica() {
       newToken={newToken}
       tokenId={tokenId ?? null}
       onGenerate={async () => {
-        setNewToken(await saves.generate());
+        try {
+          setNewToken(await saves.generate());
+        } catch (error) {
+          // Lightning's API wants the password again first: confirm access, then come back and generate.
+          if (!isStepUpRequired(error)) throw error;
+          navigate(`/auth/confirm_access?return_to=${encodeURIComponent("/profile/tokens")}`);
+          return;
+        }
         toast("Token created successfully");
       }}
       onDelete={async (id) => {

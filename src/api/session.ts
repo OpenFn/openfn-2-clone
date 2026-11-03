@@ -34,6 +34,9 @@ export interface CodeValues {
   code: string;
 }
 
+/** What the confirm access form sends to step the session up. */
+export type StepUpValues = { password: string } | { code: string };
+
 /** Everything cached: signing in may be someone else, so every list reloads. */
 const everything: QueryKey = [];
 
@@ -99,17 +102,18 @@ export function useSessionActions() {
   // Remember me isn't sent: the API refuses `remember_me`.
   const signIn = useSave([everything], ({ email, password }: SignInValues) => startSession({ email, password }));
   // The second POST of an MFA sign-in, with only the code.
-  const verifyCode = useSave([everything], ({ method, code }: CodeValues) =>
-    startSession(method === "backup_code" ? { backup_code: code } : { mfa_code: code })
-  );
+  const verifyCode = useSave([everything], ({ method, code }: CodeValues) => startSession(method === "backup_code" ? { backup_code: code } : { mfa_code: code }));
   const signOut = useSave([meKeys.all, instanceQuery.queryKey], async () => {
     await request("DELETE", "/api/session");
     renewCsrfToken(null);
     // Nothing of this person's stays behind for whoever signs in next.
     queryClient.removeQueries({ predicate: (q) => q.queryKey[0] !== meKeys.all[0] && q.queryKey[0] !== instanceQuery.queryKey[0] });
   });
+  // Entering the password or a code again while signed in steps the session up for five minutes.
+  const stepUp = useSave([meKeys.all], (values: StepUpValues) => startSession("password" in values ? { password: values.password } : { mfa_code: values.code }));
   return {
     signIn: (values: SignInValues) => signIn([values]),
+    stepUp: async (values: StepUpValues) => void (await stepUp([values])),
     verifyCode: (values: CodeValues) => verifyCode([values]),
     signOut: () => signOut([]),
   };
@@ -120,6 +124,8 @@ export function useSessionActions() {
 
 const STAND_IN_PASSWORD = "welcome12345";
 const STAND_IN_CODE = "123456";
+/** How long a step-up lasts on Lightning. */
+const STEP_UP_MS = 5 * 60_000;
 
 let waitingForCode: User | null = null;
 
@@ -134,6 +140,12 @@ function sessionAnswer(user: User) {
 standIn("POST", "/api/session", (_params, body) => {
   const b = body as Partial<Record<"email" | "password" | "mfa_code" | "backup_code", string>>;
   const code = b.mfa_code ?? b.backup_code;
+  if (b.email === undefined && !waitingForCode && standInAccount.user) {
+    // Stepping up a signed-in session.
+    if (b.password !== undefined ? b.password !== STAND_IN_PASSWORD : code !== STAND_IN_CODE) throw invalidCredentials();
+    standInAccount.steppedUpUntil = Date.now() + STEP_UP_MS;
+    return sessionAnswer(standInAccount.user);
+  }
   if (b.email === undefined) {
     // Only the code, continuing a sign-in that waits for it.
     if (!waitingForCode) throw unauthenticated();
@@ -147,7 +159,7 @@ standIn("POST", "/api/session", (_params, body) => {
   }
   const user = fixtureUsers.find((u) => u.email === b.email);
   // Signing in replaces whatever session there was.
-  [standInAccount.user, waitingForCode] = [null, null];
+  [standInAccount.user, waitingForCode, standInAccount.steppedUpUntil] = [null, null, 0];
   if (!user || b.password !== STAND_IN_PASSWORD || user.disabled || user.scheduledDeletion) throw invalidCredentials();
   if (user.mfaEnabled && code === undefined) {
     waitingForCode = user;
