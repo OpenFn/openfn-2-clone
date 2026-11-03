@@ -66,10 +66,10 @@ export default function WorkOrderTableRow({
     <>
       <Tr
         id={`toggle_details_for_${wo.id}`}
-        // eslint-disable-next-line local/primitive-classname -- debt: F526 box (bg-subtle bg-surface)
+        // eslint-disable-next-line local/primitive-classname -- debt: box (bg-subtle bg-surface)
         className={selected ? "bg-subtle" : "bg-surface"}
       >
-        {/* eslint-disable-next-line local/primitive-classname -- debt: F526 box (!pr-1) */}
+        {/* eslint-disable-next-line local/primitive-classname -- debt: box (!pr-1) */}
         <Td className="!pr-1">
           {available ? (
             <Checkbox
@@ -83,7 +83,7 @@ export default function WorkOrderTableRow({
               <Checkbox
                 id={`select_${wo.id}`}
                 label={<span className="sr-only">Select work order</span>}
-                // eslint-disable-next-line local/primitive-classname -- debt: F526 box (disabled:bg-subtle)
+                // eslint-disable-next-line local/primitive-classname -- debt: box (disabled:bg-subtle)
                 className="disabled:bg-subtle"
                 checked={false}
                 disabled
@@ -100,7 +100,7 @@ export default function WorkOrderTableRow({
             <TextLink
               to={wo.workflowHref}
               variant="plain"
-              // eslint-disable-next-line local/primitive-classname -- debt: F529 state, F527 colour (workflow-name text-strong hover:text-link)
+              // eslint-disable-next-line local/primitive-classname -- debt: state, colour (workflow-name text-strong hover:text-link)
               className="workflow-name block max-w-50 truncate text-strong hover:text-link"
               title={
                 <>
@@ -160,7 +160,7 @@ export default function WorkOrderTableRow({
                     icon="hero-arrow-path-mini"
                     label="Retry (run from the start)"
                     size="xs"
-                    // eslint-disable-next-line local/primitive-classname -- debt: F527 colour (hover:text-link)
+                    // eslint-disable-next-line local/primitive-classname -- debt: colour (hover:text-link)
                     className="hover:text-link"
                     onClick={() => {
                       onRetry();
@@ -188,7 +188,7 @@ export default function WorkOrderTableRow({
       </Tr>
       {expanded && (
         <Tr>
-          {/* eslint-disable-next-line local/primitive-classname -- debt: F526 box (!p-0) */}
+          {/* eslint-disable-next-line local/primitive-classname -- debt: box (!p-0) */}
           <Td colSpan={9} className="!p-0">
             <div className="flex flex-col gap-3 bg-sunken p-3">
               {runs.map((run, i) => {

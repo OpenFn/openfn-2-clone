@@ -211,7 +211,7 @@ export default function Sidebar({
                 content="You're using features that are still being built. Things may work differently for you than for your teammates."
                 side="right"
               >
-                {/* eslint-disable-next-line local/primitive-classname -- debt: F529 state, F525 margin, F526 box (menu-item mx-3 rounded-lg) */}
+                {/* eslint-disable-next-line local/primitive-classname -- debt: state, margin, box (menu-item mx-3 rounded-lg) */}
                 <Text as="div" variant="label-md" className="menu-item menu-item-experimental mx-3 flex h-8 items-center rounded-lg">
                   <span className="hero-wrench-screwdriver h-5 w-5" />
                   <span className="menu-item-text truncate">Experimental</span>

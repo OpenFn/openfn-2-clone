@@ -61,7 +61,7 @@ function clickedControl(e: MouseEvent<HTMLElement>) {
   return control !== null && e.currentTarget.contains(control);
 }
 
-/** A clickable row's link, in its first cell (D303): Tab reaches it, Enter opens it, and a click anywhere else on the row follows it. */
+/** A clickable row's link, in its first cell: Tab reaches it, Enter opens it, and a click anywhere else on the row follows it. */
 export function RowLink({ to, children }: { to: string; children: ReactNode }) {
   return (
     <Link to={to} data-row-action="">
@@ -224,7 +224,7 @@ export function Td({
   wrap?: boolean;
   /** One line, cut off with an ellipsis at `maxWidth` (default 60), the whole text on hover while it's cut off: a long name. A value people copy is a `CopyChip`. */
   truncate?: boolean;
-  /** A max-width in Tailwind spacing units (60 = 15rem), held by a block inside the cell, since auto table layout ignores a cell's own max-width (F530). */
+  /** A max-width in Tailwind spacing units (60 = 15rem), held by a block inside the cell, since auto table layout ignores a cell's own max-width. */
   maxWidth?: keyof typeof maxWidthClasses;
 }) {
   // Auto table layout ignores a cell's max-width, so a capped value gets its own block.

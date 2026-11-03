@@ -16,6 +16,7 @@ its stories; read the component before using it.
 | A form's values, dirty state and errors | `useForm` from `utils/useForm.ts` (never disable submit for invalid values) |
 | A form on a page: its fields, its error, its buttons | `Form`, with `{...form.formProps(save)}` |
 | A request in flight | `useAction` (`useActions` for one per row); `Spinner` for anything loading |
+| A page's data still loading, or refused | `AsyncBoundary` with the page's optional `status` prop (STANDARDS pattern 5) |
 | A switch or select saved on every change | `useChosenValue` |
 | An icon-only action | `IconButton` (always give it a `label`) |
 | The X that closes a modal, toast or panel | `CloseButton` |
@@ -254,7 +255,7 @@ it, as in any form (`Project settings/DataStoragePanel`). An untitled card
 with two or more things in it puts them in a `Stack`, or they sit flush
 (DataStoragePanel's retention policy card). SecurityPanel,
 ProjectSetupPanel, ExperimentalFeaturesCard and MaintenanceCard still have
-titles (G187 is open). A switch or select saves on change
+titles. A switch or select saves on change
 with `useChosenValue`; if the save fails, it goes back and an error toast
 says why. Text fields save with `useForm` and a Save button at the bottom of
 the card.

@@ -34,7 +34,7 @@ convert these, in order, and delete their inline render-time validation:
 3. `ProfileForms` (two forms on one page, each with its own `useForm`).
 
 Add a story for a form showing a server field error, using
-`failNextRequest` or a rejected promise with `RequestError.fieldErrors`.
+a rejected promise with `RequestError.fieldErrors`.
 
 ## Step 2. Pattern 3: server-driven list, on History
 

@@ -128,7 +128,7 @@ export default function RunShowPage({
     return (
       <PageContent header={header}>
         <Centered className="@container/main h-full">
-          {/* eslint-disable-next-line local/primitive-classname -- debt: F529 state (animate-pulse) */}
+          {/* eslint-disable-next-line local/primitive-classname -- debt: state (animate-pulse) */}
           <DetailList id="run-loading" className="animate-pulse @5xl/main:w-1/3">
             {["w-16", "w-12", "w-12"].map((w, i) => (
               <DetailItem key={i} label={<span className={`inline-block h-3 ${w} rounded-full bg-emphasis`} />}>

@@ -34,7 +34,7 @@ function StepRerun({ step, dataStorageHref, onRetry }: { step: StepRow; dataStor
       id={step.id}
       icon="hero-play-circle-mini"
       label="Run this step with the latest version of this workflow"
-      // eslint-disable-next-line local/primitive-classname -- debt: F527 colour (hover:text-link)
+      // eslint-disable-next-line local/primitive-classname -- debt: colour (hover:text-link)
       className="hover:text-link"
       onClick={onRetry}
     />
@@ -60,11 +60,11 @@ export function StepListItem({
   onRetry: () => void;
 }) {
   return (
-    // eslint-disable-next-line local/primitive-classname -- debt: F526 box, F529 state (hover:bg-surface opacity-50)
+    // eslint-disable-next-line local/primitive-classname -- debt: box, state (hover:bg-surface opacity-50)
     <Text as="div" variant="body-sm" id={`step-${step.id}`} role="listitem" tone="muted" className={cn("flex items-center hover:bg-surface", step.cloned && "opacity-50")}>
       <div className="flex flex-1 items-center gap-2 py-2 pl-4">
         <StepIcon reason={step.exitReason} errorType={step.errorType} />
-        {/* eslint-disable-next-line local/primitive-classname -- debt: F527 colour (text-strong hover:text-link) */}
+        {/* eslint-disable-next-line local/primitive-classname -- debt: colour (text-strong hover:text-link) */}
         <TextLink to={step.href} variant="plain" className="whitespace-nowrap text-strong hover:text-link">
           {step.jobName}
         </TextLink>
@@ -141,11 +141,11 @@ export function RunCard({
   const steps = run.steps;
   return (
     <Card id={`run_${run.id}`} padding="none" className="overflow-hidden">
-      {/* eslint-disable-next-line local/primitive-classname -- debt: F526 box (bg-emphasis) */}
+      {/* eslint-disable-next-line local/primitive-classname -- debt: box (bg-emphasis) */}
       <Text as="div" variant="body-sm" className="flex items-center bg-emphasis">
         <div className="flex flex-1 items-center gap-1 py-2 pl-4">
           Run
-          {/* eslint-disable-next-line local/primitive-classname -- debt: F528 type (font-mono) */}
+          {/* eslint-disable-next-line local/primitive-classname -- debt: type (font-mono) */}
           <TextLink to={run.href} title={run.id} className="font-mono">
             {shortUuid(run.id)}
           </TextLink>

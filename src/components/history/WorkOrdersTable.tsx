@@ -92,7 +92,7 @@ export default function WorkOrdersTable({
       errorMessage="There was an error loading the work orders"
       header={
         <Tr>
-          {/* eslint-disable-next-line local/primitive-classname -- debt: F526 box (!pr-1) */}
+          {/* eslint-disable-next-line local/primitive-classname -- debt: box (!pr-1) */}
           <Th className="!pr-1">
             <div className="relative">
               <Checkbox
@@ -151,7 +151,7 @@ export default function WorkOrdersTable({
                 icon="hero-cloud-arrow-down"
                 label={`Export all ${page.totalEntries} results matching your query`}
                 onClick={onExport}
-                // eslint-disable-next-line local/primitive-classname -- debt: F529 state, F527 colour (transition hover:-rotate-6 hover:text-link)
+                // eslint-disable-next-line local/primitive-classname -- debt: state, colour (transition hover:-rotate-6 hover:text-link)
                 className="transition hover:-rotate-6 hover:text-link"
               />
             )

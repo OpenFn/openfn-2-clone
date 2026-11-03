@@ -22,7 +22,6 @@ export default function SaveButton({ onClick, canSave = true, hasChanges = false
       <Button onClick={onClick} disabled={!canSave} tooltip={tooltip}>
         {children}
       </Button>
-      { }
       {hasChanges && <div className="absolute top-0 right-0 -m-1 size-3 rounded-full bg-danger-strong" data-is-dirty />}
     </div>
   );

@@ -64,7 +64,7 @@ describe("Table state", () => {
   });
 });
 
-describe("clickable rows (D303)", () => {
+describe("clickable rows", () => {
   it("opens a row from its link, and a click elsewhere on the row follows the same link", () => {
     const router: Router = {
       navigate: vi.fn(),

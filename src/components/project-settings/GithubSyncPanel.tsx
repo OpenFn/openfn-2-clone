@@ -42,7 +42,7 @@ export default function GithubSyncPanel({ githubSync, sandbox, onInitiateSync, o
   } else if (connection) {
     body = (
       <Stack gap="sm" id="github-sync-component">
-        {/* eslint-disable-next-line no-restricted-syntax -- debt: F558 a child would change in a flex column */}
+        {/* eslint-disable-next-line no-restricted-syntax -- debt: a child would change in a flex column */}
         <Card className="space-y-4">
           <DetailList>
             <DetailItem label="Repository:">

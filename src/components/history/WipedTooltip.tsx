@@ -28,7 +28,7 @@ export default function WipedTooltip({
           {message}
           <br />
           {dataStorageHref ? (
-            // eslint-disable-next-line local/primitive-classname -- debt: F528 type (underline)
+            // eslint-disable-next-line local/primitive-classname -- debt: type (underline)
             <TextLink to={dataStorageHref} variant="plain" className="underline">
               Go to data storage settings
             </TextLink>

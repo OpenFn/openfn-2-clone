@@ -51,8 +51,9 @@ does (`FormModal`, `ConfirmModal`).
   A load hands its result to `onSuccess`.
 - **Until wired,** page mutations `await simulateRequest(...)` from
   `src/mock-data/request.ts`, so the pending state is visible in the demo.
-  `failNextRequest(message, fieldErrors?)` makes the next call reject, for
-  stories and manual checks.
+  A page wired to the API client (`src/api/`) loads through its stand-in
+  instead, where `failNext({ status, code, errors })` makes the next request
+  fail, for stories and manual checks.
 
 Rules: no `onClick={() => toast("Saved")}` without an awaited request in
 between. No `setTimeout` to fake latency inside a component. A sync handler
@@ -143,17 +144,18 @@ A component never copies a record list into local state and mutates it.
 
 ## 5. Resource loading states
 
-**Not built yet. Don't build it without asking.**
+A page whose host loads its data after it renders needs the same four
+treatments: loading, not found, forbidden, error.
 
-Any page or panel built around one record (a project, a run, a credential)
-needs the same four treatments: loading, not found, forbidden, error.
-
-- One `AsyncBoundary` primitive (or equivalent) takes a resource state and
-  renders `Spinner`, a not-found page, or an `Alert`, and otherwise its
-  children.
-- A real `NotFoundPage` and `ErrorPage` under `src/pages/`, routed as the
-  catch-all. No more `<Navigate to="/projects">` as the not-found treatment.
+- The page takes an optional `status?: ResourceStatus` prop and wraps the
+  part that waits in `AsyncBoundary`, which draws `Spinner`, Lightning's
+  "Not Found" / "No Access", or the server's message in an `Alert`, and
+  otherwise its children. Leaving `status` out means ready, so a host that
+  sends the data with the page (LiveView) changes nothing.
+- The header and anything else not waiting on data render straight away.
 - Pages don't invent their own "Project not found" text.
+- Not built yet: a routed `NotFoundPage` and an `ErrorPage` for render
+  crashes (one error boundary per route).
 
 ## 6. Confirm then act
 
@@ -254,8 +256,9 @@ is rewritten.
   host keeps from it is tied to the form that started it (`formId`) and the
   record it was for, so it can only be saved there.
 - **The contract is written by hand.** `XPageProps` and the shapes it names
-  never build on the replica's model types (`User`, `Project`, `WorkOrder`,
-  in `src/mock-data/models/`); the replica maps fixtures onto them, and lint
+  never build on the replica's record types (`WorkOrder` and the rest
+  in `src/mock-data/models/`; `User` and `Project` in `src/types/`, where the
+  session and permissions can reach them); the replica maps fixtures onto them, and lint
   stops `src/types/`, pages and components importing the models. Every one is
   exported from `index.ts`, camelCase, and plain JSON apart from the `on*`
   callbacks.

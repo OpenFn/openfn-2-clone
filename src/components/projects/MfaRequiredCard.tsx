@@ -14,9 +14,7 @@ export default function MfaRequiredCard({ title = "MFA Required for Project" }: 
   return (
     <Card padding="lg" className="max-w-lg space-y-5">
       <div className="flex items-start gap-4">
-        { }
         <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-danger-badge">
-          { }
           <span className="hero-exclamation-triangle h-6 w-6 text-danger-icon" aria-hidden="true" />
         </span>
         <Stack gap="sm">

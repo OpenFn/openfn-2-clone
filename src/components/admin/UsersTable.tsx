@@ -83,7 +83,7 @@ export default function UsersTable({
               <Td>{!user.disabled && checkIcon}</Td>
               <Td>{user.supportUser && checkIcon}</Td>
               <Td>{user.scheduledDeletion && formatShortDateTime(user.scheduledDeletion)}</Td>
-              {/* eslint-disable-next-line local/primitive-classname -- debt: F526 box (py-0.5) */}
+              {/* eslint-disable-next-line local/primitive-classname -- debt: box (py-0.5) */}
               <Td className="py-0.5">
                 <ButtonMenu label="Actions">
                   <MenuItem to={`/settings/users/${user.id}`}>Edit</MenuItem>
