@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import AsyncBoundary from "../../components/primitives/AsyncBoundary";
 import Header from "../../components/primitives/Header";
 import { Centered, PageContent } from "../../components/primitives/PageContent";
 import ProjectBreadcrumbs from "../../components/shell/ProjectBreadcrumbs";
@@ -31,6 +32,7 @@ import type {
   WebhookAuthMethodValues,
 } from "../../types/project-settings";
 import type { CredentialActions, KeychainCredentialActions } from "../../types/credentials";
+import type { ResourceStatus } from "../../types/resource";
 import { cn } from "../../utils/cn";
 
 /**
@@ -44,6 +46,8 @@ export interface ProjectSettingsPageProps extends ProjectSettingsPageData, Crede
   projectLabel: string;
   /** The deletion modal is open (/settings/delete). */
   deleting: boolean;
+  /** While the host loads the collaborators, or why it couldn't (STANDARDS pattern 5). Leave it out when they arrive with the page. */
+  collaborationStatus?: ResourceStatus;
 
   onSaveIdentity: (values: ProjectIdentityValues) => Promise<void>;
   /** Saves Concurrency Override: 1 for one run at a time, null for parallel. */
@@ -166,16 +170,18 @@ export default function ProjectSettingsPage(props: ProjectSettingsPageProps) {
       />
     ),
     collaboration: (
-      <CollaborationPanel
-        collaboration={props.collaboration}
-        sandbox={sandbox}
-        onAdd={props.onAddCollaborators}
-        onInvite={props.onInviteCollaborators}
-        onRemove={props.onRemoveCollaborator}
-        onSetSupportAccess={props.onSetSupportAccess}
-        onSetFailureAlert={props.onSetFailureAlert}
-        onSetDigest={props.onSetDigest}
-      />
+      <AsyncBoundary status={props.collaborationStatus ?? { state: "ready" }}>
+        <CollaborationPanel
+          collaboration={props.collaboration}
+          sandbox={sandbox}
+          onAdd={props.onAddCollaborators}
+          onInvite={props.onInviteCollaborators}
+          onRemove={props.onRemoveCollaborator}
+          onSetSupportAccess={props.onSetSupportAccess}
+          onSetFailureAlert={props.onSetFailureAlert}
+          onSetDigest={props.onSetDigest}
+        />
+      </AsyncBoundary>
     ),
     security: <SecurityPanel security={props.security} parent={parent} onSetRequiresMfa={props.onSetRequiresMfa} />,
     vcs: (

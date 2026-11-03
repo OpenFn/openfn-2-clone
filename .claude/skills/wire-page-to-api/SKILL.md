@@ -16,7 +16,9 @@ The page must already be split into a page and a `.replica.tsx` wrapper. If
 it isn't, or if the API would need the page's props to change, stop and ask.
 The one change a page may need is an optional `status` prop, drawn with
 `AsyncBoundary` around the part that shows the data, if it doesn't have one
-yet (as `CredentialsIndexPage` does). Then run step 6's overnight-1 check.
+yet (as `CredentialsIndexPage` does). When only part of the page moves to
+the API (one tab), the prop is named for that part (`collaborationStatus`)
+and wraps only it. Then run step 6's overnight-1 check.
 
 ## 1. Match the page to the API
 
@@ -83,7 +85,11 @@ In this order, as in `credentials.ts`:
 - Add each success toast here, after the save resolves, in Lightning's
   flash wording. Error toasts are the page's, not the wrapper's.
 - Keep on the fixture only what the API doesn't serve yet, and say so in the
-  wrapper's comment.
+  wrapper's comment. A wrapper that still finds its project in the fixture
+  works live only for projects whose fixture id is Lightning's.
+- When the API doesn't send something that turns on a warning or a
+  confirmation, don't quietly pass "none": say so in your report so someone
+  picks the safe default.
 
 ## 4. Test
 
@@ -104,7 +110,8 @@ Start the replica twice: `npx vite --port <a>` for the stand-in, and
 headless browser (Playwright from `node_modules`), sign in on the live one
 by calling `fetch("/api/session", { method: "POST", ... })` from the page
 and reload (a list that loaded before signing in holds its 401), then go through every action on the page in both modes: a save, a refusal,
-a delete. Log each non-GET request and each 4xx answer. Look at the
+a delete. Wait for a modal to close rather than for a fixed time: live
+answers are slower than the stand-in's. Log each non-GET request and each 4xx answer. Look at the
 screenshots. Delete what you created on the real Lightning afterwards, and
 make the script refuse to delete anything that was there before you started:
 other people use the same Lightning. Don't keep screenshots that show a real
