@@ -1,3 +1,4 @@
+import AsyncBoundary from "../../components/primitives/AsyncBoundary";
 import Header from "../../components/primitives/Header";
 import Button from "../../components/primitives/Button";
 import { Centered, PageContent } from "../../components/primitives/PageContent";
@@ -5,6 +6,7 @@ import NewTokenBanner from "../../components/profile/NewTokenBanner";
 import TokensTable from "../../components/profile/TokensTable";
 import { Stack } from "../../components/primitives/Stack";
 import TokenDeletionModal from "../../components/profile/TokenDeletionModal";
+import type { ResourceStatus } from "../../types/resource";
 import type { ApiToken } from "../../types/tokens";
 import { useAction } from "../../utils/useAction";
 
@@ -22,6 +24,8 @@ export interface TokensPageProps {
   onDelete: (id: string) => Promise<void>;
   /** Closes the delete modal, after a delete or on Cancel. */
   onClose: () => void;
+  /** While the host loads the tokens, or why it couldn't (STANDARDS pattern 5). Leave it out when the data arrives with the page. */
+  status?: ResourceStatus;
 }
 
 /**
@@ -30,7 +34,7 @@ export interface TokensPageProps {
  * Props only, so it can run unchanged in Lightning; the replica's data and
  * routing live in TokensPage.replica.tsx.
  */
-export default function TokensPage({ tokens, newToken, tokenId, onGenerate, onDelete, onClose }: TokensPageProps) {
+export default function TokensPage({ tokens, newToken, tokenId, onGenerate, onDelete, onClose, status = { state: "ready" } }: TokensPageProps) {
   const generate = useAction(onGenerate, { onError: "toast" });
 
   return (
@@ -47,10 +51,12 @@ export default function TokensPage({ tokens, newToken, tokenId, onGenerate, onDe
         {tokenId && tokens.some((t) => t.id === tokenId) && (
           <TokenDeletionModal onClose={onClose} onDelete={() => onDelete(tokenId)} />
         )}
-        <Stack>
-          {newToken && <NewTokenBanner token={newToken} />}
-          <TokensTable tokens={tokens} />
-        </Stack>
+        <AsyncBoundary status={status}>
+          <Stack>
+            {newToken && <NewTokenBanner token={newToken} />}
+            <TokensTable tokens={tokens} />
+          </Stack>
+        </AsyncBoundary>
       </Centered>
     </PageContent>
   );
