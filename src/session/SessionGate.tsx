@@ -1,5 +1,6 @@
 import { useEffect, useRef, type ReactNode } from "react";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import { useInstance } from "../api/instance";
 import { useSessionActions, useSessionState } from "../api/session";
 import SessionProvider from "./SessionProvider";
 import type { SignInState } from "./session";
@@ -22,6 +23,7 @@ const under = (paths: string[], pathname: string) => paths.some((p) => pathname 
  */
 export default function SessionGate({ children }: { children: ReactNode }) {
   const session = useSessionState();
+  const instance = useInstance();
   const { pathname, search, state } = useLocation() as { pathname: string; search: string; state: SignInState | null };
   const navigate = useNavigate();
   const { signOut } = useSessionActions();
@@ -42,6 +44,13 @@ export default function SessionGate({ children }: { children: ReactNode }) {
   }, [loggingOut, signOut, navigate]);
 
   if (session.state === "loading" || loggingOut) return null;
+  // An instance with no superuser yet sends every page to first setup (Lightning's :check_first_setup plug).
+  if (instance?.needs_setup) return pathname === "/first_setup" ? children : <Navigate to="/first_setup" replace />;
+  // A sign-in waiting for its MFA code may only finish it, or start again.
+  if (session.state === "waitingForCode") {
+    if (under(signedOutPaths, pathname)) return children;
+    return <Navigate to="/users/two-factor" replace state={{ returnTo: pathname + search } satisfies SignInState} />;
+  }
   if (session.state === "signedOut") {
     if (under(signedOutPaths, pathname)) return children;
     return <Navigate to="/users/log_in" replace state={{ returnTo: pathname + search } satisfies SignInState} />;

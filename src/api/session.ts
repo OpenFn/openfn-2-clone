@@ -58,7 +58,22 @@ export function createQueryClient(): QueryClient {
   return client;
 }
 
-export type SessionState = { state: "loading" } | { state: "signedOut" } | { state: "signedIn"; session: Session };
+export type SessionState = { state: "loading" } | { state: "signedOut" } | { state: "waitingForCode" } | { state: "signedIn"; session: Session };
+
+export const sessionKeys = { all: ["session"] as const };
+
+/** `GET /api/session`, or null without one. Read only when nobody is signed in, to find a sign-in waiting for its MFA code. */
+const sessionQuery = {
+  queryKey: sessionKeys.all,
+  queryFn: () =>
+    request<{ data: ApiSession }>("GET", "/api/session").then(
+      (r): ApiSession | null => r.data,
+      (error: unknown) => {
+        if (error instanceof ApiError && error.code === "unauthenticated") return null;
+        throw error;
+      }
+    ),
+};
 
 /**
  * Who is signed in, for SessionProvider. The instance details fill in once
@@ -67,6 +82,10 @@ export type SessionState = { state: "loading" } | { state: "signedOut" } | { sta
 export function useSessionState(): SessionState {
   const me = useQuery(meQuery);
   const instance = useQuery(instanceQuery);
+  // A password sign-in waiting for its code has a session but no person yet (Lightning sends its pages to the two-factor step).
+  const pending = useQuery({ ...sessionQuery, enabled: me.data === null });
+  if (me.data === null && pending.data === undefined && !pending.isError) return { state: "loading" };
+  if (me.data === null && pending.data?.state === "mfa_required") return { state: "waitingForCode" };
   // ponytail: Lightning being unreachable also reads as signed out; the log in form then says "Couldn't reach Lightning."
   if (me.data === null || me.isError) return { state: "signedOut" };
   if (me.data === undefined) return { state: "loading" };
@@ -183,6 +202,13 @@ standIn("POST", "/api/session", (_params, body) => {
   if (user.mfaEnabled && code !== STAND_IN_CODE) throw invalidCredentials();
   standInAccount.user = user;
   return sessionAnswer(user);
+});
+
+standIn("GET", "/api/session", () => {
+  const user = standInAccount.user ?? waitingForCode;
+  if (!user) throw unauthenticated();
+  const answer = sessionAnswer(user);
+  return { data: { ...answer.data, state: standInAccount.user ? "signed_in" : "mfa_required" } };
 });
 
 standIn("DELETE", "/api/session", () => {

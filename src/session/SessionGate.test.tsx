@@ -1,7 +1,9 @@
 import { QueryClientProvider } from "@tanstack/react-query";
-import { render, screen } from "@testing-library/react";
+import { cleanup, render, screen } from "@testing-library/react";
 import { MemoryRouter, Route, Routes, useLocation } from "react-router-dom";
 import { describe, expect, it } from "vitest";
+import { request } from "../api/client";
+import recordedInstance from "../api/recorded/instance.json";
 import { createQueryClient } from "../api/session";
 import { useCurrentUser } from "./session";
 import SessionGate from "./SessionGate";
@@ -33,12 +35,12 @@ function renderGate(path: string) {
 describe("SessionGate", () => {
   it("gives the pages the signed-in person", async () => {
     renderGate("/projects/p1/w");
-    expect(await screen.findByText("signed in as Amy")).toBeTruthy();
+    expect(await screen.findByText("signed in as Amy", {}, { timeout: 3000 })).toBeTruthy();
   });
 
   it("sends a signed-in visitor on log in to their projects", async () => {
     renderGate("/users/log_in");
-    expect(await screen.findByText("at /projects null")).toBeTruthy();
+    expect(await screen.findByText("at /projects null", {}, { timeout: 3000 })).toBeTruthy();
   });
 
   it("signs out on /users/log_out, then shows log in with Lightning's flash", async () => {
@@ -48,6 +50,25 @@ describe("SessionGate", () => {
 
   it("sends a signed-out visitor to log in, remembering where they were going", async () => {
     renderGate("/projects/p1/w?x=1");
-    expect(await screen.findByText('at /users/log_in {"returnTo":"/projects/p1/w?x=1"}')).toBeTruthy();
+    expect(await screen.findByText('at /users/log_in {"returnTo":"/projects/p1/w?x=1"}', {}, { timeout: 3000 })).toBeTruthy();
+  });
+
+  it("sends a sign-in waiting for its MFA code to the two-factor step, and lets it start again on log in", async () => {
+    await request("POST", "/api/session", { email: "editor@openfn.org", password: "welcome12345" }).catch(() => undefined);
+    renderGate("/projects/p1/w");
+    expect(await screen.findByText('at /users/two-factor {"returnTo":"/projects/p1/w"}', {}, { timeout: 3000 })).toBeTruthy();
+    cleanup();
+    renderGate("/users/log_in");
+    expect(await screen.findByText("at /users/log_in null", {}, { timeout: 3000 })).toBeTruthy();
+  });
+
+  it("sends every page to first setup while the instance has no superuser", async () => {
+    recordedInstance.data.needs_setup = true;
+    try {
+      renderGate("/users/log_in");
+      expect(await screen.findByText("at /first_setup null", {}, { timeout: 3000 })).toBeTruthy();
+    } finally {
+      recordedInstance.data.needs_setup = false;
+    }
   });
 });

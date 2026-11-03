@@ -1,5 +1,7 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { live } from "../../api/client";
+import { ApiError, live } from "../../api/client";
+import { authMessages } from "../../constants";
+import { RequestError } from "../../utils/errors";
 import { loginOptions, useInstance } from "../../api/instance";
 import { useSessionActions } from "../../api/session";
 import { authFlags } from "../../mock-data/auth";
@@ -25,7 +27,11 @@ export default function AuthLoginPageReplica() {
       ssoProvider={options.ssoProvider}
       info={state?.info ?? null}
       onSignIn={async ({ email, password }) => {
-        if ((await signIn({ email, password })) === "mfaRequired") {
+        const result = await signIn({ email, password }).catch((error: unknown) => {
+          // Lightning's login page says the same for every refusal.
+          throw error instanceof ApiError && error.code === "invalid_credentials" ? new RequestError(authMessages.invalidLogin, { status: 401 }) : error;
+        });
+        if (result === "mfaRequired") {
           // Keeps where they were headed for after the code.
           navigate("/users/two-factor", { state });
         }

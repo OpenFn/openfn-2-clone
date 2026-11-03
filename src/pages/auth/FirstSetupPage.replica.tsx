@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
+import { useInstance } from "../../api/instance";
 import FirstSetupShell from "../../components/auth/FirstSetupShell";
 import { simulateRequest } from "../../mock-data/request";
-import { useInstanceInfo } from "../../session/session";
 import FirstSetupPage from "./FirstSetupPage";
 
 /**
@@ -11,7 +11,8 @@ import FirstSetupPage from "./FirstSetupPage";
  */
 export default function FirstSetupPageReplica() {
   const navigate = useNavigate();
-  const { releaseLabel } = useInstanceInfo();
+  // Nobody is signed in on a fresh instance, so the release comes from the instance, not the session.
+  const releaseLabel = useInstance()?.release.label ?? "";
   return (
     <FirstSetupShell releaseLabel={releaseLabel}>
       <FirstSetupPage
