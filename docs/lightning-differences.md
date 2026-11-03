@@ -65,7 +65,7 @@ goes back to Lightning's way.
 - **A detail page's short id is in its title, as plain text.** Lightning
   ends the breadcrumb with "Run" and a light short id (or a mono one for a
   channel request); the replica's breadcrumb ends with "Run" and the title
-  row reads "Run 5e9a1c2b". How a short id looks is still open (G155). A
+  row reads "Run 5e9a1c2b". How a short id looks is still open. A
   run's snapshot chip ("latest") sits beside the workflow's name in the
   run's details, since it names that workflow's version; Lightning puts it
   after the id in the breadcrumb.
@@ -299,4 +299,4 @@ goes back to Lightning's way.
 - **Clickable table rows can be reached from the keyboard.** Lightning's
   clickable rows only respond to a click. In the replica each one holds a link
   (projects, workflows) or a toggle button (history work orders) that Tab
-  reaches, and a click on the row clicks it (D303).
+  reaches, and a click on the row clicks it.

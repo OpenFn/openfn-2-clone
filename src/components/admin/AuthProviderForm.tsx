@@ -219,7 +219,7 @@ export default function AuthProviderForm({ provider, onSave, onTest, onRemove, i
                   variant="muted"
                   padding="sm"
                   id="redirect-uri-preview"
-                  // eslint-disable-next-line local/primitive-classname -- debt: F528 type, F529 state, F527 colour (font-mono cursor-not-allowed text-faint)
+                  // eslint-disable-next-line local/primitive-classname -- debt: type, state, colour (font-mono cursor-not-allowed text-faint)
                   className={cn("font-mono", !valid && "cursor-not-allowed text-faint")}
                 >
                   {valid ? authRedirectUri(values) : <>{values.redirectHost}&hellip;</>}

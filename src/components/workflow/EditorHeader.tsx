@@ -73,7 +73,7 @@ export default function EditorHeader({
   children,
 }: Props) {
   return (
-    // eslint-disable-next-line local/primitive-classname -- debt: F526 box (border-b border-subtle bg-surface shadow-xs sm:px-4)
+    // eslint-disable-next-line local/primitive-classname -- debt: box (border-b border-subtle bg-surface shadow-xs sm:px-4)
     <Text as="div" className="relative z-50 flex h-20 flex-none items-center gap-2 border-b border-subtle bg-surface shadow-xs sm:px-4">
       <div className="flex min-w-0 items-center">
         <ProjectBreadcrumbs
@@ -115,7 +115,7 @@ export default function EditorHeader({
         tooltip={`${aiOpen ? "Close AI Assistant" : "Open AI Assistant"} (⌘ K)`}
         active={aiOpen}
         size="lg"
-        // eslint-disable-next-line local/primitive-classname -- debt: F525 margin, F526 box (ml-2 rounded-full)
+        // eslint-disable-next-line local/primitive-classname -- debt: margin, box (ml-2 rounded-full)
         className="ml-2 rounded-full"
         onClick={onAIClick}
       />

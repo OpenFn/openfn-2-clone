@@ -65,7 +65,7 @@ export default function AdminProjectsTable({
               <Td wrap maxWidth={80}>{project.description}</Td>
               <Td wrap maxWidth={64}>{owner === "" ? "No owner" : owner}</Td>
               <Td>{deletion && formatShortDateTime(deletion)}</Td>
-              {/* eslint-disable-next-line local/primitive-classname -- debt: F526 box (py-0.5) */}
+              {/* eslint-disable-next-line local/primitive-classname -- debt: box (py-0.5) */}
               <Td actions className="py-0.5">
                 <ButtonMenu label="Actions">
                   <MenuItem to={`/settings/projects/${project.id}`}>Edit</MenuItem>

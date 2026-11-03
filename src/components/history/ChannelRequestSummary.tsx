@@ -37,7 +37,7 @@ export default function ChannelRequestSummary({
           state={request.state}
           title={request.state === "timeout" && event?.errorMessage ? humanizeError(event.errorMessage) : undefined}
         />
-        {/* eslint-disable-next-line local/primitive-classname -- debt: F525 margin (ml-auto) */}
+        {/* eslint-disable-next-line local/primitive-classname -- debt: margin (ml-auto) */}
         <Text as="div" variant="body-sm" className="ml-auto flex flex-wrap items-center gap-x-4 gap-y-1">
           <Row as="span" gap="sm">
             <Heading size="xs" as="span">

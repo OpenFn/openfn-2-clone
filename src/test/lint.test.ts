@@ -27,13 +27,13 @@ const cases: { rule: string; bad: string; good: string; message: RegExp; path?: 
     message: /Native title tooltip/,
   },
   {
-    rule: "hand-made cell truncation (F530)",
+    rule: "hand-made cell truncation",
     bad: component('<Td maxWidth={60} className="truncate">x</Td>', table),
     good: component("<Td truncate maxWidth={60}>x</Td>", table),
     message: /Truncate a cell with `<Td truncate/,
   },
   {
-    rule: "status shade (D301)",
+    rule: "status shade",
     bad: component('<span className="text-danger-700">x</span>'),
     good: component('<span className="text-danger">x</span>'),
     message: /Status shade/,
@@ -45,13 +45,13 @@ const cases: { rule: string; bad: string; good: string; message: RegExp; path?: 
     message: /Raw status colour/,
   },
   {
-    rule: "look boolean (D300)",
+    rule: "look boolean",
     bad: component("<Card muted>x</Card>", card),
     good: component('<Card variant="muted">x</Card>', card),
     message: /A look is one `variant`/,
   },
   {
-    rule: "primitive className is layout and sizing only (D299)",
+    rule: "primitive className is layout and sizing only",
     bad: component('<Text className="text-muted">x</Text>', text),
     good: component('<Text tone="muted" className="truncate">x</Text>', text),
     message: /className on a primitive is layout and sizing only/,
@@ -63,7 +63,7 @@ const cases: { rule: string; bad: string; good: string; message: RegExp; path?: 
     message: /Arbitrary Tailwind value/,
   },
   {
-    rule: "a plain column or line is Stack or Row (D312)",
+    rule: "a plain column or line is Stack or Row",
     bad: component('<div className="flex items-center justify-between gap-2">x</div>'),
     good: component('<div className="flex flex-col gap-4 p-2">x</div>'),
     message: /Plain column or line/,

@@ -61,7 +61,7 @@ export default function WorkflowSettings({ graph, projectConcurrency, projectId,
           onChange={(e) => onChange({ concurrency: e.target.value === "" ? null : Number(e.target.value) })}
         />
         {concurrencyDisabled && (
-          // eslint-disable-next-line local/primitive-classname -- debt: F528 type (italic)
+          // eslint-disable-next-line local/primitive-classname -- debt: type (italic)
           <Text as="p" variant="body-sm" tone="muted" className="italic">
             Parallel execution of runs is disabled for this project. This setting will have no effect. You can modify your Project
             Concurrency setting on the <TextLink to={`/projects/${projectId}/settings`}>project setup</TextLink> page.

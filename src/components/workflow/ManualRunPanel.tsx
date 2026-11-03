@@ -102,7 +102,7 @@ export default function ManualRunPanel({
               invalidMessage="Invalid file format. Please only upload: JSON"
               onFile={(file) => void file.text().then((text) => setBody(prettyJson(text)))}
             />
-            {/* eslint-disable-next-line local/primitive-classname -- debt: F526 box (py-2 *:bg-emphasis) */}
+            {/* eslint-disable-next-line local/primitive-classname -- debt: box (py-2 *:bg-emphasis) */}
             <Text as="div" tone="muted" className="flex items-center gap-2 py-2 *:h-px *:flex-1 *:bg-emphasis" aria-hidden="true">
               <span />
               OR
@@ -115,7 +115,7 @@ export default function ManualRunPanel({
         </div>
       )}
       {tab === "existing" && (
-        // eslint-disable-next-line local/primitive-classname -- debt: F526 box (px-3 pt-4 pb-6)
+        // eslint-disable-next-line local/primitive-classname -- debt: box (px-3 pt-4 pb-6)
         <Text as="div" className="flex flex-col gap-3 px-3 pt-4 pb-6">
           <Row>
             <SearchInput value={query} onChange={setQuery} placeholder="Search names or UUID prefixes" size="sm" className="flex-1" />
@@ -132,7 +132,7 @@ export default function ManualRunPanel({
                   as="button"
                   padding="none"
                   onClick={() => setSelected(clip)}
-                  // eslint-disable-next-line local/primitive-classname -- debt: F526 box (rounded-md px-3 py-2 shadow-none hover:border-primary-600 hover:bg-hover hover:shadow-none)
+                  // eslint-disable-next-line local/primitive-classname -- debt: box (rounded-md px-3 py-2 shadow-none hover:border-primary-600 hover:bg-hover hover:shadow-none)
                   className="group flex items-center justify-between gap-2 rounded-md px-3 py-2 shadow-none hover:border-primary-600 hover:bg-hover hover:shadow-none"
                 >
                   <div className="flex min-w-0 items-center gap-2">
@@ -200,7 +200,7 @@ export default function ManualRunPanel({
           <Tabs
             variant="pill"
             fill
-            // eslint-disable-next-line local/primitive-classname -- debt: F526 box (px-3 pt-2 pb-1)
+            // eslint-disable-next-line local/primitive-classname -- debt: box (px-3 pt-2 pb-1)
             className="shrink-0 px-3 pt-2 pb-1"
             tabs={tabOptions}
             active={tab}

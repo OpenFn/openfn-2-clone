@@ -19,10 +19,10 @@ export default function AdaptorDocs({ adaptor }: { adaptor: string }) {
   const version = resolvedAdaptorVersion(adaptor);
   const fns = adaptorFunctions(adaptor);
   return (
-    // eslint-disable-next-line local/primitive-classname -- debt: F525 margin (ml-1)
+    // eslint-disable-next-line local/primitive-classname -- debt: margin (ml-1)
     <Text as="div" className="ml-1 space-y-4 overflow-auto">
       <Stack gap="sm">
-        {/* eslint-disable-next-line local/primitive-classname -- debt: F527 colour (text-body) */}
+        {/* eslint-disable-next-line local/primitive-classname -- debt: colour (text-body) */}
         <Heading size="lg" as="h1" className="text-body">
           {pkg} ({version})
         </Heading>
@@ -66,7 +66,7 @@ export default function AdaptorDocs({ adaptor }: { adaptor: string }) {
               {fn.example && (
                 <>
                   <p className="mt-2 text-body">Example</p>
-                  {/* eslint-disable-next-line local/primitive-classname -- debt: F525 margin, F526 box (mx-4 mt-1 rounded-md border-2 border-subtle bg-sunken py-2 pr-8 pl-4) */}
+                  {/* eslint-disable-next-line local/primitive-classname -- debt: margin, box (mx-4 mt-1 rounded-md border-2 border-subtle bg-sunken py-2 pr-8 pl-4) */}
                   <Text as="pre" variant="code-sm" tone="strong" className="mx-4 mt-1 overflow-x-auto rounded-md border-2 border-subtle bg-sunken py-2 pr-8 pl-4">
                     {fn.example}
                   </Text>

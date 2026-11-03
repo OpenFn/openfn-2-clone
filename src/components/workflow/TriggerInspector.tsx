@@ -40,7 +40,7 @@ export function TriggerTypeBadge({ type = "webhook" }: { type?: "webhook" | "cro
 }
 
 function ReadOnlyField({ id, label, value }: { id: string; label: string; value: string }) {
-  // eslint-disable-next-line local/primitive-classname -- debt: F527 colour (text-muted)
+  // eslint-disable-next-line local/primitive-classname -- debt: colour (text-muted)
   return <TextInput id={id} label={label} value={value} readOnly className="text-muted" />;
 }
 
@@ -71,7 +71,7 @@ function WizardBreadcrumb({ step, onChoose }: { step: "choose" | "configure"; on
       <Text as="div" variant="body-sm">
         <Row gap="sm">
           {step === "configure" && onChoose ? (
-            // eslint-disable-next-line local/primitive-classname -- debt: F527 colour (text-faint hover:text-muted)
+            // eslint-disable-next-line local/primitive-classname -- debt: colour (text-faint hover:text-muted)
             <TextLink onClick={onChoose} className="text-faint hover:text-muted">
               Choose
             </TextLink>
@@ -144,7 +144,7 @@ export default function TriggerInspector({ trigger, onChange, onClose }: Props) 
           <TriggerTypeBadge type={draft.type} />
           <Text>
             <TextLink
-              // eslint-disable-next-line local/primitive-classname -- debt: F528 type (font-semibold)
+              // eslint-disable-next-line local/primitive-classname -- debt: type (font-semibold)
               className="font-semibold"
               onClick={() =>
                 setDraft((d) =>
@@ -191,7 +191,7 @@ export default function TriggerInspector({ trigger, onChange, onClose }: Props) 
             <Field group label="Response">
               <Stack gap="sm">
                 {[IMMEDIATELY, ON_COMPLETE].map((o) => (
-                  // eslint-disable-next-line local/primitive-classname -- debt: F526 box (hover:bg-hover)
+                  // eslint-disable-next-line local/primitive-classname -- debt: box (hover:bg-hover)
                   <Card key={o.value} padding="sm" className="hover:bg-hover">
                     <Radio
                       name="webhook-reply"
@@ -212,7 +212,7 @@ export default function TriggerInspector({ trigger, onChange, onClose }: Props) 
             hint="Minute, hour, day of month, month, day of week (UTC)."
             value={draft.cronExpression ?? ""}
             onChange={(e) => setDraft((d) => ({ ...d, cronExpression: e.target.value, cronDescription: e.target.value }))}
-            // eslint-disable-next-line local/primitive-classname -- debt: F528 type (font-mono)
+            // eslint-disable-next-line local/primitive-classname -- debt: type (font-mono)
             className="font-mono"
           />
         )}
@@ -262,7 +262,7 @@ export default function TriggerInspector({ trigger, onChange, onClose }: Props) 
         ) : (
           <Text as="p" variant="body-sm" tone="muted">
             No authentication configured.{" "}
-            {/* eslint-disable-next-line local/primitive-classname -- debt: F528 type (font-medium) */}
+            {/* eslint-disable-next-line local/primitive-classname -- debt: type (font-medium) */}
             <TextLink onClick={startEdit} className="font-medium">
               Add authentication
             </TextLink>

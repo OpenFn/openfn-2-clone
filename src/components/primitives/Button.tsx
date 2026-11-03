@@ -32,11 +32,11 @@ const lookClasses = {
   primary: "bg-primary-600 not-disabled:hover:bg-primary-500 text-inverse shadow-xs",
   secondary: "bg-surface not-disabled:hover:bg-hover text-strong ring-1 ring-strong ring-inset shadow-xs",
   plain: "text-muted hover:text-body disabled:text-muted aria-pressed:bg-primary-50 aria-pressed:text-primary-600",
-  // eslint-disable-next-line no-restricted-syntax -- debt: no hover role (F524)
+  // eslint-disable-next-line no-restricted-syntax -- debt: no hover role
   danger: "bg-danger-strong not-disabled:hover:bg-danger-500 text-inverse shadow-xs",
-  // eslint-disable-next-line no-restricted-syntax -- debt: no hover role (F524)
+  // eslint-disable-next-line no-restricted-syntax -- debt: no hover role
   success: "bg-success-strong not-disabled:hover:bg-success-600 text-inverse shadow-xs",
-  // eslint-disable-next-line no-restricted-syntax -- debt: danger action text is 600, the text role is 700 (F523)
+  // eslint-disable-next-line no-restricted-syntax -- debt: danger action text is 600, the text role is 700
   "plain-danger": "text-danger-600 hover:text-danger disabled:text-danger-600",
 };
 

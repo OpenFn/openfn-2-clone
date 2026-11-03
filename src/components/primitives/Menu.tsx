@@ -75,7 +75,7 @@ export function MenuItem({ icon, to, href, onClick, selected, tone, disabled = f
   const className = cn(
     "group flex w-full items-start gap-x-3 px-4 py-2 text-left text-sm cursor-pointer",
     "data-focus:bg-hover data-focus:outline-none data-disabled:cursor-not-allowed data-disabled:opacity-50",
-    // eslint-disable-next-line no-restricted-syntax -- debt: danger action text is 600, the text role is 700 (F523)
+    // eslint-disable-next-line no-restricted-syntax -- debt: danger action text is 600, the text role is 700
     tone === "danger" ? "text-danger-600" : "text-body data-focus:text-strong"
   );
   const content = (

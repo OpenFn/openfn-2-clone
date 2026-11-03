@@ -130,7 +130,7 @@ export default function FullScreenIDE({
               <EmptyState
                 variant="plain"
                 fill
-                // eslint-disable-next-line local/primitive-classname -- debt: F525 margin (mx-auto)
+                // eslint-disable-next-line local/primitive-classname -- debt: margin (mx-auto)
                 className="mx-auto max-w-md"
                 message={
                   <>
@@ -148,7 +148,7 @@ export default function FullScreenIDE({
                 <Tabs
                   variant="pill"
                   fill
-                  // eslint-disable-next-line local/primitive-classname -- debt: F526 box (px-3 pt-2 pb-1)
+                  // eslint-disable-next-line local/primitive-classname -- debt: box (px-3 pt-2 pb-1)
                   className="shrink-0 px-3 pt-2 pb-1"
                   active={docsTab}
                   onChange={setDocsTab}
@@ -162,7 +162,7 @@ export default function FullScreenIDE({
                         icon="hero-view-columns"
                         label="Toggle panel orientation"
                         size="xs"
-                        // eslint-disable-next-line local/primitive-classname -- debt: F529 state (rotate-90)
+                        // eslint-disable-next-line local/primitive-classname -- debt: state (rotate-90)
                         className={cn(vertical && "rotate-90")}
                         onClick={() => setVertical((v) => !v)}
                       />
@@ -219,7 +219,7 @@ export default function FullScreenIDE({
                       <RunBadge runId={followRunId} onClose={onClearRun} />
                       <Tabs
                         label="Run output"
-                        // eslint-disable-next-line local/primitive-classname -- debt: F526 box (border-b-0)
+                        // eslint-disable-next-line local/primitive-classname -- debt: box (border-b-0)
                         className="flex-1 border-b-0"
                         active={runTab}
                         onChange={onRunTabChange}

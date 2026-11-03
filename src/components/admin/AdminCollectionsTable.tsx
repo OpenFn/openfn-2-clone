@@ -52,7 +52,7 @@ export default function AdminCollectionsTable({ collections, onCreate, onEdit, o
     >
       {rows.map((collection) => (
         <Tr key={collection.id} id={`collections-table-row-${collection.id}`}>
-          {/* eslint-disable-next-line local/primitive-classname -- debt: F527 colour (text-strong) */}
+          {/* eslint-disable-next-line local/primitive-classname -- debt: colour (text-strong) */}
           <Td wrap maxWidth={60} className="text-strong">{collection.name}</Td>
           <Td wrap maxWidth={100}>{collection.projectName}</Td>
           <Td wrap maxWidth={100}>{formatBytes(collection.byteSizeSum)}</Td>

@@ -143,7 +143,7 @@ export default function MergeSandboxModal({
         <Text as="div" tone="body">
           <Row gap="sm">
             <span>Merge</span>
-            {/* eslint-disable-next-line no-restricted-syntax, local/primitive-classname -- debt: Pill has no 14px size; F528 type, F527 colour (text-sm text-strong) */}
+            {/* eslint-disable-next-line no-restricted-syntax, local/primitive-classname -- debt: Pill has no 14px size; type, colour (text-sm text-strong) */}
             <Pill variant="square" color="gray" className="text-sm text-strong">
               {sandboxName}
             </Pill>

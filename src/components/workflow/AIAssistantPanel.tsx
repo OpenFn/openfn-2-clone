@@ -109,7 +109,7 @@ export default function AIAssistantPanel({ sessions, onClose }: Props) {
 
       <div className="flex-1 overflow-hidden">
         {view === "chat" ? (
-          // eslint-disable-next-line local/primitive-classname -- debt: F526 box (p-4)
+          // eslint-disable-next-line local/primitive-classname -- debt: box (p-4)
           <Text as="div" className="h-full space-y-4 overflow-y-auto p-4" data-testid="message-list">
             {messages.map((m) =>
               m.role === "user" ? (
@@ -131,7 +131,7 @@ export default function AIAssistantPanel({ sessions, onClose }: Props) {
                         </CopyButton>
                         <Button size="xs">Add</Button>
                       </div>
-                      {/* eslint-disable-next-line local/primitive-classname -- debt: F526 box, F527 colour (bg-code p-3 text-code) */}
+                      {/* eslint-disable-next-line local/primitive-classname -- debt: box, colour (bg-code p-3 text-code) */}
                       <Text as="pre" variant="code-sm" className="overflow-x-auto bg-code p-3 text-code">
                         {m.code}
                       </Text>
@@ -245,7 +245,7 @@ export default function AIAssistantPanel({ sessions, onClose }: Props) {
               <li>Suggest improvements to your code</li>
             </ul>
             <p className="text-muted">Messages are saved unencrypted to the OpenFn database and may be monitored for quality control.</p>
-            {/* eslint-disable-next-line local/primitive-classname -- debt: F526 box (pt-2) */}
+            {/* eslint-disable-next-line local/primitive-classname -- debt: box (pt-2) */}
             <Heading size="sm" as="h3" className="pt-2">
               Using The Assistant Safely
             </Heading>
