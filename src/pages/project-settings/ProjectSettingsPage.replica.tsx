@@ -1,18 +1,12 @@
 import { useRef, useState } from "react";
 import { Navigate, useLocation, useNavigate, useParams } from "react-router-dom";
-import { useProjectMemberSaves, useProjectMembers } from "../../api/projects";
+import { useProjectMemberSaves, useProjectMembers, useProjectName } from "../../api/projects";
 import { useToast } from "../../components/primitives/Toast";
 import { projectLabel } from "../../components/shell/projectPickerItems";
-import {
-  generateApiKey,
-  projectSettingsPropsFor,
-  rootOf,
-  settingsFixtureFor,
-  type SettingsFixture,
-} from "../../mock-data/project-settings";
+import { generateApiKey, projectSettingsPropsFor, rootOf, settingsFixtureFor, type SettingsFixture } from "../../mock-data/project-settings";
 import { findProject, projects } from "../../mock-data/projects";
 import { simulateRequest } from "../../mock-data/request";
-import { permissionsFor } from "../../permissions";
+import { permissionsForRole } from "../../permissions";
 import type { Project } from "../../types/projects";
 import { useCurrentUser } from "../../session/session";
 import { RequestError } from "../../utils/errors";
@@ -36,19 +30,22 @@ function addedMessage(existing: number, unknown: number) {
  * The replica's side of ProjectSettingsPage: one project's settings held in
  * state as the server would, the deletion route, and the success toasts
  * (Lightning's flashes) and navigation. The collaborators come from
- * Lightning's API (or its stand-in); everything else, and who may remove a
- * collaborator, stays on the fixture until the API serves it. Lightning
+ * Lightning's API (or its stand-in), and so does who may add and remove them;
+ * everything else stays on the fixture until the API serves it. Lightning
  * replaces this file with a LiveView wrapper.
  */
 export default function ProjectSettingsPageReplica() {
-  const { projectId } = useParams();
-  const project = findProject(projectId);
-  if (!project) return <Navigate to="/projects" replace />;
+  const { projectId = "" } = useParams();
+  const apiName = useProjectName(projectId);
+  // The fixtures' ids aren't always Lightning's, so the rest of the project is also found by its name on the API.
+  const project = findProject(projectId) ?? projects.find((p) => apiName && p.name === apiName);
+  if (!project) return apiName === undefined ? null : <Navigate to="/projects" replace />;
   // Keyed so another project starts from its own fixtures.
-  return <Replica key={project.id} project={project} />;
+  return <Replica key={project.id} project={project} apiProjectId={projectId} />;
 }
 
-function Replica({ project: initial }: { project: Project }) {
+/** `apiProjectId` is the project's id on the API, which the members are read and saved under. */
+function Replica({ project: initial, apiProjectId }: { project: Project; apiProjectId: string }) {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const toast = useToast();
@@ -57,8 +54,10 @@ function Replica({ project: initial }: { project: Project }) {
   const { project } = fixture;
   const settingsPath = `/projects/${project.id}/settings`;
   const props = projectSettingsPropsFor(fixture, viewer);
-  const members = useProjectMembers(project.id, permissionsFor(project, viewer).canRemoveProjectUser);
-  const memberSaves = useProjectMemberSaves(project.id);
+  // Who may add and remove collaborators comes from the viewer's role in the API's members, as the members do.
+  const members = useProjectMembers(apiProjectId, (role) => permissionsForRole(role, viewer).canRemoveProjectUser);
+  const memberSaves = useProjectMemberSaves(apiProjectId);
+  const asMember = permissionsForRole(members.viewerRole, viewer);
 
   // The key onGenerateApiKey last handed out, kept here as Lightning keeps it on the server.
   const apiKey = useRef("");
@@ -77,7 +76,12 @@ function Replica({ project: initial }: { project: Project }) {
   return (
     <ProjectSettingsPage
       {...props}
-      collaboration={{ ...props.collaboration, collaborators: members.collaborators }}
+      collaboration={{
+        ...props.collaboration,
+        collaborators: members.collaborators,
+        canAddProjectUser: asMember.canAddProjectUser,
+        canEditProject: asMember.canEditProject,
+      }}
       collaborationStatus={members.status}
       projectLabel={projectLabel(project, projects)}
       deleting={pathname.endsWith("/settings/delete")}

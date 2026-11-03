@@ -202,7 +202,9 @@ async function updateCredential(before: ApiCredential, v: CredentialValues): Pro
   if ((v.externalId || null) !== before.external_id) throw refuseAt("externalId", "Lightning's API can't change this yet");
   const main = v.environments.find((e) => e.name === "main");
   const mainBody = main && parsed(main.body);
-  if (!main || !mainBody) throw refuseAt("environments.main", NOT_SENT_BACK);
+  // A credential Lightning holds no environments for opens with none; the form has no main to show the refusal on.
+  if (!main) throw new ApiError(422, "not_supported", "Add an environment named main, with its secret: Lightning's API needs one to save a credential.");
+  if (!mainBody) throw refuseAt("environments.main", NOT_SENT_BACK);
   const renamedBlank = v.environments.find((e) => e.previousName && e.previousName !== e.name && !parsed(e.body));
   if (renamedBlank) throw refuseAt(`environments.${renamedBlank.name}`, NOT_SENT_BACK);
 

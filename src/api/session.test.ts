@@ -11,15 +11,14 @@ function renderSession(client: QueryClient = createQueryClient()) {
   return { client, ...renderHook(() => ({ state: useSessionState(), actions: useSessionActions() }), { wrapper }) };
 }
 
-const signedInName = (state: ReturnType<typeof useSessionState>) =>
-  state.state === "signedIn" ? `${state.session.user.firstName} ${state.session.user.lastName}` : state.state;
+const signedInName = (state: ReturnType<typeof useSessionState>) => (state.state === "signedIn" ? `${state.session.user.firstName} ${state.session.user.lastName}` : state.state);
 
 // The stand-in keeps one session for the whole file, as a browser would: these run in order.
 describe("useSessionState and useSessionActions, on the stand-in", () => {
-  it("starts signed in, as the fixture's user for pages on the fixtures", async () => {
+  it("starts signed in, as the fixture's user for pages on the fixtures, with the role Lightning gives them", async () => {
     const { result } = renderSession();
     await waitFor(() => expect(signedInName(result.current.state)).toBe("Amy Admin"));
-    expect(result.current.state).toMatchObject({ session: { user: { id: "user-amy", role: "superuser" } } });
+    expect(result.current.state).toMatchObject({ session: { user: { id: "user-amy", role: "user" } } });
   });
 
   it("signs out, and is signed out once the promise resolves", async () => {

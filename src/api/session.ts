@@ -10,7 +10,7 @@ import type { TwoFactorMethod } from "../types/auth";
 import type { User } from "../types/users";
 import { ApiError, live, renewCsrfToken, request, standIn, useSave } from "./client";
 import { instanceInfo, instanceQuery } from "./instance";
-import { fixtureUserFor, meKeys, meQuery, standInAccount, userFromMe } from "./me";
+import { fixtureUserFor, meKeys, meQuery, standInAccount, userFromMe, type ApiMe } from "./me";
 import recordedSession from "./recorded/session.json";
 
 /** `GET`/`POST /api/session`'s `data`. */
@@ -74,10 +74,20 @@ export function useSessionState(): SessionState {
     state: "signedIn",
     session: {
       // On the stand-in, pages still on the fixtures know the fixture's user, by the same email.
-      user: (!live && fixtureUserFor(me.data)) || userFromMe(me.data),
+      user: sessionUser(me.data),
       instance: instance.data ? instanceInfo(instance.data) : { adminEmail: "", releaseLabel: "" },
     },
   };
+}
+
+/**
+ * The signed-in person as the app knows them. On the stand-in, pages still on
+ * the fixtures know the fixture's user by the same email, so that user is
+ * used, with the API's role, so the fallback allows what live does.
+ */
+function sessionUser(me: ApiMe): User {
+  const fixture = !live && fixtureUserFor(me);
+  return fixture ? { ...fixture, role: me.attributes.role } : userFromMe(me);
 }
 
 /** `POST /api/session`. A new session comes with a new CSRF token, kept for the next write. */
@@ -99,15 +109,20 @@ async function startSession(body: Record<string, string>): Promise<"signedIn" | 
 /** Signing in (with its MFA step) and out. Each resolves once the signed-in person has been read again. */
 export function useSessionActions() {
   const queryClient = useQueryClient();
+  // Nothing of the last person's stays behind for whoever signs in next, even when their session ran out rather than being signed out.
+  const forgetLastPerson = () => queryClient.removeQueries({ predicate: (q) => q.queryKey[0] !== meKeys.all[0] && q.queryKey[0] !== instanceQuery.queryKey[0] });
   // Remember me isn't sent: the API refuses `remember_me`.
-  const signIn = useSave([everything], ({ email, password }: SignInValues) => startSession({ email, password }));
+  const signIn = useSave([everything], async ({ email, password }: SignInValues) => {
+    const result = await startSession({ email, password });
+    forgetLastPerson();
+    return result;
+  });
   // The second POST of an MFA sign-in, with only the code.
   const verifyCode = useSave([everything], ({ method, code }: CodeValues) => startSession(method === "backup_code" ? { backup_code: code } : { mfa_code: code }));
   const signOut = useSave([meKeys.all, instanceQuery.queryKey], async () => {
     await request("DELETE", "/api/session");
     renewCsrfToken(null);
-    // Nothing of this person's stays behind for whoever signs in next.
-    queryClient.removeQueries({ predicate: (q) => q.queryKey[0] !== meKeys.all[0] && q.queryKey[0] !== instanceQuery.queryKey[0] });
+    forgetLastPerson();
   });
   // Entering the password or a code again while signed in steps the session up for five minutes.
   const stepUp = useSave([meKeys.all], (values: StepUpValues) => startSession("password" in values ? { password: values.password } : { mfa_code: values.code }));

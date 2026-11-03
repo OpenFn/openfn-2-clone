@@ -88,6 +88,9 @@ function meAnswer(user: User) {
   return { data: { ...recorded.data, id: user.id, attributes } };
 }
 
+/** The stand-in's signed-in person's role, as `GET /api/me` answers it. */
+export const standInRole = () => (standInAccount.user ? meAnswer(standInAccount.user).data.attributes.role : null);
+
 standIn("GET", "/api/me", () => {
   if (!standInAccount.user) throw new ApiError(401, "unauthenticated", "Authentication is required.");
   return meAnswer(standInAccount.user);

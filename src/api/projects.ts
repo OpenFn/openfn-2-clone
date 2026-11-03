@@ -10,7 +10,7 @@ import type { ProjectRole } from "../types/projects";
 import type { ResourceStatus } from "../types/resource";
 import type { ProjectOverview } from "../types/workflows";
 import { ApiError, listAll, request, standIn, statusOf, useSave, withFieldNames } from "./client";
-import { meQuery } from "./me";
+import { meQuery, standInRole } from "./me";
 import { workflowsQuery, type ApiWorkflow } from "./workflows";
 import recorded from "./recorded/projects.json";
 import recordedMembers from "./recorded/members.json";
@@ -55,7 +55,11 @@ export function projectOverview(p: ApiProject, role: ProjectRole, members: ApiMe
     role,
     workflowsCount: own.length,
     collaboratorsCount: members.length,
-    lastUpdatedAt: own.map((w) => w.updated_at).sort().at(-1) ?? null,
+    lastUpdatedAt:
+      own
+        .map((w) => w.updated_at)
+        .sort()
+        .at(-1) ?? null,
   };
 }
 
@@ -69,7 +73,7 @@ function removeBlockedReason(m: ApiMember, viewerId: string | undefined, canRemo
 
 /**
  * A row of the Collaboration tab. The API doesn't say which credentials a
- * member owns in the project, so the removal confirmation names none.
+ * member owns in the project, so the removal confirmation warns without naming them.
  */
 export function collaboratorRow(m: ApiMember, viewerId: string | undefined, canRemove: boolean): CollaboratorRow {
   const a = m.attributes;
@@ -202,23 +206,46 @@ async function inviteMembers(projectId: string, values: InviteValues[]): Promise
       last_name: v.lastName,
       role: v.role,
     });
-    await withFieldNames(send, atRow(i, { email: "email", first_name: "firstName", last_name: "lastName", role: "role" }));
+    try {
+      await withFieldNames(send, atRow(i, { email: "email", first_name: "firstName", last_name: "lastName", role: "role" }));
+    } catch (error) {
+      if (!(error instanceof ApiError)) throw error;
+      // An email with an account is only invited because the API couldn't find its user; say so rather than "has already been taken".
+      const entries = error.errors.map((e) => (e.code === "taken" && e.pointer?.endsWith("/email") ? { ...e, detail: HAS_ACCOUNT } : e));
+      throw new ApiError(error.status ?? 422, error.code, error.message, entries);
+    }
   }
 }
+
+const HAS_ACCOUNT = "This person has an account, but Lightning's API can only add people who are in one of your projects";
 
 export interface ProjectMembers {
   status: ResourceStatus;
   collaborators: CollaboratorRow[];
+  /** The viewer's role in the project, from its members; undefined while loading or when not a member. */
+  viewerRole: ProjectRole | undefined;
 }
 
-/** The Collaboration tab's members. `canRemove` is the viewer's permission, from the host. */
-export function useProjectMembers(projectId: string, canRemove: boolean): ProjectMembers {
+/**
+ * The Collaboration tab's members, and the viewer's role among them.
+ * `canRemoveAs` is the host's rule for who may remove a member, given that role.
+ */
+export function useProjectMembers(projectId: string, canRemoveAs: (role: ProjectRole | undefined) => boolean): ProjectMembers {
   const me = useQuery(meQuery);
   const members = useQuery(membersQuery(projectId));
+  const viewerRole = members.data?.find((m) => m.id === me.data?.id)?.attributes.role;
   return {
     status: statusOf(me, members),
-    collaborators: (members.data ?? []).map((m) => collaboratorRow(m, me.data?.id, canRemove)),
+    collaborators: (members.data ?? []).map((m) => collaboratorRow(m, me.data?.id, canRemoveAs(viewerRole))),
+    viewerRole,
   };
+}
+
+/** The project's name, as `GET /api/projects` lists it, for a host that still finds the rest of the project by name; null if the caller isn't a member, undefined while loading. */
+export function useProjectName(projectId: string): string | null | undefined {
+  const projects = useQuery(projectsQuery);
+  if (!projects.data) return projects.isError ? null : undefined;
+  return projects.data.find((p) => p.id === projectId)?.attributes.name ?? null;
 }
 
 /**
@@ -265,13 +292,17 @@ const memberStore = Object.fromEntries(Object.entries(recordedMembers).map(([id,
 
 standIn("GET", "/api/projects", () => ({ ...recorded, data: projectStore }));
 standIn("PUT", "/api/projects/:id", ({ id }, b) => {
+  // Lightning lets only a superuser create a project through the API.
+  if (standInRole() !== "superuser") throw new ApiError(403, "forbidden", "You may not do this (or it might not exist).");
   const body = b as { name: string; description: string | null; members: { email: string; role: ProjectRole }[] };
   const project: ApiProject = { id: id!, attributes: { name: body.name, description: body.description } };
   projectStore.push(project);
   projectStore.sort((x, y) => x.attributes.name.localeCompare(y.attributes.name));
   // Each member's user, as already recorded in another project.
   memberStore[id!] = body.members.flatMap(({ email, role }) => {
-    const user = Object.values(memberStore).flat().find((m) => m.attributes.email === email);
+    const user = Object.values(memberStore)
+      .flat()
+      .find((m) => m.attributes.email === email);
     return user ? [{ ...user, attributes: { ...user.attributes, role } }] : [];
   });
   return { data: project };

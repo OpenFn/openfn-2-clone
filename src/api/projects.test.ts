@@ -1,8 +1,9 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { renderHook, waitFor } from "@testing-library/react";
 import { createElement, type ReactNode } from "react";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 import { failNext } from "./client";
+import { standInAccount } from "./me";
 import { projectKeys, useProjectMemberSaves, useProjectMembers, useProjectSaves, useProjectsOverview, type ApiMember, type ApiProject } from "./projects";
 
 // The members load once the projects have: two of the stand-in's delays.
@@ -27,7 +28,20 @@ describe("useProjectsOverview", () => {
 });
 
 describe("useProjectSaves", () => {
+  const signedIn = standInAccount.user;
+  afterEach(() => {
+    standInAccount.user = signedIn;
+  });
+
+  it("refuses a project from anyone but a superuser, in Lightning's words", async () => {
+    const { result } = renderProjects();
+    await waitFor(() => expect(result.current.index.status).toEqual({ state: "ready" }), { timeout: 3000 });
+    await expect(result.current.saves.onCreate({ name: "not-allowed", description: "" })).rejects.toMatchObject({ message: "You may not do this (or it might not exist)." });
+  });
+
   it("resolves a new project only once the list has reloaded with it", async () => {
+    // Lightning lets only a superuser create a project through the API.
+    standInAccount.user = { ...signedIn!, email: "super@example.org", role: "superuser", mfaEnabled: false };
     const { result, client } = renderProjects();
     await waitFor(() => expect(result.current.index.status).toEqual({ state: "ready" }), { timeout: 3000 });
     await result.current.saves.onCreate({ name: "saved-and-listed", description: "" });
@@ -48,7 +62,7 @@ const DHIS2 = "f5c51652-8428-4fb0-9b01-b27638079dc0";
 function renderMembers(projectId: string) {
   const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   const wrapper = ({ children }: { children: ReactNode }) => createElement(QueryClientProvider, { client }, children);
-  const view = renderHook(() => ({ index: useProjectMembers(projectId, true), saves: useProjectMemberSaves(projectId) }), { wrapper });
+  const view = renderHook(() => ({ index: useProjectMembers(projectId, () => true), saves: useProjectMemberSaves(projectId) }), { wrapper });
   const emails = () => client.getQueryData<ApiMember[]>(projectKeys.members(projectId))?.map((m) => m.attributes.email) ?? [];
   return { emails, ...view };
 }
@@ -65,6 +79,11 @@ describe("useProjectMemberSaves", () => {
     expect(emails()).toContain("editor@openfn.org");
   });
 
+  it("gives the viewer's role from the project's members, so the host decides what they may do from Lightning's answer", async () => {
+    const { result } = renderMembers(OPENHIE);
+    await waitFor(() => expect(result.current.index.viewerRole).toBe("admin"), { timeout: 3000 });
+  });
+
   it("marks the viewer's own row and the owner as not removable", async () => {
     const { result } = renderMembers(OPENHIE);
     await waitFor(() => expect(result.current.index.status).toEqual({ state: "ready" }), { timeout: 3000 });
@@ -72,12 +91,12 @@ describe("useProjectMemberSaves", () => {
     expect(reasons).toMatchObject({ "demo@openfn.org": "You cannot remove yourself", "super@openfn.org": "You cannot remove an owner", "viewer@openfn.org": null });
   });
 
-  it("puts Lightning's refusal of an invite's email on that row", async () => {
+  it("puts Lightning's refusal of an invite's email on that row, saying why an account's email can't be added", async () => {
     const { result } = renderMembers(OPENHIE);
     await waitFor(() => expect(result.current.index.status).toEqual({ state: "ready" }), { timeout: 3000 });
     const invite = (email: string) => ({ email, firstName: "A", lastName: "B", role: "viewer" as const });
     await expect(result.current.saves.onInviteCollaborators([invite("someone.new@example.org"), invite("viewer@openfn.org")])).rejects.toMatchObject({
-      fieldErrors: { "1.email": ["has already been taken"] },
+      fieldErrors: { "1.email": ["This person has an account, but Lightning's API can only add people who are in one of your projects"] },
     });
   });
 });
