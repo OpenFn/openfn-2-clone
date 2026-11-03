@@ -6,7 +6,7 @@
  * delay. A refused request throws an `ApiError`: show its `message`, branch on
  * its `code`.
  */
-import type { UseQueryResult } from "@tanstack/react-query";
+import { useMutation, useQueryClient, type QueryKey, type UseQueryResult } from "@tanstack/react-query";
 import type { ResourceStatus } from "../types/resource";
 import { RequestError } from "../utils/errors";
 
@@ -49,6 +49,34 @@ export function statusOf(...queries: UseQueryResult[]): ResourceStatus {
     };
   }
   return queries.every((q) => q.data !== undefined) ? { state: "ready" } : { state: "loading" };
+}
+
+/**
+ * A save for a page's `on*` action: it resolves once every query under
+ * `changes` has reloaded, and rejects with the ApiError the form shows.
+ * List every key whose data the save can change, on any page.
+ */
+export function useSave<A extends unknown[]>(changes: QueryKey[], fn: (...args: A) => Promise<unknown>) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (args: A) => fn(...args),
+    onSuccess: () => Promise.all(changes.map((queryKey) => queryClient.invalidateQueries({ queryKey }))),
+  }).mutateAsync;
+}
+
+/** The same refusal, with each body pointer Lightning sent moved to the form's field name (`#/recipient` → `#/receiverEmail`). */
+export async function withFieldNames(send: Promise<unknown>, field: (pointer: string) => string | undefined): Promise<void> {
+  try {
+    await send;
+  } catch (error) {
+    if (!(error instanceof ApiError)) throw error;
+    throw new ApiError(
+      error.status ?? 422,
+      error.code,
+      error.message,
+      error.errors.map((e) => (e.pointer ? { ...e, pointer: field(e.pointer) ?? e.pointer } : e))
+    );
+  }
 }
 
 // Errors.

@@ -2,10 +2,10 @@
  * Credentials on Lightning's API (API.md "Credentials"): the API's shape, its
  * mappers, its keys, the hooks a wrapper calls, and how the stand-in answers.
  */
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import type { CredentialActions, CredentialRow, CredentialSchemaResult, CredentialSecretsResult, CredentialTypeOption, CredentialValues, SchemaField } from "../types/credentials";
 import type { ResourceStatus } from "../types/resource";
-import { ApiError, listAll, request, standIn, statusOf } from "./client";
+import { ApiError, listAll, request, standIn, statusOf, useSave, withFieldNames } from "./client";
 import { projectKeys, projectRef, projectsQuery } from "./projects";
 import recordedCredentials from "./recorded/credentials.json";
 import recordedSchemas from "./recorded/credential-schemas.json";
@@ -144,21 +144,6 @@ const parsed = (body: string): object | null => {
   return blank ? null : (value as object | null);
 };
 
-/** The same refusal, with each body pointer Lightning sent moved to the form's field name (`#/recipient` → `#/receiverEmail`). */
-async function withFieldNames(send: Promise<unknown>, field: (pointer: string) => string | undefined): Promise<void> {
-  try {
-    await send;
-  } catch (error) {
-    if (!(error instanceof ApiError)) throw error;
-    throw new ApiError(
-      error.status ?? 422,
-      error.code,
-      error.message,
-      error.errors.map((e) => (e.pointer ? { ...e, pointer: field(e.pointer) ?? e.pointer } : e))
-    );
-  }
-}
-
 /** Lightning places an error in a body at `#/credential_bodies/<index>/…`; the form shows it on `environments.<name>`. */
 const atEnvironment = (names: string[]) => (pointer: string) => {
   const index = /^#\/credential_bodies\/(\d+)/.exec(pointer)?.[1];
@@ -269,18 +254,6 @@ export function useCredentialIndex(viewerEmail: string): CredentialIndex {
   };
 }
 
-/**
- * A save whose promise resolves once every list it may have changed has
- * reloaded. A credential's projects show on the Projects page too.
- */
-function useSave<A extends unknown[]>(fn: (...args: A) => Promise<unknown>) {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: (args: A) => fn(...args),
-    onSuccess: () => Promise.all([queryClient.invalidateQueries({ queryKey: credentialKeys.all }), queryClient.invalidateQueries({ queryKey: projectKeys.all })]),
-  }).mutateAsync;
-}
-
 type CredentialSaves = Pick<
   CredentialActions,
   | "onCreateCredential"
@@ -292,6 +265,9 @@ type CredentialSaves = Pick<
   | "onTransferCredential"
   | "onRevokeCredentialTransfer"
 >;
+
+/** A credential's projects show on the Projects page too. */
+const changedBySave = [credentialKeys.all, projectKeys.all];
 
 /**
  * The Credentials page's saves. Each resolves once the lists it changed have
@@ -305,12 +281,12 @@ export function useCredentialSaves(): CredentialSaves {
     return found;
   };
 
-  const create = useSave((v: CredentialValues) => createCredential(v));
-  const update = useSave((id: string, v: CredentialValues) => updateCredential(credential(id), v));
-  const remove = useSave((id: string, now: boolean) => (now ? request("DELETE", path(id)) : request("PUT", path(id, "/scheduled_deletion"))));
-  const cancelDeletion = useSave((id: string) => request("DELETE", path(id, "/scheduled_deletion")));
-  const transfer = useSave((id: string, email: string) => transferCredential(id, email));
-  const revokeTransfer = useSave((id: string) => request("DELETE", path(id, "/transfer")));
+  const create = useSave(changedBySave, (v: CredentialValues) => createCredential(v));
+  const update = useSave(changedBySave, (id: string, v: CredentialValues) => updateCredential(credential(id), v));
+  const remove = useSave(changedBySave, (id: string, now: boolean) => (now ? request("DELETE", path(id)) : request("PUT", path(id, "/scheduled_deletion"))));
+  const cancelDeletion = useSave(changedBySave, (id: string) => request("DELETE", path(id, "/scheduled_deletion")));
+  const transfer = useSave(changedBySave, (id: string, email: string) => transferCredential(id, email));
+  const revokeTransfer = useSave(changedBySave, (id: string) => request("DELETE", path(id, "/transfer")));
 
   return {
     onCreateCredential: async (v) => void (await create([v])),
