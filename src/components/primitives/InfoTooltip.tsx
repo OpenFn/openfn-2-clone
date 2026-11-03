@@ -23,6 +23,7 @@ export default function InfoTooltip({
   return (
     <Tooltip content={title} side="top">
       <button
+        data-ui="info-tooltip"
         type="button"
         className={cn(
           "relative ml-1 cursor-pointer rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus",

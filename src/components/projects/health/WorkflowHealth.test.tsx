@@ -2,6 +2,7 @@ import { cleanup, fireEvent, render, screen, within } from "@testing-library/rea
 import { describe, expect, it } from "vitest";
 import { HEALTH_LOAD_ERROR } from "../../../constants";
 import type { ErrorSignatures, HealthQuery, Outcomes, RunVolume } from "../../../types/workflow-health";
+import { formatMonthDayIn } from "../../../utils/format";
 import { FAILED } from "./palette";
 import WorkflowHealth from "./WorkflowHealth";
 
@@ -144,7 +145,7 @@ describe("WorkflowHealth runs over time", () => {
     const chart = openRuns();
     const column = chart.querySelectorAll(`path[fill="${FAILED}"]`)[1]!.closest("svg")!.parentElement!;
     fireEvent.mouseEnter(column);
-    const day = new Date("2026-10-14T13:00:00.000Z").toLocaleDateString(undefined, { month: "short", day: "numeric", timeZone: "Africa/Nairobi" });
+    const day = formatMonthDayIn("2026-10-14T13:00:00.000Z", "Africa/Nairobi");
     const label = within(chart).getByText(`${day}, 16:00 – 18:00`);
     expect(label.parentElement!.textContent).toMatch(/Success\s*1.*Failed\s*2/);
   });

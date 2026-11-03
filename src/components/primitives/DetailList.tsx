@@ -28,6 +28,7 @@ export function DetailList({
   return (
     <LayoutContext.Provider value={layout}>
       <dl
+        data-ui="detail-list"
         id={id}
         className={cn(
           size === "sm" ? "text-xs" : "text-sm",

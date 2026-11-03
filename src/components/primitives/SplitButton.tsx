@@ -26,7 +26,7 @@ interface Props {
  */
 export default function SplitButton({ children, icon, onClick, menu, menuLabel = "More options", variant = "primary", disabled = false, pending = false, tooltip }: Props) {
   return (
-    <div className="inline-flex rounded-md shadow-xs">
+    <div data-ui="split-button" className="inline-flex rounded-md shadow-xs">
       <Button variant={variant} onClick={onClick} disabled={disabled} pending={pending} tooltip={tooltip} icon={icon} className="rounded-r-none">
         {children}
       </Button>
