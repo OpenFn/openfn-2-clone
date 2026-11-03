@@ -16,6 +16,14 @@ write it down in [docs/lightning-differences.md](./docs/lightning-differences.md
 and type do, and lint enforces it. Spacing and radius should too; they
 aren't checked yet.
 
+**Colour comes from roles, and is easy to change.** A role is a token named
+for a job (`text-muted`, `bg-surface`, `bg-danger`). Components use
+roles, never a palette shade (`gray-600`, `red-100`) or a hex. Only
+`src/theme/` touches the palette, to give each role its value. A theme
+sets role values and never changes the palette, so gray-600 is the same grey
+everywhere. One role does one job, so changing how one thing looks is one
+edit. The rules are in [docs/colour.md](./docs/colour.md).
+
 **Where things go.** Search first, and say what you found. Something other
 design systems have is a primitive. Something Lightning-specific that two
 screens use is domain. A one-off gets its own small file in the area folder,
@@ -55,8 +63,9 @@ this is in [docs/building.md](./docs/building.md).
 ## Look and behaviour
 
 - Colour means something: red is an error or a destructive action, yellow a
-  warning, green success, blue information; run states use run colours.
-  If taking the colour away loses nothing, it's grey.
+  warning, green success, blue information, orange a crash. A run state
+  takes its tone's colour, the same in every place it's drawn. If taking the
+  colour away loses nothing, it's grey.
 - Contrast 4.5:1 for text, 3:1 for large text and icons. Colour is never the
   only signal.
 - A control the user is blocked from (by permission, plan or state) stays

@@ -56,6 +56,34 @@ const primImports = count(consumers, /from ['"](?:\.\.\/)+(?:components\/)?primi
 const rawPalette =
   /\b(?:bg|text|border(?:-[trblxyse])?|ring|outline|divide|fill|stroke|from|to|via|placeholder|shadow|decoration)-(?:(?:gray|red|green|yellow|blue|amber|orange|purple|pink|sky)-\d|(?:white|black)(?![\w/-]))/g
 
+// Colour roles (docs/colour.md "When to add a role"): rising means a new
+// role, which is a design decision, so it has to be seen in review.
+const tokensCss = readFileSync(join(root, 'theme/tokens.css'), 'utf8')
+const roleLines = tokensCss.split('\n').filter((l) => /^\s*--(?:text|background|border|ring|outline)-color-[\w-]+:/.test(l))
+const colourRoles = roleLines.length
+
+// The colour rules (docs/colour.md), counted so each falls to 0 and then
+// becomes a hard rule. Tests are left out: they assert on colours.
+const code = files.filter((f) => !/\.test\.tsx?$/.test(f.path))
+const hues = 'gray|red|green|yellow|blue|amber|orange|purple|pink|sky|indigo|primary|white|black|slate|emerald|teal|violet|rose|lime|cyan|fuchsia'
+// Any palette class, brand and status scales included, alpha or not.
+const anyPalette = new RegExp(
+  `\\b(?:bg|text|border(?:-[trblxyse])?|ring|outline|divide|fill|stroke|from|to|via|placeholder|shadow|decoration|caret|accent)-(?:(?:${hues}|danger|success|warning|info)-\\d|(?:white|black)\\b)`,
+  'g',
+)
+// A colour class with an alpha (`bg-surface/80`), or a faded disabled state.
+const alphaOrFade = /\b(?:bg|text|border|ring|outline|divide|fill|stroke|from|to|via|shadow)-[a-z][\w-]*\/\d+|\b(?:[\w-]*disabled:)+opacity-\d+/g
+// Hex and rgb() in code; constants.ts (sandbox colours are data) and Monaco (hex only) aside.
+// themes.ts' swatches are the picker's preview of each theme.
+const codeHex = code
+  .filter((f) => !['constants.ts', 'theme/monacoTheme.ts', 'theme/themes.ts'].includes(f.path))
+  .reduce((n, f) => n + (f.src.match(/(?:^|[\s(,'"`:])#[0-9a-fA-F]{3,8}\b|rgba?\(/g) ?? []).length, 0)
+// A theme setting a palette shade instead of a role.
+const themeCss = readFileSync(join(root, 'theme/theme.css'), 'utf8')
+const themePalette = (stripComments(themeCss).match(/--color-[a-z]+(?:-\d+)?\s*:/g) ?? []).length
+const roleNamedForColour = roleLines.filter((l) => new RegExp(`-color-[\\w-]*(?:${hues}|\\d)`).test(l.split(':')[0])).length
+const roleWithoutJob = roleLines.filter((l) => !l.includes('/*')).length
+
 const rows = [
   ['Source lines (non-blank, excl. stories/mock-data)', loc(files)],
   ['  in primitives', loc(prims)],
@@ -74,6 +102,13 @@ const rows = [
   ['Raw palette classes in features + pages', count(consumers, rawPalette)],
   ['Primitive imports in features + pages', primImports],
   ['debt: lines in src', files.reduce((n, f) => n + (f.raw.match(/\bdebt:/g) ?? []).length, 0)],
+  ['Colour roles in theme/tokens.css', colourRoles],
+  ['Palette classes in src (any scale, any file)', count(code, anyPalette)],
+  ['Colour alpha or faded disabled in src', count(code, alphaOrFade)],
+  ['Hex or rgb() in src code', codeHex],
+  ['Palette shades set by themes (theme.css)', themePalette],
+  ['Colour roles named for a colour or shade', roleNamedForColour],
+  ['Colour roles without a job comment', roleWithoutJob],
 ]
 
 // The ratchet: these only go down. `--check` (CI) fails when one rises above the
@@ -89,6 +124,13 @@ const ratchet = [
   'Raw <table> in features + pages',
   'Raw palette classes in features + pages',
   'debt: lines in src',
+  'Colour roles in theme/tokens.css',
+  'Palette classes in src (any scale, any file)',
+  'Colour alpha or faded disabled in src',
+  'Hex or rgb() in src code',
+  'Palette shades set by themes (theme.css)',
+  'Colour roles named for a colour or shade',
+  'Colour roles without a job comment',
 ]
 const baselineFile = new URL('./design-system-baseline.json', import.meta.url)
 const now = Object.fromEntries(rows.filter(([k]) => ratchet.includes(k)))
@@ -101,7 +143,12 @@ if (process.argv.includes('--check')) {
   const base = JSON.parse(readFileSync(baselineFile, 'utf8'))
   const up = ratchet.filter((k) => now[k] > base[k])
   const down = ratchet.filter((k) => now[k] < base[k])
-  for (const k of up) console.error(`Went up: ${k.trim()} ${base[k]} → ${now[k]}. Use a primitive or prop instead; see docs/building.md.`)
+  for (const k of up)
+    console.error(
+      k === 'Colour roles in theme/tokens.css'
+        ? `Went up: ${k} ${base[k]} → ${now[k]}. A new colour role needs a human's yes; see "When to add a role" in docs/colour.md.`
+        : `Went up: ${k.trim()} ${base[k]} → ${now[k]}. Use a primitive or prop instead; see docs/building.md.`,
+    )
   for (const k of down) console.log(`Went down: ${k.trim()} ${base[k]} → ${now[k]}. Lock it in: node scripts/design-system-metrics.mjs --update`)
   process.exit(up.length ? 1 : 0)
 }

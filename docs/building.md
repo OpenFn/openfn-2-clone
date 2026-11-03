@@ -171,6 +171,11 @@ Primitives own the type of their parts and callers don't restyle them; a
 primitive that needs a smaller form takes a prop (`DetailList size="sm"`).
 A new variant is added only when a role in use has none.
 
+### Colour
+
+Use a colour role (`text-muted`, `bg-surface`), never a palette shade or a
+hex. The rules, the roles and when to add one are in [colour.md](./colour.md).
+
 ## Patterns
 
 Lightning's wording wins wherever Lightning has the screen.
