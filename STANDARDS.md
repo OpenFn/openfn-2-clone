@@ -144,17 +144,18 @@ A component never copies a record list into local state and mutates it.
 
 ## 5. Resource loading states
 
-**Not built yet. Don't build it without asking.**
+A page whose host loads its data after it renders needs the same four
+treatments: loading, not found, forbidden, error (D375).
 
-Any page or panel built around one record (a project, a run, a credential)
-needs the same four treatments: loading, not found, forbidden, error.
-
-- One `AsyncBoundary` primitive (or equivalent) takes a resource state and
-  renders `Spinner`, a not-found page, or an `Alert`, and otherwise its
-  children.
-- A real `NotFoundPage` and `ErrorPage` under `src/pages/`, routed as the
-  catch-all. No more `<Navigate to="/projects">` as the not-found treatment.
+- The page takes an optional `status?: ResourceStatus` prop and wraps the
+  part that waits in `AsyncBoundary`, which draws `Spinner`, Lightning's
+  "Not Found" / "No Access", or the server's message in an `Alert`, and
+  otherwise its children. Leaving `status` out means ready, so a host that
+  sends the data with the page (LiveView) changes nothing.
+- The header and anything else not waiting on data render straight away.
 - Pages don't invent their own "Project not found" text.
+- Not built yet: a routed `NotFoundPage` and an `ErrorPage` for render
+  crashes (one error boundary per route).
 
 ## 6. Confirm then act
 

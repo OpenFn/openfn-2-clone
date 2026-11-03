@@ -158,6 +158,7 @@ export type {
   ProfileDetail,
 } from "./types/profile";
 export type { CurrentProject, ProjectRole, RetentionPolicy } from "./types/projects";
+export type { ResourceStatus } from "./types/resource";
 export type {
   MergeCredentialRow,
   MergePreviewResult,
