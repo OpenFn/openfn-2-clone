@@ -12,7 +12,7 @@ const ban = (regex, message) => ({ regex, message });
 
 const notPages = ban("(^|/)pages(/|$)", "Only app/ imports pages.");
 const noClient = ban("(^|/)lib/api(/|$)", "Pages don't fetch: only *.route.tsx imports the API client.");
-const noFake = ban("(^|/)fake-api(/|$)", "Only app/ chooses fake-api.");
+const noFake = ban("(^|/)fake-api(/|$)", "Only lib/api/client.ts imports fake-api, so going real deletes the folder and touches one file.");
 const noOtherPage = ban("^@/pages/", "Pages don't import each other. Move what two pages share to components/ or lib/.");
 const noDeepComponents = ban("components/.+", "Pages import components from components/index.ts only.");
 const noLib = ban("(^|/)lib(/|$)", "Components know nothing about data: no lib/.");
@@ -42,6 +42,7 @@ const conventions = [
   },
 ];
 const syntax = (...extra) => ["error", ...conventions, ...extra];
+const noPageStyling = { selector: "JSXAttribute[name.name=/^(className|style)$/]", message: "Pages hold no styling: arrange components, or extend one." };
 
 // Colour and size: roles only, outside src/theme/ (the colour rules).
 const PALETTE =
@@ -156,17 +157,17 @@ export default defineConfig([
     ignores: ["src/pages/**/*.route.tsx", "src/pages/**/*.data.ts"],
     rules: {
       "no-restricted-imports": imports(noClient, noFake, noOtherPage, noDeepComponents, noApp),
-      "no-restricted-syntax": syntax({
-        selector: "JSXAttribute[name.name=/^(className|style)$/]",
-        message: "Pages hold no styling: arrange components, or extend one.",
-      }),
+      "no-restricted-syntax": syntax(noPageStyling),
     },
   },
+  // A page's stories need their default export, and hold no styling either.
+  { files: ["src/pages/**/*.stories.tsx"], rules: { "no-restricted-syntax": ["error", ...conventions.slice(1), noPageStyling] } },
   {
     files: ["src/pages/**/*.data.ts"],
     rules: { "no-restricted-imports": ["error", { patterns: [noParent, noIconLibrary, { ...noClient, allowTypeImports: true }, noFake, noOtherPage, noApp] }] },
   },
-  { files: ["src/pages/**/*.route.tsx"], rules: { "no-restricted-imports": imports(noFake, noOtherPage, noDeepComponents, noApp) } },
+  // A route's stories drive the route on the stand-in, so they may import what the route does.
+  { files: ["src/pages/**/*.route.tsx", "src/pages/**/*.route.stories.tsx"], rules: { "no-restricted-imports": imports(noFake, noOtherPage, noDeepComponents, noApp) } },
 
   // Components: look only. ui/ uses nothing above it.
   { files: ["src/components/**/*.{ts,tsx}"], rules: { "no-restricted-imports": imports(notPages, noLib, noData, noApp, noFake) } },
@@ -174,6 +175,7 @@ export default defineConfig([
 
   // Data: no React, nothing about how it's shown.
   { files: ["src/lib/**/*.ts"], rules: { "no-restricted-imports": imports(notPages, noComponents, noApp, noFake, noReact) } },
+  { files: ["src/lib/api/client.ts"], rules: { "no-restricted-imports": imports(notPages, noComponents, noApp, noReact) } },
   { files: ["src/fake-api/**/*.ts"], rules: { "no-restricted-imports": imports(notPages, noComponents, noApp, noReact) } },
   { files: ["src/theme/**/*.ts"], rules: { "no-restricted-imports": imports(notPages, noComponents, noApp, noFake, noLib) } },
   // The one file that may import the icon library.
