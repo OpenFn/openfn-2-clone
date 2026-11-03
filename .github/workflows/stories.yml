@@ -2,7 +2,8 @@ name: Stories
 
 # Renders every story and runs axe on it; each violation fails that story.
 # Once per theme, so a colour that only fails in one theme is caught. GDS
-# is left out until its link-on-grey contrast is fixed.
+# is left out until its link-on-grey contrast is fixed. Each theme runs in
+# two halves side by side, to halve the wait.
 # Its own workflow so it runs beside CI, and only when something a story
 # renders could have changed.
 on:
@@ -24,7 +25,8 @@ jobs:
       fail-fast: false
       matrix:
         theme: [lightning-v2, light, dark]
-    name: stories (${{ matrix.theme }})
+        shard: [1, 2]
+    name: stories (${{ matrix.theme }} ${{ matrix.shard }}/2)
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -33,6 +35,6 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npx playwright install --with-deps chromium
-      - run: npm run test:stories
+      - run: npm run test:stories -- --shard=${{ matrix.shard }}/2
         env:
           STORYBOOK_THEME: ${{ matrix.theme }}
