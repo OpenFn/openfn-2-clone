@@ -31,23 +31,23 @@ function computeTiming(event: ChannelEvent | undefined): TimingData | null {
     const wait = Math.max(ttfbUs - queue - connect - event.requestSendUs, 0);
     const reused = event.reusedConnection && !connect;
     const segments: Segment[] = [];
-    if (queue > 0) segments.push({ label: "Queue", us: queue, color: "bg-amber-300", textColor: "text-amber-900" });
+    if (queue > 0) segments.push({ label: "Queue", us: queue, color: "bg-tag-yellow", textColor: "text-tag-yellow" });
     if (reused)
-      segments.push({ label: "Connect", us: 0, color: "bg-orange-300", textColor: "text-orange-900", badge: "(reused)" });
+      segments.push({ label: "Connect", us: 0, color: "bg-tag-orange", textColor: "text-tag-orange", badge: "(reused)" });
     else if (connect > 0)
-      segments.push({ label: "Connect", us: connect, color: "bg-orange-300", textColor: "text-orange-900" });
+      segments.push({ label: "Connect", us: connect, color: "bg-tag-orange", textColor: "text-tag-orange" });
     segments.push(
-      { label: "Send", us: event.requestSendUs, color: "bg-blue-300", textColor: "text-blue-900" },
-      { label: "Processing", us: wait, color: "bg-gray-300", textColor: "text-gray-700" },
-      { label: "Recv", us: event.responseDurationUs, color: "bg-green-400", textColor: "text-green-900" }
+      { label: "Send", us: event.requestSendUs, color: "bg-tag-blue", textColor: "text-tag-blue" },
+      { label: "Processing", us: wait, color: "bg-sunken", textColor: "text-body" },
+      { label: "Recv", us: event.responseDurationUs, color: "bg-tag-green", textColor: "text-tag-green" }
     );
     return { segments, totalUs: latencyUs, ttfbUs, tier: "full" };
   }
   if (ttfbUs != null) {
     return {
       segments: [
-        { label: "TTFB", us: ttfbUs, color: "bg-blue-300", textColor: "text-blue-900" },
-        { label: "Download", us: Math.max(latencyUs - ttfbUs, 0), color: "bg-green-400", textColor: "text-green-900" },
+        { label: "TTFB", us: ttfbUs, color: "bg-tag-blue", textColor: "text-tag-blue" },
+        { label: "Download", us: Math.max(latencyUs - ttfbUs, 0), color: "bg-tag-green", textColor: "text-tag-green" },
       ],
       totalUs: latencyUs,
       ttfbUs,
@@ -55,7 +55,7 @@ function computeTiming(event: ChannelEvent | undefined): TimingData | null {
     };
   }
   return {
-    segments: [{ label: "Total", us: latencyUs, color: "bg-blue-300", textColor: "text-blue-900" }],
+    segments: [{ label: "Total", us: latencyUs, color: "bg-tag-blue", textColor: "text-tag-blue" }],
     totalUs: latencyUs,
     ttfbUs: null,
     tier: "minimal",
@@ -114,7 +114,7 @@ export default function ChannelTiming({ event }: { event: ChannelEvent | undefin
                 </Tooltip>
               ))}
             </div>
-            {ttfbPct ? <div className="absolute inset-y-0 z-10 w-0.5 bg-gray-700" style={{ left: `${ttfbPct}%` }} /> : null}
+            {ttfbPct ? <div className="absolute inset-y-0 z-10 w-0.5 bg-inverse" style={{ left: `${ttfbPct}%` }} /> : null}
           </div>
           {ttfbPct ? (
             <div className="relative mt-1.5 h-4">

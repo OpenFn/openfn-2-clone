@@ -126,6 +126,26 @@
   --background-color-severe-strong: var(--color-severe-600); /* the severe solid: a dot, a chart slice */
   --background-color-neutral-strong: var(--color-gray-500); /* the neutral solid: a pending or cancelled dot, a chart slice */
 
+  /* Tags that mean nothing (an HTTP method, a scope, a timing segment):
+     named for their hue, since the hue is all they carry. Grey is
+     bg-sunken and text-body. */
+  --background-color-tag-red: var(--color-red-100); /* a red tag */
+  --text-color-tag-red: var(--color-red-700); /* its words */
+  --background-color-tag-orange: var(--color-orange-100); /* a orange tag */
+  --text-color-tag-orange: var(--color-orange-700); /* its words */
+  --background-color-tag-yellow: var(--color-yellow-100); /* a yellow tag */
+  --text-color-tag-yellow: var(--color-yellow-800); /* its words */
+  --background-color-tag-green: var(--color-green-100); /* a green tag */
+  --text-color-tag-green: var(--color-green-700); /* its words */
+  --background-color-tag-blue: var(--color-blue-100); /* a blue tag */
+  --text-color-tag-blue: var(--color-blue-700); /* its words */
+  --background-color-tag-indigo: var(--color-primary-100); /* a indigo tag */
+  --text-color-tag-indigo: var(--color-primary-700); /* its words */
+  --background-color-tag-purple: var(--color-purple-100); /* a purple tag */
+  --text-color-tag-purple: var(--color-purple-700); /* its words */
+  --background-color-tag-pink: var(--color-pink-100); /* a pink tag */
+  --text-color-tag-pink: var(--color-pink-700); /* its words */
+
   /* Elevation: a modal's shadow, tinted grey as Lightning's is. */
   --shadow-modal: 0 10px 15px -3px color-mix(in oklab, var(--color-gray-700) 10%, transparent), 0 4px 6px -4px color-mix(in oklab, var(--color-gray-700) 10%, transparent);
 

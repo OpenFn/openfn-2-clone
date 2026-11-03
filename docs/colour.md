@@ -12,7 +12,7 @@ a job, in `src/theme/tokens.css`; **everything else uses those**.
   change alone.
 - **Names say the property, the job, the emphasis, then the state**:
   `text-muted`, `bg-danger-strong`, `bg-brand-hover`. Never a colour or a
-  shade.
+  shade, except tags that mean nothing (`tag-red`), where the hue is the job.
 - **States are roles.** Hover, pressed, selected and disabled each have
   their own. A theme may work one out from another colour; a component
   never does (no `opacity-50`, no `/90`).

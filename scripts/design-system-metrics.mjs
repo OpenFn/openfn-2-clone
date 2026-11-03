@@ -72,7 +72,8 @@ const anyPalette = new RegExp(
   'g',
 )
 // A colour class with an alpha (`bg-surface/80`), or a faded disabled state.
-const alphaOrFade = /\b(?:bg|text|border|ring|outline|divide|fill|stroke|from|to|via|shadow)-[a-z][\w-]*\/\d+|\b(?:[\w-]*disabled:)+opacity-\d+/g
+// `text-sm/6` is a size with a line height, not a colour.
+const alphaOrFade = /\b(?:bg|text|border|ring|outline|divide|fill|stroke|from|to|via|shadow)-(?!(?:xs|sm|base|lg|[2-9]?xl)\/)[a-z][\w-]*\/\d+|\b(?:[\w-]*disabled:)+opacity-\d+/g
 // Hex and rgb() in code; constants.ts (sandbox colours are data) and Monaco (hex only) aside.
 // themes.ts' swatches are the picker's preview of each theme.
 const codeHex = code
@@ -81,7 +82,8 @@ const codeHex = code
 // A theme setting a palette shade instead of a role.
 const themeCss = readFileSync(join(root, 'theme/theme.css'), 'utf8')
 const themePalette = (stripComments(themeCss).match(/--color-[a-z]+(?:-\d+)?\s*:/g) ?? []).length
-const roleNamedForColour = roleLines.filter((l) => new RegExp(`-color-[\\w-]*(?:${hues}|\\d)`).test(l.split(':')[0])).length
+// Tag roles are named for their hue on purpose (docs/colour.md).
+const roleNamedForColour = roleLines.filter((l) => !/-color-tag-/.test(l) && new RegExp(`-color-[\\w-]*(?:${hues}|\\d)`).test(l.split(':')[0])).length
 const roleWithoutJob = roleLines.filter((l) => !l.includes('/*')).length
 
 const rows = [
