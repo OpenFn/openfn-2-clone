@@ -17,12 +17,11 @@ const eslint = new ESLint({
   },
 });
 
-async function seamMessages(filePath: string, code: string) {
+async function ruleMessages(ruleId: string, filePath: string, code: string) {
   const [result] = await eslint.lintText(code, { filePath });
-  return (result?.messages ?? [])
-    .filter((m) => m.ruleId === "no-restricted-imports")
-    .map((m) => m.message);
+  return (result?.messages ?? []).filter((m) => m.ruleId === ruleId).map((m) => m.message);
 }
+const seamMessages = (filePath: string, code: string) => ruleMessages("no-restricted-imports", filePath, code);
 
 describe("the data seam lint rule", () => {
   it("every import that crosses the seam is tagged wiring: or debt:", () => {
@@ -196,5 +195,19 @@ describe("the tier lint rule", () => {
     for (const probe of ["src/components/history/TierProbe.tsx", "src/components/domain/TierProbe.tsx"]) {
       expect(await seamMessages(probe, code("../../session/session"))).toHaveLength(1);
     }
+  });
+});
+
+describe("the data-flow lint rules (PRINCIPLES.md, How data flows)", () => {
+  it("nothing writes a response into the query cache (D374)", async () => {
+    const code = "declare const client: { setQueryData(k: unknown, v: unknown): void; setQueriesData(k: unknown, v: unknown): void };\nclient.setQueryData([\"credentials\"], []);\nclient.setQueriesData({}, []);\n";
+    expect(await ruleMessages("no-restricted-properties", "src/pages/x/SeamProbe.replica.tsx", code)).toHaveLength(2);
+    expect(await ruleMessages("no-restricted-properties", "src/api/seamProbe.ts", code)).toHaveLength(2);
+  });
+
+  it("src/api/ imports no toasts or components (D375)", async () => {
+    const code = 'import { useToast } from "../components/primitives/Toast";\nexport const x = useToast;\n';
+    expect(await seamMessages("src/api/seamProbe.ts", code)).toHaveLength(1);
+    expect(await seamMessages("src/pages/x/SeamProbe.replica.tsx", 'import { useToast } from "../../components/primitives/Toast";\nexport const x = useToast;\n')).toEqual([]);
   });
 });

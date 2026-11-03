@@ -243,6 +243,8 @@ const apiImports = {
   message: 'Take data as props; the replica wrapper calls the API client (D376).',
 }
 
+const cacheWriteMessage = "Don't write into the query cache: invalidate the keys the save changed and return that from onSuccess (D374, .claude/rules/api.md)."
+
 const seamIgnores = ['**/*.stories.tsx', '**/*[rR]eplica.{ts,tsx}', '**/*.test.{ts,tsx}']
 const seamImports = (extra = []) => [
   'error',
@@ -372,6 +374,9 @@ export default defineConfig([
         { object: 'document', property: 'location', message: hostMessage },
         { property: 'pushEvent', message: hostMessage },
         { property: 'pushEventTo', message: hostMessage },
+        // D374: after a save, invalidate and let the refetch bring the server's answer.
+        { property: 'setQueryData', message: cacheWriteMessage },
+        { property: 'setQueriesData', message: cacheWriteMessage },
       ],
     },
   },
@@ -432,6 +437,17 @@ export default defineConfig([
       'src/index.ts',
     ],
     rules: { 'no-restricted-imports': ['error', { patterns: [pageImports] }] },
+  },
+  {
+    // The API client has no UI: a failed save stays in its form, and success
+    // toasts are the wrapper's (D375).
+    files: ['src/api/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        { patterns: [pageImports, { regex: '(^|/)components(/.*)?$', message: 'src/api/ has no UI: no toasts or components. A failed save stays in its form; the wrapper toasts success (D375).' }] },
+      ],
+    },
   },
   {
     // Contract shapes are written by hand, never built on models or fixtures.

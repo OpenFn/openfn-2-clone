@@ -106,6 +106,32 @@ out labels, errors or buttons itself.
   runs the full width.
 - A search box or the AI chat box isn't a form; its button sits in the box.
 
+## How data flows
+
+A page takes props and nothing else, so the same page runs inside Lightning's
+LiveView and in the replica. Everything below happens in the replica's
+`.replica.tsx` wrapper, never in the page.
+
+- **Loading (D373).** The wrapper loads with TanStack Query. The page never
+  fetches, and never imports `src/api/`.
+- **Saving (D374).** After a save, the wrapper marks the affected queries
+  stale, and the page's `on*` promise resolves once they've reloaded, the way
+  LiveView re-renders after an event. Never write a response into the cache.
+  Show a change before the server confirms it only where the page already
+  does (`useChosenValue`).
+- **Waiting and refusals (D375).** While data loads, or when the server
+  refuses the whole page, the page gets an optional `status` prop, and
+  `AsyncBoundary` shows it in Lightning's words. A failed save stays in its
+  form. A crash shows an error page with "Try again". Toasts say something
+  worked; they never carry an error.
+- **The API code (D376).** One `src/api/` folder: `client.ts` talks to
+  Lightning (or the stand-in) and turns refusals into `ApiError`, and one file
+  per resource holds the API's shape, the mapper to page props, the query keys,
+  the queries and the saves. Show the server's `detail`; branch on `code`
+  (G199).
+
+How to apply it is in `.claude/rules/api.md`.
+
 ## Where we're heading
 
 These change how Lightning looks or what it says. They apply to anything
