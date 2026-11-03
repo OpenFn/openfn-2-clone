@@ -25,3 +25,4 @@ pixel-check-screenshots
 *.njsproj
 *.sln
 *.sw?
+.eslintcache

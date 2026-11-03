@@ -25,8 +25,11 @@ data, comments, lint) and loads by itself when you touch one.
 
 - Before you say it's done: `npm run lint` (warnings fail too),
   `npm run build` (typechecks) and `npm test`.
-- Changed a component or a story: also `npm run test:stories`, which
-  renders every story and runs axe on it. Stop Storybook first.
+- Changed a component or a story: while you work, run only the stories
+  you touched (`npm run test:stories -- Button`). Run the full
+  `npm run test:stories` once, right before you commit, and under the
+  other themes (`STORYBOOK_THEME=dark …`) only if you changed colours.
+  It renders every story and runs axe on it. Stop Storybook first.
 - The pixel check is a local Chromatic, for big sweeps across many screens
   that should mostly look the same; don't run it for a normal change. It
   screenshots every story before and after and lists only the ones that
