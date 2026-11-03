@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useDocumentTitle } from "../../utils/useDocumentTitle";
 import { useCredentialIndex, useCredentialSaves } from "../../api/credentials";
 import { useToast } from "../../components/primitives/Toast";
 import { credentialIndexDataFor, credentialsFixture, type CredentialsFixture } from "../../mock-data/credentials";
@@ -14,6 +15,7 @@ import CredentialsIndexPage from "./CredentialsIndexPage";
  * LiveView wrapper; CredentialsIndexPage stays as it is.
  */
 export default function CredentialsIndexPageReplica() {
+  useDocumentTitle("Credentials");
   const viewer = useCurrentUser();
   const toast = useToast();
   const { status, ...data } = useCredentialIndex(viewer.email);

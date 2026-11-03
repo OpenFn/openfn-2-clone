@@ -1,4 +1,5 @@
 import { useLocation, useNavigate } from "react-router-dom";
+import { useDocumentTitle } from "../../utils/useDocumentTitle";
 import { ApiError, live } from "../../api/client";
 import { authMessages } from "../../constants";
 import { RequestError } from "../../utils/errors";
@@ -15,6 +16,7 @@ import AuthLoginPage from "./AuthLoginPage";
  * instance; on the stand-in, `?signup=1` and `?sso=1` switch them on.
  */
 export default function AuthLoginPageReplica() {
+  useDocumentTitle("Lightning");
   const navigate = useNavigate();
   const { search, state } = useLocation() as { search: string; state: SignInState | null };
   const instance = useInstance();

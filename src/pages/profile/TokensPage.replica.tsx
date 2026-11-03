@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useDocumentTitle } from "../../utils/useDocumentTitle";
 import { useNavigate, useParams } from "react-router-dom";
 import { isStepUpRequired } from "../../api/client";
 import { useTokenSaves, useTokens } from "../../api/tokens";
@@ -14,6 +15,7 @@ import TokensPage from "./TokensPage";
  * will replace this file with a LiveView wrapper; TokensPage stays as it is.
  */
 export default function TokensPageReplica() {
+  useDocumentTitle("Personal Access Tokens");
   const { tokenId } = useParams();
   const navigate = useNavigate();
   const toast = useToast();

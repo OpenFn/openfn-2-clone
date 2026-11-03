@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useDocumentTitle } from "../../utils/useDocumentTitle";
 import { Navigate, useLocation, useNavigate, useParams } from "react-router-dom";
 import { useCollectionSaves, useProjectCollections } from "../../api/collections";
 import { useProjectMemberSaves, useProjectMembers, useProjectName } from "../../api/projects";
@@ -38,6 +39,7 @@ function addedMessage(existing: number, unknown: number) {
  * Lightning replaces this file with a LiveView wrapper.
  */
 export default function ProjectSettingsPageReplica() {
+  useDocumentTitle("Project settings");
   const { projectId = "" } = useParams();
   const apiName = useProjectName(projectId);
   // The fixtures' ids aren't always Lightning's, so the rest of the project is also found by its name on the API.

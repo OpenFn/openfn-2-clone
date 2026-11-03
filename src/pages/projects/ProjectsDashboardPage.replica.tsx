@@ -1,4 +1,5 @@
 import { useProjectSaves, useProjectsOverview } from "../../api/projects";
+import { useDocumentTitle } from "../../utils/useDocumentTitle";
 import { useToast } from "../../components/primitives/Toast";
 import ProjectsDashboardPage from "./ProjectsDashboardPage";
 
@@ -9,6 +10,7 @@ import ProjectsDashboardPage from "./ProjectsDashboardPage";
  * LiveView wrapper.
  */
 export default function ProjectsDashboardPageReplica() {
+  useDocumentTitle("Projects");
   const toast = useToast();
   const overview = useProjectsOverview();
   const saves = useProjectSaves();
