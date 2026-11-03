@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { GitBranch, Plus, ShieldX, Trash2 } from "lucide-react";
+import { GitBranch, Plus, ShieldX, Trash2 } from "@/components/ui/icons";
 import { Button } from "./Button";
 
 const meta = {

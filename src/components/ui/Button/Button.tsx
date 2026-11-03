@@ -1,5 +1,5 @@
 import type { ButtonHTMLAttributes, ReactNode } from "react";
-import type { LucideIcon } from "lucide-react";
+import type { Icon } from "@/components/ui/icons";
 import { cn } from "@/components/ui/cn";
 
 /** How loud the button is: one `primary` per page as a rule, `secondary` for the rest, `plain` for minor actions. */
@@ -34,7 +34,7 @@ type ButtonProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, "className"> & 
   tone?: ButtonTone;
   size?: ButtonSize;
   /** Shown before the words. */
-  icon?: LucideIcon;
+  icon?: Icon;
   /** Layout only (`w-full`, `self-end`), never how it looks. */
   className?: string;
   children: ReactNode;

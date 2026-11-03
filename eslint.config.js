@@ -23,7 +23,9 @@ const noComponents = ban("(^|/)components(/|$)", "Data knows nothing about how i
 const noReact = ban("^react(-dom)?(/|$)", "lib/ and fake-api/ have no React.");
 const noParent = ban("^\\.\\./", "Import across folders with @/ (for example @/components); ./ only within a folder.");
 
-const imports = (...patterns) => ["error", { patterns: [noParent, ...patterns] }];
+const noIconLibrary = ban("^lucide-react$", "Icons come from @/components/ui/icons, the one file that imports the library.");
+
+const imports = (...patterns) => ["error", { patterns: [noParent, noIconLibrary, ...patterns] }];
 
 // React and component conventions from PRINCIPLES.md. no-restricted-syntax is replaced per block too, so every block that
 // sets it spreads these in.
@@ -45,6 +47,11 @@ const syntax = (...extra) => ["error", ...conventions, ...extra];
 const PALETTE =
   "slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose|black|white";
 const COLOUR_UTILS = "bg|text|border|ring|outline|divide|fill|stroke|from|via|to|shadow|accent|caret|decoration|placeholder";
+// Layout components and the app shell may set sizes: they are the layout that decides.
+const FIXED_SIZE = [
+  /(^|[\s:])((w|h|min-w|max-w|min-h|max-h)-(\d+|px)|size-(?![3-6]\b)\d+)\b/,
+  "No fixed sizes: layout decides how much space a component gets. Icons use size-3 to size-6.",
+];
 const styleChecks = [
   [new RegExp(`(^|[\\s:])(${COLOUR_UTILS})-([a-z]-)?(${PALETTE})(-\\d+)?\\b`), "Use a colour role (text-muted, bg-brand), not a palette shade."],
   [/#[0-9a-fA-F]{3,8}\b/, "No hex colours outside src/theme/. Use a colour role."],
@@ -55,10 +62,6 @@ const styleChecks = [
     "Corners: rounded-md (controls), rounded-lg (on the page), rounded-xl (above the page), rounded-full (pills).",
   ],
   [/(^|[\s:])-?z-\d+\b/, "Stacking order comes from the named layers in src/theme/ (menu, dialog, tooltip), never a number."],
-  [
-    /(^|[\s:])((w|h|min-w|max-w|min-h|max-h)-(\d+|px)|size-(?![3-6]\b)\d+)\b/,
-    "No fixed sizes: layout decides how much space a component gets. Icons use size-3 to size-6.",
-  ],
   [
     /(^|[\s:])-?(p[xytrblse]?|m[xytrblse]?|gap(-[xy])?|space-[xy])-(?!(0\.5|1\.5|0|1|2|3|4|6|8)(?![\w.]))[\d.]+(?![\w.])/,
     "Spacing uses only Tailwind's steps 0, 0.5, 1, 1.5, 2, 3, 4, 6 and 8. Pick the nearest.",
@@ -107,10 +110,11 @@ function unknownRoles(text) {
 const local = {
   rules: {
     "no-raw-style": {
-      meta: { type: "problem", schema: [] },
+      meta: { type: "problem", schema: [{ type: "object", properties: { allowSizes: { type: "boolean" } }, additionalProperties: false }] },
       create(context) {
+        const checks = context.options[0]?.allowSizes ? styleChecks : [...styleChecks, FIXED_SIZE];
         const check = (node, text) => {
-          for (const [regex, message] of styleChecks) if (regex.test(text)) context.report({ node, message });
+          for (const [regex, message] of checks) if (regex.test(text)) context.report({ node, message });
           for (const token of unknownRoles(text)) context.report({ node, message: `"${token}" isn't a colour role. Use one defined in src/theme/roles.css.` });
         };
         return {
@@ -133,6 +137,7 @@ export default defineConfig([
   { files: ["*.{js,ts}", "src/theme/*.js"], languageOptions: { globals: globals.node } },
 
   { files: ["src/**/*.{ts,tsx}"], ignores: ["src/theme/**"], rules: { "local/no-raw-style": "error" } },
+  { files: ["src/components/layout/**/*.{ts,tsx}", "src/app/**/*.{ts,tsx}"], rules: { "local/no-raw-style": ["error", { allowSizes: true }] } },
 
   // Everywhere in src/: the conventions, @/ imports, and files small enough to read. Stories need a default export.
   {
@@ -159,7 +164,7 @@ export default defineConfig([
   },
   {
     files: ["src/pages/**/*.data.ts"],
-    rules: { "no-restricted-imports": ["error", { patterns: [noParent, { ...noClient, allowTypeImports: true }, noFake, noOtherPage, noApp] }] },
+    rules: { "no-restricted-imports": ["error", { patterns: [noParent, noIconLibrary, { ...noClient, allowTypeImports: true }, noFake, noOtherPage, noApp] }] },
   },
   { files: ["src/pages/**/*.route.tsx"], rules: { "no-restricted-imports": imports(noFake, noOtherPage, noDeepComponents, noApp) } },
 
@@ -171,4 +176,6 @@ export default defineConfig([
   { files: ["src/lib/**/*.ts"], rules: { "no-restricted-imports": imports(notPages, noComponents, noApp, noFake, noReact) } },
   { files: ["src/fake-api/**/*.ts"], rules: { "no-restricted-imports": imports(notPages, noComponents, noApp, noReact) } },
   { files: ["src/theme/**/*.ts"], rules: { "no-restricted-imports": imports(notPages, noComponents, noApp, noFake, noLib) } },
+  // The one file that may import the icon library.
+  { files: ["src/components/ui/icons.ts"], rules: { "no-restricted-imports": ["error", { patterns: [noParent] }] } },
 ]);
