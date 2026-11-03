@@ -143,7 +143,7 @@ export function BodyViewer({
               </Pill>
             )}
             {/* eslint-disable-next-line local/primitive-classname -- debt: F526 box (bg-white/80) */}
-            <CopyButton value={preview} label="Copy body" size="xs" className="bg-white/80" />
+            <CopyButton value={preview} label="Copy body" size="xs" className="bg-surface" />
           </div>
           <pre className="max-h-80 overflow-auto whitespace-pre-wrap break-all p-3 pr-20 font-mono text-body">{preview}</pre>
         </Card>

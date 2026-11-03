@@ -94,8 +94,8 @@ function ThemeName({ meta }: { meta: ThemeMeta }) {
         <span
           role="img"
           aria-label={dark ? "Dark" : "Light"}
-          // eslint-disable-next-line no-restricted-syntax -- the theme picker's mode dot shows a dark theme, it is a swatch, not UI
-          className={cn("h-2 w-2 rounded-full border", dark ? "border-gray-900 bg-gray-900" : "border-strong bg-emphasis")}
+           
+          className={cn("h-2 w-2 rounded-full border", dark ? "border-transparent bg-inverse" : "border-strong bg-emphasis")}
         />
       </Tooltip>
     </span>

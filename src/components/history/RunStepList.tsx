@@ -49,7 +49,7 @@ export default function RunStepList<S extends Omit<RunStep, "insertedAt" | "snap
               to={`?step=${step.id}${hash}`}
               className={cn(
                 "flex items-center gap-3 border-r-4",
-                selected ? "border-primary-500 font-semibold" : "border-transparent hover:border-strong"
+                selected ? "border-selected font-semibold" : "border-transparent hover:border-strong"
               )}
             >
               <StepIcon reason={step.exitReason} errorType={step.errorType ?? null} />

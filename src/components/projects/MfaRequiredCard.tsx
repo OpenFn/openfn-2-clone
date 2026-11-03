@@ -14,10 +14,10 @@ export default function MfaRequiredCard({ title = "MFA Required for Project" }: 
   return (
     <Card padding="lg" className="max-w-lg space-y-5">
       <div className="flex items-start gap-4">
-        {/* eslint-disable-next-line no-restricted-syntax -- debt: no fill role at 100 (F522) */}
-        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-danger-100">
-          {/* eslint-disable-next-line no-restricted-syntax -- debt: no icon role at 600 (F522) */}
-          <span className="hero-exclamation-triangle h-6 w-6 text-danger-600" aria-hidden="true" />
+        { }
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-danger-badge">
+          { }
+          <span className="hero-exclamation-triangle h-6 w-6 text-danger-icon" aria-hidden="true" />
         </span>
         <Stack gap="sm">
           <Heading>{title}</Heading>

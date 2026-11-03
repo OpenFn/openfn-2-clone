@@ -79,7 +79,7 @@ export default function Pagination({ page, actions }: Props) {
               className={cn(
                 box,
                 n === number
-                  ? "z-10 bg-primary-50 border-primary-500 text-primary-600"
+                  ? "z-10 bg-selected border-selected text-selected"
                   : "bg-surface border-strong text-muted hover:bg-hover"
               )}
             >

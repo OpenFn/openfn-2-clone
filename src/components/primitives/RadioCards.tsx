@@ -41,7 +41,7 @@ export default function RadioCards<T extends string>({ label, "aria-label": aria
             className={cn(
               "flex cursor-pointer items-center gap-x-2.5 rounded-lg border bg-surface p-2 text-sm text-body shadow-xs",
               "border-subtle has-aria-invalid:border-invalid",
-              "has-checked:border-primary-600 has-checked:ring-1 has-checked:ring-primary-600",
+              "has-checked:border-selected has-checked:ring-1 has-checked:ring-selected",
               "has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-focus",
               "has-disabled:cursor-not-allowed has-disabled:bg-subtle has-disabled:text-muted"
             )}

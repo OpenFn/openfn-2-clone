@@ -145,11 +145,11 @@ export default function Tooltip({
             ref={setFloating}
             style={floatingStyles}
             {...getFloatingProps()}
-            className={cn("z-300 max-w-xs rounded-md bg-primary-950 px-3 py-1.5 text-center text-xs text-primary-50 shadow-md", !interactive && "pointer-events-none")}
+            className={cn("z-300 max-w-xs rounded-md bg-inverse px-3 py-1.5 text-center text-xs text-inverse shadow-md", !interactive && "pointer-events-none")}
             data-ui="tooltip"
           >
             {copied ? "Copied!" : content}
-            <FloatingArrow ref={setArrowEl} context={context} width={10} height={5} className="fill-primary-950" />
+            <FloatingArrow ref={setArrowEl} context={context} width={10} height={5} style={{ fill: "var(--background-color-inverse)" }} />
           </div>
         </FloatingPortal>
       )}

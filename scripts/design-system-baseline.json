@@ -1,19 +1,19 @@
 {
   "className= in features + pages": 763,
-  "Class-list literals in features + pages": 335,
+  "Class-list literals in features + pages": 334,
   "  duplicated (same list used 2+ times)": 44,
-  "Distinct Tailwind tokens in features + pages": 425,
+  "Distinct Tailwind tokens in features + pages": 418,
   "Arbitrary values (`-[…]`) in features + pages": 11,
   "Raw <button> in features + pages": 10,
   "Raw <input>/<select>/<textarea> in features + pages": 3,
   "Raw <table> in features + pages": 1,
-  "Raw palette classes in features + pages": 32,
-  "debt: lines in src": 175,
-  "Colour roles in theme/tokens.css": 57,
-  "Palette classes in src (any scale, any file)": 207,
-  "Colour alpha or faded disabled in src": 34,
+  "Raw palette classes in features + pages": 26,
+  "debt: lines in src": 159,
+  "Colour roles in theme/tokens.css": 77,
+  "Palette classes in src (any scale, any file)": 107,
+  "Colour alpha or faded disabled in src": 13,
   "Hex or rgb() in src code": 20,
   "Palette shades set by themes (theme.css)": 153,
   "Colour roles named for a colour or shade": 0,
-  "Colour roles without a job comment": 29
+  "Colour roles without a job comment": 0
 }

@@ -32,7 +32,7 @@ export function Table({
 }) {
   const divide = variant === "divided";
   return (
-    <div id={id} data-ui="table" className="shadow ring-1 ring-black/5 sm:rounded-lg bg-subtle">
+    <div id={id} data-ui="table" className="shadow ring-1 ring-floating sm:rounded-lg bg-subtle">
       {/* A table wider than its box scrolls sideways inside the card instead of spilling out of it. */}
       <div className="overflow-x-auto sm:rounded-lg">
         <table className={cn("min-w-full", divide && "divide-y divide-subtle")}>

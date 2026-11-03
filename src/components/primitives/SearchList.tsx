@@ -58,7 +58,7 @@ const looks = {
     section: "",
     heading: "px-4 py-2",
     option:
-      "group flex cursor-pointer select-none items-center px-4 py-3 text-strong hover:bg-primary-600 hover:text-inverse data-focus:bg-primary-600 data-focus:text-inverse",
+      "group flex cursor-pointer select-none items-center px-4 py-3 text-strong hover:bg-brand hover:text-on-brand data-focus:bg-brand data-focus:text-on-brand",
   },
   field: {
     list: "max-h-96 space-y-4 overflow-y-auto",

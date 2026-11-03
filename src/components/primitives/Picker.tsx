@@ -80,7 +80,7 @@ const VIEW_ALL = { id: "__view_all__" } as const;
 type Row = PickerItem | typeof VIEW_ALL;
 const isViewAll = (row: Row): row is typeof VIEW_ALL => row === VIEW_ALL;
 
-const iconClasses = (active: boolean) => cn("shrink-0 group-hover:text-white/70", active ? "text-white/70" : "text-faint");
+const iconClasses = (active: boolean) => cn("shrink-0 group-hover:text-on-brand-muted", active ? "text-on-brand-muted" : "text-faint");
 
 /**
  * Lightning's command-palette picker (assets/js/picker/Picker.tsx), used as
@@ -169,8 +169,8 @@ export default function Picker({ items: allItems, currentId, placeholder, emptyM
                   <span className="shrink-0" style={{ width: row.depth * 10 }} />
                   <span
                     className={cn(
-                      "hero-arrow-turn-down-right mr-2 h-4 w-4 shrink-0 group-hover:text-white/50",
-                      active ? "text-white/50" : "text-faint"
+                      "hero-arrow-turn-down-right mr-2 h-4 w-4 shrink-0 group-hover:text-on-brand-muted",
+                      active ? "text-on-brand-muted" : "text-faint"
                     )}
                   />
                 </>
@@ -178,7 +178,7 @@ export default function Picker({ items: allItems, currentId, placeholder, emptyM
               <span className={cn(row.icon, "mr-2 h-5 w-5", iconClasses(active))} />
               <span className={cn("grow truncate", selected && "font-semibold")}>{row.label}</span>
               {selected && (
-                <span className={cn("hero-check ml-3 h-5 w-5 shrink-0 group-hover:text-inverse", active ? "text-inverse" : "text-primary-600")} />
+                <span className={cn("hero-check ml-3 h-5 w-5 shrink-0 group-hover:text-on-brand", active ? "text-on-brand" : "text-selected")} />
               )}
             </>
           )

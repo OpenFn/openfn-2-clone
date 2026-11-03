@@ -132,8 +132,8 @@ export default function ManualRunPanel({
                   as="button"
                   padding="none"
                   onClick={() => setSelected(clip)}
-                  // eslint-disable-next-line local/primitive-classname -- debt: F526 box (rounded-md px-3 py-2 shadow-none hover:border-primary-600 hover:bg-hover hover:shadow-none)
-                  className="group flex items-center justify-between gap-2 rounded-md px-3 py-2 shadow-none hover:border-primary-600 hover:bg-hover hover:shadow-none"
+                  // eslint-disable-next-line local/primitive-classname -- debt: F526 box (rounded-md px-3 py-2 shadow-none hover:border-selected hover:bg-hover hover:shadow-none)
+                  className="group flex items-center justify-between gap-2 rounded-md px-3 py-2 shadow-none hover:border-selected hover:bg-hover hover:shadow-none"
                 >
                   <div className="flex min-w-0 items-center gap-2">
                     {i === 0 ? (
@@ -141,11 +141,11 @@ export default function ManualRunPanel({
                         <span
                           role="img"
                           aria-label="Current dataclip for this step"
-                          className="hero-star-solid size-4 shrink-0 text-primary-400 group-hover:text-primary-600"
+                          className="hero-star-solid size-4 shrink-0 text-brand group-hover:text-link"
                         />
                       </Tooltip>
                     ) : (
-                      <span className="hero-document-text size-4 shrink-0 group-hover:text-primary-600" />
+                      <span className="hero-document-text size-4 shrink-0 group-hover:text-link" />
                     )}
                     <span className="truncate font-mono">{clip.name || shortUuid(uuidOf(clip.id), 7)}</span>
                     <DataclipTypePill type={clip.type} />

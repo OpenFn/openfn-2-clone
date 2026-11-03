@@ -44,7 +44,7 @@ export default function WorkspaceCard({
   const { navigate } = useRouter();
   const deleted = workspace.scheduledDeletion;
   const env = workspace.env?.trim() ? workspace.env : isRoot ? "main" : null;
-  const color = (!isRoot && workspace.color) || "var(--color-primary-600)";
+  const color = (!isRoot && workspace.color) || "var(--background-color-brand)";
 
   return (
     <Card

@@ -53,8 +53,7 @@ export default function Modal({ open, onClose, title, description, children, foo
           <DialogPanel
             transition
             className={cn(
-              // eslint-disable-next-line no-restricted-syntax -- a faint gray-700 tint on the ring and shadow, as Lightning's modal; no named colour is a tint
-              "relative w-full rounded-xl bg-surface text-left shadow-lg shadow-gray-700/10 ring-1 ring-gray-700/10",
+              "relative w-full rounded-xl bg-surface text-left shadow-modal ring-1 ring-floating",
               "transition duration-200 ease-out data-closed:translate-y-2 data-closed:opacity-0",
               !bare && "py-6",
               sizes[size],

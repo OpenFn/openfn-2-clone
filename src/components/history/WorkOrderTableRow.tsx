@@ -100,8 +100,8 @@ export default function WorkOrderTableRow({
             <TextLink
               to={wo.workflowHref}
               variant="plain"
-              // eslint-disable-next-line local/primitive-classname -- debt: F529 state, F527 colour (workflow-name text-strong hover:text-primary-600)
-              className="workflow-name block max-w-50 truncate text-strong hover:text-primary-600"
+              // eslint-disable-next-line local/primitive-classname -- debt: F529 state, F527 colour (workflow-name text-strong hover:text-link)
+              className="workflow-name block max-w-50 truncate text-strong hover:text-link"
               title={
                 <>
                   {wo.workflowName}
@@ -161,7 +161,7 @@ export default function WorkOrderTableRow({
                     label="Retry (run from the start)"
                     size="xs"
                     // eslint-disable-next-line local/primitive-classname -- debt: F527 colour (hover:text-primary-400)
-                    className="hover:text-primary-400"
+                    className="hover:text-link"
                     onClick={() => {
                       onRetry();
                       setExpanded((e) => !e);

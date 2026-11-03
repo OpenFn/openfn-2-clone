@@ -35,7 +35,7 @@ function StepRerun({ step, dataStorageHref, onRetry }: { step: StepRow; dataStor
       icon="hero-play-circle-mini"
       label="Run this step with the latest version of this workflow"
       // eslint-disable-next-line local/primitive-classname -- debt: F527 colour (hover:text-primary-400)
-      className="hover:text-primary-400"
+      className="hover:text-link"
       onClick={onRetry}
     />
   );
@@ -64,8 +64,8 @@ export function StepListItem({
     <Text as="div" variant="body-sm" id={`step-${step.id}`} role="listitem" tone="muted" className={cn("flex items-center hover:bg-surface", step.cloned && "opacity-50")}>
       <div className="flex flex-1 items-center gap-2 py-2 pl-4">
         <StepIcon reason={step.exitReason} errorType={step.errorType} />
-        {/* eslint-disable-next-line local/primitive-classname -- debt: F527 colour (text-strong hover:text-primary-500) */}
-        <TextLink to={step.href} variant="plain" className="whitespace-nowrap text-strong hover:text-primary-500">
+        {/* eslint-disable-next-line local/primitive-classname -- debt: F527 colour (text-strong hover:text-link) */}
+        <TextLink to={step.href} variant="plain" className="whitespace-nowrap text-strong hover:text-link">
           {step.jobName}
         </TextLink>
         {step.cloned && (

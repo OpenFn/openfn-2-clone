@@ -14,7 +14,7 @@ export default function FirstSetupShell({ releaseLabel, children }: { releaseLab
         <div className="app-logo-container h-20" />
         <nav id="side-menu" className="flex flex-1 flex-col justify-end overflow-hidden">
           <SidebarLogo releaseLabel={releaseLabel} />
-          <div className="mt-2 h-8 border-t border-white/10" />
+          <div className="sidebar-rule mt-2 h-8 border-t" />
         </nav>
       </div>
       <div className="min-w-0 flex-auto">{children}</div>

@@ -8,13 +8,13 @@ export const tabStyles = {
   line: {
     list: "gap-4",
     tab: "border-b-2 px-1 py-2 text-sm font-medium leading-tight",
-    selected: "border-primary-600 text-primary-600",
+    selected: "border-selected text-selected",
     idle: "border-transparent text-muted hover:border-strong hover:text-body",
   },
   pill: {
     list: "gap-1 rounded-lg bg-sunken p-1",
     tab: "rounded-md px-3 py-2 text-sm font-medium transition-all duration-200",
-    selected: "bg-surface text-primary-600 shadow-xs",
+    selected: "bg-surface text-selected shadow-xs",
     idle: "text-muted hover:bg-hover hover:text-body",
   },
 };

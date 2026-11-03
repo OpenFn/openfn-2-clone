@@ -47,7 +47,7 @@ export default function FilterChip({
       data-variant={active ? "active" : "default"}
       className={cn(
         "inline-flex items-center gap-x-1 rounded-full border text-sm font-medium transition-colors",
-        active ? "border-primary-200 bg-primary-50 text-primary-700" : "border-subtle bg-sunken text-body hover:bg-emphasis",
+        active ? "border-selected bg-selected text-selected" : "border-subtle bg-sunken text-body hover:bg-emphasis",
         clearable && "pr-1.5"
       )}
     >
@@ -67,7 +67,7 @@ export default function FilterChip({
           icon="hero-x-mark-solid"
           label="Clear filter"
           size="xs"
-          className="rounded-full text-primary-400 hover:bg-primary-200 hover:text-primary-600"
+          className="rounded-full text-selected hover:bg-selected-hover hover:text-link-hover"
           onClick={onClear}
         />
       )}

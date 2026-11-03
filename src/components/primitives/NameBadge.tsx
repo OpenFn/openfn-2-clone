@@ -11,7 +11,7 @@ export default function NameBadge({ name, children }: { name: string; children?:
   return (
     <span data-ui="name-badge">
       {children}
-      <Text variant="code-sm" className="ml-1 rounded-md border border-strong bg-warning p-1">{name}</Text>.
+      <Text variant="code-sm" className="ml-1 rounded-md border border-strong bg-warning-badge p-1">{name}</Text>.
     </span>
   );
 }

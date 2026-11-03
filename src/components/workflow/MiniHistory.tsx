@@ -97,7 +97,7 @@ export default function MiniHistory({
                     label={`${isExpanded ? "Collapse" : "Expand"} work order details`}
                     size="xs"
                     // eslint-disable-next-line local/primitive-classname -- debt: F527 colour (text-primary-600)
-                    className={cn(selected && "text-primary-600")}
+                    className={cn(selected && "text-selected")}
                     onClick={(e) => {
                       e.stopPropagation();
                       expand();
@@ -123,7 +123,7 @@ export default function MiniHistory({
                       key={run.id}
                       className={cn(
                         "flex cursor-pointer items-center justify-between gap-2 border-l-2 px-3 py-1.5 hover:bg-hover",
-                        runSelected ? "border-l-primary-500 bg-primary-50" : "border-l-transparent"
+                        runSelected ? "border-l-selected bg-selected" : "border-l-transparent"
                       )}
                       onClick={(e) => {
                         e.stopPropagation();

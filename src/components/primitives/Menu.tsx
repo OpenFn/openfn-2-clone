@@ -75,8 +75,8 @@ export function MenuItem({ icon, to, href, onClick, selected, tone, disabled = f
   const className = cn(
     "group flex w-full items-start gap-x-3 px-4 py-2 text-left text-sm cursor-pointer",
     "data-focus:bg-hover data-focus:outline-none data-disabled:cursor-not-allowed data-disabled:opacity-50",
-    // eslint-disable-next-line no-restricted-syntax -- debt: danger action text is 600, the text role is 700 (F523)
-    tone === "danger" ? "text-danger-600" : "text-body data-focus:text-strong"
+     
+    tone === "danger" ? "text-danger" : "text-body data-focus:text-strong"
   );
   const content = (
     <>
@@ -85,7 +85,7 @@ export function MenuItem({ icon, to, href, onClick, selected, tone, disabled = f
         <span className={cn("block", selected && "font-medium text-strong")}>{children}</span>
         {description && <Text variant="body-sm" className="mt-0.5 block text-muted">{description}</Text>}
       </span>
-      {selected && <span className="hero-check mt-0.5 h-4 w-4 shrink-0 text-primary-600" />}
+      {selected && <span className="hero-check mt-0.5 h-4 w-4 shrink-0 text-selected" />}
     </>
   );
 
