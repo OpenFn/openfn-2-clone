@@ -204,7 +204,7 @@ export default function FullScreenIDE({
                         className={cn(
                           // eslint-disable-next-line no-restricted-syntax -- a control: the vertical run tab sets its own type
                           "whitespace-nowrap rounded p-1 text-xs hover:bg-emphasis",
-                          runTab === t ? "text-primary-600 font-medium" : "text-muted"
+                          runTab === t ? "text-selected font-medium" : "text-muted"
                         )}
                       >
                         {t === "log" ? "Logs" : t === "input" ? "Input" : "Output"}

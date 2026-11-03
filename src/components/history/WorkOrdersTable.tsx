@@ -102,8 +102,6 @@ export default function WorkOrdersTable({
                 indeterminate={partial}
                 disabled={rows.length === 0}
                 onChange={(e) => onSelectionChange(e.target.checked ? selectable.map((w) => w.id) : [])}
-                // eslint-disable-next-line local/primitive-classname -- debt: state (disabled:opacity-50)
-                className="disabled:opacity-50"
               />
               {selected.length > 0 && (
                 <div className="absolute left-full top-1/2 ml-3 flex -translate-y-1/2 gap-1 whitespace-nowrap bg-subtle">
@@ -153,8 +151,8 @@ export default function WorkOrdersTable({
                 icon="hero-cloud-arrow-down"
                 label={`Export all ${page.totalEntries} results matching your query`}
                 onClick={onExport}
-                // eslint-disable-next-line local/primitive-classname -- debt: state, colour (transition hover:-rotate-6 hover:text-primary-500)
-                className="transition hover:-rotate-6 hover:text-primary-500"
+                // eslint-disable-next-line local/primitive-classname -- debt: state, colour (transition hover:-rotate-6 hover:text-link)
+                className="transition hover:-rotate-6 hover:text-link"
               />
             )
           }

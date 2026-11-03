@@ -96,7 +96,7 @@ export default function RunViewerPanel({ projectId, run, startedBy, steps, logs,
                       className={cn(
                         // eslint-disable-next-line no-restricted-syntax -- a control: the step row sets its own type
                         "flex w-full items-center gap-3 rounded border-r-4 p-2 text-left text-sm",
-                        selected ? "border-primary-500 bg-primary-50 font-semibold" : "border-transparent hover:border-strong hover:bg-hover"
+                        selected ? "border-selected bg-selected font-semibold" : "border-transparent hover:border-strong hover:bg-hover"
                       )}
                     >
                       <StepIcon reason={s.exitReason} />

@@ -9,6 +9,16 @@
   --ui-sidebar-bg-dark: var(--color-primary-900);
   --ui-sidebar-text-light: var(--color-primary-300);
   --ui-sidebar-text-lighter: var(--color-primary-200);
+  /* White at low alpha over the menu colour: its rules, hover, the
+     account button and its focus ring, and secondary icons. */
+  --ui-sidebar-rule: color-mix(in oklab, var(--color-white) 10%, transparent);
+  --ui-sidebar-hover: color-mix(in oklab, var(--color-white) 5%, transparent);
+  --ui-sidebar-fill: color-mix(in oklab, var(--color-white) 10%, transparent);
+  --ui-sidebar-fill-hover: color-mix(in oklab, var(--color-white) 20%, transparent);
+  --ui-sidebar-focus: color-mix(in oklab, var(--color-white) 30%, transparent);
+  --ui-sidebar-icon: color-mix(in oklab, var(--color-white) 70%, transparent);
+  /* The Experimental item. */
+  --ui-sidebar-experimental: var(--color-amber-300);
 }
 
 .sudo-variant {
@@ -41,6 +51,19 @@
 .primary-light {
   color: var(--ui-sidebar-text-light);
 }
+
+.sidebar-rule { border-color: var(--ui-sidebar-rule); }
+.sidebar-toggle-btn:hover { background-color: var(--ui-sidebar-hover); }
+.sidebar-toggle-btn svg,
+.user-menu-chevron { color: var(--ui-sidebar-icon); }
+.menu-item-experimental { color: var(--ui-sidebar-experimental); }
+.user-menu-trigger {
+  background-color: var(--ui-sidebar-fill);
+  color: var(--ui-sidebar-text);
+  &:hover { background-color: var(--ui-sidebar-fill-hover); }
+}
+.menu-item,
+.user-menu-trigger { --tw-ring-color: var(--ui-sidebar-focus); }
 
 .app-logo-container,
 .sidebar-toggle-btn {

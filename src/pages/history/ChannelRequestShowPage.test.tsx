@@ -198,7 +198,7 @@ describe("ChannelRequestShowPage", () => {
   });
 
   it("positions the TTFB marker on the phases' own scale, not the latency", () => {
-    const marker = () => document.querySelector<HTMLElement>("#timing-section .bg-gray-700")!.style.left;
+    const marker = () => document.querySelector<HTMLElement>("#timing-section .bg-inverse")!.style.left;
     renderPage({
       request: request({}, { queueUs: 10_000, connectUs: 20_000, requestSendUs: 5_000, ttfbUs: 100_000, responseDurationUs: 100_000, latencyUs: 250_000 }),
     });

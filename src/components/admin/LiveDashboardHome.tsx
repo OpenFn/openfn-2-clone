@@ -39,7 +39,7 @@ function Limit({ label, used, limit }: { label: string; used: number; limit: num
         </span>
       </div>
       <div className="mt-3 h-4 overflow-hidden rounded-sm bg-emphasis">
-        <div className="h-full bg-blue-400" style={{ width: `${Math.max(pct, 0.3)}%` }} />
+        <div className="h-full bg-info-strong" style={{ width: `${Math.max(pct, 0.3)}%` }} />
       </div>
     </Card>
   );
@@ -61,9 +61,9 @@ export default function LiveDashboardHome({
 }) {
   const totalMemory = data.memory.reduce((s, m) => s + m.value, 0);
   const versions = [
-    { label: "Elixir", value: data.versions.elixir, className: "from-purple-600 to-primary-500" },
-    { label: "Phoenix", value: data.versions.phoenix, className: "from-orange-500 to-amber-500" },
-    { label: "Dashboard", value: data.versions.dashboard, className: "from-blue-500 to-blue-600" },
+    { label: "Elixir", value: data.versions.elixir, className: "bg-brand" },
+    { label: "Phoenix", value: data.versions.phoenix, className: "bg-brand" },
+    { label: "Dashboard", value: data.versions.dashboard, className: "bg-brand" },
   ];
   return (
     // eslint-disable-next-line no-restricted-syntax -- copies Phoenix LiveDashboard's type
@@ -78,7 +78,7 @@ export default function LiveDashboardHome({
           <TextLink to={backHref}>Back to Lightning</TextLink>
         </div>
       </Alert>
-      <div className="h-28 bg-primary-900 text-inverse">
+      <div className="h-28 bg-inverse text-inverse">
         <div className="mx-auto flex max-w-6xl justify-between pt-3">
           {/* eslint-disable-next-line no-restricted-syntax -- copies Phoenix LiveDashboard's type */}
           <h1 className="mt-8 text-3xl">Phoenix LiveDashboard</h1>
@@ -109,7 +109,7 @@ export default function LiveDashboardHome({
             <Card padding="lg">{data.systemInfo}</Card>
             <div className="grid grid-cols-3 gap-6 pt-3">
               {versions.map((v) => (
-                <Stat key={v.label} {...v} className={cn("bg-gradient-to-br text-inverse", v.className)} />
+                <Stat key={v.label} {...v} className={cn("text-on-brand", v.className)} />
               ))}
               <Stat label="Uptime" value={data.uptime} />
               <Stat label="Total input" value={data.totalInput} hasInfo />

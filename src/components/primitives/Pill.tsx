@@ -4,29 +4,26 @@ import Tooltip from "./Tooltip";
 import type { Tone } from "./tone";
 
 /** Tag colours, for tags that mean nothing (dataclip types, HTTP methods). Meaning goes in `tone`. */
-export type PillColor = "gray" | "red" | "orange" | "yellow" | "green" | "blue" | "primary" | "purple" | "pink";
+export type PillColor = "gray" | "red" | "orange" | "yellow" | "green" | "blue" | "indigo" | "purple" | "pink";
 
 const colorClasses: Record<PillColor, string> = {
-  gray: "bg-gray-100 text-gray-700",
-  red: "bg-red-100 text-red-700",
-  orange: "bg-orange-100 text-orange-700",
-  yellow: "bg-yellow-100 text-yellow-800",
-  green: "bg-green-100 text-green-700",
-  blue: "bg-blue-100 text-blue-700",
-  primary: "bg-primary-100 text-primary-700",
-  purple: "bg-purple-100 text-purple-700",
-  pink: "bg-pink-100 text-pink-700",
+  gray: "bg-sunken text-body",
+  red: "bg-tag-red text-tag-red",
+  orange: "bg-tag-orange text-tag-orange",
+  yellow: "bg-tag-yellow text-tag-yellow",
+  green: "bg-tag-green text-tag-green",
+  blue: "bg-tag-blue text-tag-blue",
+  indigo: "bg-tag-indigo text-tag-indigo",
+  purple: "bg-tag-purple text-tag-purple",
+  pink: "bg-tag-pink text-tag-pink",
 };
 
 const toneClasses: Record<Tone, string> = {
   neutral: "bg-sunken text-body",
-  // eslint-disable-next-line no-restricted-syntax -- debt: Pill's fill is 100, the fill role is 50
-  info: "bg-info-100 text-info",
-  // eslint-disable-next-line no-restricted-syntax -- debt: Pill's fill is 100, the fill role is 50
-  success: "bg-success-100 text-success",
-  warning: "bg-warning text-warning-strong",
-  // eslint-disable-next-line no-restricted-syntax -- debt: Pill's fill is 100, the fill role is 50
-  danger: "bg-danger-100 text-danger",
+  info: "bg-info-badge text-info",
+  success: "bg-success-badge text-success",
+  warning: "bg-warning-badge text-warning-strong",
+  danger: "bg-danger-badge text-danger",
 };
 
 /**
@@ -93,7 +90,7 @@ export default function Pill({
             type="button"
             aria-label={removeLabel}
             onClick={onRemove}
-            className="inline-flex rounded-full text-current opacity-60 hover:bg-black/10 hover:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-focus"
+            className="inline-flex rounded-full text-current opacity-60 hover:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-focus"
           >
             <span className="hero-x-mark-mini h-4 w-4" aria-hidden="true" />
           </button>

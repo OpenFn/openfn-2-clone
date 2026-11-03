@@ -33,7 +33,7 @@ export default function PickerButton({
   const visible = truncated ? parts.slice(-2) : parts;
   // Lightning always writes white on the sandbox colour; a light colour gets dark text instead, for contrast.
   const onLight = isSandbox && !!color && prefersDarkText(color);
-  const accent = onLight ? "text-strong" : "text-white/80";
+  const accent = onLight ? "text-on-light" : "text-on-dark";
 
   const button = (
     // eslint-disable-next-line no-restricted-syntax -- debt: a secondary Button that takes the sandbox colour at runtime
@@ -47,10 +47,10 @@ export default function PickerButton({
         // eslint-disable-next-line no-restricted-syntax -- a control that owns its type: the picker button
         "flex items-center gap-2 rounded-md border px-2.5 py-1.5 text-sm font-medium transition-colors",
         isSandbox
-          ? cn("border-transparent hover:opacity-90", onLight ? "text-strong" : "text-inverse")
+          ? cn("border-transparent hover:opacity-90", onLight ? "text-on-light" : "text-on-dark")
           : "border-strong bg-surface text-body hover:border-emphasis hover:bg-hover"
       )}
-      style={isSandbox ? { backgroundColor: color ?? "var(--color-primary-600)" } : undefined}
+      style={isSandbox ? { backgroundColor: color ?? "var(--background-color-brand)" } : undefined}
     >
       <span className={cn("h-4 w-4", isSandbox ? `${accentIcon} ${accent}` : `${icon} text-muted`)} />
       <span>

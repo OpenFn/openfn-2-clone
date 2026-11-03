@@ -81,19 +81,20 @@ const stackRules = [
   `^\\s*${tok('flex')}${tok('items-center')}${tok('gap-[\\d.]+')}${only('flex|items-center|flex-wrap|justify-between|justify-end|gap-[\\d.]+')}`,
 ].map((re) => ({ selector: `JSXAttribute[name.name="className"] > Literal[value=/${re}/]`, message: stackMessage }))
 
-// Colours are named for what they're for (src/theme/tokens.css). Each message
-// names what to use instead. White and black with an alpha (`black/5`,
-// `white/10`) are allowed: they tint whatever is behind them.
+// Colours are roles named for what they're for (src/theme/tokens.css,
+// docs/colour.md). Each message names what to use instead. A colour with an
+// alpha (`bg-surface/80`, `white/10`) and a faded disabled state are banned
+// too: a theme can't change them.
 const WB = '(?:white|black)(?![\\w\\x2f-])'
 const UTIL = '(?:bg|text|border(?:-[trblxyse])?|ring|ring-offset|outline|divide|fill|stroke|from|to|via|placeholder|shadow|decoration|caret|accent)'
-const OTHER = ['amber', 'orange', 'purple', 'pink', 'sky', 'teal', 'emerald', 'lime', 'cyan', 'violet', 'fuchsia', 'rose']
+const OTHER = ['primary', 'indigo', 'amber', 'orange', 'purple', 'pink', 'sky', 'teal', 'emerald', 'lime', 'cyan', 'violet', 'fuchsia', 'rose']
 const banned = (re, message) => [
   { selector: `Literal[value=/${re}/]`, message },
   { selector: `TemplateElement[value.raw=/${re}/]`, message },
 ]
 const tokens = 'See src/theme/tokens.css.'
-const statusRoles = `Each status (danger, success, warning, info) has text-<s>, text-<s>-strong (headings, text on a fill), text-<s>-icon, border-<s> and ring-<s>, bg-<s> (pale fill) and bg-<s>-strong (the solid). A use no role fits stays on its shade behind a debt: disable naming a finding. ${tokens}`
-const colourRules = ({ palette = true, literals = true, amber = false } = {}) => [
+const statusRoles = `Each tone (danger, success, warning, info, severe) has text-<t>, text-<t>-strong (headings, text on a panel), text-<t>-icon, border-<t> and ring-<t>, bg-<t> (a panel), bg-<t>-badge (a pill) and bg-<t>-strong (the solid). If no role fits, use the nearest and raise it: a new role needs a human's yes (docs/colour.md). ${tokens}`
+const colourRules = ({ palette = true, literals = true } = {}) => [
   ...(palette
     ? [
         ...banned(
@@ -113,17 +114,21 @@ const colourRules = ({ palette = true, literals = true, amber = false } = {}) =>
           'Raw status colour: red is danger, green is success, yellow is warning, blue is info; then use its role name (bg-red-50 becomes bg-danger). ' + statusRoles
         ),
         ...banned(
-          `\\b${UTIL}-(?:${OTHER.filter((f) => !amber || f !== 'amber').join('|')})-\\d|\\b(?:fill|stroke|from|to|via|placeholder|shadow|decoration)-(?:gray-\\d|${WB})`,
-          `Raw palette colour: a tag takes a Pill colour, a run state comes from src/theme/runStateColours.ts, and a chart keeps its palette in its own allow-listed file. Icons take fill-current or stroke-current with a text-* name; placeholders take placeholder:text-faint. ${tokens}`
+          `\\b${UTIL}-(?:${OTHER.join('|')})-\\d|\\b(?:fill|stroke|from|to|via|placeholder|shadow|decoration)-(?:gray-\\d|${WB})`,
+          `Raw palette colour: use a role (docs/colour.md). Brand is bg-brand / text-brand, the chosen item bg-selected / text-selected, a tag a Pill colour, a run state src/theme/runStateColours.ts. Icons take fill-current or stroke-current with a text-* name; placeholders take placeholder:text-faint. ${tokens}`
         ),
       ]
     : []),
   // Status shades, banned even where raw palette colours are allowed (Pill).
-  ...banned(`\\b${UTIL}-(?:danger|success|warning|info)-\\d`, `Status shade: use its role name. ${statusRoles}`),
+  ...banned(`\\b${UTIL}-(?:danger|success|warning|info|severe)-\\d`, `Status shade: use its role name. ${statusRoles}`),
+  ...banned(
+    `\\b(?:bg|border(?:-[trblxyse])?|ring|outline|divide|fill|stroke|from|to|via|shadow|decoration)-[a-z][\\w-]*\\/\\d|\\btext-(?!(?:xs|sm|base|lg|[2-9]?xl)\\/)[a-z][\\w-]*\\/\\d|\\b(?:[\\w-]*disabled:)+opacity-\\d`,
+    `Colour with an alpha, or a faded disabled state: a theme can't change it. Use a role (hover, selected and disabled each have one). ${tokens}`
+  ),
   ...(literals
     ? banned(
-        '(?:^|[\\s(,\\[:])#[0-9a-fA-F]{3,8}\\b|rgba?\\(|--color-(?:gray|red|green|yellow|blue|white|black|danger|success|warning|info)\\b',
-        `Colour literal: use a named colour class, or its variable in a style (var(--text-color-muted), var(--background-color-surface)). A canvas or Monaco value that copies Lightning is disabled on its line with the reason. ${tokens}`
+        '(?:^|[\\s(,\\[:])#[0-9a-fA-F]{3,8}\\b|\\b(?:rgba?|hsla?|oklch|oklab|lab|lch|hwb)\\(|--(?:color|lt|dk|gds)-',
+        `Colour literal or a palette variable: use a role class, or the role's variable in a style (var(--text-color-muted), var(--background-color-surface)). Only src/theme/ reads the palette. ${tokens}`
       )
     : []),
 ]
@@ -332,20 +337,13 @@ export default defineConfig([
     ignores: ['src/components/primitives/**', '**/*.stories.tsx', '**/*.test.tsx'],
     rules: { 'local/primitive-classname': 'error' },
   },
-  // Raw palette colours, confined to the files that are about colour.
-  // Tag colours:
-  { files: ['src/components/primitives/Pill.tsx'], rules: { 'no-restricted-syntax': srcRules(colourRules({ palette: false })) } },
+  // Only src/theme/ may use the palette (docs/colour.md).
   // The theme files and the run-state map:
   { files: ['src/theme/**/*.{ts,tsx}'], rules: { 'no-restricted-syntax': srcRules([]) } },
-  // Monaco's theme, the sandbox colours (user data) and the health charts' palette:
+  // Monaco's theme (it takes hex only) and the sandbox colours (user data):
   {
-    files: ['src/theme/monacoTheme.ts', 'src/constants.ts', 'src/components/projects/health/palette.ts'],
+    files: ['src/theme/monacoTheme.ts', 'src/constants.ts'],
     rules: { 'no-restricted-syntax': srcRules(colourRules({ literals: false })) },
-  },
-  // Chart palettes (the status-shade ban still holds):
-  {
-    files: ['src/components/history/ChannelTiming.tsx', 'src/components/admin/LiveDashboardHome.tsx'],
-    rules: { 'no-restricted-syntax': [...consumerRules(colourRules({ palette: false, literals: false })), ...typeRules, ...stackRules] },
   },
   // Tests and fixtures hold data (sandbox colours) and query chart classes:
   { files: ['src/**/*.test.{ts,tsx}', 'src/mock-data/**/*.{ts,tsx}'], rules: { 'no-restricted-syntax': srcRules([]) } },
@@ -356,12 +354,6 @@ export default defineConfig([
   },
   // Stories are checked for colour too. Hex stays allowed: it is data there (sandbox colours, chart values).
   { files: ['src/**/*.stories.tsx'], rules: { 'no-restricted-syntax': ['error', ...colourRules({ literals: false })] } },
-  { files: ['src/components/primitives/Menu.stories.tsx'], rules: { 'no-restricted-syntax': ['error', ...colourRules({ literals: false, amber: true })] } },
-  // The amber notices (support user, experimental):
-  {
-    files: ['src/components/shell/UserMenu.tsx', 'src/components/shell/Sidebar.tsx'],
-    rules: { 'no-restricted-syntax': [...consumerRules(colourRules({ amber: true })), ...typeRules, ...stackRules] },
-  },
   {
     // The router adapter is the one place that reads the browser URL.
     files: ['src/**/*.{ts,tsx}'],

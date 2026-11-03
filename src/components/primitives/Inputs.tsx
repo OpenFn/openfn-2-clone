@@ -376,7 +376,7 @@ export function Select({
               className="group relative cursor-default select-none py-2 pl-8 pr-4 text-body data-focus:bg-hover data-focus:text-strong"
             >
               <span className="block truncate group-data-selected:font-medium group-data-selected:text-strong">{l}</span>
-              <span className="hero-check invisible absolute inset-y-0 left-1.5 my-auto size-5 text-primary-600 group-data-selected:visible" />
+              <span className="hero-check invisible absolute inset-y-0 left-1.5 my-auto size-5 text-selected group-data-selected:visible" />
             </ListboxOption>
           ))}
         </ListboxOptions>
@@ -388,8 +388,8 @@ export function Select({
 type ChoiceProps = { label: ReactNode; hint?: ReactNode; ref?: Ref<HTMLInputElement> } & Omit<InputHTMLAttributes<HTMLInputElement>, "type">;
 
 const choiceClasses = cn(
-  "h-4 w-4 border-strong text-primary-600 focus:ring-focus transition duration-200 cursor-pointer",
-  "disabled:cursor-not-allowed disabled:border-subtle disabled:bg-subtle disabled:checked:bg-emphasis",
+  "h-4 w-4 border-strong bg-surface text-selected focus:ring-focus transition duration-200 cursor-pointer",
+  "disabled:cursor-not-allowed disabled:border-subtle disabled:bg-disabled disabled:checked:bg-emphasis",
   "aria-invalid:border-invalid"
 );
 

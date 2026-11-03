@@ -2,89 +2,72 @@ import type { RunDisplayState, StepExitReason } from "../types/history";
 import type { WorkOrderDisplayState } from "../types/workflows";
 
 /**
- * Every run-state colour, in one place. The shades are Lightning's and differ
- * on purpose between the dot, the text and the icon (a crash is orange-800 as
- * an icon and orange-500 as text): parity first, unify at the redesign. A
- * status grey is a status, not a neutral, so the greys here stay raw palette.
+ * Run-state colours. Each state takes a tone, and every place a state is
+ * drawn (pill, dot, the text by the dot, step icon, canvas node, health
+ * chart) uses that tone's roles, so a state is one colour everywhere
+ * (docs/colour.md, Run states).
  */
+export type RunTone = "success" | "danger" | "info" | "warning" | "severe" | "neutral";
 
-/** A work-order or run state pill (run_live/components.ex `state_pill`
- * chip_styles), on Pill's tag shades. Goes in Pill's `className`. */
-export const STATE_PILL: Record<RunDisplayState, string> = {
-  rejected: "bg-danger-100 text-danger-700",
-  pending: "bg-gray-100 text-gray-700",
-  running: "bg-info-100 text-info-700",
-  available: "bg-gray-100 text-gray-700",
-  claimed: "bg-info-100 text-info-700",
-  started: "bg-info-100 text-info-700",
-  success: "bg-success-100 text-success-700",
-  failed: "bg-danger-100 text-danger-700",
-  crashed: "bg-orange-100 text-orange-700",
-  cancelled: "bg-gray-100 text-gray-700",
-  killed: "bg-warning-100 text-warning-800",
-  exception: "bg-gray-100 text-gray-700",
-  lost: "bg-gray-100 text-gray-700",
+const STATE_TONE: Record<RunDisplayState, RunTone> = {
+  rejected: "danger",
+  pending: "neutral",
+  running: "info",
+  available: "neutral",
+  claimed: "info",
+  started: "info",
+  success: "success",
+  failed: "danger",
+  crashed: "severe",
+  cancelled: "neutral",
+  killed: "warning",
+  exception: "neutral",
+  lost: "neutral",
 };
 
-/** The work-order dot (DashboardComponents.state_card). */
-export const WORK_ORDER_DOT: Record<WorkOrderDisplayState, string> = {
-  rejected: "bg-gray-300",
-  pending: "bg-gray-600",
-  running: "bg-info-600",
-  success: "bg-success-600",
-  failed: "bg-danger-600",
-  crashed: "bg-orange-600",
-  cancelled: "bg-gray-500",
-  killed: "bg-warning-600",
-  exception: "bg-gray-300 border-2 border-gray-800",
-  lost: "bg-gray-300 border-2 border-gray-800",
+const STEP_TONE: Record<StepExitReason | "pending", RunTone> = {
+  pending: "neutral",
+  success: "success",
+  fail: "danger",
+  crash: "severe",
+  cancel: "neutral",
+  kill: "warning",
+  exception: "neutral",
+  lost: "neutral",
 };
 
+/** Each tone's classes, written out so Tailwind sees them. */
+const TONE: Record<RunTone, { pill: string; dot: string; text: string; icon: string }> = {
+  success: { pill: "bg-success-badge text-success", dot: "bg-success-strong", text: "text-success-strong", icon: "text-success-icon" },
+  danger: { pill: "bg-danger-badge text-danger", dot: "bg-danger-strong", text: "text-danger-strong", icon: "text-danger-icon" },
+  info: { pill: "bg-info-badge text-info", dot: "bg-info-strong", text: "text-info-strong", icon: "text-info-icon" },
+  warning: { pill: "bg-warning-badge text-warning-strong", dot: "bg-warning-strong", text: "text-warning-strong", icon: "text-warning-icon" },
+  severe: { pill: "bg-severe-badge text-severe", dot: "bg-severe-strong", text: "text-severe-strong", icon: "text-severe-icon" },
+  neutral: { pill: "bg-sunken text-body", dot: "bg-neutral-strong", text: "text-muted", icon: "text-muted" },
+};
+
+const map = <K extends string>(tones: Record<K, RunTone>, part: keyof (typeof TONE)[RunTone]) =>
+  Object.fromEntries(Object.entries(tones).map(([k, t]) => [k, TONE[t as RunTone][part]])) as Record<K, string>;
+
+/** A work-order or run state pill. Goes in Pill's `className`. */
+export const STATE_PILL = map(STATE_TONE, "pill");
+/** The work-order dot. */
+export const WORK_ORDER_DOT: Record<WorkOrderDisplayState, string> = map(STATE_TONE, "dot");
 /** The work-order state's text, next to the dot. */
-export const WORK_ORDER_TEXT: Record<WorkOrderDisplayState, string> = {
-  rejected: "text-gray-600",
-  pending: "text-gray-600",
-  running: "text-info-700",
-  success: "text-success-800",
-  failed: "text-danger-700",
-  crashed: "text-orange-700",
-  cancelled: "text-gray-600",
-  killed: "text-warning-800",
-  exception: "text-gray-600",
-  lost: "text-gray-600",
-};
-
-/** A step's exit-reason icon (run_live/components.ex `step_icon`). */
-export const STEP_ICON: Record<StepExitReason | "pending", string> = {
-  pending: "text-gray-400",
-  success: "text-success-500",
-  fail: "text-danger-500",
-  crash: "text-orange-800",
-  cancel: "text-gray-600",
-  kill: "text-warning-800",
-  exception: "text-black",
-  lost: "text-black",
-};
-
+export const WORK_ORDER_TEXT: Record<WorkOrderDisplayState, string> = map(STATE_TONE, "text");
+/** A step's exit-reason icon. */
+export const STEP_ICON = map(STEP_TONE, "icon");
 /** The run icon on a canvas node. */
-export const NODE_RUN_ICON: Record<string, string> = {
-  running: "text-info-500",
-  success: "text-success-500",
-  fail: "text-danger-500",
-  crash: "text-orange-800",
-};
+export const NODE_RUN_ICON: Record<string, string> = { running: TONE.info.icon, ...map(STEP_TONE, "icon") };
 
-/** A canvas node's stroke and fill (workflow-diagram/styles.ts). Used in
- * `style`, since SVG presentation attributes don't read `var()`. */
-export const NODE_RUN_BORDER: Record<string, string> = {
-  success: "var(--color-success-600)",
-  fail: "var(--color-danger-600)",
-  crash: "var(--color-orange-600)",
-  running: "var(--color-info-500)",
-};
-export const NODE_RUN_FILL: Record<string, string> = {
-  success: "var(--color-success-100)",
-  fail: "var(--color-danger-100)",
-  crash: "var(--color-orange-100)",
-  running: "var(--color-info-100)",
-};
+/** The solid and badge fill of a tone, for `style` (SVG and charts). */
+export const toneSolid = (tone: RunTone) => `var(--background-color-${tone}-strong)`;
+const toneBadge = (tone: RunTone) => (tone === "neutral" ? "var(--background-color-sunken)" : `var(--background-color-${tone}-badge)`);
+
+/** A canvas node's stroke and fill, keyed by step exit reason or "running". */
+const NODE_TONE: Record<string, RunTone> = { running: "info", success: "success", fail: "danger", crash: "severe" };
+export const NODE_RUN_BORDER: Record<string, string> = Object.fromEntries(Object.entries(NODE_TONE).map(([k, t]) => [k, toneSolid(t)]));
+export const NODE_RUN_FILL: Record<string, string> = Object.fromEntries(Object.entries(NODE_TONE).map(([k, t]) => [k, toneBadge(t)]));
+
+/** A state's tone, for charts. */
+export const stateTone = (state: RunDisplayState) => STATE_TONE[state];

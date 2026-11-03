@@ -6,92 +6,169 @@
  * `text-surface`. Border names are ring names too. `divide-*` reads the
  * border names.
  *
- * Plain `@theme`, not `@theme inline`: the names point at the palette
- * variables, so a theme that remaps `--color-gray-*` (Light, GDS) still
- * reaches them.
+ * Plain `@theme`, not `@theme inline`: each class reads its role's variable,
+ * so a theme that sets the role (Light, Dark, GDS in theme.css) reaches it.
+ * The palette is only used here and in src/theme/ (docs/colour.md).
  *
  * Lightning compiles our sources with its own app.css, so it imports this
  * file too (`@import '@openfn/ui/tokens.css'`). Without it, `text-muted`
  * silently produces no CSS there.
  *
- * Brand keeps its scale (`primary`). Each status (`danger`, `success`,
- * `warning`, `info`) has role names like the greys: `text-<s>`,
- * `text-<s>-strong`, `text-<s>-icon`, `border-<s>` (and `ring-<s>`),
- * `bg-<s>` and `bg-<s>-strong` (the solid). Status shades (`bg-danger-50`)
- * are banned outside src/theme/. Raw palette classes are kept only in a
- * few confined files (eslint.config.js lists them).
+ * Every role carries a comment saying its job; that comment is what tells
+ * two similar roles apart. Lint bans palette classes everywhere outside
+ * src/theme/, and a new role needs a human's yes (docs/colour.md).
  */
 @theme {
   /* Text */
-  --text-color-strong: var(--color-gray-900); /* headings, labels, body copy on white */
+  --text-color-strong: var(--color-gray-900); /* headings, labels, body copy */
   --text-color-body: var(--color-gray-700); /* secondary text, panel copy */
   --text-color-muted: var(--color-gray-600); /* hints, descriptions, meta */
   --text-color-faint: var(--color-gray-500); /* icons, placeholders, disabled */
-  --text-color-inverse: var(--color-white); /* on dark or on brand */
-  --text-color-link: var(--color-primary-600);
-  --text-color-link-hover: var(--color-primary-700);
-  --text-color-code: var(--color-gray-200); /* on the dark code background */
+  --text-color-inverse: var(--color-white); /* on an inverse background */
+  --text-color-link: var(--color-primary-600); /* links, and anything that turns brand on hover */
+  --text-color-link-hover: var(--color-primary-700); /* a link, hovered */
+  --text-color-code: var(--color-gray-200); /* on the code background */
+  --text-color-on-light: var(--color-gray-900); /* on a pale colour that doesn't change with the theme (a sandbox colour) */
+  --text-color-on-dark: var(--color-white); /* on a deep colour that doesn't change with the theme */
 
   /* Backgrounds */
-  --background-color-page: var(--color-gray-100);
+  --background-color-page: var(--color-gray-100); /* the ground behind cards */
   --background-color-surface: var(--color-white); /* card, panel, input */
   --background-color-subtle: var(--color-gray-50); /* panel header, muted card, disabled control */
   --background-color-sunken: var(--color-gray-100); /* chip, avatar, inline code, tab track */
-  --background-color-hover: var(--color-gray-50); /* hover and keyboard highlight on white */
+  --background-color-hover: var(--color-gray-50); /* hover and keyboard highlight on a surface */
   --background-color-emphasis: var(--color-gray-200); /* tracks, rules, skeletons, hover on sunken */
-  --background-color-inverse: var(--color-gray-800); /* dark badge, dark nav */
-  --background-color-overlay: color-mix(in oklab, var(--color-gray-900) 60%, transparent);
+  --background-color-inverse: var(--color-gray-800); /* dark badge, tooltip */
+  --background-color-overlay: color-mix(in oklab, var(--color-gray-900) 60%, transparent); /* the scrim behind a modal */
   --background-color-code: var(--color-gray-700); /* log, dataclip and code viewers */
 
   /* Borders (and rings) */
   --border-color-subtle: var(--color-gray-200); /* cards, tables, dividers */
   --border-color-strong: var(--color-gray-300); /* inputs, buttons, dashed, hr */
-  --border-color-emphasis: var(--color-gray-400); /* hover and focus on controls, selected */
-  --ring-color-subtle: var(--color-gray-200);
-  --ring-color-strong: var(--color-gray-300);
-  --ring-color-emphasis: var(--color-gray-400);
+  --border-color-emphasis: var(--color-gray-400); /* hover and focus on controls */
+  --ring-color-subtle: var(--color-gray-200); /* a card's edge, drawn as a ring */
+  --ring-color-strong: var(--color-gray-300); /* a control's edge, drawn as a ring */
+  --ring-color-emphasis: var(--color-gray-400); /* a hovered control's edge, drawn as a ring */
+  --ring-color-floating: color-mix(in oklab, var(--color-black) 5%, transparent); /* the hairline round a menu, popover, table or modal */
 
   /* Focus */
-  --ring-color-focus: var(--color-primary-600);
-  --outline-color-focus: var(--color-primary-600);
+  --ring-color-focus: var(--color-primary-600); /* the focus ring */
+  --outline-color-focus: var(--color-primary-600); /* the focus outline */
+
+  /* Brand: the one colour for the main action. */
+  --background-color-brand: var(--color-primary-600); /* the brand fill: primary button, a switch when on, the highlighted option */
+  --background-color-brand-hover: var(--color-primary-500); /* the brand fill, hovered */
+  --text-color-on-brand: var(--color-white); /* text and icons on the brand fill */
+  --text-color-on-brand-muted: color-mix(in oklab, var(--color-white) 70%, transparent); /* secondary icons on the brand fill */
+  --text-color-brand: var(--color-primary-600); /* brand text that isn't a link or a selection: a Gherkin keyword, a favourite's star */
+
+  /* Disabled: a control the user can't use yet. Its own colours, not a
+     fade, so a theme can choose them. The 300s: Tyrell's primary disabled colour,
+     and Lightning's own, light enough to read as off and dark enough that
+     white text on them still reads. */
+  --background-color-brand-disabled: var(--color-primary-300); /* a disabled primary button, a disabled switch that's on */
+  --background-color-danger-disabled: var(--color-danger-300); /* a disabled danger button */
+  --background-color-success-disabled: var(--color-success-300); /* a disabled success button */
+  --background-color-disabled: var(--color-gray-50); /* a disabled secondary button, switch or checkbox */
+  --text-color-disabled: var(--color-gray-400); /* text and icons on a disabled control */
+  --text-color-on-brand-disabled: var(--color-white); /* text on a disabled filled button */
+
+  /* Selected: the chosen or current item in a set. */
+  --background-color-selected: var(--color-primary-50); /* current page, active chip, pressed toggle, chosen row, drop target */
+  --background-color-selected-hover: var(--color-primary-100); /* the selected background, hovered */
+  --text-color-selected: var(--color-primary-600); /* its text, and the check beside a chosen option */
+  --border-color-selected: var(--color-primary-600); /* its edge: tab underline, chosen card, current page */
+  --ring-color-selected: var(--color-primary-600); /* the same edge, drawn as a ring */
 
   /* Validation: one red for an invalid control's border, ring, typed text
      and message. Dark enough for text contrast on white. */
-  --text-color-invalid: var(--color-danger-700);
-  --border-color-invalid: var(--color-danger-700);
-  --ring-color-invalid: var(--color-danger-700);
-  --outline-color-invalid: var(--color-danger-700);
+  --text-color-invalid: var(--color-danger-700); /* an invalid field's message and typed text */
+  --border-color-invalid: var(--color-danger-700); /* an invalid field's border */
+  --ring-color-invalid: var(--color-danger-700); /* an invalid control's ring */
+  --outline-color-invalid: var(--color-danger-700); /* an invalid control's outline */
 
-  /* Status roles. Each shade is the one that role used most before the
-     names existed, so moving onto them changed nothing on screen. */
-  --text-color-danger: var(--color-danger-700);
-  --text-color-danger-strong: var(--color-danger-800); /* headings, text on a fill */
-  --text-color-danger-icon: var(--color-danger-500); /* icons, the required * */
-  --border-color-danger: var(--color-danger-200);
-  --ring-color-danger: var(--color-danger-200);
-  --background-color-danger: var(--color-danger-50);
-  --background-color-danger-strong: var(--color-danger-600); /* the solid: buttons, dots */
-  --text-color-success: var(--color-success-700);
-  --text-color-success-strong: var(--color-success-800); /* headings, text on a fill */
-  --text-color-success-icon: var(--color-success-600); /* icons, the required * */
-  --border-color-success: var(--color-success-200);
-  --ring-color-success: var(--color-success-200);
-  --background-color-success: var(--color-success-50);
-  --background-color-success-strong: var(--color-success-700); /* the solid: buttons, dots */
-  --text-color-warning: var(--color-warning-700);
-  --text-color-warning-strong: var(--color-warning-800); /* headings, text on a fill */
-  --text-color-warning-icon: var(--color-warning-500); /* icons, the required * */
-  --border-color-warning: var(--color-warning-200);
-  --ring-color-warning: var(--color-warning-200);
-  --background-color-warning: var(--color-warning-100);
-  --background-color-warning-strong: var(--color-warning-600); /* the solid: buttons, dots */
-  --text-color-info: var(--color-info-700);
-  --text-color-info-strong: var(--color-info-800); /* headings, text on a fill */
-  --text-color-info-icon: var(--color-info-500); /* icons, the required * */
-  --border-color-info: var(--color-info-200);
-  --ring-color-info: var(--color-info-200);
-  --background-color-info: var(--color-info-50);
-  --background-color-info-strong: var(--color-info-600); /* the solid: buttons, dots */
+  /* Tones */
+  --text-color-danger: var(--color-danger-700); /* danger text: an error message, a danger pill's words */
+  --text-color-danger-strong: var(--color-danger-800); /* danger headings, text on a danger panel */
+  --text-color-danger-icon: var(--color-danger-500); /* danger icons, and the required * on a field */
+  --border-color-danger: var(--color-danger-200); /* the edge of a danger panel */
+  --ring-color-danger: var(--color-danger-200); /* the same edge, drawn as a ring */
+  --background-color-danger: var(--color-danger-50); /* a danger panel: alert, toast, an invalid drop zone */
+  --background-color-danger-badge: var(--color-danger-100); /* a danger pill or badge */
+  --background-color-danger-strong: var(--color-danger-600); /* the danger solid: a button, a dot */
+  --background-color-danger-hover: var(--color-danger-500); /* the solid, hovered */
+  --text-color-success: var(--color-success-700); /* success text: a success pill's words */
+  --text-color-success-strong: var(--color-success-800); /* success headings, text on a success panel */
+  --text-color-success-icon: var(--color-success-600); /* success icons */
+  --border-color-success: var(--color-success-200); /* the edge of a success panel */
+  --ring-color-success: var(--color-success-200); /* the same edge, drawn as a ring */
+  --background-color-success: var(--color-success-50); /* a success panel: alert, toast */
+  --background-color-success-badge: var(--color-success-100); /* a success pill or badge */
+  --background-color-success-strong: var(--color-success-700); /* the success solid: a button, a dot */
+  --background-color-success-hover: var(--color-success-600); /* the solid, hovered */
+  --text-color-warning: var(--color-warning-700); /* warning text: a warning message (pills use the strong shade) */
+  --text-color-warning-strong: var(--color-warning-800); /* warning headings, text on a warning panel, a warning pill's words */
+  --text-color-warning-icon: var(--color-warning-700); /* warning icons: yellow needs its 700 to reach 3:1 on white */
+  --border-color-warning: var(--color-warning-200); /* the edge of a warning panel */
+  --ring-color-warning: var(--color-warning-200); /* the same edge, drawn as a ring */
+  --background-color-warning: var(--color-warning-50); /* a warning panel: alert, toast, the experimental notice */
+  --background-color-warning-badge: var(--color-warning-100); /* a warning pill or badge */
+  --background-color-warning-strong: var(--color-warning-600); /* the warning solid: a button, a dot */
+  --background-color-warning-badge-hover: var(--color-warning-200); /* the badge, hovered */
+  --text-color-info: var(--color-info-700); /* info text: an info pill's words */
+  --text-color-info-strong: var(--color-info-800); /* info headings, text on an info panel */
+  --text-color-info-icon: var(--color-info-500); /* info icons */
+  --border-color-info: var(--color-info-200); /* the edge of an info panel */
+  --ring-color-info: var(--color-info-200); /* the same edge, drawn as a ring */
+  --background-color-info: var(--color-info-50); /* an info panel: alert, toast */
+  --background-color-info-badge: var(--color-info-100); /* an info pill or badge */
+  --background-color-info-strong: var(--color-info-600); /* the info solid: a button, a dot */
+
+  --text-color-severe: var(--color-severe-700); /* severe text: a crash */
+  --text-color-severe-strong: var(--color-severe-800); /* severe headings, text on a severe panel */
+  --text-color-severe-icon: var(--color-severe-600); /* severe icons */
+  --border-color-severe: var(--color-severe-200); /* the edge of a severe panel */
+  --ring-color-severe: var(--color-severe-200); /* the same edge, drawn as a ring */
+  --background-color-severe: var(--color-severe-50); /* a severe panel */
+  --background-color-severe-badge: var(--color-severe-100); /* a severe pill or badge */
+  --background-color-severe-strong: var(--color-severe-600); /* the severe solid: a dot, a chart slice */
+  --background-color-neutral-strong: var(--color-gray-500); /* the neutral solid: a pending or cancelled dot, a chart slice */
+
+  /* Tags that mean nothing (an HTTP method, a scope, a timing segment):
+     named for their hue, since the hue is all they carry. Grey is
+     bg-sunken and text-body. */
+  --background-color-tag-red: var(--color-red-100); /* a red tag */
+  --text-color-tag-red: var(--color-red-700); /* its words */
+  --background-color-tag-orange: var(--color-orange-100); /* an orange tag */
+  --text-color-tag-orange: var(--color-orange-700); /* its words */
+  --background-color-tag-yellow: var(--color-yellow-100); /* a yellow tag */
+  --text-color-tag-yellow: var(--color-yellow-800); /* its words */
+  --background-color-tag-green: var(--color-green-100); /* a green tag */
+  --text-color-tag-green: var(--color-green-700); /* its words */
+  --background-color-tag-blue: var(--color-blue-100); /* a blue tag */
+  --text-color-tag-blue: var(--color-blue-700); /* its words */
+  --background-color-tag-indigo: var(--color-primary-100); /* an indigo tag */
+  --text-color-tag-indigo: var(--color-primary-700); /* its words */
+  --background-color-tag-purple: var(--color-purple-100); /* a purple tag */
+  --text-color-tag-purple: var(--color-purple-700); /* its words */
+  --background-color-tag-pink: var(--color-pink-100); /* a pink tag */
+  --text-color-tag-pink: var(--color-pink-700); /* its words */
+
+  /* Elevation: a modal's shadow, tinted grey as Lightning's is. */
+  --shadow-modal: 0 10px 15px -3px color-mix(in oklab, var(--color-gray-700) 10%, transparent), 0 4px 6px -4px color-mix(in oklab, var(--color-gray-700) 10%, transparent);
+
+  /* severe is orange: a crash, worse than a warning, not a plain failure. */
+  --color-severe-50: var(--color-orange-50);
+  --color-severe-100: var(--color-orange-100);
+  --color-severe-200: var(--color-orange-200);
+  --color-severe-300: var(--color-orange-300);
+  --color-severe-400: var(--color-orange-400);
+  --color-severe-500: var(--color-orange-500);
+  --color-severe-600: var(--color-orange-600);
+  --color-severe-700: var(--color-orange-700);
+  --color-severe-800: var(--color-orange-800);
+  --color-severe-900: var(--color-orange-900);
+  --color-severe-950: var(--color-orange-950);
 
   /* info is blue, which is what both apps draw for alerts, toasts and
      "running". */

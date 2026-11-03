@@ -82,7 +82,7 @@ export default function AnnotationCard({ id, annotation, inventory, onOpenId, in
           <Pill variant="square">
             <code>{id}</code>
           </Pill>
-          {annotation && <Pill color="primary">{annotation.folder.replace(/s$/, "")}</Pill>}
+          {annotation && <Pill color="indigo">{annotation.folder.replace(/s$/, "")}</Pill>}
           {status && <Pill tone={statusTone(status)}>{status}</Pill>}
           {inventory && <Pill tone={statusTone(inventory.status)}>inventory: {inventory.status}</Pill>}
         </Row>

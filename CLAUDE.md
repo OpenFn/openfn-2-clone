@@ -15,6 +15,7 @@ Lightning touches one wrapper file and nothing else (see The data seam).
 | Doing anything | [PRINCIPLES.md](./PRINCIPLES.md). It's short: what good looks like |
 | Building or changing a page | The page's annotation, `annotations/views/<inventory-id>.md`: what Lightning's page does and says. Then [STANDARDS.md](./STANDARDS.md): the page and its `.replica.tsx` wrapper, pending, failure, lists |
 | Building or changing a component | [docs/building.md](./docs/building.md): which primitive to use, where a new one goes, the recurring patterns |
+| Choosing or changing a colour, or a theme | [docs/colour.md](./docs/colour.md): the roles, what a theme may change, when to add a role |
 | Building something Lightning doesn't have, or a redesign | PRINCIPLES.md "Where we're heading" |
 | Changing something that looks different from Lightning | [docs/lightning-differences.md](./docs/lightning-differences.md) first; it may be on purpose |
 

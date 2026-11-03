@@ -200,7 +200,7 @@ export default function AIAssistantPanel({ sessions, onClose }: Props) {
             send();
           }}
         >
-          <div className={cn("rounded-xl border-2", input.trim() ? "border-primary-300" : "border-subtle hover:border-strong")}>
+          <div className={cn("rounded-xl border-2", input.trim() ? "border-selected" : "border-subtle hover:border-strong")}>
             {/* eslint-disable-next-line no-restricted-syntax -- debt: chat composer; TextArea has no borderless variant (also LandingScreen) */}
             <textarea
               data-testid="chat-input"

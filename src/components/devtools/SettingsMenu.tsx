@@ -37,8 +37,8 @@ export default function SettingsMenu() {
             label="Open settings"
             tooltip="Settings"
             data-ui="settings-trigger"
-            // eslint-disable-next-line local/primitive-classname -- debt: box, colour (rounded-full bg-inverse text-inverse shadow-lg hover:bg-inverse/90)
-            className="h-12 w-12 rounded-full bg-inverse text-inverse shadow-lg hover:bg-inverse/90"
+            // eslint-disable-next-line local/primitive-classname -- debt: box, colour (rounded-full bg-inverse text-inverse shadow-lg hover:opacity-90)
+            className="h-12 w-12 rounded-full bg-inverse text-inverse shadow-lg hover:opacity-90"
           />
         }
       >
@@ -94,8 +94,7 @@ function ThemeName({ meta }: { meta: ThemeMeta }) {
         <span
           role="img"
           aria-label={dark ? "Dark" : "Light"}
-          // eslint-disable-next-line no-restricted-syntax -- the theme picker's mode dot shows a dark theme, it is a swatch, not UI
-          className={cn("h-2 w-2 rounded-full border", dark ? "border-gray-900 bg-gray-900" : "border-strong bg-emphasis")}
+          className={cn("h-2 w-2 rounded-full border", dark ? "border-transparent bg-inverse" : "border-strong bg-emphasis")}
         />
       </Tooltip>
     </span>

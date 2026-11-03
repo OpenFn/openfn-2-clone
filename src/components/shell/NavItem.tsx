@@ -25,7 +25,7 @@ export default function NavItem({ to, href, target = "_blank", icon, label, acti
   const className = cn(
     // eslint-disable-next-line no-restricted-syntax -- a control that owns its type: the sidebar link, as Lightning's menu_item
     "menu-item mx-3 mb-1 flex h-10 items-center rounded-lg text-sm font-medium transition-colors",
-    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30",
+    "focus-visible:outline-none focus-visible:ring-2",
     active ? "menu-item-active" : "menu-item-inactive"
   );
   const content: ReactNode = (

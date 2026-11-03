@@ -37,7 +37,7 @@ export default function UserMenu({ user }: { user: MenuUser }) {
             type="button"
             data-ui="account-trigger"
             // eslint-disable-next-line no-restricted-syntax -- a control that owns its type: the account button
-            className="user-menu-trigger flex h-10 w-full items-center rounded-lg bg-white/10 text-sm font-medium text-inverse transition-colors hover:bg-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30"
+            className="user-menu-trigger flex h-10 w-full items-center rounded-lg text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2"
           >
             <div className="user-menu-content flex w-full min-w-0 items-center">
               <UserAvatar firstName={user.firstName} lastName={user.lastName} className="shrink-0" />
@@ -45,7 +45,7 @@ export default function UserMenu({ user }: { user: MenuUser }) {
                 {user.firstName}
                 {user.lastName ? " " + user.lastName : ""}
               </span>
-              <span className="user-menu-chevron hero-chevron-down h-4 w-4 shrink-0 text-white/70" />
+              <span className="user-menu-chevron hero-chevron-down h-4 w-4 shrink-0" />
             </div>
           </button>
         }
@@ -55,10 +55,10 @@ export default function UserMenu({ user }: { user: MenuUser }) {
           <p className="truncate font-medium text-strong">{user.email}</p>
         </MenuHeader>
         {user.experimentalFeatures && (
-          <div className="bg-amber-50 px-4 py-3">
+          <div className="bg-warning px-4 py-3">
             <Heading size="sm" as="p">
               <Row as="span" gap="sm">
-                <span className="hero-wrench-screwdriver-mini h-4 w-4 text-amber-600" />
+                <span className="hero-wrench-screwdriver-mini h-4 w-4 text-warning-icon" />
                 Experimental features on
               </Row>
             </Heading>
@@ -67,8 +67,8 @@ export default function UserMenu({ user }: { user: MenuUser }) {
               You're using features that are still being built. Things may work differently for you than for your
               teammates.
             </Text>
-            {/* eslint-disable-next-line local/primitive-classname -- debt: margin, colour (mt-1.5 text-amber-700) */}
-            <Text as="p" variant="body-sm" className="mt-1.5 text-amber-700">
+            {/* eslint-disable-next-line local/primitive-classname -- debt: margin (mt-1.5) */}
+            <Text as="p" variant="body-sm" className="mt-1.5 text-warning">
               <MenuLink to="/profile">Turn off in your profile</MenuLink>
             </Text>
           </div>

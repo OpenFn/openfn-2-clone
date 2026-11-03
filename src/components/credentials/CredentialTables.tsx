@@ -17,7 +17,7 @@ function ProjectBadges({ names }: { names: string[] }) {
   return (
     <div className="flex flex-wrap gap-1">
       {names.map((name) => (
-        <Pill key={name} color="primary" variant="square">
+        <Pill key={name} color="indigo" variant="square">
           {name}
         </Pill>
       ))}

@@ -13,7 +13,7 @@ export const Warning: Story = { args: { tone: "warning", children: "Read-only" }
 export const Info: Story = { args: { tone: "info", children: "New" } };
 /** `color` is for tags that mean nothing, like dataclip types and HTTP methods. */
 export const TagColour: Story = { args: { color: "purple", children: <code>step_result</code> } };
-export const Square: Story = { args: { color: "primary", variant: "square", children: "latest" } };
+export const Square: Story = { args: { color: "indigo", variant: "square", children: "latest" } };
 export const Removable: Story = { args: { color: "blue", children: "openhie-project", onRemove: () => {} } };
 /** Code text goes in `<code>`. */
 export const Mono: Story = { args: { children: <code>v2.14.3</code> } };

@@ -160,7 +160,7 @@ describe("RunShowPage", () => {
     expect(a.textContent).toContain("Map to FHIR");
     expect(a.textContent).toContain("1 s");
     expect(within(a as HTMLElement).getByRole("link", { name: /Map to FHIR/ }).getAttribute("href")).toBe("?step=step-a");
-    expect(within(a as HTMLElement).getByRole("link", { name: /Map to FHIR/ }).className).toContain("border-primary-500");
+    expect(within(a as HTMLElement).getByRole("link", { name: /Map to FHIR/ }).className).toContain("border-selected");
     expect(b.querySelector(".hero-paper-clip-mini")).not.toBeNull();
 
     fireEvent.click(within(b as HTMLElement).getByRole("link", { name: "Inspect Step" }));

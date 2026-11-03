@@ -4,6 +4,8 @@ import { NODE_BOX, type Rect, type Viewport } from "./diagramGeometry";
 
 const WIDTH = 200;
 const HEIGHT = 150;
+// React Flow's minimap node, in theme variables so a dark theme can recolour it.
+const MINIMAP_NODE = { fill: "var(--background-color-surface)", stroke: "var(--ui-diagram-minimap-stroke)" };
 
 interface Props {
   graph: WorkflowGraph;
@@ -69,8 +71,7 @@ export default function DiagramMiniMap({ graph, viewport, canvasSize, onCenter }
           if (!p) return null;
           return (
             <g key={t.id}>
-              {/* eslint-disable-next-line no-restricted-syntax -- Lightning's minimap node stroke (React Flow's default), kept for parity */}
-              <circle cx={p.x + 60} cy={p.y + 60} r={60} fill="white" stroke="#ccc" strokeWidth={8} />
+              <circle cx={p.x + 60} cy={p.y + 60} r={60} strokeWidth={8} style={MINIMAP_NODE} />
               <foreignObject x={p.x + 30} y={p.y + 30} width={60} height={60}>
                 <span className={`${t.type === "cron" ? "hero-clock" : "hero-globe-alt"} block h-full w-full text-muted`} />
               </foreignObject>
@@ -83,8 +84,7 @@ export default function DiagramMiniMap({ graph, viewport, canvasSize, onCenter }
           const icon = adaptorIconUrl(j.adaptor);
           return (
             <g key={j.id}>
-              {/* eslint-disable-next-line no-restricted-syntax -- Lightning's minimap node stroke (React Flow's default), kept for parity */}
-              <rect x={p.x} y={p.y} width={120} height={120} fill="white" stroke="#ccc" strokeWidth={8} rx={20} />
+              <rect x={p.x} y={p.y} width={120} height={120} strokeWidth={8} rx={20} style={MINIMAP_NODE} />
               {icon && <image x={p.x + 20} y={p.y + 20} width={80} height={80} href={icon} />}
             </g>
           );
@@ -92,8 +92,7 @@ export default function DiagramMiniMap({ graph, viewport, canvasSize, onCenter }
         <path
           d={`M${x - offset},${y - offset}h${w + offset * 2}v${h + offset * 2}h${-w - offset * 2}z
               M${view.x},${view.y}h${view.width}v${view.height}h${-view.width}z`}
-          // eslint-disable-next-line no-restricted-syntax -- React Flow's minimap mask, kept for parity
-          fill="rgba(240, 240, 240, 0.6)"
+          style={{ fill: "var(--ui-diagram-minimap-mask)" }}
           fillRule="evenodd"
           pointerEvents="none"
         />

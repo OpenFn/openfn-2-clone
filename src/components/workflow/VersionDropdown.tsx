@@ -32,8 +32,7 @@ export default function VersionDropdown({ snapshots, pinnedVersion, onVersionSel
             className={cn(
               // eslint-disable-next-line no-restricted-syntax -- a control: the version menu trigger sets its own type
               "inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-xs font-medium",
-              // eslint-disable-next-line no-restricted-syntax -- debt: no hover role
-              isLatest ? "bg-primary-100 text-primary-800 hover:bg-primary-200" : "bg-warning text-warning-strong hover:bg-warning-200"
+              isLatest ? "bg-selected text-selected hover:bg-selected-hover" : "bg-warning-badge text-warning-strong hover:bg-warning-badge-hover"
             )}
           >
             {isLatest ? "latest" : `v${pinnedVersion}`}

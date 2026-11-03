@@ -19,7 +19,7 @@ function gherkin(text: string) {
       const indent = line.length - line.trimStart().length;
       const pad = `style="padding-left:${indent}ch"`;
       if (trimmed.startsWith("@"))
-        return `<span class="block mt-3 font-medium text-primary-600" ${pad}>${escape(trimmed)}</span>`;
+        return `<span class="block mt-3 font-medium text-brand" ${pad}>${escape(trimmed)}</span>`;
       if (trimmed.startsWith("# Value:"))
         return `<span class="block italic text-muted" ${pad}>${escape(trimmed.slice(2))}</span>`;
       if (trimmed.startsWith("#"))
@@ -29,7 +29,7 @@ function gherkin(text: string) {
         const keyword = match[2]!;
         const rest = trimmed.slice(keyword.length);
         const heading = /:$/.test(keyword);
-        return `<span class="block text-strong" ${pad}><strong class="${heading ? "text-strong" : "text-primary-700"}">${keyword}</strong>${escape(rest)}</span>`;
+        return `<span class="block text-strong" ${pad}><strong class="${heading ? "text-strong" : "text-brand"}">${keyword}</strong>${escape(rest)}</span>`;
       }
       return `<span class="block text-body" ${pad}>${escape(trimmed)}</span>`;
     })
@@ -66,7 +66,7 @@ export default function Markdown({ source, className }: { source: string; classN
       className={cn(
         "prose prose-sm max-w-none prose-headings:font-semibold prose-h2:text-base prose-h2:mt-6 prose-h3:text-sm",
         "prose-code:before:content-none prose-code:after:content-none prose-code:bg-sunken prose-code:rounded prose-code:px-1 prose-code:font-normal",
-        "prose-pre:bg-code prose-pre:text-xs [&_pre_code]:bg-transparent [&_pre_code]:p-0 prose-table:text-xs prose-a:text-primary-600",
+        "prose-pre:bg-code prose-pre:text-xs [&_pre_code]:bg-transparent [&_pre_code]:p-0 prose-table:text-xs prose-a:text-link",
         className
       )}
       dangerouslySetInnerHTML={{ __html: html }}

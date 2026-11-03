@@ -22,8 +22,7 @@ export default function SaveButton({ onClick, canSave = true, hasChanges = false
       <Button onClick={onClick} disabled={!canSave} tooltip={tooltip}>
         {children}
       </Button>
-      {/* eslint-disable-next-line no-restricted-syntax -- debt: the dot is 500, strong fill is 600 */}
-      {hasChanges && <div className="absolute top-0 right-0 -m-1 size-3 rounded-full bg-danger-500" data-is-dirty />}
+      {hasChanges && <div className="absolute top-0 right-0 -m-1 size-3 rounded-full bg-danger-strong" data-is-dirty />}
     </div>
   );
 }

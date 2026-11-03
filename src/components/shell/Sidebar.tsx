@@ -141,7 +141,7 @@ export function SidebarLogo({
   className?: string;
 }) {
   return (
-    <div className={cn("primary-light border-t border-white/10 pt-5 text-center", className)}>
+    <div className={cn("primary-light sidebar-rule border-t pt-5 text-center", className)}>
       {collapsed ? <OpenFnLogoCollapsed className="mx-auto h-6" /> : <OpenFnLogo className="mx-auto h-6" />}
       {/* eslint-disable-next-line no-restricted-syntax -- below text-xs, the smallest step on the scale */}
       <code className="block py-1 text-[8px]">{releaseLabel}</code>
@@ -206,13 +206,13 @@ export default function Sidebar({
             )}
           </div>
           {user.experimentalFeatures && (
-            <div className="mt-3 border-t border-white/10 pt-3">
+            <div className="sidebar-rule mt-3 border-t pt-3">
               <Tooltip
                 content="You're using features that are still being built. Things may work differently for you than for your teammates."
                 side="right"
               >
-                {/* eslint-disable-next-line local/primitive-classname -- debt: state, margin, box, colour (menu-item mx-3 rounded-lg text-amber-300) */}
-                <Text as="div" variant="label-md" className="menu-item mx-3 flex h-8 items-center rounded-lg text-amber-300">
+                {/* eslint-disable-next-line local/primitive-classname -- debt: state, margin, box (menu-item mx-3 rounded-lg) */}
+                <Text as="div" variant="label-md" className="menu-item menu-item-experimental mx-3 flex h-8 items-center rounded-lg">
                   <span className="hero-wrench-screwdriver h-5 w-5" />
                   <span className="menu-item-text truncate">Experimental</span>
                 </Text>
@@ -224,12 +224,12 @@ export default function Sidebar({
           <button
             type="button"
             onClick={onToggle}
-            className="sidebar-toggle-btn mt-2 flex border-t border-white/10 py-1.5 pl-6 transition-colors hover:bg-white/5 focus:outline-none"
+            className="sidebar-toggle-btn sidebar-rule mt-2 flex border-t py-1.5 pl-6 transition-colors focus:outline-none"
             aria-label="Toggle sidebar"
           >
             {/* On the icon, not the button: the button spans the sidebar, so the tooltip would float off its far edge. */}
             <Tooltip content="Toggle sidebar" side="right">
-              <svg className="h-5 w-5 text-white/70" viewBox="0 0 18 18" fill="currentColor" aria-hidden="true">
+              <svg className="h-5 w-5" viewBox="0 0 18 18" fill="currentColor" aria-hidden="true">
                 {collapsed ? (
                   <path
                     fillRule="evenodd"

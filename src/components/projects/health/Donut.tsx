@@ -63,7 +63,7 @@ export default function Donut({
         <svg viewBox={`0 0 ${SIZE} ${SIZE}`} className="h-full w-full" aria-hidden="true">
           {only ? (
             <Link to={only.href} tabIndex={-1}>
-              <circle cx={C} cy={C} r={(OUTER + INNER) / 2} fill="none" stroke={only.color} strokeWidth={OUTER - INNER} className="cursor-pointer">
+              <circle cx={C} cy={C} r={(OUTER + INNER) / 2} fill="none" style={{ stroke: only.color }} strokeWidth={OUTER - INNER} className="cursor-pointer">
                 <title>{`${only.label}: ${formatNumber(only.value)} (${percent(only.value, total)})`}</title>
               </circle>
             </Link>
@@ -73,7 +73,7 @@ export default function Donut({
               angle += (s.value / total) * 360;
               return (
                 <Link key={s.key} to={s.href} tabIndex={-1}>
-                  <path d={arc(from, angle)} fill={s.color} stroke="var(--background-color-surface)" strokeWidth={2} className="cursor-pointer">
+                  <path d={arc(from, angle)} style={{ fill: s.color, stroke: "var(--background-color-surface)" }} strokeWidth={2} className="cursor-pointer">
                     <title>{`${s.label}: ${formatNumber(s.value)} (${percent(s.value, total)})`}</title>
                   </path>
                 </Link>
