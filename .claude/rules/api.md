@@ -1,13 +1,14 @@
 ---
 paths:
-  - "src/api/**"
-  - "src/**/*.replica.tsx"
-  - "src/**/*Replica.ts"
+  - 'src/api/**'
+  - 'src/**/*.replica.tsx'
+  - 'src/**/*Replica.ts'
 ---
 
 # The API and the wrappers that call it
 
-PRINCIPLES.md "How data flows" says what; this is how. Decisions D373–D376.
+PRINCIPLES.md "How data flows" says what; this is how.
+At the moment the app supports us moving to Lightning as a single page React app with API or connecting up the existing backend with React islands. This document talks about the api side of things.
 
 ## `src/api/`
 
@@ -16,11 +17,11 @@ PRINCIPLES.md "How data flows" says what; this is how. Decisions D373–D376.
   or to the stand-in, which replays `recorded/` answers. `listAll(path, key)`
   follows `links.next` to the end.
 - A refused request throws `ApiError`. Show its `message` (the server's
-  `detail`); branch on `code`, never on the words (G199). Body errors arrive
+  `detail`); branch on `code`, never on the words. Body errors arrive
   as `fieldErrors`, ready for the form.
 - One file per resource (`credentials.ts`, `projects.ts`, …), holding, in
   this order: the API's type (`ApiCredential`, snake_case as sent), the mapper
-  to the page's props type (a plain function, D363), the query keys, the
+  to the page's props type (a plain function), the query keys, the
   queries and the saves.
 - Query keys go from general to specific, all from that file:
   `["credentials"]`, `["projects", id, "members"]`.
@@ -45,9 +46,11 @@ PRINCIPLES.md "How data flows" says what; this is how. Decisions D373–D376.
   refetch. Show a change early only where the page already uses
   `useChosenValue`.
 - A success toast is the wrapper's, after the save resolves, in Lightning's
-  flash wording. Errors are never toasted.
+  flash wording. An error toast is the page's, for an action with no form
+  (`useAction(handler, { onError: "toast" })`, STANDARDS pattern 1); it
+  stays until dismissed. Nothing in `src/api/` toasts.
 - The page's props and action types don't change to suit the API. A new
   thing is an optional prop, so Lightning's LiveView wrapper keeps compiling.
   If a page needs a prop changed, stop and ask.
 - What the API can't give a page yet is mapped to the answer for "none" and
-  tracked as a finding for Brandon, not faked in the page.
+  tracked as a finding, not faked in the page.

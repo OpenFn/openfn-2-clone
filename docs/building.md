@@ -250,7 +250,7 @@ it, as in any form (`Project settings/DataStoragePanel`). An untitled card
 with two or more things in it puts them in a `Stack`, or they sit flush
 (DataStoragePanel's retention policy card). SecurityPanel,
 ProjectSetupPanel, ExperimentalFeaturesCard and MaintenanceCard still have
-titles (G187 is open). A switch or select saves on change
+titles. A switch or select saves on change
 with `useChosenValue`; if the save fails, it goes back and an error toast
 says why. Text fields save with `useForm` and a Save button at the bottom of
 the card.
