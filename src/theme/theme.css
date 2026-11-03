@@ -3,15 +3,15 @@
  * ------------------------------------------------------------------
  * HOW THIS WORKS:
  *
- * Tailwind v4 compiles every color/radius/shadow/font utility to a
- * `var(--token)` reference — e.g. `bg-gray-50` => `background-color:
- * var(--color-gray-50)`, `rounded-md` => `var(--radius-md)`,
- * `font-mono` => `var(--font-mono)`. Those variables live in `:root`.
- *
- * By redefining the SAME variables under an `html[data-theme="…"]`
- * selector, every utility already in the codebase resolves to the
- * themed value instead. Swapping the `data-theme` attribute on <html>
- * re-skins the app without editing a component.
+ * Components use colour roles (`text-muted`, `bg-surface`, src/theme/
+ * tokens.css), and Tailwind compiles each to its variable, e.g.
+ * `bg-surface` => `background-color: var(--background-color-surface)`.
+ * A theme sets those role variables under `html[data-theme="…"]`, so
+ * swapping the attribute on <html> re-skins the app without editing a
+ * component. A theme never redefines a palette shade (`--color-gray-600`);
+ * shades it needs that the palette lacks live under its own prefix
+ * (`--lt-*`, `--dk-*`, `--gds-*`). Radius, font and shadow variables are
+ * set the same way. The rules are in docs/colour.md.
  *
  * A token swap can't reach everything (button shape, field borders,
  * focus states), so each theme may add a component layer. That layer
@@ -22,8 +22,9 @@
  * plain primary button needs `:not([data-tone])`.
  * The default theme has no component layer.
  *
- * ADDING A THEME: add an entry in `themes.ts`, then a token block here
- * and, if needed, a component layer scoped to the same `data-theme`.
+ * ADDING A THEME: add an entry in `themes.ts`, then a block here that sets
+ * every role in tokens.css (a test checks dark themes set them all), and,
+ * if needed, a component layer scoped to the same `data-theme`.
  */
 
 /* ============================================================== */
@@ -83,7 +84,7 @@ body {
 /* (github.com/OpenFn/lightning, assets/css/app.css). The         */
 /* components are built with Lightning's own markup and classes, */
 /* so this theme only sets the type: Inter and Fira Code.         */
-/* Colours come from the primary and semantic tokens in index.css.*/
+/* Colours are the roles' defaults in tokens.css.                 */
 /* ============================================================== */
 html[data-theme="lightning-v2"] {
   --app-bg: var(--color-gray-100);
@@ -97,8 +98,7 @@ html[data-theme="lightning-v2"] {
 
 /* ============================================================== */
 /* Light — airy and quiet, in the manner of Stripe's dashboard.   */
-/* Builds on the Basic theme (the original white-page look) and   */
-/* sets it in Geist.                                              */
+/* A white page set in Geist.                                     */
 /*                                                                */
 /*  - A white page. Panels are separated by hairlines and soft,   */
 /*    low shadows, not by grey grounds or heavy borders.          */
@@ -137,7 +137,7 @@ html:is([data-theme="light"], [data-theme="dark"]) {
   --lt-gray-900: #1a1b25;
   --lt-gray-950: #0d0e14;
 
-  /* Primary: blurple, centred on #635bff. Drives primary utilities. */
+  /* Brand: blurple, centred on #635bff; the roles below read it. */
   --lt-indigo-50: #f5f5ff;
   --lt-indigo-100: #ebeaff;
   --lt-indigo-200: #d6d3ff;
@@ -472,7 +472,6 @@ html[data-theme="dark"] {
   --background-color-disabled: var(--dk-gray-50);
   --text-color-disabled: var(--dk-gray-400);
   --text-color-on-brand-disabled: color-mix(in oklab, var(--color-white) 45%, transparent);
-  --text-color-on-brand-disabled: color-mix(in oklab, var(--color-white) 45%, transparent);
   --background-color-selected: var(--dk-indigo-50);
   --background-color-selected-hover: var(--dk-indigo-100);
   --text-color-selected: var(--dk-indigo-600);
@@ -682,9 +681,8 @@ html[data-theme="gds"] {
   --gds-gray-900: #0b0c0c;
   --gds-gray-950: #0b0c0c;
 
-  /* Primary: GOV.UK blue. brand #1d70b8, link #1a65a6,
-     link-hover #0f385c, surface #f4f8fb. Drives blue + indigo
-     (and so primary) utilities across the app. */
+  /* Brand: GOV.UK blue. brand #1d70b8, link #1a65a6,
+     link-hover #0f385c, surface #f4f8fb; the roles below read it. */
   --gds-blue-50: #f4f8fb;   --gds-indigo-50: #f4f8fb;
   --gds-blue-100: #d2e2f1;  --gds-indigo-100: #d2e2f1;
   --gds-blue-200: #8eb8dc;  --gds-indigo-200: #8eb8dc;
@@ -941,8 +939,8 @@ html[data-theme="gds"] .sudo-variant {
 }
 
 /* ============================================================== */
-/* GDS component layer. Values come only from the `--ui-*` tokens */
-/* above; selectors target the `data-ui` hooks on our components. */
+/* GDS component layer. Values come from the roles and the `--ui-*` */
+/* tokens above; selectors target the `data-ui` hooks.             */
 /* This block is unlayered, so it beats Tailwind utilities: keep  */
 /* colour rules off elements that take per-call colour classes.   */
 /* ============================================================== */

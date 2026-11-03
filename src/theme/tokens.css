@@ -6,20 +6,17 @@
  * `text-surface`. Border names are ring names too. `divide-*` reads the
  * border names.
  *
- * Plain `@theme`, not `@theme inline`: the names point at the palette
- * variables, so a theme that remaps `--color-gray-*` (Light, GDS) still
- * reaches them.
+ * Plain `@theme`, not `@theme inline`: each class reads its role's variable,
+ * so a theme that sets the role (Light, Dark, GDS in theme.css) reaches it.
+ * The palette is only used here and in src/theme/ (docs/colour.md).
  *
  * Lightning compiles our sources with its own app.css, so it imports this
  * file too (`@import '@openfn/ui/tokens.css'`). Without it, `text-muted`
  * silently produces no CSS there.
  *
- * Brand keeps its scale (`primary`). Each status (`danger`, `success`,
- * `warning`, `info`) has role names like the greys: `text-<s>`,
- * `text-<s>-strong`, `text-<s>-icon`, `border-<s>` (and `ring-<s>`),
- * `bg-<s>` and `bg-<s>-strong` (the solid). Status shades (`bg-danger-50`)
- * are banned outside src/theme/. Raw palette classes are kept only in a
- * few confined files (eslint.config.js lists them).
+ * Every role carries a comment saying its job; that comment is what tells
+ * two similar roles apart. Lint bans palette classes everywhere outside
+ * src/theme/, and a new role needs a human's yes (docs/colour.md).
  */
 @theme {
   /* Text */
@@ -91,40 +88,40 @@
   --outline-color-invalid: var(--color-danger-700); /* an invalid control's outline */
 
   /* Tones */
-  --text-color-danger: var(--color-danger-700); /* danger text: a message, a pill's words */
+  --text-color-danger: var(--color-danger-700); /* danger text: an error message, a danger pill's words */
   --text-color-danger-strong: var(--color-danger-800); /* danger headings, text on a danger panel */
-  --text-color-danger-icon: var(--color-danger-500); /* danger icons, the required * */
+  --text-color-danger-icon: var(--color-danger-500); /* danger icons, and the required * on a field */
   --border-color-danger: var(--color-danger-200); /* the edge of a danger panel */
   --ring-color-danger: var(--color-danger-200); /* the same edge, drawn as a ring */
   --background-color-danger: var(--color-danger-50); /* a danger panel: alert, toast, an invalid drop zone */
   --background-color-danger-badge: var(--color-danger-100); /* a danger pill or badge */
   --background-color-danger-strong: var(--color-danger-600); /* the danger solid: a button, a dot */
   --background-color-danger-hover: var(--color-danger-500); /* the solid, hovered */
-  --text-color-success: var(--color-success-700); /* success text: a message, a pill's words */
+  --text-color-success: var(--color-success-700); /* success text: a success pill's words */
   --text-color-success-strong: var(--color-success-800); /* success headings, text on a success panel */
-  --text-color-success-icon: var(--color-success-600); /* success icons, the required * */
+  --text-color-success-icon: var(--color-success-600); /* success icons */
   --border-color-success: var(--color-success-200); /* the edge of a success panel */
   --ring-color-success: var(--color-success-200); /* the same edge, drawn as a ring */
-  --background-color-success: var(--color-success-50); /* a success panel: alert, toast, an invalid drop zone */
+  --background-color-success: var(--color-success-50); /* a success panel: alert, toast */
   --background-color-success-badge: var(--color-success-100); /* a success pill or badge */
   --background-color-success-strong: var(--color-success-700); /* the success solid: a button, a dot */
   --background-color-success-hover: var(--color-success-600); /* the solid, hovered */
-  --text-color-warning: var(--color-warning-700); /* warning text: a message, a pill's words */
-  --text-color-warning-strong: var(--color-warning-800); /* warning headings, text on a warning panel */
+  --text-color-warning: var(--color-warning-700); /* warning text: a warning message (pills use the strong shade) */
+  --text-color-warning-strong: var(--color-warning-800); /* warning headings, text on a warning panel, a warning pill's words */
   --text-color-warning-icon: var(--color-warning-700); /* warning icons: yellow needs its 700 to reach 3:1 on white */
   --border-color-warning: var(--color-warning-200); /* the edge of a warning panel */
   --ring-color-warning: var(--color-warning-200); /* the same edge, drawn as a ring */
-  --background-color-warning: var(--color-warning-50); /* a warning panel: alert, toast, an invalid drop zone */
+  --background-color-warning: var(--color-warning-50); /* a warning panel: alert, toast, the experimental notice */
   --background-color-warning-badge: var(--color-warning-100); /* a warning pill or badge */
   --background-color-warning-strong: var(--color-warning-600); /* the warning solid: a button, a dot */
   --background-color-warning-badge-hover: var(--color-warning-200); /* the badge, hovered */
-  --text-color-info: var(--color-info-700); /* info text: a message, a pill's words */
-  --text-color-info-strong: var(--color-info-800); /* info headings, text on a info panel */
-  --text-color-info-icon: var(--color-info-500); /* info icons, the required * */
-  --border-color-info: var(--color-info-200); /* the edge of a info panel */
+  --text-color-info: var(--color-info-700); /* info text: an info pill's words */
+  --text-color-info-strong: var(--color-info-800); /* info headings, text on an info panel */
+  --text-color-info-icon: var(--color-info-500); /* info icons */
+  --border-color-info: var(--color-info-200); /* the edge of an info panel */
   --ring-color-info: var(--color-info-200); /* the same edge, drawn as a ring */
-  --background-color-info: var(--color-info-50); /* a info panel: alert, toast, an invalid drop zone */
-  --background-color-info-badge: var(--color-info-100); /* a info pill or badge */
+  --background-color-info: var(--color-info-50); /* an info panel: alert, toast */
+  --background-color-info-badge: var(--color-info-100); /* an info pill or badge */
   --background-color-info-strong: var(--color-info-600); /* the info solid: a button, a dot */
 
   --text-color-severe: var(--color-severe-700); /* severe text: a crash */
@@ -142,7 +139,7 @@
      bg-sunken and text-body. */
   --background-color-tag-red: var(--color-red-100); /* a red tag */
   --text-color-tag-red: var(--color-red-700); /* its words */
-  --background-color-tag-orange: var(--color-orange-100); /* a orange tag */
+  --background-color-tag-orange: var(--color-orange-100); /* an orange tag */
   --text-color-tag-orange: var(--color-orange-700); /* its words */
   --background-color-tag-yellow: var(--color-yellow-100); /* a yellow tag */
   --text-color-tag-yellow: var(--color-yellow-800); /* its words */
@@ -150,7 +147,7 @@
   --text-color-tag-green: var(--color-green-700); /* its words */
   --background-color-tag-blue: var(--color-blue-100); /* a blue tag */
   --text-color-tag-blue: var(--color-blue-700); /* its words */
-  --background-color-tag-indigo: var(--color-primary-100); /* a indigo tag */
+  --background-color-tag-indigo: var(--color-primary-100); /* an indigo tag */
   --text-color-tag-indigo: var(--color-primary-700); /* its words */
   --background-color-tag-purple: var(--color-purple-100); /* a purple tag */
   --text-color-tag-purple: var(--color-purple-700); /* its words */

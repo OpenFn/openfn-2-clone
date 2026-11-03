@@ -81,9 +81,10 @@ const stackRules = [
   `^\\s*${tok('flex')}${tok('items-center')}${tok('gap-[\\d.]+')}${only('flex|items-center|flex-wrap|justify-between|justify-end|gap-[\\d.]+')}`,
 ].map((re) => ({ selector: `JSXAttribute[name.name="className"] > Literal[value=/${re}/]`, message: stackMessage }))
 
-// Colours are named for what they're for (src/theme/tokens.css). Each message
-// names what to use instead. White and black with an alpha (`black/5`,
-// `white/10`) are allowed: they tint whatever is behind them.
+// Colours are roles named for what they're for (src/theme/tokens.css,
+// docs/colour.md). Each message names what to use instead. A colour with an
+// alpha (`bg-surface/80`, `white/10`) and a faded disabled state are banned
+// too: a theme can't change them.
 const WB = '(?:white|black)(?![\\w\\x2f-])'
 const UTIL = '(?:bg|text|border(?:-[trblxyse])?|ring|ring-offset|outline|divide|fill|stroke|from|to|via|placeholder|shadow|decoration|caret|accent)'
 const OTHER = ['primary', 'indigo', 'amber', 'orange', 'purple', 'pink', 'sky', 'teal', 'emerald', 'lime', 'cyan', 'violet', 'fuchsia', 'rose']
@@ -92,7 +93,7 @@ const banned = (re, message) => [
   { selector: `TemplateElement[value.raw=/${re}/]`, message },
 ]
 const tokens = 'See src/theme/tokens.css.'
-const statusRoles = `Each status (danger, success, warning, info) has text-<s>, text-<s>-strong (headings, text on a fill), text-<s>-icon, border-<s> and ring-<s>, bg-<s> (pale fill) and bg-<s>-strong (the solid). A use no role fits stays on its shade behind a debt: disable naming a finding. ${tokens}`
+const statusRoles = `Each tone (danger, success, warning, info, severe) has text-<t>, text-<t>-strong (headings, text on a panel), text-<t>-icon, border-<t> and ring-<t>, bg-<t> (a panel), bg-<t>-badge (a pill) and bg-<t>-strong (the solid). If no role fits, use the nearest and raise it: a new role needs a human's yes (docs/colour.md). ${tokens}`
 const colourRules = ({ palette = true, literals = true } = {}) => [
   ...(palette
     ? [
@@ -119,11 +120,15 @@ const colourRules = ({ palette = true, literals = true } = {}) => [
       ]
     : []),
   // Status shades, banned even where raw palette colours are allowed (Pill).
-  ...banned(`\\b${UTIL}-(?:danger|success|warning|info)-\\d`, `Status shade: use its role name. ${statusRoles}`),
+  ...banned(`\\b${UTIL}-(?:danger|success|warning|info|severe)-\\d`, `Status shade: use its role name. ${statusRoles}`),
+  ...banned(
+    `\\b(?:bg|border(?:-[trblxyse])?|ring|outline|divide|fill|stroke|from|to|via|shadow|decoration)-[a-z][\\w-]*\\/\\d|\\btext-(?!(?:xs|sm|base|lg|[2-9]?xl)\\/)[a-z][\\w-]*\\/\\d|\\b(?:[\\w-]*disabled:)+opacity-\\d`,
+    `Colour with an alpha, or a faded disabled state: a theme can't change it. Use a role (hover, selected and disabled each have one). ${tokens}`
+  ),
   ...(literals
     ? banned(
-        '(?:^|[\\s(,\\[:])#[0-9a-fA-F]{3,8}\\b|rgba?\\(|--color-(?:gray|red|green|yellow|blue|white|black|danger|success|warning|info)\\b',
-        `Colour literal: use a named colour class, or its variable in a style (var(--text-color-muted), var(--background-color-surface)). A canvas or Monaco value that copies Lightning is disabled on its line with the reason. ${tokens}`
+        '(?:^|[\\s(,\\[:])#[0-9a-fA-F]{3,8}\\b|\\b(?:rgba?|hsla?|oklch|oklab|lab|lch|hwb)\\(|--(?:color|lt|dk|gds)-',
+        `Colour literal or a palette variable: use a role class, or the role's variable in a style (var(--text-color-muted), var(--background-color-surface)). Only src/theme/ reads the palette. ${tokens}`
       )
     : []),
 ]

@@ -68,7 +68,7 @@ const code = files.filter((f) => !/\.test\.tsx?$/.test(f.path))
 const hues = 'gray|red|green|yellow|blue|amber|orange|purple|pink|sky|indigo|primary|white|black|slate|emerald|teal|violet|rose|lime|cyan|fuchsia'
 // Any palette class, brand and status scales included, alpha or not.
 const anyPalette = new RegExp(
-  `\\b(?:bg|text|border(?:-[trblxyse])?|ring|outline|divide|fill|stroke|from|to|via|placeholder|shadow|decoration|caret|accent)-(?:(?:${hues}|danger|success|warning|info)-\\d|(?:white|black)\\b)`,
+  `\\b(?:bg|text|border(?:-[trblxyse])?|ring|outline|divide|fill|stroke|from|to|via|placeholder|shadow|decoration|caret|accent)-(?:(?:${hues}|danger|success|warning|info|severe)-\\d|(?:white|black)\\b)`,
   'g',
 )
 // A colour class with an alpha (`bg-surface/80`), or a faded disabled state.

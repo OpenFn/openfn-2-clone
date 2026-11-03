@@ -72,4 +72,6 @@ measuring contrast (`prefersDarkText`).
 Contrast is a property of the roles. Every text role passes 4.5:1 on
 every background it can sit on, in every theme, and icons and borders 3:1.
 `STORYBOOK_THEME=<id> npm run test:stories` runs the axe checks under one
-theme; run it for every theme before merging a colour change.
+theme. CI runs it for Lightning v2, Light and Dark; GDS joins once its
+links pass on grey. A unit test (`src/theme/themes.test.ts`) checks that each
+dark theme sets every role, since it can't fall back on the light defaults.
