@@ -39,7 +39,6 @@ export function buildProjectPickerItems(currentPath: string, all: TreeProject[])
           label: p.name,
           searchLabel: label,
           depth,
-          color: p.color,
           href,
           sameSection,
           // A sandbox keeps the beaker even when it's the root of the user's access.

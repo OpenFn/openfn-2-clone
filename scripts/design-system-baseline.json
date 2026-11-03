@@ -1,6 +1,6 @@
 {
   "className= in features + pages": 763,
-  "Class-list literals in features + pages": 336,
+  "Class-list literals in features + pages": 335,
   "  duplicated (same list used 2+ times)": 44,
   "Distinct Tailwind tokens in features + pages": 426,
   "Arbitrary values (`-[…]`) in features + pages": 11,
@@ -8,5 +8,5 @@
   "Raw <input>/<select>/<textarea> in features + pages": 3,
   "Raw <table> in features + pages": 1,
   "Raw palette classes in features + pages": 32,
-  "debt: lines in src": 176
+  "debt: lines in src": 175
 }

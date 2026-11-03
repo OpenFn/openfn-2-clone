@@ -9,7 +9,7 @@ import Text from "./Text";
 export default function NameBadge({ name, children }: { name: string; children?: ReactNode }) {
   if (name === "") return null;
   return (
-    <span>
+    <span data-ui="name-badge">
       {children}
       <Text variant="code-sm" className="ml-1 rounded-md border border-strong bg-warning p-1">{name}</Text>.
     </span>

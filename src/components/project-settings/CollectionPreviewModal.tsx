@@ -1,3 +1,4 @@
+import CodeViewer from "../primitives/CodeViewer";
 import Modal from "../primitives/Modal";
 import Text from "../primitives/Text";
 import TextLink from "../primitives/TextLink";
@@ -11,7 +12,7 @@ interface Props {
 
 /**
  * collections_component.ex `collection_preview_modal`: the first record as
- * JSON. Lightning renders it in a Monaco viewer; this uses a plain <pre>.
+ * JSON in a Monaco viewer.
  */
 export default function CollectionPreviewModal({ name, json, onClose }: Props) {
   return (
@@ -31,8 +32,7 @@ export default function CollectionPreviewModal({ name, json, onClose }: Props) {
       }
     >
       {json ? (
-        // eslint-disable-next-line no-restricted-syntax -- debt: belongs in CodeViewer
-        <pre className="h-96 overflow-auto rounded-md bg-code p-4 text-xs text-code">{json}</pre>
+        <CodeViewer value={json} language="json" ariaLabel={`First record of ${name}`} className="h-96" />
       ) : (
         <Text as="p" tone="faint" className="flex h-96 items-center justify-center">
           This collection is empty.

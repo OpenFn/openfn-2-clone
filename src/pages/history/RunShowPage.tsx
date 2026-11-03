@@ -166,7 +166,7 @@ export default function RunShowPage({
     <PageContent header={header}>
       <Centered className="@container/main h-full">
         <div className="flex gap-x-6 @5xl/main:flex-row flex-col h-full">
-          <div className="@5xl/main:basis-1/3 flex gap-y-6 @5xl/main:flex-col flex-row">
+          <div className="@5xl/main:basis-1/3 flex gap-6 @5xl/main:flex-col flex-row">
             <DetailList id={`run-detail-${run.id}`} className="flex-1 @5xl/main:flex-none">
               <DetailItem label="Workflow">
                 {/* The version this run used sits with the workflow it's a version of. */}

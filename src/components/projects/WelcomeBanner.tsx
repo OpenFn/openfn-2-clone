@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { localHour } from "../../utils/format";
 import TextLink from "../primitives/TextLink";
 
 const PARAGRAPH =
@@ -22,7 +23,7 @@ function greetingFor(name: string, hour: number): string {
  */
 export default function WelcomeBanner({
   firstName,
-  hour = new Date().getHours(),
+  hour = localHour(),
   animate = true,
 }: {
   firstName: string;

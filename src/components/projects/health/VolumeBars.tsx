@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "../../../routing/router";
 import { cn } from "../../../utils/cn";
-import { formatNumber } from "../../../utils/format";
+import { formatMonthDayIn, formatNumber, hourIn } from "../../../utils/format";
 import { historyUrl } from "../../../utils/history";
 import type { RunBucket } from "../../../types/workflow-health";
 import { CANCELLED, DOT, EMPTY, FAILED, FRAME, LEGEND, SUCCESS } from "./palette";
@@ -31,24 +31,19 @@ const bucketUrl = (projectId: string, workflowId: string, buckets: RunBucket[], 
     run_status: states,
   });
 
-const dayLabel = (d: Date, tz: string) => d.toLocaleDateString(undefined, { month: "short", day: "numeric", timeZone: tz });
-const hour = (d: Date, tz: string) =>
-  Number(d.toLocaleString("en-GB", { hour: "2-digit", hourCycle: "h23", timeZone: tz }));
 const hourLabel = (h: number) => `${String(h).padStart(2, "0")}:00`;
 
 /** "Oct 14, 14:00 – 16:00"; a daily bar is just its day. */
 function rangeLabel(at: string, hours: number, tz: string) {
-  const start = new Date(at);
-  if (hours >= 24) return dayLabel(start, tz);
-  const from = hour(start, tz);
-  return `${dayLabel(start, tz)}, ${hourLabel(from)} – ${hourLabel((from + hours) % 24)}`;
+  if (hours >= 24) return formatMonthDayIn(at, tz);
+  const from = hourIn(at, tz);
+  return `${formatMonthDayIn(at, tz)}, ${hourLabel(from)} – ${hourLabel((from + hours) % 24)}`;
 }
 
 function tickLabel(at: string, hours: number, tz: string) {
-  const d = new Date(at);
-  if (hours >= 24) return dayLabel(d, tz);
-  if (hours >= 12) return hour(d, tz) < 12 ? dayLabel(d, tz) : "";
-  return hourLabel(hour(d, tz));
+  if (hours >= 24) return formatMonthDayIn(at, tz);
+  if (hours >= 12) return hourIn(at, tz) < 12 ? formatMonthDayIn(at, tz) : "";
+  return hourLabel(hourIn(at, tz));
 }
 
 /**

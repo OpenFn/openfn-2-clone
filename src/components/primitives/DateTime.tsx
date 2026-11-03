@@ -38,6 +38,7 @@ export default function DateTime({
     >
       {/* A span, not a button, because Lightning puts dates inside links. */}
       <span
+        data-ui="date-time"
         role="button"
         tabIndex={0}
         onKeyDown={(e) => {

@@ -240,6 +240,13 @@ goes back to Lightning's way.
   beside it; the replica uses `Section`'s heading, so it matches Outcomes
   and Failure breakdown.
 
+## Spacing
+
+- **The run page's details and step list have a gap when side by side.**
+  Below the wide layout (main area under 64rem), Lightning puts them in a row
+  with only a vertical gap (`run_live/show.ex:103`), so the step list touches
+  the details' values. The replica uses the same 24px gap both ways.
+
 ## Colour
 
 - **Muted, faint and link text are a shade darker.** Lightning uses

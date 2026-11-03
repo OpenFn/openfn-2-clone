@@ -75,33 +75,23 @@ describe("every page and component can be seen and checked", () => {
       const name = path.slice(folder.length, -".tsx".length);
       return !paths.some((story) => story.startsWith(folder) && story.endsWith(".stories.tsx") && sources[story]!.includes(`from "./${name}"`));
     });
-    expectOnlyKnown(missing, ["./components/shell/ProjectBreadcrumbs.tsx"]);
+    expect(missing).toEqual([]);
   });
 
   it("every primitive gives themes a data-ui hook", () => {
-    const missing = components.filter((path) => path.startsWith("./components/primitives/") && !sources[path]!.includes("data-ui"));
-    expectOnlyKnown(missing, [
-      "./components/primitives/Breadcrumbs.tsx",
-      "./components/primitives/ButtonMenu.tsx",
-      "./components/primitives/CloseButton.tsx",
-      "./components/primitives/ConfirmModal.tsx",
-      "./components/primitives/CopyButton.tsx",
-      "./components/primitives/DateTime.tsx",
-      "./components/primitives/DetailList.tsx",
-      "./components/primitives/Disclosure.tsx",
-      "./components/primitives/FormModal.tsx",
-      "./components/primitives/IconButton.tsx",
-      "./components/primitives/InfoTooltip.tsx",
-      "./components/primitives/Markdown.tsx",
-      "./components/primitives/MetricCard.tsx",
-      "./components/primitives/NameBadge.tsx",
-      "./components/primitives/NameField.tsx",
-      "./components/primitives/Picker.tsx",
-      "./components/primitives/SectionHeader.tsx",
-      "./components/primitives/SplitButton.tsx",
-      "./components/primitives/TextPingLoader.tsx",
-      "./components/primitives/UserAvatar.tsx",
-    ]);
+    // One whose root is another primitive (IconButton renders Button) already
+    // carries that one's hook; its own would replace it and break theme rules.
+    // Every JSX root the default export returns must be one; `return null` is fine.
+    const wrapsPrimitive = (text: string) => {
+      const body = text.slice(text.indexOf("export default function"));
+      const roots = [...body.matchAll(/return \(?\s*(?:\/\/[^\n]*\n\s*)*<(\w*)/g)].map((m) => m[1]!);
+      const imported = (tag: string) => new RegExp(`^import ${tag}\\b.* from "\\./`, "m").test(text);
+      return roots.length > 0 && roots.every(imported);
+    };
+    const missing = components.filter(
+      (path) => path.startsWith("./components/primitives/") && !sources[path]!.includes("data-ui") && !wrapsPrimitive(sources[path]!)
+    );
+    expect(missing).toEqual([]);
   });
 
   it("every routed page has an annotations view id", () => {
@@ -123,6 +113,6 @@ describe("dates are formatted in one place", () => {
     const missing = paths.filter(
       (path) => isSource(path) && !/^\.\/(utils|mock-data|test)\//.test(path) && dateParts.test(sources[path]!)
     );
-    expectOnlyKnown(missing, ["./components/projects/WelcomeBanner.tsx", "./components/projects/health/VolumeBars.tsx"]);
+    expect(missing).toEqual([]);
   });
 });

@@ -26,7 +26,8 @@ export function useFieldControl() {
  * fails tests and stories, and logs an error in the dev app.
  */
 export function checkNamed(control: string, named: boolean) {
-  if (named || !import.meta.env.DEV) return;
+  // A host that doesn't bundle with Vite (Lightning's esbuild) has no import.meta.env
+  if (named || !import.meta.env?.DEV) return;
   const message = `${control} has no name: give it a label, or aria-label when the label isn't visible.`;
   if (import.meta.env.MODE === "test") throw new Error(message);
   console.error(message);
