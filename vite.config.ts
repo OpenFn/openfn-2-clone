@@ -13,7 +13,7 @@ export default defineConfig(({ mode }) => {
     plugins: [react(), tailwindcss()],
     server: {
       // VITE_API=lightning sends the API client here. Same origin as the app, so
-      // Lightning's session cookie counts (F606).
+      // Lightning's session cookie counts.
       proxy: { '/api': { target: LIGHTNING_URL, changeOrigin: true } },
     },
     test: {

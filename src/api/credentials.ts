@@ -1,4 +1,4 @@
-/** Credentials on Lightning's API (api/credentials.md): the API's shape, its mapper and its requests (D376). */
+/** Credentials on Lightning's API (api/credentials.md): the API's shape, its mapper and its requests. */
 import type { CredentialRow } from "../types/credentials";
 import { listAll } from "./client";
 
@@ -6,7 +6,7 @@ import { listAll } from "./client";
 export interface ApiCredential {
   id: string;
   name: string;
-  /** Lightning `main` sends the adaptor's package name (`@openfn/language-dhis2`), or `raw` / `oauth` (F613). */
+  /** Lightning `main` sends the adaptor's package name (`@openfn/language-dhis2`), or `raw` / `oauth`; api/credentials.md says `raw`, `http` or `dhis2`. */
   schema: string;
   external_id: string | null;
   user_id: string;
@@ -19,7 +19,7 @@ export interface ApiCredential {
  * One of the viewer's own credentials as a Credentials table row. Every
  * credential `GET /api/credentials` lists is the caller's, so the viewer owns
  * it. What the API doesn't send yet (api/credentials.md's planned scope, and
- * `workflowsUsing`, F615) gets the answer for a credential with none: one
+ * `workflowsUsing`, which api/ has nothing for) gets the answer for a credential with none: one
  * `main` environment, nothing pending, no runs.
  */
 export function ownCredentialRow(c: ApiCredential, viewerEmail: string): CredentialRow {

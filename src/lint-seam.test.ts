@@ -199,13 +199,13 @@ describe("the tier lint rule", () => {
 });
 
 describe("the data-flow lint rules (PRINCIPLES.md, How data flows)", () => {
-  it("nothing writes a response into the query cache (D374)", async () => {
+  it("nothing writes a response into the query cache", async () => {
     const code = "declare const client: { setQueryData(k: unknown, v: unknown): void; setQueriesData(k: unknown, v: unknown): void };\nclient.setQueryData([\"credentials\"], []);\nclient.setQueriesData({}, []);\n";
     expect(await ruleMessages("no-restricted-properties", "src/pages/x/SeamProbe.replica.tsx", code)).toHaveLength(2);
     expect(await ruleMessages("no-restricted-properties", "src/api/seamProbe.ts", code)).toHaveLength(2);
   });
 
-  it("src/api/ imports no toasts or components (D375)", async () => {
+  it("src/api/ imports no toasts or components", async () => {
     const code = 'import { useToast } from "../components/primitives/Toast";\nexport const x = useToast;\n';
     expect(await seamMessages("src/api/seamProbe.ts", code)).toHaveLength(1);
     expect(await seamMessages("src/pages/x/SeamProbe.replica.tsx", 'import { useToast } from "../../components/primitives/Toast";\nexport const x = useToast;\n')).toEqual([]);

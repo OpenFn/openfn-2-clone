@@ -145,7 +145,7 @@ A component never copies a record list into local state and mutates it.
 ## 5. Resource loading states
 
 A page whose host loads its data after it renders needs the same four
-treatments: loading, not found, forbidden, error (D375).
+treatments: loading, not found, forbidden, error.
 
 - The page takes an optional `status?: ResourceStatus` prop and wraps the
   part that waits in `AsyncBoundary`, which draws `Spinner`, Lightning's

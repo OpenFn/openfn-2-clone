@@ -1,4 +1,4 @@
-/** Projects on Lightning's API (api/projects.md, JSON:API): the API's shape, its mapper and its requests (D376). */
+/** Projects on Lightning's API (api/projects.md, JSON:API): the API's shape, its mapper and its requests. */
 import type { CredentialProjectRef } from "../types/credentials";
 import { listAll } from "./client";
 

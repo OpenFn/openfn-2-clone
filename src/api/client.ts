@@ -1,9 +1,9 @@
 /**
- * The one way the replica reaches Lightning's API (D376). With `VITE_API=lightning`
+ * The one way the replica reaches Lightning's API. With `VITE_API=lightning`
  * it calls a real Lightning through Vite's `/api` proxy (vite.config.ts), on
  * Lightning's session cookie; by default it calls the stand-in, which replays
  * recorded answers (`recorded/`) after a short delay. A refused request throws
- * an `ApiError`: show its `message`, branch on its `code` (G199).
+ * an `ApiError`: show its `message`, branch on its `code`.
  */
 import { RequestError } from "../utils/errors";
 import credentials from "./recorded/credentials.json";
@@ -45,7 +45,7 @@ export interface ProblemEntry {
 
 /**
  * A request Lightning refused. Show `message` (the problem's `detail`) and
- * branch on `code`, never on the wording (G199). Entries with a body pointer
+ * branch on `code`, never on the wording. Entries with a body pointer
  * become `fieldErrors`, keyed by the pointer without `#/` (`#/name` → `name`,
  * `#/members/0/email` → `members.0.email`).
  */
