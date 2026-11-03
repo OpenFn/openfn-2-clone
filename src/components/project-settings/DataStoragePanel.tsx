@@ -62,7 +62,7 @@ export default function DataStoragePanel({ dataStorage, sandbox, onSave }: Props
         permissionsSection={canEdit ? undefined : "data storage settings."}
       />
       {sandbox && <SandboxSettingsBanner scope="local" />}
-      {/* One card per setting, each a Field named by its label (D253); they save together, as in Lightning. */}
+      {/* One card per setting, each a Field named by its label; they save together, as in Lightning. */}
       <Form
         id="retention-settings-form"
         actions={

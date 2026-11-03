@@ -62,12 +62,12 @@ export default function UserMenu({ user }: { user: MenuUser }) {
                 Experimental features on
               </Row>
             </Heading>
-            {/* eslint-disable-next-line local/primitive-classname -- debt: F525 margin (mt-0.5) */}
+            {/* eslint-disable-next-line local/primitive-classname -- debt: margin (mt-0.5) */}
             <Text as="p" variant="body-sm" tone="muted" className="mt-0.5">
               You're using features that are still being built. Things may work differently for you than for your
               teammates.
             </Text>
-            {/* eslint-disable-next-line local/primitive-classname -- debt: F525 margin, F527 colour (mt-1.5 text-amber-700) */}
+            {/* eslint-disable-next-line local/primitive-classname -- debt: margin, colour (mt-1.5 text-amber-700) */}
             <Text as="p" variant="body-sm" className="mt-1.5 text-amber-700">
               <MenuLink to="/profile">Turn off in your profile</MenuLink>
             </Text>

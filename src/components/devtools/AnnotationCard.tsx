@@ -41,7 +41,7 @@ function IdList({ label, ids, onOpenId }: { label: string; ids: string[]; onOpen
       <Row gap="sm" wrap>
         <span className="text-muted">{label}</span>
         {ids.map((id) => (
-          // eslint-disable-next-line no-restricted-syntax, local/primitive-classname -- debt: Button has no 12px mono size for ids; F528 type (font-mono text-xs)
+          // eslint-disable-next-line no-restricted-syntax, local/primitive-classname -- debt: Button has no 12px mono size for ids; type (font-mono text-xs)
           <Button key={id} variant="secondary" size="xs" className="font-mono text-xs" onClick={() => onOpenId?.(id)}>
             {id}
           </Button>
@@ -63,7 +63,7 @@ export default function AnnotationCard({ id, annotation, inventory, onOpenId, in
   const list = (key: string) => (Array.isArray(fm[key]) ? (fm[key] as string[]) : []);
 
   return (
-    // eslint-disable-next-line no-restricted-syntax -- debt: F558 a child would change in a flex column
+    // eslint-disable-next-line no-restricted-syntax -- debt: a child would change in a flex column
     <div className="space-y-4">
       <Stack gap="sm">
         <div className="flex items-start justify-between gap-2">
@@ -117,7 +117,7 @@ export default function AnnotationCard({ id, annotation, inventory, onOpenId, in
         <>
           {annotation.frontMatterRaw && (
             <Disclosure title="Front matter" defaultOpen={false} padding="none">
-              {/* eslint-disable-next-line local/primitive-classname -- debt: F526 box (border-t border-subtle px-4 py-3) */}
+              {/* eslint-disable-next-line local/primitive-classname -- debt: box (border-t border-subtle px-4 py-3) */}
               <Text as="pre" variant="code-sm" tone="muted" className="overflow-x-auto border-t border-subtle px-4 py-3">
                 {annotation.frontMatterRaw}
               </Text>

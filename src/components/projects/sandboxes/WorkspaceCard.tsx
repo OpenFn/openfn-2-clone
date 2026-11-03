@@ -52,7 +52,7 @@ export default function WorkspaceCard({
       padding="none"
       variant={deleted ? "muted" : "default"}
       // The whole card shows the focus outline when its name area is reached by keyboard.
-      // eslint-disable-next-line local/primitive-classname -- debt: F526 box, F529 state (has-[[role=button]:focus-visible]:outline-2 has-[[role=button]:focus-visible]:outline-offset-2 has-[[role=button]:focus-visible]:outline-focus opacity-75 hover:bg-hover)
+      // eslint-disable-next-line local/primitive-classname -- debt: box, state (has-[[role=button]:focus-visible]:outline-2 has-[[role=button]:focus-visible]:outline-offset-2 has-[[role=button]:focus-visible]:outline-focus opacity-75 hover:bg-hover)
       className={cn(
         "flex overflow-hidden has-[[role=button]:focus-visible]:outline-2 has-[[role=button]:focus-visible]:outline-offset-2 has-[[role=button]:focus-visible]:outline-focus",
         deleted ? "opacity-75" : "hover:bg-hover"
@@ -77,7 +77,7 @@ export default function WorkspaceCard({
         {/* Only on the name: around the badges too, it would open with their own tooltips. */}
         <Tooltip content={deleted ? deletionTooltip(deleted) : undefined}>
           <div className="min-w-0">
-            {/* eslint-disable-next-line local/primitive-classname -- debt: F527 colour, F529 state (text-muted line-through) */}
+            {/* eslint-disable-next-line local/primitive-classname -- debt: colour, state (text-muted line-through) */}
             <Heading size="lg" className={cn("truncate", deleted && "text-muted line-through")}>
               {workspace.name}
             </Heading>

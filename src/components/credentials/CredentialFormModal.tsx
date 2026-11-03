@@ -429,7 +429,7 @@ export default function CredentialFormModal({
       before={
         schema === "oauth" &&
         !client && (
-          // eslint-disable-next-line local/primitive-classname -- debt: F525 margin (mb-4)
+          // eslint-disable-next-line local/primitive-classname -- debt: margin (mb-4)
           <Alert tone="danger" header="OAuth client not found" className="mb-4">
             <p>The associated Oauth client for this credential cannot be found. Create a new client or contact your administrator.</p>
           </Alert>
@@ -529,7 +529,7 @@ export default function CredentialFormModal({
               label="Credential Body"
               required
               rows={8}
-              // eslint-disable-next-line local/primitive-classname -- debt: F528 type (font-mono)
+              // eslint-disable-next-line local/primitive-classname -- debt: type (font-mono)
               className="font-mono"
               value={env.body}
               onChange={(e) => patchEnv(env.key, { body: e.target.value })}
@@ -622,7 +622,7 @@ function SchemaInput({
           label={f.label}
           required={f.required}
           rows={4}
-          // eslint-disable-next-line local/primitive-classname -- debt: F528 type (font-mono)
+          // eslint-disable-next-line local/primitive-classname -- debt: type (font-mono)
           className="font-mono"
           value={code ?? (value === undefined ? "" : JSON.stringify(value, null, 2))}
           errors={code !== undefined && !parseJson(code).ok ? ["must be valid JSON"] : []}
@@ -774,7 +774,7 @@ function OauthFields({
   }
 
   return (
-    // eslint-disable-next-line no-restricted-syntax -- debt: F558 a child would change in a flex column
+    // eslint-disable-next-line no-restricted-syntax -- debt: a child would change in a flex column
     <div className="space-y-4">
       {scopes.length > 0 && (
         <Section

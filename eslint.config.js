@@ -40,7 +40,7 @@ const designRules = [
     selector: 'JSXOpeningElement[name.name=/^[A-Z]/]:not([name.name=/^(Diff)?Editor$/]) > JSXAttribute[name.name=/^(theme|kind|appearance)$/]',
     message: propNames,
   },
-  // D300: a look is one `variant`, not a boolean. The primitives' old boolean names stay banned.
+  // A look is one `variant`, not a boolean. The primitives' old boolean names stay banned.
   {
     selector: 'JSXOpeningElement[name.name=/^(Card|Table|Modal|DetailItem|Pill|Disclosure|Header)$/] > JSXAttribute[name.name=/^(muted|dashed|square|mono|bare|divide|padded|loggedOut)$/]',
     message: "A look is one `variant`, not a boolean prop (PRINCIPLES.md, Components).",
@@ -62,14 +62,14 @@ const designRules = [
     selector: 'JSXOpeningElement[name.name=/^[a-z]/] > JSXAttribute[name.name="title"]',
     message: "Native title tooltip: use `Tooltip`, or the component's own `tooltip` prop.",
   },
-  // A cell's own max-width doesn't hold in an auto-layout table, so hand-made truncation spills (F530).
+  // A cell's own max-width doesn't hold in an auto-layout table, so hand-made truncation spills.
   {
     selector: 'JSXOpeningElement[name.name="Td"] > JSXAttribute[name.name="className"] :matches(Literal[value=/\\btruncate\\b/], TemplateElement[value.raw=/\\btruncate\\b/])',
     message: "Truncate a cell with `<Td truncate maxWidth={…}>`, not a class: a cell's max-width doesn't hold in an auto table layout.",
   },
 ]
 
-// D312: a className that is only a plain column or line is Stack or Row. Any gap is caught, so an
+// A className that is only a plain column or line is Stack or Row. Any gap is caught, so an
 // off-scale one left behind carries a debt: disable until it's rounded. Only static strings are read.
 const tok = (t) => `(?=(?:\\S+\\s+)*${t}(?:\\s|$))`
 const only = (ts) => `(?:(?:${ts})(?:\\s+|$))+$`
@@ -162,7 +162,7 @@ const local = {
         }
       },
     },
-    // D299: a primitive's className, from a page or feature component, is layout and sizing only
+    // A primitive's className, from a page or feature component, is layout and sizing only
     // (src/components/CLAUDE.md). Names imported from primitives/ are checked; a className held in
     // a variable passes unread.
     'primitive-classname': {
@@ -203,7 +203,7 @@ const local = {
   },
 }
 
-// Layout and sizing (D299): display, flex and grid, gaps, sizing, text overflow, overflow,
+// Layout and sizing: display, flex and grid, gaps, sizing, text overflow, overflow,
 // position, sr-only, group/peer and container queries. Variant prefixes (`sm:`) and `!` are stripped first.
 const layoutClass =
   /^(flex|inline-flex|grid|inline-grid|block|inline-block|inline|hidden|contents|(flex|grid|col|row|items|justify|content|self|place|order|gap|space-[xy])-.+|(min-|max-)?[wh]-.+|size-.+|(shrink|grow)(-.+)?|basis-.+|aspect-.+|truncate|line-clamp-.+|(whitespace|break|wrap)-.+|text-(wrap|nowrap|balance|pretty|ellipsis|clip)|overflow-.+|relative|absolute|fixed|sticky|static|(inset|top|bottom|left|right|z)-.+|(not-)?sr-only|(group|peer)(\/.+)?|isolate|@container(\/.+)?)$/
@@ -327,7 +327,7 @@ export default defineConfig([
     rules: { 'no-restricted-syntax': [...consumerRules(colourRules()), ...typeRules, ...stackRules] },
   },
   {
-    // D299.
+    // A primitive's className, from a page or feature component, is layout and sizing only.
     files: ['src/pages/**/*.tsx', 'src/components/*/**/*.tsx'],
     ignores: ['src/components/primitives/**', '**/*.stories.tsx', '**/*.test.tsx'],
     rules: { 'local/primitive-classname': 'error' },

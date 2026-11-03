@@ -107,7 +107,7 @@ function BulkModal({
           {button("all", allLabel)}
           <div className="relative col-span-2 flex justify-center" aria-hidden="true">
             <div className="absolute inset-x-0 top-1/2 border-t border-strong" />
-            {/* eslint-disable-next-line local/primitive-classname -- debt: F526 box (bg-surface px-2) */}
+            {/* eslint-disable-next-line local/primitive-classname -- debt: box (bg-surface px-2) */}
             <Text tone="muted" className="relative bg-surface px-2">OR</Text>
           </div>
           <div className="col-span-2 grid">{back}</div>

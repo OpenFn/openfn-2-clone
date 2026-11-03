@@ -25,7 +25,7 @@ const methodColors: Record<string, PillColor> = {
 
 export function MethodBadge({ method }: { method: string | null | undefined }) {
   return (
-    // eslint-disable-next-line local/primitive-classname -- debt: F528 type (font-bold uppercase)
+    // eslint-disable-next-line local/primitive-classname -- debt: type (font-bold uppercase)
     <Pill variant="square" color={(method && methodColors[method]) || "gray"} className="font-bold uppercase">
       <code>{method || "—"}</code>
     </Pill>
@@ -52,7 +52,7 @@ function statusTone(status: number | null | undefined): Tone {
 /** An HTTP status code chip, coloured by class (`status_code_display`, `status_code_badge`). */
 export function StatusCodeBadge({ status }: { status: number | null | undefined }) {
   return (
-    // eslint-disable-next-line local/primitive-classname -- debt: F528 type (font-bold)
+    // eslint-disable-next-line local/primitive-classname -- debt: type (font-bold)
     <Pill variant="square" tone={statusTone(status)} className="font-bold">
       <code>{status ?? "—"}</code>
     </Pill>
@@ -110,7 +110,7 @@ export function BodyViewer({
   }
   if (ct && !isText(ct)) {
     return (
-      // eslint-disable-next-line local/primitive-classname -- debt: F526 box (py-4)
+      // eslint-disable-next-line local/primitive-classname -- debt: box (py-4)
       <Text as="div" tone="muted" className="flex items-center gap-2 py-4">
         <Pill variant="square">
           <code>{contentTypeLabel(ct)}</code>
@@ -124,10 +124,10 @@ export function BodyViewer({
   const previewBytes = preview == null ? 0 : new TextEncoder().encode(preview).length;
   if (preview == null) {
     return (
-      // eslint-disable-next-line local/primitive-classname -- debt: F526 box (py-4)
+      // eslint-disable-next-line local/primitive-classname -- debt: box (py-4)
       <Text as="div" tone="muted" className="py-4">
         Body not captured
-        {/* eslint-disable-next-line local/primitive-classname -- debt: F525 margin (ml-1) */}
+        {/* eslint-disable-next-line local/primitive-classname -- debt: margin (ml-1) */}
         {size != null && <Text variant="body-sm" tone="faint" className="ml-1">({formatBytes(size)})</Text>}
       </Text>
     );
@@ -142,7 +142,7 @@ export function BodyViewer({
                 <code>{contentTypeLabel(ct)}</code>
               </Pill>
             )}
-            {/* eslint-disable-next-line local/primitive-classname -- debt: F526 box (bg-white/80) */}
+            {/* eslint-disable-next-line local/primitive-classname -- debt: box (bg-white/80) */}
             <CopyButton value={preview} label="Copy body" size="xs" className="bg-white/80" />
           </div>
           <pre className="max-h-80 overflow-auto whitespace-pre-wrap break-all p-3 pr-20 font-mono text-body">{preview}</pre>
@@ -178,7 +178,7 @@ export function ResponseEmpty({
       ? ["hero-exclamation-triangle", "No response received"]
       : ["hero-lock-closed", "Request not sent — credential error"];
   return (
-    // eslint-disable-next-line local/primitive-classname -- debt: F526 box (border-t border-subtle)
+    // eslint-disable-next-line local/primitive-classname -- debt: box (border-t border-subtle)
     <EmptyState variant="plain" icon={icon} title={label} message={humanMessage} className="border-t border-subtle">
       <Pill variant="square">
         <code>{errorCode}</code>

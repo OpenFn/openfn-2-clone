@@ -23,9 +23,9 @@ export default function WipedDataViewer({
   adminContacts?: string[];
 }) {
   return (
-    // eslint-disable-next-line local/primitive-classname -- debt: F525 margin, F526 box (mb-4 px-8 pb-8 pt-6)
+    // eslint-disable-next-line local/primitive-classname -- debt: margin, box (mb-4 px-8 pb-8 pt-6)
     <Card variant="dashed" padding="none" className="mb-4 px-8 pb-8 pt-6">
-      {/* eslint-disable-next-line local/primitive-classname -- debt: F528 type (text-center) */}
+      {/* eslint-disable-next-line local/primitive-classname -- debt: type (text-center) */}
       <Text as="div" tone="muted" className="space-y-4 text-center">
         <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full border-2 border-strong text-faint">
           <span className="hero-code-bracket h-4 w-4" />

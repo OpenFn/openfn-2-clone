@@ -3,7 +3,7 @@
 ## className on a primitive is layout and sizing only
 
 A page or feature component passes a primitive a `className` to place and
-size it, never to change how it looks (D299). Lint checks it
+size it, never to change how it looks. Lint checks it
 (`local/primitive-classname` in eslint.config.js).
 
 Allowed (after `sm:`, `hover:`, `@5xl/main:` prefixes and `!`):
@@ -33,7 +33,7 @@ A heading over a block of content is a `Section` (it owns the gaps), not a
 
 Never add a `debt:` disable in new work: code that can't pass lint isn't
 finished. Only uses that predate the rule are frozen, with
-`// eslint-disable-next-line local/primitive-classname -- debt: F5xx …`,
-naming the finding (F525 margin, F526 padding/border/background, F527
-colour, F528 type, F529 state looks). `grep -rn "primitive-classname" src`
+`// eslint-disable-next-line local/primitive-classname -- debt: <kind> (<classes>)`,
+naming the kind: margin, box (padding, border, background), colour, type
+or state. `grep -rn "primitive-classname" src`
 lists them; the count only goes down.
