@@ -12,6 +12,7 @@
   },
   "scripts": {
     "dev": "vite",
+    "dev:fake": "VITE_API=fake vite",
     "build": "tsc -b && vite build",
     "lint": "eslint . --max-warnings 0",
     "preview": "vite preview",

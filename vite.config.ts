@@ -12,11 +12,13 @@ export default defineConfig(({ mode }) => {
     base: '/openfn-3-poc/',
     plugins: [react(), tailwindcss()],
     server: {
-      // VITE_API=lightning sends the API client here. Same origin as the app, so
+      // The API client calls Lightning here, unless VITE_API=fake. Same origin as the app, so
       // Lightning's session cookie counts.
       proxy: { '/api': { target: LIGHTNING_URL, changeOrigin: true } },
     },
     test: {
+      // Tests run on the stand-in, never a real Lightning.
+      env: { VITE_API: 'fake' },
       // Monaco rejects its pending timers with "Canceled" when a story unmounts.
       onUnhandledError: (error) => error.message !== 'Canceled',
       projects: [

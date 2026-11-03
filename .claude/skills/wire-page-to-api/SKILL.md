@@ -105,8 +105,8 @@ Break the invalidation once and watch the first test fail.
 
 ## 5. See it work, both ways
 
-Start the replica twice: `npx vite --port <a>` for the stand-in, and
-`VITE_API=lightning npx vite --port <b>` against Lightning on :4000. In a
+Start the replica twice: `VITE_API=fake npx vite --port <a>` for the stand-in, and
+`npx vite --port <b>` against Lightning on :4000 (the default). In a
 headless browser (Playwright from `node_modules`), sign in on the live one
 by calling `fetch("/api/session", { method: "POST", ... })` from the page
 and reload (a list that loaded before signing in holds its 401), then go through every action on the page in both modes: a save, a refusal,

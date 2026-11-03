@@ -1,7 +1,7 @@
 /**
- * The one way the replica reaches Lightning's API. With `VITE_API=lightning`
- * it calls a real Lightning through Vite's `/api` proxy (vite.config.ts), on
- * Lightning's session cookie; by default it calls the stand-in, which answers
+ * The one way the replica reaches Lightning's API. It calls a real Lightning
+ * through Vite's `/api` proxy (vite.config.ts), on Lightning's session cookie;
+ * with `VITE_API=fake` (`npm run dev:fake`) it calls the stand-in, which answers
  * the way Lightning would, from recorded answers (`recorded/`), after a short
  * delay. A refused request throws an `ApiError`: show its `message`, branch on
  * its `code`.
@@ -10,8 +10,8 @@ import { useMutation, useQueryClient, type QueryKey, type UseQueryResult } from 
 import type { ResourceStatus } from "../types/resource";
 import { RequestError } from "../utils/errors";
 
-/** Calling a real Lightning (`VITE_API=lightning`) rather than the stand-in. */
-export const live = import.meta.env["VITE_API"] === "lightning";
+/** Calling a real Lightning, unless asked for the stand-in (`VITE_API=fake`, `npm run dev:fake`). */
+export const live = import.meta.env["VITE_API"] !== "fake";
 
 type Method = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 

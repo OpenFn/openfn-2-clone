@@ -44,7 +44,9 @@ data, comments, lint) and loads by itself when you touch one.
 ## Running it
 
 - `npm run dev`, then open `http://localhost:5173/openfn-3-poc/#/projects`.
-  It's a hash router; `/projects` is a 404.
+  It's a hash router; `/projects` is a 404. The pages on the API call a
+  Lightning on :4000 (`LIGHTNING_URL` to change it); `npm run dev:fake`
+  runs them on the stand-in instead, with no Lightning.
 - `npm run storybook` (port 6006).
 - `npm run compare:all` compares the replica with a local Lightning. Use
   the `compare-with-lightning` skill.
