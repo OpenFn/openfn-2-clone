@@ -95,7 +95,7 @@ export default function ChannelTiming({ event }: { event: ChannelEvent | undefin
         <div className="relative">
           <div
             className="relative flex h-10 w-full items-center overflow-hidden rounded-lg p-1.5"
-            style={{ background: showOverhead ? hatch : "var(--color-gray-100)" }}
+            style={{ background: showOverhead ? hatch : "var(--background-color-sunken)" }}
           >
             <div className="flex h-7 w-full min-w-0">
               {segs.map((s) => (

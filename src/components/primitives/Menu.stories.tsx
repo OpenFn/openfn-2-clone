@@ -85,9 +85,9 @@ export const WithInlineLink: Story = {
   args: {
     children: (
       <>
-        <div className="bg-amber-50 px-4 py-3">
+        <div className="bg-warning px-4 py-3">
           <p className="text-xs text-muted">You're using features that are still being built.</p>
-          <p className="mt-1.5 text-xs text-amber-700">
+          <p className="mt-1.5 text-xs text-warning">
             <MenuLink to="/profile">Turn off in your profile</MenuLink>
           </p>
         </div>

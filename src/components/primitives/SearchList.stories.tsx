@@ -12,8 +12,8 @@ const meta: Meta<typeof SearchList> = {
   component: SearchList,
   decorators: [
     (Story) => (
-      // eslint-disable-next-line no-restricted-syntax -- the same faint gray-700 ring as Modal; no named colour is a tint
-      <div className="w-lg rounded-xl bg-surface shadow-lg ring-1 ring-gray-700/10">
+       
+      <div className="w-lg rounded-xl bg-surface shadow-lg ring-1 ring-floating">
         <Story />
       </div>
     ),

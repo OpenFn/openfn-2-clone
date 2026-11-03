@@ -91,8 +91,8 @@ html[data-theme="lightning-v2"] {
 /*  - Focus is a soft blurple halo rather than a hard outline.    */
 /* ============================================================== */
 html[data-theme="light"] {
-  --app-bg: #ffffff;
-  --app-fg: #1a1b25;
+  --app-bg: var(--background-color-surface);
+  --app-fg: var(--text-color-strong);
 
   --font-sans: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
     sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
@@ -105,42 +105,42 @@ html[data-theme="light"] {
   --font-weight-bold: 600;
 
   /* Neutral: cool greys with a hint of blue. */
-  --color-gray-50: #f7f8fa;
-  --color-gray-100: #f0f2f5;
-  --color-gray-200: #e3e7ec;
-  --color-gray-300: #cfd5dd;
-  --color-gray-400: #a3acba;
-  --color-gray-500: #6c7688;
-  --color-gray-600: #545b6b;
-  --color-gray-700: #414552;
-  --color-gray-800: #2b2d38;
-  --color-gray-900: #1a1b25;
-  --color-gray-950: #0d0e14;
+  --lt-gray-50: #f7f8fa;
+  --lt-gray-100: #f0f2f5;
+  --lt-gray-200: #e3e7ec;
+  --lt-gray-300: #cfd5dd;
+  --lt-gray-400: #a3acba;
+  --lt-gray-500: #6c7688;
+  --lt-gray-600: #545b6b;
+  --lt-gray-700: #414552;
+  --lt-gray-800: #2b2d38;
+  --lt-gray-900: #1a1b25;
+  --lt-gray-950: #0d0e14;
 
   /* Primary: blurple, centred on #635bff. Drives primary utilities. */
-  --color-indigo-50: #f5f5ff;
-  --color-indigo-100: #ebeaff;
-  --color-indigo-200: #d6d3ff;
-  --color-indigo-300: #b3aeff;
-  --color-indigo-400: #8f88ff;
-  --color-indigo-500: #7a73ff;
-  --color-indigo-600: #635bff;
-  --color-indigo-700: #554dea;
-  --color-indigo-800: #4740c7;
-  --color-indigo-900: #37329a;
-  --color-indigo-950: #221f60;
+  --lt-indigo-50: #f5f5ff;
+  --lt-indigo-100: #ebeaff;
+  --lt-indigo-200: #d6d3ff;
+  --lt-indigo-300: #b3aeff;
+  --lt-indigo-400: #8f88ff;
+  --lt-indigo-500: #7a73ff;
+  --lt-indigo-600: #635bff;
+  --lt-indigo-700: #554dea;
+  --lt-indigo-800: #4740c7;
+  --lt-indigo-900: #37329a;
+  --lt-indigo-950: #221f60;
 
-  --ui-text: #1a1b25;
-  --ui-secondary-text: #6c7688;
-  --ui-border: #e3e7ec;
-  --ui-brand: #635bff;
-  --ui-brand-hover: #554dea;
-  --ui-halo: 0 0 0 4px rgb(99 91 255 / 0.18);
-  --ui-surface: #f7f8fa;
+  --ui-text: var(--text-color-strong);
+  --ui-secondary-text: var(--text-color-muted);
+  --ui-border: var(--border-color-subtle);
+  --ui-brand: var(--lt-indigo-600);
+  --ui-brand-hover: var(--lt-indigo-700);
+  --ui-halo: 0 0 0 4px color-mix(in oklab, var(--lt-indigo-600) 18%, transparent);
+  --ui-surface: var(--lt-gray-50);
 
   /* Workflow canvas: blurple selection. */
-  --ui-diagram-selected: #635bff;
-  --ui-diagram-selected-disabled: #d6d3ff;
+  --ui-diagram-selected: var(--lt-indigo-600);
+  --ui-diagram-selected-disabled: var(--lt-indigo-200);
 
   /* Slightly softer corners than Lightning's. */
   --radius-xs: 0.1875rem;
@@ -158,18 +158,59 @@ html[data-theme="light"] {
   --shadow-card: 0 2px 5px rgb(60 66 87 / 0.06), 0 7px 14px rgb(60 66 87 / 0.06);
   --shadow-lg: 0 0 0 1px rgb(60 66 87 / 0.06), 0 7px 14px rgb(60 66 87 / 0.08), 0 15px 35px rgb(60 66 87 / 0.1);
   --shadow-xl: 0 0 0 1px rgb(60 66 87 / 0.06), 0 15px 35px rgb(60 66 87 / 0.12), 0 50px 100px rgb(50 50 93 / 0.12);
-  --shadow-modal: var(--shadow-lg);
+
+  /* The roles that read the shades above. Text in the brand colour, and
+     faint text, take one shade further from the page than the shade
+     itself, so they pass AA on Light's pale fills. */
+  --text-color-strong: var(--lt-gray-900);
+  --text-color-body: var(--lt-gray-700);
+  --text-color-muted: var(--lt-gray-600);
+  --text-color-faint: var(--lt-gray-600);
+  --text-color-link: var(--lt-indigo-700);
+  --text-color-link-hover: var(--lt-indigo-800);
+  --text-color-code: var(--lt-gray-200);
+  --text-color-on-light: var(--lt-gray-900);
+  --background-color-page: var(--lt-gray-100);
+  --background-color-subtle: var(--lt-gray-50);
+  --background-color-sunken: var(--lt-gray-100);
+  --background-color-hover: var(--lt-gray-50);
+  --background-color-emphasis: var(--lt-gray-200);
+  --background-color-inverse: var(--lt-gray-800);
+  --background-color-overlay: color-mix(in oklab, var(--lt-gray-900) 60%, transparent);
+  --background-color-code: var(--lt-gray-700);
+  --border-color-subtle: var(--lt-gray-200);
+  --border-color-strong: var(--lt-gray-300);
+  --border-color-emphasis: var(--lt-gray-400);
+  --ring-color-subtle: var(--lt-gray-200);
+  --ring-color-strong: var(--lt-gray-300);
+  --ring-color-emphasis: var(--lt-gray-400);
+  --ring-color-focus: var(--lt-indigo-600);
+  --outline-color-focus: var(--lt-indigo-600);
+  --background-color-brand: var(--lt-indigo-600);
+  --background-color-brand-hover: var(--lt-indigo-500);
+  --text-color-brand: var(--lt-indigo-700);
+  --background-color-brand-disabled: var(--lt-indigo-300);
+  --background-color-disabled: var(--lt-gray-50);
+  --text-color-disabled: var(--lt-gray-400);
+  --background-color-selected: var(--lt-indigo-50);
+  --background-color-selected-hover: var(--lt-indigo-100);
+  --text-color-selected: var(--lt-indigo-700);
+  --border-color-selected: var(--lt-indigo-600);
+  --ring-color-selected: var(--lt-indigo-600);
+  --background-color-neutral-strong: var(--lt-gray-500);
+  --background-color-tag-indigo: var(--lt-indigo-100);
+  --text-color-tag-indigo: var(--lt-indigo-700);
 }
 
 /* Side menu: a pale column ruled off from the page, grey links and
    the current page in blurple. Admin pages look the same. */
 html[data-theme="light"],
 html[data-theme="light"] .sudo-variant {
-  --ui-sidebar-bg: #f7f8fa;
-  --ui-sidebar-bg-dark: #f7f8fa;
-  --ui-sidebar-text: #1a1b25;
-  --ui-sidebar-text-light: #545b6b;
-  --ui-sidebar-text-lighter: #635bff;
+  --ui-sidebar-bg: var(--lt-gray-50);
+  --ui-sidebar-bg-dark: var(--lt-gray-50);
+  --ui-sidebar-text: var(--lt-gray-900);
+  --ui-sidebar-text-light: var(--lt-gray-600);
+  --ui-sidebar-text-lighter: var(--lt-indigo-700);
 }
 
 /* ============================================================== */
@@ -179,7 +220,7 @@ html[data-theme="light"] {
   /* ---- Page frame -------------------------------------------- */
 
   [data-ui="page-body"],
-  [data-ui="page-title-row"] { background-color: #ffffff; }
+  [data-ui="page-title-row"] { background-color: var(--background-color-surface); }
   [data-ui="page-header"] {
     border-bottom-color: var(--ui-border);
     box-shadow: none;
@@ -203,7 +244,7 @@ html[data-theme="light"] {
     &[data-variant="primary"]:not([data-tone]):hover:not(:is(:disabled, [aria-disabled="true"])) { background-color: var(--ui-brand-hover); }
     /* Tailwind's ring is a box-shadow too, so the hairline is drawn here. */
     &[data-variant="secondary"] {
-      box-shadow: 0 0 0 1px var(--color-gray-300), var(--shadow-sm);
+      box-shadow: 0 0 0 1px var(--lt-gray-300), var(--shadow-sm);
       &:hover:not(:is(:disabled, [aria-disabled="true"])) { background-color: var(--ui-surface); }
     }
     &:is(:disabled, [aria-disabled="true"]) { box-shadow: none; }
@@ -211,8 +252,8 @@ html[data-theme="light"] {
 
   /* Links: blurple, underlined only on hover. */
   [data-ui="link"] {
-    --text-color-link: var(--ui-brand);
-    --text-color-link-hover: var(--ui-brand-hover);
+    --text-color-link: var(--lt-indigo-700);
+    --text-color-link-hover: var(--lt-indigo-800);
   }
 
   /* ---- Statuses and messages --------------------------------- */
@@ -228,9 +269,9 @@ html[data-theme="light"] {
   /* Table: white throughout, a hairline round the edge and between
      rows, quiet grey headers. */
   [data-ui="table"] {
-    background-color: #ffffff;
+    background-color: var(--background-color-surface);
     box-shadow: 0 0 0 1px var(--ui-border), var(--shadow-xs);
-    thead { background-color: #ffffff; }
+    thead { background-color: var(--background-color-surface); }
     th { color: var(--ui-secondary-text); font-weight: 500; }
     tbody tr { transition: background-color 0.1s ease; }
   }
@@ -249,35 +290,35 @@ html[data-theme="light"] {
 
     .menu-item { font-weight: 450; }
     .menu-item-inactive:hover {
-      background-color: var(--color-gray-200);
+      background-color: var(--lt-gray-200);
       color: var(--ui-text);
     }
     .menu-item-active {
-      background-color: #ffffff;
+      background-color: var(--background-color-surface);
       box-shadow: 0 0 0 1px var(--ui-border), var(--shadow-xs);
       font-weight: 500;
     }
 
     .user-menu-trigger {
-      background-color: #ffffff;
+      background-color: var(--background-color-surface);
       color: var(--ui-text);
       box-shadow: 0 0 0 1px var(--ui-border), var(--shadow-xs);
     }
-    .user-menu-trigger:hover { background-color: var(--color-gray-100); }
+    .user-menu-trigger:hover { background-color: var(--lt-gray-100); }
     .user-menu-chevron,
     .sidebar-toggle-btn svg { color: var(--ui-secondary-text); }
-    .sidebar-toggle-btn:hover { background-color: var(--color-gray-200); }
+    .sidebar-toggle-btn:hover { background-color: var(--lt-gray-200); }
     .primary-light { color: var(--ui-secondary-text); }
-    .menu-item-experimental { color: var(--color-amber-600); }
+    .menu-item-experimental { color: var(--text-color-warning-strong); }
   }
 
   /* ---- Forms ------------------------------------------------- */
 
-  [data-ui="label"] { color: var(--color-gray-700); }
+  [data-ui="label"] { color: var(--lt-gray-700); }
   [data-ui="hint"] { color: var(--ui-secondary-text); }
 
   [data-ui="field"] {
-    border-color: var(--color-gray-300);
+    border-color: var(--lt-gray-300);
     box-shadow: var(--shadow-xs);
     transition: border-color 0.15s ease, box-shadow 0.15s ease;
     &[aria-invalid="true"] { border-color: var(--border-color-invalid); }
@@ -289,11 +330,11 @@ html[data-theme="light"] {
   }
   [data-ui="field"][aria-invalid="true"]:focus {
     border-color: var(--border-color-invalid);
-    box-shadow: 0 0 0 4px rgb(239 68 68 / 0.15);
+    box-shadow: 0 0 0 4px color-mix(in oklab, var(--color-danger-500) 15%, transparent);
   }
 
   :is([data-ui="choice"], input[type="checkbox"], input[type="radio"]) {
-    border-color: var(--color-gray-300);
+    border-color: var(--lt-gray-300);
     color: var(--ui-brand);
     &[aria-invalid="true"] { border-color: var(--border-color-invalid); }
     &:focus-visible { outline: none; box-shadow: var(--ui-halo); }
@@ -361,111 +402,111 @@ html[data-theme="gds"] {
   /* Neutral: GOV.UK black and its tints. Every grey that can carry
      text is secondary-text #484949 (AA on white and on #f3f3f3);
      #cecece is for rules and #f3f3f3 for the odd light surface. */
-  --color-gray-50: #f3f3f3;
-  --color-gray-100: #f3f3f3;
-  --color-gray-200: #cecece;
-  --color-gray-300: #cecece;
-  --color-gray-400: #484949;
-  --color-gray-500: #484949;
-  --color-gray-600: #484949;
-  --color-gray-700: #0b0c0c;
-  --color-gray-800: #0b0c0c;
-  --color-gray-900: #0b0c0c;
-  --color-gray-950: #0b0c0c;
+  --gds-gray-50: #f3f3f3;
+  --gds-gray-100: #f3f3f3;
+  --gds-gray-200: #cecece;
+  --gds-gray-300: #cecece;
+  --gds-gray-400: #484949;
+  --gds-gray-500: #484949;
+  --gds-gray-600: #484949;
+  --gds-gray-700: #0b0c0c;
+  --gds-gray-800: #0b0c0c;
+  --gds-gray-900: #0b0c0c;
+  --gds-gray-950: #0b0c0c;
 
   /* Primary: GOV.UK blue. brand #1d70b8, link #1a65a6,
      link-hover #0f385c, surface #f4f8fb. Drives blue + indigo
      (and so primary) utilities across the app. */
-  --color-blue-50: #f4f8fb;   --color-indigo-50: #f4f8fb;
-  --color-blue-100: #d2e2f1;  --color-indigo-100: #d2e2f1;
-  --color-blue-200: #8eb8dc;  --color-indigo-200: #8eb8dc;
-  --color-blue-300: #8eb8dc;  --color-indigo-300: #8eb8dc;
-  --color-blue-400: #5694ca;  --color-indigo-400: #5694ca;
-  --color-blue-500: #1d70b8;  --color-indigo-500: #1d70b8;
-  --color-blue-600: #1a65a6;  --color-indigo-600: #1d70b8;
-  --color-blue-700: #16548a;  --color-indigo-700: #16548a;
-  --color-blue-800: #0f385c;  --color-indigo-800: #0f385c;
-  --color-blue-900: #0f385c;  --color-indigo-900: #0f385c;
-  --color-blue-950: #0f385c;  --color-indigo-950: #0f385c;
+  --gds-blue-50: #f4f8fb;   --gds-indigo-50: #f4f8fb;
+  --gds-blue-100: #d2e2f1;  --gds-indigo-100: #d2e2f1;
+  --gds-blue-200: #8eb8dc;  --gds-indigo-200: #8eb8dc;
+  --gds-blue-300: #8eb8dc;  --gds-indigo-300: #8eb8dc;
+  --gds-blue-400: #5694ca;  --gds-indigo-400: #5694ca;
+  --gds-blue-500: #1d70b8;  --gds-indigo-500: #1d70b8;
+  --gds-blue-600: #1a65a6;  --gds-indigo-600: #1d70b8;
+  --gds-blue-700: #16548a;  --gds-indigo-700: #16548a;
+  --gds-blue-800: #0f385c;  --gds-indigo-800: #0f385c;
+  --gds-blue-900: #0f385c;  --gds-indigo-900: #0f385c;
+  --gds-blue-950: #0f385c;  --gds-indigo-950: #0f385c;
 
   /* Success: GOV.UK green #0f7a52 */
-  --color-green-50: #f3f8f6;
-  --color-green-100: #cfe4dc;
-  --color-green-200: #87bca8;
-  --color-green-300: #87bca8;
-  --color-green-400: #4b9b7d;
-  --color-green-500: #0f7a52;
-  --color-green-600: #0f7a52;
-  --color-green-700: #0b5c3e;
-  --color-green-800: #083d29;
-  --color-green-900: #083d29;
-  --color-green-950: #083d29;
+  --gds-green-50: #f3f8f6;
+  --gds-green-100: #cfe4dc;
+  --gds-green-200: #87bca8;
+  --gds-green-300: #87bca8;
+  --gds-green-400: #4b9b7d;
+  --gds-green-500: #0f7a52;
+  --gds-green-600: #0f7a52;
+  --gds-green-700: #0b5c3e;
+  --gds-green-800: #083d29;
+  --gds-green-900: #083d29;
+  --gds-green-950: #083d29;
 
   /* Yellow and orange stay available for tags and illustrations;
      they carry no state of their own (see the Alert rule below). */
-  --color-amber-50: #fffdf2;   --color-yellow-50: #fffdf2;  --color-orange-50: #fef8f5;
-  --color-amber-100: #fff8cc;  --color-yellow-100: #fff8cc; --color-orange-100: #fde4d7;
-  --color-amber-200: #ffee80;  --color-yellow-200: #ffee80; --color-orange-200: #fabb9c;
-  --color-amber-300: #ffe640;  --color-yellow-300: #ffe640; --color-orange-300: #f7996a;
-  --color-amber-400: #ffdd00;  --color-yellow-400: #ffdd00; --color-orange-400: #f47738;
-  --color-amber-500: #bfa600;  --color-yellow-500: #bfa600; --color-orange-500: #f47738;
-  --color-amber-600: #b7592a;  --color-yellow-600: #806f00; --color-orange-600: #b7592a;
-  --color-amber-700: #7a3c1c;  --color-yellow-700: #7a3c1c; --color-orange-700: #7a3c1c;
-  --color-amber-800: #7a3c1c;  --color-yellow-800: #7a3c1c; --color-orange-800: #7a3c1c;
-  --color-amber-900: #7a3c1c;  --color-yellow-900: #7a3c1c; --color-orange-900: #7a3c1c;
-  --color-amber-950: #7a3c1c;  --color-yellow-950: #7a3c1c; --color-orange-950: #7a3c1c;
+  --gds-amber-50: #fffdf2;   --gds-yellow-50: #fffdf2;  --gds-orange-50: #fef8f5;
+  --gds-amber-100: #fff8cc;  --gds-yellow-100: #fff8cc; --gds-orange-100: #fde4d7;
+  --gds-amber-200: #ffee80;  --gds-yellow-200: #ffee80; --gds-orange-200: #fabb9c;
+  --gds-amber-300: #ffe640;  --gds-yellow-300: #ffe640; --gds-orange-300: #f7996a;
+  --gds-amber-400: #ffdd00;  --gds-yellow-400: #ffdd00; --gds-orange-400: #f47738;
+  --gds-amber-500: #bfa600;  --gds-yellow-500: #bfa600; --gds-orange-500: #f47738;
+  --gds-amber-600: #b7592a;  --gds-yellow-600: #806f00; --gds-orange-600: #b7592a;
+  --gds-amber-700: #7a3c1c;  --gds-yellow-700: #7a3c1c; --gds-orange-700: #7a3c1c;
+  --gds-amber-800: #7a3c1c;  --gds-yellow-800: #7a3c1c; --gds-orange-800: #7a3c1c;
+  --gds-amber-900: #7a3c1c;  --gds-yellow-900: #7a3c1c; --gds-orange-900: #7a3c1c;
+  --gds-amber-950: #7a3c1c;  --gds-yellow-950: #7a3c1c; --gds-orange-950: #7a3c1c;
 
   /* Error: GOV.UK red #ca3535 */
-  --color-red-50: #fcf5f5;
-  --color-red-100: #f4d7d7;
-  --color-red-200: #e59a9a;
-  --color-red-300: #e59a9a;
-  --color-red-400: #d76868;
-  --color-red-500: #ca3535;
-  --color-red-600: #ca3535;
-  --color-red-700: #982828;
-  --color-red-800: #651b1b;
-  --color-red-900: #651b1b;
-  --color-red-950: #651b1b;
+  --gds-red-50: #fcf5f5;
+  --gds-red-100: #f4d7d7;
+  --gds-red-200: #e59a9a;
+  --gds-red-300: #e59a9a;
+  --gds-red-400: #d76868;
+  --gds-red-500: #ca3535;
+  --gds-red-600: #ca3535;
+  --gds-red-700: #982828;
+  --gds-red-800: #651b1b;
+  --gds-red-900: #651b1b;
+  --gds-red-950: #651b1b;
 
   /* Info: GOV.UK blue again; GDS has one blue. */
-  --color-sky-50: #f4f8fb;
-  --color-sky-100: #d2e2f1;
-  --color-sky-200: #8eb8dc;
-  --color-sky-300: #8eb8dc;
-  --color-sky-400: #5694ca;
-  --color-sky-500: #1d70b8;
-  --color-sky-600: #1d70b8;
-  --color-sky-700: #16548a;
-  --color-sky-800: #0f385c;
-  --color-sky-900: #0f385c;
-  --color-sky-950: #0f385c;
+  --gds-sky-50: #f4f8fb;
+  --gds-sky-100: #d2e2f1;
+  --gds-sky-200: #8eb8dc;
+  --gds-sky-300: #8eb8dc;
+  --gds-sky-400: #5694ca;
+  --gds-sky-500: #1d70b8;
+  --gds-sky-600: #1d70b8;
+  --gds-sky-700: #16548a;
+  --gds-sky-800: #0f385c;
+  --gds-sky-900: #0f385c;
+  --gds-sky-950: #0f385c;
 
   /* Category accents from the web palette: purple #54319f and
      magenta #ca357c (Tailwind's pink). Tag colours only. */
-  --color-purple-50: #f6f5fa;
-  --color-purple-100: #ddd6ec;
-  --color-purple-200: #aa98cf;
-  --color-purple-300: #aa98cf;
-  --color-purple-400: #7f65b7;
-  --color-purple-500: #54319f;
-  --color-purple-600: #54319f;
-  --color-purple-700: #3f2577;
-  --color-purple-800: #2a1950;
-  --color-purple-900: #2a1950;
-  --color-purple-950: #2a1950;
+  --gds-purple-50: #f6f5fa;
+  --gds-purple-100: #ddd6ec;
+  --gds-purple-200: #aa98cf;
+  --gds-purple-300: #aa98cf;
+  --gds-purple-400: #7f65b7;
+  --gds-purple-500: #54319f;
+  --gds-purple-600: #54319f;
+  --gds-purple-700: #3f2577;
+  --gds-purple-800: #2a1950;
+  --gds-purple-900: #2a1950;
+  --gds-purple-950: #2a1950;
 
-  --color-pink-50: #fcf5f8;
-  --color-pink-100: #f4d7e5;
-  --color-pink-200: #e59abe;
-  --color-pink-300: #e59abe;
-  --color-pink-400: #d7689d;
-  --color-pink-500: #ca357c;
-  --color-pink-600: #ca357c;
-  --color-pink-700: #98285d;
-  --color-pink-800: #651b3e;
-  --color-pink-900: #651b3e;
-  --color-pink-950: #651b3e;
+  --gds-pink-50: #fcf5f8;
+  --gds-pink-100: #f4d7e5;
+  --gds-pink-200: #e59abe;
+  --gds-pink-300: #e59abe;
+  --gds-pink-400: #d7689d;
+  --gds-pink-500: #ca357c;
+  --gds-pink-600: #ca357c;
+  --gds-pink-700: #98285d;
+  --gds-pink-800: #651b3e;
+  --gds-pink-900: #651b3e;
+  --gds-pink-950: #651b3e;
 
   /* Component tokens, read by the component layer below. Named after
      GOV.UK Frontend's functional colours. */
@@ -512,6 +553,110 @@ html[data-theme="gds"] {
   --shadow-card: none;
   --shadow-lg: 0 0 0 1px #cecece;
   --shadow-xl: 0 0 0 1px #cecece;
+
+  /* The roles that read the shades above. */
+  --text-color-strong: var(--gds-gray-900);
+  --text-color-body: var(--gds-gray-700);
+  --text-color-muted: var(--gds-gray-600);
+  --text-color-faint: var(--gds-gray-500);
+  --text-color-link: var(--gds-indigo-600);
+  --text-color-link-hover: var(--gds-indigo-700);
+  --text-color-code: var(--gds-gray-200);
+  --text-color-on-light: var(--gds-gray-900);
+  --background-color-page: var(--gds-gray-100);
+  --background-color-subtle: var(--gds-gray-50);
+  --background-color-sunken: var(--gds-gray-100);
+  --background-color-hover: var(--gds-gray-50);
+  --background-color-emphasis: var(--gds-gray-200);
+  --background-color-inverse: var(--gds-gray-800);
+  --background-color-overlay: color-mix(in oklab, var(--gds-gray-900) 60%, transparent);
+  --background-color-code: var(--gds-gray-700);
+  --border-color-subtle: var(--gds-gray-200);
+  --border-color-strong: var(--gds-gray-300);
+  --border-color-emphasis: var(--gds-gray-400);
+  --ring-color-subtle: var(--gds-gray-200);
+  --ring-color-strong: var(--gds-gray-300);
+  --ring-color-emphasis: var(--gds-gray-400);
+  --ring-color-focus: var(--gds-indigo-600);
+  --outline-color-focus: var(--gds-indigo-600);
+  --background-color-brand: var(--gds-indigo-600);
+  --background-color-brand-hover: var(--gds-indigo-500);
+  --text-color-brand: var(--gds-indigo-600);
+  --background-color-brand-disabled: var(--gds-indigo-300);
+  --background-color-danger-disabled: var(--gds-red-200);
+  --background-color-success-disabled: var(--gds-green-200);
+  --background-color-disabled: var(--gds-gray-50);
+  --text-color-disabled: var(--gds-gray-400);
+  --background-color-selected: var(--gds-indigo-50);
+  --background-color-selected-hover: var(--gds-indigo-100);
+  --text-color-selected: var(--gds-indigo-600);
+  --border-color-selected: var(--gds-indigo-600);
+  --ring-color-selected: var(--gds-indigo-600);
+  --text-color-invalid: var(--gds-red-700);
+  --border-color-invalid: var(--gds-red-700);
+  --ring-color-invalid: var(--gds-red-700);
+  --outline-color-invalid: var(--gds-red-700);
+  --text-color-danger: var(--gds-red-700);
+  --text-color-danger-strong: var(--gds-red-800);
+  --text-color-danger-icon: var(--gds-red-500);
+  --border-color-danger: var(--gds-red-200);
+  --ring-color-danger: var(--gds-red-200);
+  --background-color-danger: var(--gds-red-50);
+  --background-color-danger-badge: var(--gds-red-100);
+  --background-color-danger-strong: var(--gds-red-600);
+  --background-color-danger-hover: var(--gds-red-500);
+  --text-color-success: var(--gds-green-700);
+  --text-color-success-strong: var(--gds-green-800);
+  --text-color-success-icon: var(--gds-green-600);
+  --border-color-success: var(--gds-green-200);
+  --ring-color-success: var(--gds-green-200);
+  --background-color-success: var(--gds-green-50);
+  --background-color-success-badge: var(--gds-green-100);
+  --background-color-success-strong: var(--gds-green-700);
+  --background-color-success-hover: var(--gds-green-600);
+  --text-color-warning: var(--gds-yellow-700);
+  --text-color-warning-strong: var(--gds-yellow-800);
+  --text-color-warning-icon: var(--gds-yellow-500);
+  --border-color-warning: var(--gds-yellow-200);
+  --ring-color-warning: var(--gds-yellow-200);
+  --background-color-warning: var(--gds-yellow-50);
+  --background-color-warning-badge: var(--gds-yellow-100);
+  --background-color-warning-strong: var(--gds-yellow-600);
+  --background-color-warning-badge-hover: var(--gds-yellow-200);
+  --text-color-info: var(--gds-blue-700);
+  --text-color-info-strong: var(--gds-blue-800);
+  --text-color-info-icon: var(--gds-blue-500);
+  --border-color-info: var(--gds-blue-200);
+  --ring-color-info: var(--gds-blue-200);
+  --background-color-info: var(--gds-blue-50);
+  --background-color-info-badge: var(--gds-blue-100);
+  --background-color-info-strong: var(--gds-blue-600);
+  --text-color-severe: var(--gds-orange-700);
+  --text-color-severe-strong: var(--gds-orange-800);
+  --text-color-severe-icon: var(--gds-orange-600);
+  --border-color-severe: var(--gds-orange-200);
+  --ring-color-severe: var(--gds-orange-200);
+  --background-color-severe: var(--gds-orange-50);
+  --background-color-severe-badge: var(--gds-orange-100);
+  --background-color-severe-strong: var(--gds-orange-600);
+  --background-color-neutral-strong: var(--gds-gray-500);
+  --background-color-tag-red: var(--gds-red-100);
+  --text-color-tag-red: var(--gds-red-700);
+  --background-color-tag-orange: var(--gds-orange-100);
+  --text-color-tag-orange: var(--gds-orange-700);
+  --background-color-tag-yellow: var(--gds-yellow-100);
+  --text-color-tag-yellow: var(--gds-yellow-800);
+  --background-color-tag-green: var(--gds-green-100);
+  --text-color-tag-green: var(--gds-green-700);
+  --background-color-tag-blue: var(--gds-blue-100);
+  --text-color-tag-blue: var(--gds-blue-700);
+  --background-color-tag-indigo: var(--gds-indigo-100);
+  --text-color-tag-indigo: var(--gds-indigo-700);
+  --background-color-tag-purple: var(--gds-purple-100);
+  --text-color-tag-purple: var(--gds-purple-700);
+  --background-color-tag-pink: var(--gds-pink-100);
+  --text-color-tag-pink: var(--gds-pink-700);
+  --shadow-modal: 0 10px 15px -3px color-mix(in oklab, var(--gds-gray-700) 10%, transparent), 0 4px 6px -4px color-mix(in oklab, var(--gds-gray-700) 10%, transparent);
 }
 
 /* Side menu (lightning-shell.css). GOV.UK services don't use coloured
@@ -629,23 +774,19 @@ html[data-theme="gds"] {
   /* ---- Statuses and messages --------------------------------- */
 
   /* Tag: square, regular weight, sentence case, a pale fill with the
-     darkest shade of its colour as text. Re-pointing the -700 text
-     tokens (rather than setting `color`) keeps each call's colour. */
+     darkest shade of its colour as text. Re-pointing the text roles
+     (rather than setting `color`) keeps each call's colour. */
   [data-ui="tag"] {
-    --color-red-700: var(--color-red-800);
-    --color-orange-700: var(--color-orange-800);
-    --color-green-700: var(--color-green-800);
-    --color-blue-700: var(--color-blue-800);
-    --color-indigo-700: var(--color-indigo-800);
-    --color-purple-700: var(--color-purple-800);
-    --color-pink-700: var(--color-pink-800);
-    /* The tone names resolve at the root, so re-point them too. */
-    --color-danger-700: var(--color-red-800);
-    --color-success-700: var(--color-green-800);
-    --color-info-700: var(--color-blue-800);
-    --text-color-danger: var(--color-red-800);
-    --text-color-success: var(--color-green-800);
-    --text-color-info: var(--color-blue-800);
+    --text-color-tag-red: var(--gds-red-800);
+    --text-color-tag-orange: var(--gds-orange-800);
+    --text-color-tag-green: var(--gds-green-800);
+    --text-color-tag-blue: var(--gds-blue-800);
+    --text-color-tag-indigo: var(--gds-indigo-800);
+    --text-color-tag-purple: var(--gds-purple-800);
+    --text-color-tag-pink: var(--gds-pink-800);
+    --text-color-danger: var(--gds-red-800);
+    --text-color-success: var(--gds-green-800);
+    --text-color-info: var(--gds-blue-800);
     border-radius: 0;
   }
 
