@@ -10,18 +10,21 @@ a job, in `src/theme/tokens.css`; **everything else uses those**.
 - **One role, one job.** Two things that look the same but do different
   jobs (a button's fill and a selected tab) get two roles, so either can
   change alone.
-- **Names say the property, the job, the emphasis, then the state**:
-  `text-muted`, `bg-danger-strong`, `bg-brand-hover`. Never a colour or a
-  shade, except tags that mean nothing (`tag-red`), where the hue is the job.
-- **States are roles.** Hover, pressed, selected and disabled each have
-  their own. A theme may work one out from another colour; a component
+- **Names say the property, the job, then a suffix**: `text-muted`,
+  `bg-danger-strong`, `bg-brand-hover`. `-strong` means more contrast than
+  the plain role: darker text, the solid fill of a tone, a firmer border.
+  `-badge` is a pill's fill; `-hover` and `-disabled` are states. Never a
+  colour or a shade, except tags that mean nothing (`tag-red`), where the hue
+  is the job.
+- **States are roles.** Hover, selected and disabled have their own, and a
+  pressed state gets one when something needs it. A theme may work one out from another colour; a component
   never does (no `opacity-50`, no `/90`).
 - **A theme sets role values only.** Light, Dark and GDS are each a list of
   role values. A colour a theme needs that the palette lacks goes under the
   theme's own prefix (`--dk-*`), never by redefining a palette shade.
-- **Component tokens are the exception**: the `--ui-*` variables, for a
-  part no role covers (the side menu, the workflow canvas). Each is listed
-  in `theme.css` with what it's for.
+- **Component tokens are the exception**: the `--ui-*` variables in
+  `theme.css` and `lightning-shell.css`, for a part no role covers (the side
+  menu, the workflow canvas). A new one gets a comment saying its job.
 
 ## The roles
 
@@ -29,6 +32,19 @@ The roles are in [src/theme/tokens.css](../src/theme/tokens.css), in groups
 (text, backgrounds, borders, focus, brand, disabled, selected, validation,
 each tone, tags), each with a comment saying its job. Read it before
 picking one: the comment is what tells two similar roles apart.
+
+## Which one
+
+| You want | Use | Not |
+|---|---|---|
+| Quiet secondary text | `text-muted` | `text-faint`, which is for icons and placeholders |
+| A control the user can't use yet | `text-disabled`, `bg-disabled` | `text-faint`, `bg-subtle` |
+| Something that navigates | `text-link` (it turns brand on hover too) | `text-brand` |
+| The chosen item in a set | `text-selected`, `bg-selected` | `text-link`, `text-brand` |
+| Brand text that isn't a link or a selection | `text-brand` | |
+| An invalid field's message and border | `text-invalid`, `border-invalid` | `text-danger` |
+| Words in a danger panel or pill | `text-danger`; its heading `text-danger-strong` | |
+| A pill or badge | `bg-<tone>-badge` | `bg-<tone>`, which is a panel |
 
 ## When to add a role
 
