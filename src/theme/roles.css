@@ -1,0 +1,64 @@
+/*
+ * Colour roles: what a colour is for, never which shade it is.
+ *
+ * Components use only these (`text-muted`, `bg-brand`, `border-subtle`); only
+ * this folder touches the palette. Each role sits in the namespace of the one
+ * property it's for, so `text-surface` doesn't exist.
+ *
+ * The values here are the Basic theme: Brandon's prototype, which is stock
+ * Tailwind with his own red and indigo for info. Another theme sets these
+ * same roles under `[data-theme="…"]` and nothing else (dark.css).
+ *
+ * Plain `@theme`, not `@theme inline`, so utilities read `var(--role)` and a
+ * theme's override reaches them.
+ */
+@theme {
+  /* Brandon's red: darker and calmer than Tailwind's, so danger reads serious, not alarming. */
+  --bj-red-50: oklch(97.5% 0.012 20);
+  --bj-red-200: oklch(89% 0.055 21);
+  --bj-red-500: oklch(58% 0.145 24);
+  --bj-red-600: oklch(52% 0.145 25);
+  --bj-red-700: oklch(45% 0.125 25);
+
+  /* Text */
+  --text-color-strong: var(--color-gray-900); /* headings, labels, values */
+  --text-color-body: var(--color-gray-700); /* button and panel copy */
+  --text-color-muted: var(--color-gray-500); /* descriptions, table cells, icons */
+  --text-color-inverse: var(--color-white); /* on bg-inverse */
+
+  /* Backgrounds */
+  --background-color-page: var(--color-white); /* the ground behind everything */
+  --background-color-surface: var(--color-white); /* card, table, dialog, input */
+  --background-color-subtle: var(--color-gray-50); /* table header, empty state, a value to copy, a blocked control */
+  --background-color-hover: var(--color-gray-50); /* a row or a quiet control, hovered */
+  --background-color-inverse: var(--color-gray-900); /* tooltip */
+  --background-color-overlay: color-mix(in oklab, var(--color-black) 40%, transparent); /* the scrim behind a dialog */
+
+  /* Borders */
+  --border-color-subtle: var(--color-gray-200); /* tables, dialogs, dividers, a blocked control */
+  --border-color-strong: var(--color-gray-300); /* buttons, inputs, dashed empty states */
+
+  /* Focus */
+  --outline-color-focus: var(--color-indigo-600); /* the keyboard focus outline */
+
+  /* Brand: the one colour for the main action. */
+  --background-color-brand: var(--color-indigo-600); /* primary button */
+  --background-color-brand-hover: var(--color-indigo-700); /* primary button, hovered */
+  --text-color-on-brand: var(--color-white); /* text and icons on the brand fill */
+
+  /* Danger */
+  --background-color-danger-strong: var(--bj-red-600); /* the danger solid: a destructive button */
+  --background-color-danger-hover: var(--bj-red-700); /* the danger solid, hovered */
+  --background-color-danger: var(--bj-red-50); /* a danger panel */
+  --border-color-danger: var(--bj-red-200); /* its edge */
+  --text-color-danger: var(--bj-red-600); /* text on a danger panel */
+  --text-color-danger-strong: var(--bj-red-700); /* a danger panel's heading */
+  --text-color-danger-icon: var(--bj-red-500); /* a danger panel's icon */
+
+  /* Info: indigo in Basic, as Brandon draws notices. */
+  --background-color-info: var(--color-indigo-50); /* an info panel */
+  --border-color-info: var(--color-indigo-200); /* its edge */
+  --text-color-info: var(--color-indigo-700); /* text on an info panel */
+  --text-color-info-strong: var(--color-indigo-800); /* an info panel's heading */
+  --text-color-info-icon: var(--color-indigo-500); /* an info panel's icon */
+}

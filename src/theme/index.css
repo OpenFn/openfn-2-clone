@@ -1,0 +1,9 @@
+@import "tailwindcss";
+@plugin "./heroicons.js";
+@import "./roles.css";
+@import "./dark.css";
+
+body {
+  background-color: var(--background-color-page);
+  color: var(--text-color-strong);
+}

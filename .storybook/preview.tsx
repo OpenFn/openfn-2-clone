@@ -11,7 +11,7 @@ const withTheme: Decorator = (Story, context) => {
 const preview: Preview = {
   parameters: {
     a11y: { test: "error" },
-    options: { storySort: { order: ["ui", "layout", "openfn", "pages"] } },
+    options: { storySort: { order: ["theme", "ui", "layout", "openfn", "pages"] } },
   },
   globalTypes: {
     theme: {

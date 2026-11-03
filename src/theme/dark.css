@@ -1,0 +1,60 @@
+/*
+ * Dark: slate charcoal, after Linear and GitHub dimmed, with an indigo that
+ * glows. Values from the dark-theme branch of openfn-3-poc (PR 76), set on
+ * the roles only. Colours the palette lacks go under `--dk-*`.
+ *
+ * Tints are a wash of the tone over the surface and a line in it, not a
+ * light shade turned over, which comes out as heavy brown and maroon blocks.
+ */
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --dk-canvas: #15171c;
+  --dk-surface: #1b1e24;
+  --dk-indigo: #5e6ad2;
+  --dk-red-fill: oklch(53% 0.2 26);
+  --dk-red: oklch(63.7% 0.237 25.331);
+  --dk-blue: oklch(62.3% 0.214 259.815);
+
+  /* Text */
+  --text-color-strong: #f3f4f6;
+  --text-color-body: #ccd1da;
+  --text-color-muted: #afb5c1;
+  --text-color-inverse: var(--dk-surface);
+
+  /* Backgrounds */
+  --background-color-page: var(--dk-canvas);
+  --background-color-surface: var(--dk-surface);
+  --background-color-subtle: #22252c;
+  --background-color-hover: #22252c;
+  --background-color-inverse: #e2e5ea;
+  --background-color-overlay: color-mix(in oklab, black 70%, transparent);
+
+  /* Borders: white at low alpha, so they read the same on every grey. */
+  --border-color-subtle: color-mix(in oklab, white 8%, transparent);
+  --border-color-strong: color-mix(in oklab, white 14%, transparent);
+
+  --outline-color-focus: var(--dk-indigo);
+
+  /* Brand */
+  --background-color-brand: var(--dk-indigo);
+  /* Darker on hover, not lighter as the dark-theme branch has it: white on the lighter fill is 3.8:1. */
+  --background-color-brand-hover: color-mix(in oklab, var(--dk-indigo) 85%, black);
+  --text-color-on-brand: white;
+
+  /* Danger */
+  --background-color-danger-strong: var(--dk-red-fill);
+  --background-color-danger-hover: color-mix(in oklab, var(--dk-red-fill) 88%, white);
+  --background-color-danger: color-mix(in oklab, var(--dk-red) 10%, var(--dk-surface));
+  --border-color-danger: color-mix(in oklab, var(--dk-red) 30%, transparent);
+  --text-color-danger: oklch(80.8% 0.114 19.571);
+  --text-color-danger-strong: oklch(88.5% 0.062 18.334);
+  --text-color-danger-icon: var(--dk-red);
+
+  /* Info: blue here, as the dark-theme branch has it. */
+  --background-color-info: color-mix(in oklab, var(--dk-blue) 10%, var(--dk-surface));
+  --border-color-info: color-mix(in oklab, var(--dk-blue) 30%, transparent);
+  --text-color-info: oklch(80.9% 0.105 251.813);
+  --text-color-info-strong: oklch(88.2% 0.059 254.128);
+  --text-color-info-icon: var(--dk-blue);
+}
