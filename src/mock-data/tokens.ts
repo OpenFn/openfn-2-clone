@@ -20,23 +20,6 @@ export const apiTokens: ApiToken[] = [
   },
 ];
 
-/**
- * A new fake token after "Generate New Token": the stored record, masked the
- * way Lightning's `mask_token` does, and the secret, shown once in the banner.
- */
-export function generateFakeToken(): { token: ApiToken; secret: string } {
-  const secret = `demo.fake-token-not-real.${Math.random().toString(36).slice(2, 12).padEnd(10, "x")}`;
-  return {
-    token: {
-      id: `token-${Date.now()}`,
-      masked: "..." + secret.slice(-10),
-      insertedAt: new Date().toISOString().replace(/\.\d+Z$/, "Z"), // utc_datetime: whole seconds, like Lightning
-      lastUsedAt: null,
-    },
-    secret,
-  };
-}
-
 /** Ten placeholder recovery codes; one already used. */
 export const backupCodes: BackupCode[] = [
   "demo0001", "demo0002", "demo0003", "demo0004", "demo0005",

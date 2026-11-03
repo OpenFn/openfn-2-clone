@@ -14,6 +14,9 @@ file exports. PRINCIPLES.md "How data flows" says why;
 
 The page must already be split into a page and a `.replica.tsx` wrapper. If
 it isn't, or if the API would need the page's props to change, stop and ask.
+The one change a page may need is an optional `status` prop, drawn with
+`AsyncBoundary` around the part that shows the data, if it doesn't have one
+yet (as `CredentialsIndexPage` does). Then run step 6's overnight-1 check.
 
 ## 1. Match the page to the API
 
@@ -26,6 +29,10 @@ it isn't, or if the API would need the page's props to change, stop and ask.
   `POST /api/session` (send `Sec-Fetch-Site: same-origin`; writes need the
   `x-csrf-token` from `GET /api/session`). The docs and the code disagree
   more often than you'd think.
+- A route marked "stepped up" refuses a fresh sign-in with 403
+  `step_up_required`. Try it before and after `POST /api/session` with just
+  `{"password": …}`. The page has no step-up screen, so the page shows
+  Lightning's refusal; track it as a gap.
 - Anything the page needs that the API doesn't give is a gap. Track each
   gap as a finding (the `track` skill), one line each: the route, what's
   missing, what the page does instead.
@@ -89,7 +96,10 @@ headless browser (Playwright from `node_modules`), sign in on the live one
 by calling `fetch("/api/session", { method: "POST", ... })` from the page,
 then go through every action on the page in both modes: a save, a refusal,
 a delete. Log each non-GET request and each 4xx answer. Look at the
-screenshots. Delete what you created on the real Lightning afterwards.
+screenshots. Delete what you created on the real Lightning afterwards, and
+make the script refuse to delete anything that was there before you started:
+other people use the same Lightning. Don't keep screenshots that show a real
+secret.
 
 ## 6. Checks
 
