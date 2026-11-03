@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { cn } from "@/components/ui/cn";
 
 // Every colour role, each shown on what it sits on, so Basic and Dark can be checked side by side from the toolbar.
 // The story's axe check tests each text pair's contrast in whichever theme is on.
@@ -97,8 +98,8 @@ function Roles() {
                 <p className="text-sm text-muted">{role.job}</p>
                 <div className="flex flex-wrap gap-2">
                   {role.chips.map((chip) => (
-                    <span key={chip.label + chip.className} className={`inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm ${chip.className}`}>
-                      {chip.icon && <span aria-hidden className={`${chip.icon} size-4`} />}
+                    <span key={chip.label + chip.className} className={cn("inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm", chip.className)}>
+                      {chip.icon && <span aria-hidden className={cn(chip.icon, "size-4")} />}
                       {chip.label}
                     </span>
                   ))}

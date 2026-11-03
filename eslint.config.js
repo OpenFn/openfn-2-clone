@@ -2,6 +2,7 @@ import js from "@eslint/js";
 import tseslint from "typescript-eslint";
 import reactHooks from "eslint-plugin-react-hooks";
 import globals from "globals";
+import fs from "node:fs";
 import { defineConfig, globalIgnores } from "eslint/config";
 
 // The area lines from PRINCIPLES.md "Areas" and STRUCTURE.md. ESLint replaces a rule's options
@@ -12,7 +13,7 @@ const ban = (regex, message) => ({ regex, message });
 const notPages = ban("(^|/)pages(/|$)", "Only app/ imports pages.");
 const noClient = ban("(^|/)lib/api(/|$)", "Pages don't fetch: only *.route.tsx imports the API client.");
 const noFake = ban("(^|/)fake-api(/|$)", "Only app/ chooses fake-api.");
-const noOtherPage = ban("^\\.\\./[^./]", "Pages don't import each other. Move what two pages share to components/ or lib/.");
+const noOtherPage = ban("^@/pages/", "Pages don't import each other. Move what two pages share to components/ or lib/.");
 const noDeepComponents = ban("components/.+", "Pages import components from components/index.ts only.");
 const noLib = ban("(^|/)lib(/|$)", "Components know nothing about data: no lib/.");
 const noData = ban("\\.data$", "Components know nothing about data: no *.data.ts.");
@@ -20,10 +21,27 @@ const noApp = ban("(^|/)app(/|$)", "Nothing imports the app shell.");
 const noUpper = ban("(^|/)(layout|openfn)(/|$)", "ui/ uses nothing above it: no layout/ or openfn/.");
 const noComponents = ban("(^|/)components(/|$)", "Data knows nothing about how it's shown: no components/.");
 const noReact = ban("^react(-dom)?(/|$)", "lib/ and fake-api/ have no React.");
+const noParent = ban("^\\.\\./", "Import across folders with @/ (for example @/components); ./ only within a folder.");
 
-const imports = (...patterns) => ["error", { patterns }];
+const imports = (...patterns) => ["error", { patterns: [noParent, ...patterns] }];
 
-// Colour and size: roles only, outside src/theme/ (docs: colour rules, decision D385).
+// React and component conventions from PRINCIPLES.md. no-restricted-syntax is replaced per block too, so every block that
+// sets it spreads these in.
+const conventions = [
+  { selector: "ExportDefaultDeclaration", message: "Named exports only." },
+  { selector: "JSXAttribute[name.name='id'][value.type='Literal']", message: "IDs come from useId(), never written by hand." },
+  {
+    selector: "JSXAttribute[name.name='key'] > JSXExpressionContainer > Identifier[name=/^(i|idx|index)$/]",
+    message: "A key names the thing, never its position in the list.",
+  },
+  {
+    selector: "JSXAttribute[name.name='className'] > JSXExpressionContainer > TemplateLiteral",
+    message: "Join classes with cn(), never by building a string.",
+  },
+];
+const syntax = (...extra) => ["error", ...conventions, ...extra];
+
+// Colour and size: roles only, outside src/theme/ (the colour rules).
 const PALETTE =
   "slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose|black|white";
 const COLOUR_UTILS = "bg|text|border|ring|outline|divide|fill|stroke|from|via|to|shadow|accent|caret|decoration|placeholder";
@@ -32,7 +50,51 @@ const styleChecks = [
   [/#[0-9a-fA-F]{3,8}\b/, "No hex colours outside src/theme/. Use a colour role."],
   [/(^|[\s:])-?[a-z][a-z0-9-]*-\[[^\]\s]+\]/, "No arbitrary values like text-[13px]. Use the scale, or add a token in src/theme/."],
   [/(^|[\s:])[a-z-]+\/\d+(\s|$)|(^|[\s:])opacity-\d+\b/, "No opacity on colours: a state is its own role."],
+  [
+    /(^|[\s:])rounded(-[trblse]{1,2})?(-(none|xs|sm|2xl|3xl|4xl))?(?=[\s"'`]|$)/,
+    "Corners: rounded-md (controls), rounded-lg (on the page), rounded-xl (above the page), rounded-full (pills).",
+  ],
+  [/(^|[\s:])-?z-\d+\b/, "Stacking order comes from the named layers in src/theme/ (menu, dialog, tooltip), never a number."],
+  [
+    /(^|[\s:])((w|h|min-w|max-w|min-h|max-h)-(\d+|px)|size-(?![3-6]\b)\d+)\b/,
+    "No fixed sizes: layout decides how much space a component gets. Icons use size-3 to size-6.",
+  ],
+  [
+    /(^|[\s:])-?(p[xytrblse]?|m[xytrblse]?|gap(-[xy])?|space-[xy])-(?!(0\.5|1\.5|0|1|2|3|4|6|8)(?![\w.]))[\d.]+(?![\w.])/,
+    "Spacing uses only Tailwind's steps 0, 0.5, 1, 1.5, 2, 3, 4, 6 and 8. Pick the nearest.",
+  ],
 ];
+// A colour class must name a role defined in src/theme/roles.css. Tailwind drops a class it doesn't know without a word,
+// so a typo or a renamed role would otherwise leave a control with no colour at all.
+const ROLE_NAMESPACES = { text: "text-color", bg: "background-color", border: "border-color", divide: "border-color", outline: "outline-color", ring: "ring-color" };
+const roles = new Set(
+  [...fs.readFileSync(new URL("./src/theme/roles.css", import.meta.url), "utf8").matchAll(/--([a-z]+-color)-([a-z0-9-]+):/g)].map(([, ns, name]) => `${ns}:${name}`),
+);
+// Utilities that share a colour prefix but set something else: size, alignment, width, side, style.
+const NOT_COLOUR = {
+  text: /^(xs|sm|base|lg|\d?xl|left|center|right|start|end|justify|wrap|nowrap|balance|pretty|ellipsis|clip)$/,
+  bg: /^(fixed|local|scroll|none|auto|cover|contain|center|top|bottom|left|right|repeat(-.+)?|no-repeat|clip-.+|origin-.+|linear-.+|radial.*|conic.*|blend-.+)$/,
+  border: /^(\d+|[xytblrse](-\d+)?|solid|dashed|dotted|double|none|hidden|collapse|separate|spacing-.+)$/,
+  divide: /^([xy](-\d+|-reverse)?|\d+|solid|dashed|dotted|double|none)$/,
+  outline: /^(\d+|none|hidden|solid|dashed|dotted|double|offset-\d+)$/,
+  ring: /^(\d+|inset|offset-.+)$/,
+};
+const KEYWORDS = /^(transparent|current|inherit)$/;
+function unknownRoles(text) {
+  const found = [];
+  for (const token of text.split(/\s+/)) {
+    const utility = token.split(":").pop().replace(/^[!-]/, "");
+    const m = utility.match(/^(text|bg|border|divide|outline|ring)-(.+)$/);
+    if (!m || /[[/]/.test(utility)) continue;
+    const [, prefix, rest] = m;
+    if (NOT_COLOUR[prefix].test(rest) || KEYWORDS.test(rest)) continue;
+    const ns = ROLE_NAMESPACES[prefix];
+    const sideless = prefix === "border" ? rest.replace(/^[xytblrse]-/, "") : rest;
+    if (!roles.has(`${ns}:${rest}`) && !roles.has(`${ns}:${sideless}`)) found.push(token);
+  }
+  return found;
+}
+
 const local = {
   rules: {
     "no-raw-style": {
@@ -40,6 +102,7 @@ const local = {
       create(context) {
         const check = (node, text) => {
           for (const [regex, message] of styleChecks) if (regex.test(text)) context.report({ node, message });
+          for (const token of unknownRoles(text)) context.report({ node, message: `"${token}" isn't a colour role. Use one defined in src/theme/roles.css.` });
         };
         return {
           Literal: (node) => typeof node.value === "string" && check(node, node.value),
@@ -62,21 +125,32 @@ export default defineConfig([
 
   { files: ["src/**/*.{ts,tsx}"], ignores: ["src/theme/**"], rules: { "local/no-raw-style": "error" } },
 
+  // Everywhere in src/: the conventions, @/ imports, and files small enough to read. Stories need a default export.
+  {
+    files: ["src/**/*.{ts,tsx}"],
+    rules: {
+      "no-restricted-imports": imports(),
+      "no-restricted-syntax": syntax(),
+      "max-lines": ["error", { max: 300, skipBlankLines: true, skipComments: true }],
+    },
+  },
+  { files: ["src/**/*.stories.tsx"], rules: { "no-restricted-syntax": ["error", ...conventions.slice(1)] } },
+
   // Pages: take props, fetch nothing, hold no styling. The route fetches; the mappers may name API types.
   {
     files: ["src/pages/**/*.{ts,tsx}"],
     ignores: ["src/pages/**/*.route.tsx", "src/pages/**/*.data.ts"],
     rules: {
       "no-restricted-imports": imports(noClient, noFake, noOtherPage, noDeepComponents, noApp),
-      "no-restricted-syntax": [
-        "error",
-        { selector: "JSXAttribute[name.name=/^(className|style)$/]", message: "Pages hold no styling: arrange components, or extend one." },
-      ],
+      "no-restricted-syntax": syntax({
+        selector: "JSXAttribute[name.name=/^(className|style)$/]",
+        message: "Pages hold no styling: arrange components, or extend one.",
+      }),
     },
   },
   {
     files: ["src/pages/**/*.data.ts"],
-    rules: { "no-restricted-imports": ["error", { patterns: [{ ...noClient, allowTypeImports: true }, noFake, noOtherPage, noApp] }] },
+    rules: { "no-restricted-imports": ["error", { patterns: [noParent, { ...noClient, allowTypeImports: true }, noFake, noOtherPage, noApp] }] },
   },
   { files: ["src/pages/**/*.route.tsx"], rules: { "no-restricted-imports": imports(noFake, noOtherPage, noDeepComponents, noApp) } },
 

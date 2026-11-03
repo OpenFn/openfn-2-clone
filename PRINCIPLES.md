@@ -10,6 +10,10 @@ We are moving towards a future where the application will be used by more and mo
 
 To feel proud of this repo, each part will have a clear defined home and rules. What good looks like: we are able to work on the data fetching mechanism of the frontend and it won't break other parts of it. We want to always work in a way where different areas of responsibility are organised so that we can work on things independently. This is extremely important.
 
+## Where the design comes from
+
+Brandon's design is what we're building towards, and it wins when it differs from Lightning. We take what he designed, not how he built it: every piece is rebuilt by these principles. Lightning still tells us what a page does, so the same tests pass on both.
+
 ## Decisions still outstanding
 
 We aren't sure if we are moving to a single page React application + API or importing the page level components into Lightning's current backend with LiveView and React islands per page. We are trying to keep the solution flexible in case the decision goes either way. We should not overengineer this part. The way this is set up proves that each part is configurable. We are separating concerns so each part does its own thing.
@@ -61,8 +65,13 @@ Each area can change without the others changing. Lint stops imports crossing th
 - Primitive components know nothing about OpenFn: no product words, no permissions.
 - The parent owns the space between children. A component has no outer margin.
 - Anything common comes from tokens: colour, type, spacing, radius. Never raw values.
+- Spacing uses only Tailwind's steps 0, 0.5, 1, 1.5, 2, 3, 4, 6 and 8. Lint bans the rest. 0.5 and 1.5 are for the small gaps inside controls.
+- Corners come in four sizes, one per job: `rounded-md` for controls (buttons, inputs), `rounded-lg` for things on the page (cards, tables, callouts), `rounded-xl` for things above or framing the page (dialogs, the page header), `rounded-full` for pills and avatars. Lint bans the rest.
 - A component's stories are its spec: one per state (empty, loading, error, disabled, long text).
 - Design for the longest real value. User-typed text truncates in a one-line slot and wraps in a block.
+- No component sets a fixed width or height. Layout decides how much space it gets, so making the app responsive later is a change to layout, not to every component. Icons are the exception (`size-3` to `size-6`).
+- What sits on top (menus, dialogs, tooltips) comes from a few named layers, never a `z-` number.
+- Classes are joined with `cn()`, never by building a string, so when two classes clash the right one wins.
 
 ## Data and state
 
@@ -72,6 +81,14 @@ Each area can change without the others changing. Lint stops imports crossing th
 - Most effects aren't needed. Work things out while rendering; don't copy state from one place to another with an effect. ([React docs](https://react.dev/learn/you-might-not-need-an-effect))
 - One way to fetch, used everywhere. A reply that arrives after you've moved on is ignored.
 - The server decides who can do what, and sends it with the data, with a reason when the answer is no. The page shows that answer; it never works out a permission from someone's role. The server checks again when the action arrives.
+- IDs come from `useId()`, never written by hand, so a component can appear twice on one page.
+- A list's `key` names the thing, never its position, so deleting or reordering a row keeps the right state on the right row.
+
+## Code
+
+- Named exports only, so a rename is the same everywhere.
+- Imports across folders use `@/` (`@/components`, `@/theme`). `./` only within a folder.
+- A file over 300 lines gets split.
 
 ## When things go wrong
 
@@ -85,11 +102,12 @@ Each area can change without the others changing. Lint stops imports crossing th
 - Contrast 4.5:1 for text. Colour is never the only signal.
 - A blocked control stays visible and says why ("Only owners can delete projects"). It's hidden only if this person could never do it.
 - Everything works by keyboard. A shortcut does exactly what its button does, and never fires while you're typing.
+- A dialog keeps focus inside while it's open and gives it back when it closes. A menu moves with the arrow keys. Every input has a label.
 - General web rules follow Vercel's [web interface guidelines](https://github.com/vercel-labs/web-interface-guidelines). Where they clash with Lightning's wording, ask if Lightning wins.
 
 ## Words
 
-- Same words as Lightning unless we've decided to change them, and then the change is written down.
+- Where Brandon's design has the screen, its words win. Where it doesn't, Lightning's do.
 - Sentence case on buttons and headings. A button says what it does ("Delete project", not "OK").
 
 ## How we verify
