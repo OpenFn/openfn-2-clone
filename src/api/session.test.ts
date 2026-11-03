@@ -3,7 +3,8 @@ import { renderHook, waitFor } from "@testing-library/react";
 import { createElement, type ReactNode } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { failNext } from "./client";
-import { createQueryClient, sessionKeys, useSessionActions, useSessionState } from "./session";
+import { meKeys } from "./me";
+import { createQueryClient, useSessionActions, useSessionState } from "./session";
 
 function renderSession(client: QueryClient = createQueryClient()) {
   const wrapper = ({ children }: { children: ReactNode }) => createElement(QueryClientProvider, { client }, children);
@@ -15,7 +16,7 @@ const signedInName = (state: ReturnType<typeof useSessionState>) =>
 
 // The stand-in keeps one session for the whole file, as a browser would: these run in order.
 describe("useSessionState and useSessionActions, on the stand-in", () => {
-  it("starts signed in as the fixture's user, so pages on the fixtures still find her", async () => {
+  it("starts signed in, as the fixture's user for pages on the fixtures", async () => {
     const { result } = renderSession();
     await waitFor(() => expect(signedInName(result.current.state)).toBe("Amy Admin"));
     expect(result.current.state).toMatchObject({ session: { user: { id: "user-amy", role: "superuser" } } });
@@ -39,7 +40,7 @@ describe("useSessionState and useSessionActions, on the stand-in", () => {
   it("resolves a sign-in only once the signed-in person has been read again", async () => {
     const { result, client } = renderSession();
     await expect(result.current.actions.signIn({ email: "demo@openfn.org", password: "welcome12345" })).resolves.toBe("signedIn");
-    expect(client.getQueryData(sessionKeys.me)).toMatchObject({ id: "user-amy" });
+    expect(client.getQueryData(meKeys.all)).toMatchObject({ attributes: { email: "demo@openfn.org" } });
   });
 
   it("asks an account with MFA for its code, refuses a wrong one, and signs in with the right one", async () => {
@@ -57,7 +58,7 @@ describe("createQueryClient", () => {
     const recheck = vi.spyOn(client, "invalidateQueries");
     failNext({ status: 401, code: "unauthenticated", detail: "Authentication is required." });
     await client.query({ queryKey: ["credentials"], queryFn: () => import("./client").then((c) => c.request("GET", "/api/credentials")) }).catch(() => {});
-    expect(recheck).toHaveBeenCalledWith({ queryKey: sessionKeys.me });
+    expect(recheck).toHaveBeenCalledWith({ queryKey: meKeys.all });
   });
 });
 

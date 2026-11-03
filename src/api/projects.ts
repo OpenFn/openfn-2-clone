@@ -162,6 +162,7 @@ export function useProjectSaves() {
   const queryClient = useQueryClient();
   const create = useSave([projectKeys.all], async (project: { name: string; description: string }) => {
     const me = await queryClient.query({ ...meQuery, staleTime: "static" });
+    if (!me) throw new ApiError(401, "unauthenticated", "Authentication is required.");
     await createProject(me.attributes.email, project);
   });
   return {

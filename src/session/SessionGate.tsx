@@ -6,8 +6,11 @@ import type { SignInState } from "./session";
 
 /** Pages a signed-out visitor may see; Lightning sends them anywhere else to log in. */
 const signedOutPaths = ["/users/log_in", "/users/register", "/users/reset_password", "/users/two-factor", "/users/confirm"];
-/** Pages Lightning sends a signed-in visitor away from, to their projects (`redirect_if_user_is_authenticated`). */
-const signedInAway = ["/users/log_in", "/users/register", "/users/reset_password"];
+/**
+ * Pages Lightning sends a signed-in visitor away from (`redirect_if_user_is_authenticated`),
+ * and the two-factor step once it's done: on to where they were headed, or their projects.
+ */
+const signedInAway = ["/users/log_in", "/users/register", "/users/reset_password", "/users/two-factor"];
 
 const under = (paths: string[], pathname: string) => paths.some((p) => pathname === p || pathname.startsWith(`${p}/`));
 
@@ -43,7 +46,7 @@ export default function SessionGate({ children }: { children: ReactNode }) {
     if (under(signedOutPaths, pathname)) return children;
     return <Navigate to="/users/log_in" replace state={{ returnTo: pathname + search } satisfies SignInState} />;
   }
-  // Signing in lands here too, before the log in page sends them on: go the same way.
+  // This is also how signing in moves on.
   if (under(signedInAway, pathname)) return <Navigate to={state?.returnTo ?? "/projects"} replace />;
   return <SessionProvider session={session.session}>{children}</SessionProvider>;
 }
