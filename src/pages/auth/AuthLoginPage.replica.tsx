@@ -1,0 +1,35 @@
+import { useLocation, useNavigate } from "react-router-dom";
+import { live } from "../../api/client";
+import { loginOptions, useInstance } from "../../api/instance";
+import { useSessionActions } from "../../api/session";
+import { authFlags } from "../../mock-data/auth";
+import type { SignInState } from "../../session/session";
+import AuthLoginPage from "./AuthLoginPage";
+
+/**
+ * The replica's side of AuthLoginPage: signs in on Lightning's API (or its
+ * stand-in); SessionGate then sends the visitor where they were headed. An
+ * account with MFA goes on to the two-factor page. Register and the SSO button follow the
+ * instance; on the stand-in, `?signup=1` and `?sso=1` switch them on.
+ */
+export default function AuthLoginPageReplica() {
+  const navigate = useNavigate();
+  const { search, state } = useLocation() as { search: string; state: SignInState | null };
+  const instance = useInstance();
+  const { signIn } = useSessionActions();
+  const options = live ? (instance ? loginOptions(instance) : { allowSignup: false, ssoProvider: null }) : authFlags(search);
+
+  return (
+    <AuthLoginPage
+      allowSignup={options.allowSignup}
+      ssoProvider={options.ssoProvider}
+      info={state?.info ?? null}
+      onSignIn={async ({ email, password }) => {
+        if ((await signIn({ email, password })) === "mfaRequired") {
+          // Keeps where they were headed for after the code.
+          navigate("/users/two-factor", { state });
+        }
+      }}
+    />
+  );
+}

@@ -1,10 +1,10 @@
 import { Navigate, Route, Routes, useParams } from "react-router-dom";
 import AppShell from "./components/shell/AppShell";
 
-import AuthLoginPage from "./pages/auth/AuthLoginPage";
+import AuthLoginPage from "./pages/auth/AuthLoginPage.replica";
 import AuthRegisterPage from "./pages/auth/AuthRegisterPage";
 import AuthResetPasswordPage from "./pages/auth/AuthResetPasswordPage";
-import AuthTwoFactorPage from "./pages/auth/AuthTwoFactorPage";
+import AuthTwoFactorPage from "./pages/auth/AuthTwoFactorPage.replica";
 import AuthConfirmAccountPage from "./pages/auth/AuthConfirmAccountPage";
 import AuthConfirmationRequiredPage from "./pages/auth/AuthConfirmationRequiredPage.replica";
 import AuthConfirmAccessPage from "./pages/auth/AuthConfirmAccessPage.replica";
@@ -55,7 +55,7 @@ export default function App() {
     <Routes>
       {/* Auth and onboarding: no side menu. */}
       <Route path="/users/log_in" element={<AuthLoginPage />} /> {/* auth-login */}
-      <Route path="/users/log_out" element={<Navigate to="/users/log_in" replace />} />
+      <Route path="/users/log_out" element={<Navigate to="/users/log_in" replace />} /> {/* main.tsx signs out first */}
       <Route path="/users/register" element={<AuthRegisterPage />} /> {/* auth-register */}
       <Route path="/users/reset_password" element={<AuthResetPasswordPage />} /> {/* auth-reset-password */}
       <Route path="/users/reset_password/:token" element={<AuthResetPasswordPage />} />

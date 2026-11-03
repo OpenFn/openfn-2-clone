@@ -1,38 +1,48 @@
-// eslint-disable-next-line no-restricted-imports -- debt: not yet split into page and .replica.tsx wrapper (STANDARDS §11).
-import { useLocation, useNavigate } from "react-router-dom";
 import AuthPanelLayout, {
   AuthPanel,
   HavingProblems,
 } from "../../components/auth/AuthPanelLayout";
 import Alert from "../../components/primitives/Alert";
 import Form from "../../components/primitives/Form";
+import { errorMessage } from "../../utils/errors";
 import { useForm } from "../../utils/useForm";
 import { blank } from "../../utils/validate";
 import TextLink from "../../components/primitives/TextLink";
 import Button from "../../components/primitives/Button";
 import { TextInput } from "../../components/primitives/Inputs";
-import { authMessages } from "../../constants";
 import type { TwoFactorMethod } from "../../types/auth";
 
-/**
- * Inventory view `auth-two-factor` (user_totp_html/new.html.heex).
- * ?authentication_type=backup_code switches to the backup-code form, as in
- * Lightning; ?error=1 shows the invalid-code message. Any code is accepted.
- */
-export default function AuthTwoFactorPage() {
-  const { search } = useLocation();
-  const navigate = useNavigate();
-  const q = new URLSearchParams(search);
-  const method: TwoFactorMethod = q.get("authentication_type") === "backup_code" ? "backup_code" : "totp";
-  const other: TwoFactorMethod = method === "totp" ? "backup_code" : "totp";
+/** What the two-factor form sends: the code, and which kind it is. */
+export interface TwoFactorValues {
+  method: TwoFactorMethod;
+  code: string;
+}
 
+/** The contract between this page and whatever feeds it (the replica wrapper, later Lightning). */
+export interface AuthTwoFactorPageProps {
+  /** Which code the page asks for (Lightning's `?authentication_type=`). */
+  method: TwoFactorMethod;
+  /** Checks the code. Resolves when the host accepts (it then sends the user on); rejects with the refusal to show. */
+  onVerify: (values: TwoFactorValues) => Promise<void>;
+}
+
+/**
+ * Inventory view `auth-two-factor` (user_totp_html/new.html.heex): the second
+ * step of signing in to an account with MFA. "Use your backup code" switches
+ * to the backup-code form, as in Lightning. Props only, so it can run
+ * unchanged in Lightning.
+ */
+export default function AuthTwoFactorPage({ method, onVerify }: AuthTwoFactorPageProps) {
+  const other: TwoFactorMethod = method === "totp" ? "backup_code" : "totp";
   const form = useForm({ initial: { code: "" }, validate: ({ code }) => ({ code: blank(code) }) });
+  // A refusal shows above the form, where Lightning's flash is.
+  const { error, ...formProps } = form.formProps(({ code }) => onVerify({ method, code }));
 
   return (
     <AuthPanelLayout title="Two-factor authentication">
       <AuthPanel>
-        {q.has("error") && <Alert tone="danger">{authMessages.invalidTwoFactorCode}</Alert>}
-        <Form {...form.formProps(() => navigate("/projects"))}>
+        {error != null && <Alert tone="danger">{errorMessage(error)}</Alert>}
+        <Form {...formProps}>
           <TextInput
             id="user_code"
             label={method === "backup_code" ? "Backup Code" : "Authentication Code"}

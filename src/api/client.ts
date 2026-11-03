@@ -10,7 +10,8 @@ import { useMutation, useQueryClient, type QueryKey, type UseQueryResult } from 
 import type { ResourceStatus } from "../types/resource";
 import { RequestError } from "../utils/errors";
 
-const live = import.meta.env["VITE_API"] === "lightning";
+/** Calling a real Lightning (`VITE_API=lightning`) rather than the stand-in. */
+export const live = import.meta.env["VITE_API"] === "lightning";
 
 type Method = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 
@@ -162,7 +163,12 @@ function readCsrfToken(): Promise<string> {
   return token;
 }
 
-const withToken = (token: string): Record<string, string> => (token ? { "x-csrf-token": token } : {});
+/** Keeps the token a new session came with (`POST /api/session` sends it), or forgets an ended session's (null). */
+export function renewCsrfToken(token: string | null) {
+  csrfToken = token ? Promise.resolve(token) : null;
+}
+
+const withToken =(token: string): Record<string, string> => (token ? { "x-csrf-token": token } : {});
 
 async function fetchLightning<T>(method: Method, path: string, body: unknown): Promise<T> {
   if (method === "GET") return send<T>(method, path, body, {});

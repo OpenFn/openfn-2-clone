@@ -5,7 +5,7 @@
  * here authenticates anyone.
  *
  * For demoing, a page can override a flag from the query string, e.g.
- * /users/log_in?sso=1, /users/register?signup=1, /users/log_in?error=1.
+ * /users/log_in?sso=1, /users/register?signup=1.
  */
 import type { SsoProvider } from "../types/auth";
 import type { AuthConfig } from "./models/auth";
