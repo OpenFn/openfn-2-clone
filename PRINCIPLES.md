@@ -12,15 +12,10 @@ To feel proud of this repo, each part will have a clear defined home and rules. 
 
 ## Where the design comes from
 
-Brandon's design is what we're building towards, and it wins when it differs from Lightning. We take what he designed, not how he built it: every piece is rebuilt by these principles. Lightning still tells us what a page does, so the same tests pass on both.
-
-## Decisions still outstanding
-
-We aren't sure if we are moving to a single page React application + API or importing the page level components into Lightning's current backend with LiveView and React islands per page. We are trying to keep the solution flexible in case the decision goes either way. We should not overengineer this part. The way this is set up proves that each part is configurable. We are separating concerns so each part does its own thing.
-
+Brandon's design is what we're building towards, and it wins when it differs from Lightning. We take what he designed, not how he built it: every piece is rebuilt by these principles. Lightning still tells us what a page does, so the same tests pass on both. Where we change or drop something Lightning does, it's written in [LIGHTNING-CHANGES.md](./LIGHTNING-CHANGES.md), with why.
 ## Areas
 
-Each area can change without the others changing. Lint stops imports crossing the lines. A first guess, to be tested on the first page:
+Each area can change without the others changing. Lint stops imports crossing the lines. We should not overengineer this: the way it is set up proves that each part is configurable. We are separating concerns so each part does its own thing. A first guess, to be tested on the first page:
 
 - **Components:** what things look like. Knows nothing about data or OpenFn.
 - **Pages:** what a screen shows and does. Takes props, fetches nothing.
@@ -65,13 +60,18 @@ Each area can change without the others changing. Lint stops imports crossing th
 - Primitive components know nothing about OpenFn: no product words, no permissions.
 - The parent owns the space between children. A component has no outer margin.
 - Anything common comes from tokens: colour, type, spacing, radius. Never raw values.
-- Spacing uses only Tailwind's steps 0, 0.5, 1, 1.5, 2, 3, 4, 6 and 8. Lint bans the rest. 0.5 and 1.5 are for the small gaps inside controls.
-- Corners come in four sizes, one per job: `rounded-md` for controls (buttons, inputs), `rounded-lg` for things on the page (cards, tables, callouts), `rounded-xl` for things above or framing the page (dialogs, the page header), `rounded-full` for pills and avatars. Lint bans the rest.
 - A component's stories are its spec: one per state (empty, loading, error, disabled, long text).
 - Design for the longest real value. User-typed text truncates in a one-line slot and wraps in a block.
-- No component sets a fixed width or height. Layout decides how much space it gets, so making the app responsive later is a change to layout, not to every component. Icons are the exception (`size-3` to `size-6`).
-- What sits on top (menus, dialogs, tooltips) comes from a few named layers, never a `z-` number.
-- Classes are joined with `cn()`, never by building a string, so when two classes clash the right one wins.
+
+## Buttons
+
+A button's look says how important the action is and what it does, nothing else.
+
+- Two settings: how loud (`primary`, `secondary`, `plain`) and what it means (`danger`, `success`).
+- One `primary` per page or dialog, as a rule rather than a law. `secondary` for the rest, `plain` for minor actions like Dismiss.
+- Removing one thing from a list is `secondary` + `danger` with its word ("Delete", "Remove"), never a bare icon.
+- Inside a tool panel (the editor, the assistant), the main action is dark, so it doesn't compete with the page's main action. Not built until the editor or assistant needs it.
+- Someone else's brand never colours a button. Connecting GitHub is a `secondary` button with GitHub's icon.
 
 ## Data and state
 
@@ -81,14 +81,6 @@ Each area can change without the others changing. Lint stops imports crossing th
 - Most effects aren't needed. Work things out while rendering; don't copy state from one place to another with an effect. ([React docs](https://react.dev/learn/you-might-not-need-an-effect))
 - One way to fetch, used everywhere. A reply that arrives after you've moved on is ignored.
 - The server decides who can do what, and sends it with the data, with a reason when the answer is no. The page shows that answer; it never works out a permission from someone's role. The server checks again when the action arrives.
-- IDs come from `useId()`, never written by hand, so a component can appear twice on one page.
-- A list's `key` names the thing, never its position, so deleting or reordering a row keeps the right state on the right row.
-
-## Code
-
-- Named exports only, so a rename is the same everywhere.
-- Imports across folders use `@/` (`@/components`, `@/theme`). `./` only within a folder.
-- A file over 300 lines gets split.
 
 ## When things go wrong
 
@@ -98,6 +90,8 @@ Each area can change without the others changing. Lint stops imports crossing th
 - Nothing loses what the user typed.
 
 ## Everyone can use it
+
+We meet [WCAG 2.2 level AA](https://www.w3.org/TR/WCAG22/). The story checks run axe on every story in both themes, but axe catches only part of AA, so keyboard and screen-reader checks are still ours to do. The lines below are the parts we get wrong most often.
 
 - Contrast 4.5:1 for text. Colour is never the only signal.
 - A blocked control stays visible and says why ("Only owners can delete projects"). It's hidden only if this person could never do it.
@@ -117,9 +111,20 @@ Each area can change without the others changing. Lint stops imports crossing th
 - Every check is proven once by an independent agent: plant the bug it's meant to catch, and confirm the check fails.
 - An independent reviewer checks the work, not the one who built it.
 - Lint enforces what it can. A rule only written in a doc gets broken. Write lint checks at least during this build phase. 
+- The repo only holds code we're proud of. Claude copies what's nearby.
 
-## Working with Claude
+## Conventions (lint enforces these)
 
-- The repo only holds code we're proud of. Claude copies what's nearby. 
-- One short CLAUDE.md that points here. Rules for one kind of file sit next to that kind of file.
-- A new rule comes with an example of it done right.
+The detail behind the principles above. Lint fails on each one, so they hold without anyone remembering.
+
+- Spacing uses only Tailwind's steps 0, 0.5, 1, 1.5, 2, 3, 4, 6 and 8. Lint bans the rest. 0.5 and 1.5 are for the small gaps inside controls.
+- Corners come in four sizes, one per job: `rounded-md` for controls (buttons, inputs), `rounded-lg` for things on the page (cards, tables, callouts), `rounded-xl` for things above or framing the page (dialogs, the page header), `rounded-full` for pills and avatars. Lint bans the rest.
+- No component sets a fixed width or height. Layout decides how much space it gets, so making the app responsive later is a change to layout, not to every component. Layout components and the app shell may set sizes; icons use `size-3` to `size-6`.
+- What sits on top (menus, dialogs, tooltips) comes from a few named layers, never a `z-` number.
+- Classes are joined with `cn()`, never by building a string, so when two classes clash the right one wins.
+- IDs come from `useId()`, never written by hand, so a component can appear twice on one page.
+- A list's `key` names the thing, never its position, so deleting or reordering a row keeps the right state on the right row.
+- Named exports only, so a rename is the same everywhere.
+- Imports across folders use `@/` (`@/components`, `@/theme`). `./` only within a folder.
+- A file over 300 lines gets split.
+- Icons are Lucide (Brandon's), imported only through `@/components/ui/icons`, so switching library is one file.
