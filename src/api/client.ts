@@ -1,20 +1,21 @@
 /**
  * The one way the replica reaches Lightning's API. With `VITE_API=lightning`
  * it calls a real Lightning through Vite's `/api` proxy (vite.config.ts), on
- * Lightning's session cookie; by default it calls the stand-in, which replays
- * recorded answers (`recorded/`) after a short delay. A refused request throws
- * an `ApiError`: show its `message`, branch on its `code`.
+ * Lightning's session cookie; by default it calls the stand-in, which answers
+ * the way Lightning would, from recorded answers (`recorded/`), after a short
+ * delay. A refused request throws an `ApiError`: show its `message`, branch on
+ * its `code`.
  */
+import type { UseQueryResult } from "@tanstack/react-query";
+import type { ResourceStatus } from "../types/resource";
 import { RequestError } from "../utils/errors";
-import credentials from "./recorded/credentials.json";
-import projects from "./recorded/projects.json";
 
 const live = import.meta.env["VITE_API"] === "lightning";
 
 type Method = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 
 export function request<T>(method: Method, path: string, body?: unknown): Promise<T> {
-  return live ? fetchLightning<T>(method, path, body) : standIn<T>(method, path);
+  return live ? fetchLightning<T>(method, path, body) : answerFromStandIn<T>(method, path, body);
 }
 
 /** Every page of a paged list (api/conventions.md), following `links.next`. */
@@ -29,6 +30,25 @@ export async function listAll<T>(path: string, key: string): Promise<T[]> {
     next = url ? url.pathname + url.search : null;
   }
   return rows;
+}
+
+/**
+ * Where the page stands while these queries load, for its `status` prop:
+ * loading until each has data, then the first refusal by its code. A refetch
+ * that fails keeps the rows already on screen.
+ */
+export function statusOf(...queries: UseQueryResult[]): ResourceStatus {
+  const failed = queries.find((q) => q.data === undefined && q.isError);
+  if (failed) {
+    const error = failed.error;
+    if (error instanceof ApiError && error.code === "not_found") return { state: "notFound" };
+    if (error instanceof ApiError && error.code === "forbidden") return { state: "forbidden" };
+    return {
+      state: "error",
+      message: error?.message ?? "Something went wrong.",
+    };
+  }
+  return queries.every((q) => q.data !== undefined) ? { state: "ready" } : { state: "loading" };
 }
 
 // Errors.
@@ -68,11 +88,20 @@ export class ApiError extends RequestError {
 }
 
 // For an answer that isn't a problem document (a proxy's 502, an empty body).
-const codeForStatus: Record<number, string> = { 401: "unauthenticated", 403: "forbidden", 404: "not_found" };
+const codeForStatus: Record<number, string> = {
+  401: "unauthenticated",
+  403: "forbidden",
+  404: "not_found",
+};
 
 /** An error status and its body (a problem document, or anything else) as an ApiError. */
 export function toApiError(status: number, body: unknown): ApiError {
-  const problem = (typeof body === "object" && body !== null ? body : {}) as Partial<{ code: string; detail: string; title: string; errors: ProblemEntry[] }>;
+  const problem = (typeof body === "object" && body !== null ? body : {}) as Partial<{
+    code: string;
+    detail: string;
+    title: string;
+    errors: ProblemEntry[];
+  }>;
   return new ApiError(
     status,
     problem.code ?? codeForStatus[status] ?? "internal",
@@ -83,13 +112,42 @@ export function toApiError(status: number, body: unknown): ApiError {
 
 // Lightning.
 
+/** The session's CSRF token, which every write sends (API.md "Authenticate"). Read once, and again when Lightning says it no longer matches. */
+let csrfToken: Promise<string> | null = null;
+
+function readCsrfToken(): Promise<string> {
+  const token = send<{ data: { csrf_token: string } }>("GET", "/api/session", undefined, {}).then((s) => s.data.csrf_token);
+  // A failed read leaves nothing behind for the next write.
+  token.catch(() => (csrfToken = null));
+  return token;
+}
+
 async function fetchLightning<T>(method: Method, path: string, body: unknown): Promise<T> {
+  if (method === "GET") return send<T>(method, path, body, {});
+  csrfToken ??= readCsrfToken();
+  try {
+    return await send<T>(method, path, body, {
+      "x-csrf-token": await csrfToken,
+    });
+  } catch (error) {
+    // Signing in renews the session, and with it the token.
+    if (!(error instanceof ApiError && error.code === "invalid_header")) throw error;
+    csrfToken = readCsrfToken();
+    return send<T>(method, path, body, { "x-csrf-token": await csrfToken });
+  }
+}
+
+async function send<T>(method: Method, path: string, body: unknown, headers: Record<string, string>): Promise<T> {
   let response: Response;
   try {
     response = await fetch(path, {
       method,
       credentials: "same-origin",
-      headers: { Accept: "application/json", ...(body === undefined ? {} : { "Content-Type": "application/json" }) },
+      headers: {
+        Accept: "application/json",
+        ...headers,
+        ...(body === undefined ? {} : { "Content-Type": "application/json" }),
+      },
       ...(body === undefined ? {} : { body: JSON.stringify(body) }),
     });
   } catch {
@@ -105,10 +163,26 @@ async function fetchLightning<T>(method: Method, path: string, body: unknown): P
 /** Delay to make loading states visible, in ms. */
 const LATENCY_MS = 500;
 
-const recorded: Record<string, unknown> = {
-  "GET /api/credentials": credentials,
-  "GET /api/projects": projects,
-};
+/** How the stand-in answers one route: the path's `:params` and the body in, the answer out, or a thrown ApiError. */
+type StandInHandler = (params: Record<string, string>, body: unknown) => unknown;
+
+const routes: {
+  method: Method;
+  pattern: RegExp;
+  names: string[];
+  handler: StandInHandler;
+}[] = [];
+
+/**
+ * Teaches the stand-in a route, answered as Lightning would. Each resource
+ * file registers its own, beside the API type they answer with:
+ * `standIn("PUT", "/api/credentials/:id", ({ id }, body) => …)`.
+ */
+export function standIn(method: Method, route: string, handler: StandInHandler) {
+  const names: string[] = [];
+  const pattern = new RegExp(`^${route.replace(/:(\w+)/g, (_, name: string) => (names.push(name), "([^/]+)"))}$`);
+  routes.push({ method, pattern, names, handler });
+}
 
 let failure: ApiError | null = null;
 
@@ -116,19 +190,38 @@ let failure: ApiError | null = null;
  * Makes the stand-in's next request fail with this problem, then clears. For
  * stories, tests and the console: `failNext({ status: 403, code: "forbidden" })`.
  */
-export function failNext({ status, code, detail = "The server could not complete that request.", errors = [] }: { status: number; code: string; detail?: string; errors?: ProblemEntry[] }) {
+export function failNext({
+  status,
+  code,
+  detail = "The server could not complete that request.",
+  errors = [],
+}: {
+  status: number;
+  code: string;
+  detail?: string;
+  errors?: ProblemEntry[];
+}) {
   failure = new ApiError(status, code, detail, errors);
 }
 
-function standIn<T>(method: Method, path: string): Promise<T> {
+function answerFromStandIn<T>(method: Method, path: string, body: unknown): Promise<T> {
   const fail = failure;
   failure = null;
-  const key = `${method} ${path.split("?")[0]}`;
+  const pathname = path.split("?")[0]!;
   return new Promise((resolve, reject) =>
     window.setTimeout(() => {
-      if (fail) reject(fail);
-      else if (key in recorded) resolve(structuredClone(recorded[key]) as T);
-      else reject(new ApiError(404, "not_found", `The stand-in has no recorded answer for ${key}.`));
+      if (fail) return reject(fail);
+      for (const route of routes) {
+        const match = route.method === method ? route.pattern.exec(pathname) : null;
+        if (!match) continue;
+        const params = Object.fromEntries(route.names.map((name, i) => [name, decodeURIComponent(match[i + 1]!)]));
+        try {
+          return resolve(structuredClone(route.handler(params, body)) as T);
+        } catch (error) {
+          return reject(error);
+        }
+      }
+      reject(new ApiError(404, "not_found", `The stand-in has no answer for ${method} ${pathname}.`));
     }, LATENCY_MS)
   );
 }
