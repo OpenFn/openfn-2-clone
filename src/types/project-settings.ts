@@ -120,8 +120,8 @@ export interface CollaboratorRow {
   isCurrentUser: boolean;
   /** Why this member can't be removed ("You cannot remove an owner"), or null when they can. */
   removeBlockedReason: string | null;
-  /** Credentials this member owns in the project, named in the removal confirmation. */
-  ownedCredentialNames: string[];
+  /** Credentials this member owns in the project, named in the removal confirmation; null when the host can't say which, and the confirmation warns without naming them. */
+  ownedCredentialNames: string[] | null;
 }
 
 export interface CollaborationSettings {

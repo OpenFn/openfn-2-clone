@@ -83,7 +83,8 @@ export function collaboratorRow(m: ApiMember, viewerId: string | undefined, canR
     digest: a.digest,
     isCurrentUser: m.id === viewerId,
     removeBlockedReason: removeBlockedReason(m, viewerId, canRemove),
-    ownedCredentialNames: [],
+    // The API doesn't say which credentials a member owns, so the confirmation warns without naming them.
+    ownedCredentialNames: null,
   };
 }
 
