@@ -44,10 +44,16 @@ In this order, as in `credentials.ts`:
 1. **The API's types**, as Lightning sends them (snake_case).
 2. **Mappers**, plain functions from the API's shape to the page's row type.
    What the API doesn't send gets the answer for "none" (an empty list,
-   `null`), never made-up data.
+   `null`), never made-up data. When another route has it (counts from a
+   list, a role from the members), read that route instead, and still track
+   the gap.
+   When a mapper needs to know who's looking, use `meQuery` (`me.ts`, the
+   API's `GET /api/me`), not `useCurrentUser()`, which is the fixture's.
 3. **Query keys**, general to specific: `["tokens"]`,
    `["projects", id, "members"]`. Reuse another resource's keys from its
-   file (`projectKeys`), never retype them.
+   file (`projectKeys`), never retype them. A sub-route
+   (`/api/projects/:id/members`) goes in its parent's file, as environments
+   do in `credentials.ts`.
 4. **Requests**: `listAll(path, key)` for a paged list, `request(...)`
    for the rest. Turn Lightning's field names into the form's with
    `withFieldNames` (`client.ts`), so a refusal lands on the right field.
@@ -56,6 +62,9 @@ In this order, as in `credentials.ts`:
 5. **The hooks** a wrapper calls:
    - `useXIndex()`: one `useQuery` per list, side by side, and
      `status: statusOf(...queries)`. Returns the page's data props, mapped.
+     A query per row (each project's members) is `useQueries` over the
+     parent list; it starts once the parent has loaded, so give the test's
+     `waitFor` more than its one second.
    - `useXSaves()`: one `useSave(keys, fn)` per action (`client.ts`), with
      the keys of every list the save can change, on any page. The page's
      promise then resolves only once those lists have reloaded. Never
@@ -93,8 +102,8 @@ Break the invalidation once and watch the first test fail.
 Start the replica twice: `npx vite --port <a>` for the stand-in, and
 `VITE_API=lightning npx vite --port <b>` against Lightning on :4000. In a
 headless browser (Playwright from `node_modules`), sign in on the live one
-by calling `fetch("/api/session", { method: "POST", ... })` from the page,
-then go through every action on the page in both modes: a save, a refusal,
+by calling `fetch("/api/session", { method: "POST", ... })` from the page
+and reload (a list that loaded before signing in holds its 401), then go through every action on the page in both modes: a save, a refusal,
 a delete. Log each non-GET request and each 4xx answer. Look at the
 screenshots. Delete what you created on the real Lightning afterwards, and
 make the script refuse to delete anything that was there before you started:
