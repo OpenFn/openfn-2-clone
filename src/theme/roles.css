@@ -55,6 +55,14 @@
   --text-color-danger-strong: var(--bj-red-700); /* a danger panel's heading */
   --text-color-danger-icon: var(--bj-red-500); /* a danger panel's icon */
 
+  /* Disabled: Brandon fades a disabled button to half strength. These are the colours that fading gives,
+     as roles, so no component uses opacity. Names from PR 78. */
+  --background-color-brand-disabled: color-mix(in oklab, var(--color-indigo-600) 50%, var(--color-white)); /* a disabled primary button */
+  --background-color-danger-disabled: color-mix(in oklab, var(--bj-red-600) 50%, var(--color-white)); /* a disabled danger button */
+  --text-color-on-brand-disabled: color-mix(in oklab, var(--color-white) 75%, var(--color-indigo-600)); /* text on a disabled filled button */
+  --background-color-disabled: var(--color-white); /* a disabled secondary button */
+  --text-color-disabled: color-mix(in oklab, var(--color-gray-700) 50%, var(--color-white)); /* text and icons on a disabled control */
+
   /* Info: indigo in Basic, as Brandon draws notices. */
   --background-color-info: var(--color-indigo-50); /* an info panel */
   --border-color-info: var(--color-indigo-200); /* its edge */

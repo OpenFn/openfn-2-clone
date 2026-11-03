@@ -67,9 +67,17 @@ const styleChecks = [
 // A colour class must name a role defined in src/theme/roles.css. Tailwind drops a class it doesn't know without a word,
 // so a typo or a renamed role would otherwise leave a control with no colour at all.
 const ROLE_NAMESPACES = { text: "text-color", bg: "background-color", border: "border-color", divide: "border-color", outline: "outline-color", ring: "ring-color" };
-const roles = new Set(
-  [...fs.readFileSync(new URL("./src/theme/roles.css", import.meta.url), "utf8").matchAll(/--([a-z]+-color)-([a-z0-9-]+):/g)].map(([, ns, name]) => `${ns}:${name}`),
-);
+// Re-read whenever roles.css changes, so an editor's long-running lint sees a role added after it started.
+const ROLES_FILE = new URL("./src/theme/roles.css", import.meta.url);
+let rolesCache = { mtime: -1, set: new Set() };
+function currentRoles() {
+  const mtime = fs.statSync(ROLES_FILE).mtimeMs;
+  if (mtime !== rolesCache.mtime) {
+    const css = fs.readFileSync(ROLES_FILE, "utf8");
+    rolesCache = { mtime, set: new Set([...css.matchAll(/--([a-z]+-color)-([a-z0-9-]+):/g)].map(([, ns, name]) => `${ns}:${name}`)) };
+  }
+  return rolesCache.set;
+}
 // Utilities that share a colour prefix but set something else: size, alignment, width, side, style.
 const NOT_COLOUR = {
   text: /^(xs|sm|base|lg|\d?xl|left|center|right|start|end|justify|wrap|nowrap|balance|pretty|ellipsis|clip)$/,
@@ -81,6 +89,7 @@ const NOT_COLOUR = {
 };
 const KEYWORDS = /^(transparent|current|inherit)$/;
 function unknownRoles(text) {
+  const roles = currentRoles();
   const found = [];
   for (const token of text.split(/\s+/)) {
     const utility = token.split(":").pop().replace(/^[!-]/, "");

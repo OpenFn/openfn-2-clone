@@ -51,6 +51,13 @@
   --text-color-danger-strong: oklch(88.5% 0.062 18.334);
   --text-color-danger-icon: var(--dk-red);
 
+  /* Disabled: the same half-strength fade, over the dark surface. */
+  --background-color-brand-disabled: color-mix(in oklab, var(--dk-indigo) 50%, var(--dk-surface));
+  --background-color-danger-disabled: color-mix(in oklab, var(--dk-red-fill) 50%, var(--dk-surface));
+  --text-color-on-brand-disabled: color-mix(in oklab, white 60%, var(--dk-surface));
+  --background-color-disabled: var(--dk-surface);
+  --text-color-disabled: color-mix(in oklab, #ccd1da 50%, var(--dk-surface));
+
   /* Info: blue here, as the dark-theme branch has it. */
   --background-color-info: color-mix(in oklab, var(--dk-blue) 10%, var(--dk-surface));
   --border-color-info: color-mix(in oklab, var(--dk-blue) 30%, transparent);
