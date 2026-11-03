@@ -10,7 +10,7 @@ import { fixturesUnder, mergeFixtures, rootOf, sandboxRow, workspaceFixtures, ty
 import { workflowsIn } from "../../mock-data/workflows";
 import { permissionsFor, roleIn } from "../../permissions";
 import { useCurrentUser } from "../../session/session";
-import type { Project } from "../../mock-data/models/projects";
+import type { Project } from "../../types/projects";
 import type { ProjectRole } from "../../types/projects";
 import type { MergePreviewResult, MergeWorkflowRow, SandboxForm, SandboxValues } from "../../types/sandboxes";
 import { RequestError } from "../../utils/errors";

@@ -1,7 +1,7 @@
 import { createContext, useContext } from "react";
 import { permissionsFor, type Permissions } from "../permissions";
-import type { Project } from "../mock-data/models/projects";
-import type { User } from "../mock-data/models/users";
+import type { Project } from "../types/projects";
+import type { User } from "../types/users";
 
 /** Instance details the layout shows (Lightning.Config). */
 export interface InstanceInfo {

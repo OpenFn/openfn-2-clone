@@ -49,17 +49,25 @@ describe("the data seam lint rule", () => {
   });
 
   it("pages, components and contract shapes may not import the replica's models, and say so once", async () => {
-    const code = (from: string) => `import type { Project } from "${from}";\nexport type X = Project;\n`;
+    const code = (from: string) => `import type { WorkflowSummary } from "${from}";\nexport type X = WorkflowSummary;\n`;
     const message = (from: string) =>
       `'${from}' import is restricted from being used by a pattern. Models are the replica's records: take a hand-written contract shape from src/types/ (STANDARDS §11).`;
     for (const [probe, from] of [
-      ["src/pages/SeamProbePage.tsx", "../mock-data/models/projects"],
-      ["src/components/primitives/SeamProbe.tsx", "../../mock-data/models/projects"],
-      ["src/types/seamProbe.ts", "../mock-data/models/projects"],
+      ["src/pages/SeamProbePage.tsx", "../mock-data/models/workflows"],
+      ["src/components/primitives/SeamProbe.tsx", "../../mock-data/models/workflows"],
+      ["src/types/seamProbe.ts", "../mock-data/models/workflows"],
     ] as const) {
       expect(await seamMessages(probe, code(from))).toEqual([message(from)]);
     }
-    expect(await seamMessages("src/pages/x/SeamProbe.replica.tsx", code("../../mock-data/models/projects"))).toEqual([]);
+    expect(await seamMessages("src/pages/x/SeamProbe.replica.tsx", code("../../mock-data/models/workflows"))).toEqual([]);
+  });
+
+  it("pages and contract shapes may take CurrentProject from types/projects, but not the Project and User records", async () => {
+    const code = (name: string, from: string) => `import type { ${name} } from "${from}";\nexport type X = ${name};\n`;
+    expect(await seamMessages("src/pages/SeamProbePage.tsx", code("Project", "../types/projects"))).toHaveLength(1);
+    expect(await seamMessages("src/types/seamProbe.ts", code("User", "./users"))).toHaveLength(1);
+    expect(await seamMessages("src/types/seamProbe.ts", code("User", "../types/users"))).toHaveLength(1);
+    expect(await seamMessages("src/pages/SeamProbePage.tsx", code("CurrentProject", "../types/projects"))).toEqual([]);
   });
 });
 

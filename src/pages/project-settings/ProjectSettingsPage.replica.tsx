@@ -12,7 +12,7 @@ import {
 import { findProject, projects } from "../../mock-data/projects";
 import { simulateRequest } from "../../mock-data/request";
 import { users } from "../../mock-data/users";
-import type { Project } from "../../mock-data/models/projects";
+import type { Project } from "../../types/projects";
 import { useCurrentUser } from "../../session/session";
 import { RequestError } from "../../utils/errors";
 import { urlSafeName } from "../../utils/format";

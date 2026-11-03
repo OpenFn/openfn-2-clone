@@ -4,7 +4,7 @@
  */
 
 import { kickstartProjects } from "./generated/kickstart";
-import type { Project } from "./models/projects";
+import type { Project } from "../types/projects";
 
 export const projects: Project[] = [
   {

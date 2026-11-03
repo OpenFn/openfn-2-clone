@@ -4,10 +4,10 @@
  * Static fixtures only: every secret here is an obviously fake placeholder.
  */
 import { projects } from "./projects";
-import type { Project } from "./models/projects";
+import type { Project } from "../types/projects";
 import { findUser } from "./users";
 import { canEditCredential } from "../permissions";
-import type { User } from "./models/users";
+import type { User } from "../types/users";
 import { kickstartCredentials } from "./generated/kickstart";
 import type {
   CredentialSecretsResult,

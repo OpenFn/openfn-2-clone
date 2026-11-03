@@ -13,8 +13,8 @@ import { projects } from "../../mock-data/projects";
 import { simulateRequest } from "../../mock-data/request";
 import { users } from "../../mock-data/users";
 import type { CredentialActions, CredentialValues, KeychainCredentialActions } from "../../types/credentials";
-import type { Project } from "../../mock-data/models/projects";
-import type { User } from "../../mock-data/models/users";
+import type { Project } from "../../types/projects";
+import type { User } from "../../types/users";
 import { RequestError } from "../../utils/errors";
 import { fullName } from "../../utils/format";
 

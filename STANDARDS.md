@@ -254,8 +254,9 @@ is rewritten.
   host keeps from it is tied to the form that started it (`formId`) and the
   record it was for, so it can only be saved there.
 - **The contract is written by hand.** `XPageProps` and the shapes it names
-  never build on the replica's model types (`User`, `Project`, `WorkOrder`,
-  in `src/mock-data/models/`); the replica maps fixtures onto them, and lint
+  never build on the replica's record types (`WorkOrder` and the rest
+  in `src/mock-data/models/`; `User` and `Project` in `src/types/`, where the
+  session and permissions can reach them); the replica maps fixtures onto them, and lint
   stops `src/types/`, pages and components importing the models. Every one is
   exported from `index.ts`, camelCase, and plain JSON apart from the `on*`
   callbacks.

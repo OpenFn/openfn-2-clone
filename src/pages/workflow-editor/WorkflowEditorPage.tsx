@@ -27,7 +27,7 @@ import { adaptorShortName } from "../../utils/adaptors";
 import { findProject, projects } from "../../mock-data/projects";
 import { projectLabel } from "../../components/shell/projectPickerItems";
 // eslint-disable-next-line no-restricted-imports -- debt: the workflow editor takes the replica's models until it is split into page and .replica.tsx wrapper (STANDARDS §11).
-import type { Project } from "../../mock-data/models/projects";
+import type { Project } from "../../types/projects";
 import { blankWorkflowGraph, newWorkflowGraph, templateGraph } from "../../utils/workflowGraph";
 // eslint-disable-next-line no-restricted-imports -- debt: not yet split into page and .replica.tsx wrapper (STANDARDS §11).
 import { findWorkflowGraph, snapshotsOf, workflowTemplates } from "../../mock-data/workflow";

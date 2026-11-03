@@ -12,7 +12,8 @@ seed (`lib/lightning/setup_utils.ex`) and the queries over them
 
 - **Fixtures and queries only.** A pure helper that doesn't read a fixture
   goes in `src/utils/` (formatters in `format.ts`).
-- **Record types live in `models/`** (`User`, `Project`, `WorkOrder`, …).
+- **Record types live in `models/`** (`WorkOrder`, …), except `User` and
+  `Project`, which sit in `src/types/` for the session and permissions.
   Pages, components and `src/types/` never import them; ESLint enforces it.
   The replica maps a model onto the hand-written contract type in
   `src/types/`.

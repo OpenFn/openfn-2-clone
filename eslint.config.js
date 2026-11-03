@@ -221,6 +221,13 @@ const modelImports = {
   group: ['**/mock-data/models', '**/mock-data/models/**'],
   message: "Models are the replica's records: take a hand-written contract shape from src/types/ (STANDARDS §11).",
 }
+// Project and User sit in src/types/ so the session and permissions don't reach
+// into mock-data, but they are records, not contract shapes.
+const recordImports = {
+  regex: '((^|/)types|^\\.)/(projects|users)$',
+  importNames: ['Project', 'ProjectMember', 'User'],
+  message: 'Project and User are records: take a hand-written contract shape such as CurrentProject (STANDARDS §11).',
+}
 const mockDataImports = {
   // Any other mock-data path: models get their own message.
   regex: '(^|/)mock-data(/(?!models(/|$)).*)?$',
@@ -234,7 +241,7 @@ const sessionImports = {
 const seamIgnores = ['**/*.stories.tsx', '**/*[rR]eplica.{ts,tsx}', '**/*.test.{ts,tsx}']
 const seamImports = (extra = []) => [
   'error',
-  { paths: routerImports, patterns: [modelImports, mockDataImports, sessionImports, ...extra] },
+  { paths: routerImports, patterns: [modelImports, recordImports, mockDataImports, sessionImports, ...extra] },
 ]
 
 // Each folder in src/components/ other than primitives/ and domain/ is an
@@ -424,6 +431,6 @@ export default defineConfig([
   {
     // Contract shapes are written by hand, never built on models or fixtures.
     files: ['src/types/**/*.ts'],
-    rules: { 'no-restricted-imports': ['error', { patterns: [modelImports, mockDataImports, pageImports] }] },
+    rules: { 'no-restricted-imports': ['error', { patterns: [modelImports, recordImports, mockDataImports, pageImports] }] },
   },
 ])
