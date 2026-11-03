@@ -37,6 +37,10 @@ Two pages track this reference against the
 - [Register](./register.md): every method in that design and where it stands here
 - [Misfits](./misfits.md): the methods that don't belong in this API, and why
 
+[Migration assessment](./migration-assessment.md) scores how hard each Private
+endpoint was to build in Lightning, with a framework for judging the rest of
+the migration.
+
 ## Status
 
 Every endpoint carries a status:
