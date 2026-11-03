@@ -395,8 +395,8 @@ html:is([data-theme="light"], [data-theme="dark"]) {
 /*   - The page and cards are charcoal, a step apart; the side    */
 /*     menu and canvas sit on the darker canvas colour.           */
 /*   - Lines are white at low alpha, so they read on every grey.  */
-/*   - Text in a tone is that hue's 300; panels, pills and tags   */
-/*     are a faint wash of the hue over the page.                 */
+/*   - Text in a tone is that hue's 300; pills and tags sit on    */
+/*     its 900, panels on a faint wash of it.                     */
 /*   - Buttons and switches fill with the indigo, white text on it. */
 /* ============================================================== */
 html[data-theme="dark"] {
@@ -405,6 +405,8 @@ html[data-theme="dark"] {
   --dk-canvas: #15171c;
   --dk-surface: #1b1e24;
   --dk-brand: #5e6ad2;
+  --dk-danger: oklch(53% 0.2 26);
+  --dk-success: oklch(50% 0.13 155);
   --dk-gray-50: #22252c;
   --dk-gray-100: #282c34;
   --dk-gray-200: #323640;
@@ -464,11 +466,13 @@ html[data-theme="dark"] {
   --text-color-on-brand: var(--color-white);
   --text-color-on-brand-muted: color-mix(in oklab, var(--color-white) 70%, transparent);
   --text-color-brand: var(--dk-indigo-600);
-  --background-color-brand-disabled: var(--dk-indigo-300);
-  --background-color-danger-disabled: color-mix(in oklab, var(--color-red-500) 35%, var(--dk-surface));
-  --background-color-success-disabled: color-mix(in oklab, var(--color-green-500) 35%, var(--dk-surface));
+  --background-color-brand-disabled: color-mix(in oklab, var(--dk-brand) 45%, var(--dk-surface));
+  --background-color-danger-disabled: color-mix(in oklab, var(--dk-danger) 45%, var(--dk-surface));
+  --background-color-success-disabled: color-mix(in oklab, var(--dk-success) 45%, var(--dk-surface));
   --background-color-disabled: var(--dk-gray-50);
   --text-color-disabled: var(--dk-gray-400);
+  --text-color-on-brand-disabled: color-mix(in oklab, var(--color-white) 45%, transparent);
+  --text-color-on-brand-disabled: color-mix(in oklab, var(--color-white) 45%, transparent);
   --background-color-selected: var(--dk-indigo-50);
   --background-color-selected-hover: var(--dk-indigo-100);
   --text-color-selected: var(--dk-indigo-600);
@@ -484,34 +488,34 @@ html[data-theme="dark"] {
   --border-color-danger: color-mix(in oklab, var(--color-red-500) 30%, transparent);
   --ring-color-danger: color-mix(in oklab, var(--color-red-500) 30%, transparent);
   --background-color-danger: color-mix(in oklab, var(--color-red-500) 10%, var(--dk-surface));
-  --background-color-danger-badge: color-mix(in oklab, var(--color-red-500) 18%, var(--dk-surface));
-  --background-color-danger-strong: var(--color-red-600);
-  --background-color-danger-hover: var(--color-red-700);
+  --background-color-danger-badge: var(--color-red-900);
+  --background-color-danger-strong: var(--dk-danger);
+  --background-color-danger-hover: color-mix(in oklab, var(--dk-danger) 88%, var(--color-white));
   --text-color-success: var(--color-green-300);
   --text-color-success-strong: var(--color-green-200);
   --text-color-success-icon: var(--color-green-400);
   --border-color-success: color-mix(in oklab, var(--color-green-500) 30%, transparent);
   --ring-color-success: color-mix(in oklab, var(--color-green-500) 30%, transparent);
   --background-color-success: color-mix(in oklab, var(--color-green-500) 10%, var(--dk-surface));
-  --background-color-success-badge: color-mix(in oklab, var(--color-green-500) 18%, var(--dk-surface));
-  --background-color-success-strong: var(--color-green-700);
-  --background-color-success-hover: var(--color-green-800);
+  --background-color-success-badge: var(--color-green-900);
+  --background-color-success-strong: var(--dk-success);
+  --background-color-success-hover: color-mix(in oklab, var(--dk-success) 88%, var(--color-white));
   --text-color-warning: var(--color-yellow-300);
   --text-color-warning-strong: var(--color-yellow-200);
   --text-color-warning-icon: var(--color-yellow-400);
   --border-color-warning: color-mix(in oklab, var(--color-yellow-500) 30%, transparent);
   --ring-color-warning: color-mix(in oklab, var(--color-yellow-500) 30%, transparent);
   --background-color-warning: color-mix(in oklab, var(--color-yellow-500) 10%, var(--dk-surface));
-  --background-color-warning-badge: color-mix(in oklab, var(--color-yellow-500) 18%, var(--dk-surface));
+  --background-color-warning-badge: var(--color-yellow-900);
   --background-color-warning-strong: var(--color-yellow-600);
-  --background-color-warning-badge-hover: color-mix(in oklab, var(--color-yellow-500) 26%, var(--dk-surface));
+  --background-color-warning-badge-hover: var(--color-yellow-800);
   --text-color-info: var(--color-blue-300);
   --text-color-info-strong: var(--color-blue-200);
   --text-color-info-icon: var(--color-blue-400);
   --border-color-info: color-mix(in oklab, var(--color-blue-500) 30%, transparent);
   --ring-color-info: color-mix(in oklab, var(--color-blue-500) 30%, transparent);
   --background-color-info: color-mix(in oklab, var(--color-blue-500) 10%, var(--dk-surface));
-  --background-color-info-badge: color-mix(in oklab, var(--color-blue-500) 18%, var(--dk-surface));
+  --background-color-info-badge: var(--color-blue-900);
   --background-color-info-strong: var(--color-blue-600);
   --text-color-severe: var(--color-orange-300);
   --text-color-severe-strong: var(--color-orange-200);
@@ -519,24 +523,24 @@ html[data-theme="dark"] {
   --border-color-severe: color-mix(in oklab, var(--color-orange-500) 30%, transparent);
   --ring-color-severe: color-mix(in oklab, var(--color-orange-500) 30%, transparent);
   --background-color-severe: color-mix(in oklab, var(--color-orange-500) 10%, var(--dk-surface));
-  --background-color-severe-badge: color-mix(in oklab, var(--color-orange-500) 18%, var(--dk-surface));
+  --background-color-severe-badge: var(--color-orange-900);
   --background-color-severe-strong: var(--color-orange-600);
   --background-color-neutral-strong: var(--dk-gray-500);
-  --background-color-tag-red: color-mix(in oklab, var(--color-red-500) 18%, var(--dk-surface));
+  --background-color-tag-red: var(--color-red-900);
   --text-color-tag-red: var(--color-red-300);
-  --background-color-tag-orange: color-mix(in oklab, var(--color-orange-500) 18%, var(--dk-surface));
+  --background-color-tag-orange: var(--color-orange-900);
   --text-color-tag-orange: var(--color-orange-300);
-  --background-color-tag-yellow: color-mix(in oklab, var(--color-yellow-500) 18%, var(--dk-surface));
+  --background-color-tag-yellow: var(--color-yellow-900);
   --text-color-tag-yellow: var(--color-yellow-300);
-  --background-color-tag-green: color-mix(in oklab, var(--color-green-500) 18%, var(--dk-surface));
+  --background-color-tag-green: var(--color-green-900);
   --text-color-tag-green: var(--color-green-300);
-  --background-color-tag-blue: color-mix(in oklab, var(--color-blue-500) 18%, var(--dk-surface));
+  --background-color-tag-blue: var(--color-blue-900);
   --text-color-tag-blue: var(--color-blue-300);
-  --background-color-tag-indigo: color-mix(in oklab, var(--color-indigo-500) 18%, var(--dk-surface));
+  --background-color-tag-indigo: var(--color-indigo-900);
   --text-color-tag-indigo: var(--color-indigo-300);
-  --background-color-tag-purple: color-mix(in oklab, var(--color-purple-500) 18%, var(--dk-surface));
+  --background-color-tag-purple: var(--color-purple-900);
   --text-color-tag-purple: var(--color-purple-300);
-  --background-color-tag-pink: color-mix(in oklab, var(--color-pink-500) 18%, var(--dk-surface));
+  --background-color-tag-pink: var(--color-pink-900);
   --text-color-tag-pink: var(--color-pink-300);
 
   --ui-text: var(--text-color-strong);

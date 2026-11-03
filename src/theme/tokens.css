@@ -74,6 +74,7 @@
   --background-color-success-disabled: var(--color-success-300); /* a disabled success button */
   --background-color-disabled: var(--color-gray-50); /* a disabled secondary button, switch or checkbox */
   --text-color-disabled: var(--color-gray-400); /* text and icons on a disabled control */
+  --text-color-on-brand-disabled: var(--color-white); /* text on a disabled filled button */
 
   /* Selected: the chosen or current item in a set. */
   --background-color-selected: var(--color-primary-50); /* current page, active chip, pressed toggle, chosen row, drop target */

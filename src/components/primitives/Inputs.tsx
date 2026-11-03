@@ -388,7 +388,7 @@ export function Select({
 type ChoiceProps = { label: ReactNode; hint?: ReactNode; ref?: Ref<HTMLInputElement> } & Omit<InputHTMLAttributes<HTMLInputElement>, "type">;
 
 const choiceClasses = cn(
-  "h-4 w-4 border-strong text-selected focus:ring-focus transition duration-200 cursor-pointer",
+  "h-4 w-4 border-strong bg-surface text-selected focus:ring-focus transition duration-200 cursor-pointer",
   "disabled:cursor-not-allowed disabled:border-subtle disabled:bg-disabled disabled:checked:bg-emphasis",
   "aria-invalid:border-invalid"
 );

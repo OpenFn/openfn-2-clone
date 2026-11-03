@@ -28,11 +28,11 @@ const iconClasses: Record<ButtonSize, string> = { xs: "h-4 w-4", sm: "h-4 w-4", 
 // (docs/colour.md), with no hover. Plain writes its hover as `hover:` with `disabled:` undoing it, so a
 // caller's own `hover:` colour replaces it; a `not-disabled:hover:` class would outrank it.
 const lookClasses = {
-  primary: "bg-brand not-disabled:hover:bg-brand-hover disabled:bg-brand-disabled text-on-brand shadow-xs",
+  primary: "bg-brand not-disabled:hover:bg-brand-hover disabled:bg-brand-disabled text-on-brand disabled:text-on-brand-disabled shadow-xs",
   secondary: "bg-surface not-disabled:hover:bg-hover disabled:bg-disabled text-strong disabled:text-disabled ring-1 ring-strong ring-inset shadow-xs",
   plain: "text-muted hover:text-body disabled:text-disabled aria-pressed:bg-selected aria-pressed:text-selected",
-  danger: "bg-danger-strong not-disabled:hover:bg-danger-hover disabled:bg-danger-disabled text-on-brand shadow-xs",
-  success: "bg-success-strong not-disabled:hover:bg-success-hover disabled:bg-success-disabled text-on-brand shadow-xs",
+  danger: "bg-danger-strong not-disabled:hover:bg-danger-hover disabled:bg-danger-disabled text-on-brand disabled:text-on-brand-disabled shadow-xs",
+  success: "bg-success-strong not-disabled:hover:bg-success-hover disabled:bg-success-disabled text-on-brand disabled:text-on-brand-disabled shadow-xs",
   "plain-danger": "text-danger hover:text-danger-strong disabled:text-disabled",
 };
 
