@@ -25,14 +25,10 @@ a job, in `src/theme/tokens.css`; **everything else uses those**.
 
 ## The roles
 
-| Group | Roles |
-|---|---|
-| Text | `strong`, `body`, `muted`, `faint`, `inverse`, `link` (+ hover), `code`, `on-light` / `on-dark` (text on a colour that doesn't change with the theme) |
-| Background | `page`, `surface`, `subtle`, `sunken`, `hover`, `emphasis`, `inverse`, `overlay`, `code` |
-| Border | `subtle`, `strong`, `emphasis`, `focus`, `invalid` |
-| Brand | fill, fill hover, fill pressed, text on the fill, text, subtle background, border, focus |
-| Each tone: danger, success, warning, info, severe | text, strong text, icon, border, subtle background, fill, and fill hover where a button uses it |
-| Tags that mean nothing | one pair (background and text) per hue: `tag-red`, `tag-blue`… |
+The roles are in [src/theme/tokens.css](../src/theme/tokens.css), in groups
+(text, backgrounds, borders, focus, brand, disabled, selected, validation,
+each tone, tags), each with a comment saying its job. Read it before
+picking one: the comment is what tells two similar roles apart.
 
 ## When to add a role
 

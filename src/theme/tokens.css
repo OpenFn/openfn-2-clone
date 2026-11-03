@@ -66,10 +66,12 @@
   --text-color-brand: var(--color-primary-600); /* brand text that isn't a link or a selection: a Gherkin keyword, a favourite's star */
 
   /* Disabled: a control the user can't use yet. Its own colours, not a
-     fade, so a theme can choose them (Tyrell's disabled action colours). */
+     fade, so a theme can choose them. The 300s: Tyrell's primary disabled colour,
+     and Lightning's own, light enough to read as off and dark enough that
+     white text on them still reads. */
   --background-color-brand-disabled: var(--color-primary-300); /* a disabled primary button, a disabled switch that's on */
-  --background-color-danger-disabled: var(--color-danger-200); /* a disabled danger button */
-  --background-color-success-disabled: var(--color-success-200); /* a disabled success button */
+  --background-color-danger-disabled: var(--color-danger-300); /* a disabled danger button */
+  --background-color-success-disabled: var(--color-success-300); /* a disabled success button */
   --background-color-disabled: var(--color-gray-50); /* a disabled secondary button, switch or checkbox */
   --text-color-disabled: var(--color-gray-400); /* text and icons on a disabled control */
 
@@ -108,7 +110,7 @@
   --background-color-success-hover: var(--color-success-600); /* the solid, hovered */
   --text-color-warning: var(--color-warning-700); /* warning text: a message, a pill's words */
   --text-color-warning-strong: var(--color-warning-800); /* warning headings, text on a warning panel */
-  --text-color-warning-icon: var(--color-warning-500); /* warning icons, the required * */
+  --text-color-warning-icon: var(--color-warning-700); /* warning icons: yellow needs its 700 to reach 3:1 on white */
   --border-color-warning: var(--color-warning-200); /* the edge of a warning panel */
   --ring-color-warning: var(--color-warning-200); /* the same edge, drawn as a ring */
   --background-color-warning: var(--color-warning-50); /* a warning panel: alert, toast, an invalid drop zone */

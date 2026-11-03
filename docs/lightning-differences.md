@@ -19,9 +19,11 @@ goes back to Lightning's way.
   disables them natively (`new_inputs.ex:268-280`, `phx-disable-with`), which
   drops focus and hides the reason from the keyboard. A disabled button with
   no reason is natively disabled in both.
-- **Disabled buttons are their enabled colour at half strength.** Lightning
-  gives each look its own disabled colours (`new_inputs.ex:232-247`, e.g.
-  success turns a mint `bg-green-300`). One rule for every look, and no mint green.
+- **Disabled buttons take their own colours, the same family as Lightning's.**
+  Primary, danger and success fill with their 300 shade, as Lightning does
+  (`new_inputs.ex:232-247`), and secondary and plain buttons go grey
+  (`bg-disabled`, `text-disabled`). They are roles, not a fade, so a theme can
+  change them (docs/colour.md).
 - **One focus ring colour.** Lightning's danger and success buttons draw a
   red or green focus outline (`new_inputs.ex:244,249`); the replica uses the
   focus colour on every button, so focus always looks the same.
@@ -268,9 +270,29 @@ goes back to Lightning's way.
   (`AdaptorDisplay.tsx:197`, `opacity-50`) and the admin project form's
   users with no role (`opacity-60`); the replica writes them in muted or
   faint text, which reads as quieter but meets AA.
-- **The channel timing bars are a shade lighter.** Lightning draws them in
-  orange-400 and blue-400 behind 900 text (`timing.ex:277-388`); the replica
-  uses the 300s, so the text on them meets AA.
+- **The channel timing bars use the tag colours.** Lightning draws them in
+  the 300s and 400s behind 900 text (`timing.ex:277-388`); the replica uses
+  each hue's tag pair (a 100 fill, 700 text), the same colours as a tag of
+  that hue, so the text meets AA in every theme.
+- **A run state is one colour everywhere.** Lightning draws a state in
+  different shades in its pill, dot, text, step icon and canvas node (a
+  crash is orange-800 as an icon and orange-500 as text), and its health
+  charts use another set again (crashed pink, killed purple, lost teal,
+  exception blue). The replica gives each state a tone (docs/colour.md, Run
+  states) and draws its roles in every place: crashed is orange, killed
+  yellow, and pending, cancelled, lost and exception grey, in the charts
+  too.
+- **The selected item is one colour.** The current page, active filter chip,
+  chosen row and tab underline share `bg-selected`, `text-selected` and
+  `border-selected` (primary-50, 600 and 600). Lightning varies the edge
+  between 500 and 600 and an active chip's text between 600 and 700.
+- **Tooltips are dark grey, not dark indigo** (`bg-inverse`), like the
+  replica's other dark badges.
+- **Alert and warning icons are darker.** Lightning draws alert icons in the
+  400s; the replica uses each tone's icon role, which reaches 3:1 on white
+  (the warning icon is yellow-700).
+- **The live dashboard's cards are the brand fill**, not Phoenix's
+  gradients; it is a static stand-in for a third-party page.
 - **A danger link darkens on hover.** Lightning lightens it to red-600
   (`app.css:176`), below AA on the grey page; the replica goes to
   danger-800, as other links go darker on hover.
