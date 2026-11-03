@@ -62,6 +62,13 @@ describe("the data seam lint rule", () => {
     expect(await seamMessages("src/pages/x/SeamProbe.replica.tsx", code("../../mock-data/models/workflows"))).toEqual([]);
   });
 
+  it("pages and components may not call the API client; their wrappers do", async () => {
+    const code = (from: string) => `import { listCredentials } from "${from}";\nexport const x = listCredentials;\n`;
+    expect(await seamMessages("src/pages/SeamProbePage.tsx", code("../api/credentials"))).toHaveLength(1);
+    expect(await seamMessages("src/components/primitives/SeamProbe.tsx", code("../../api/credentials"))).toHaveLength(1);
+    expect(await seamMessages("src/pages/x/SeamProbe.replica.tsx", code("../../api/credentials"))).toEqual([]);
+  });
+
   it("pages and contract shapes may take CurrentProject from types/projects, but not the Project and User records", async () => {
     const code = (name: string, from: string) => `import type { ${name} } from "${from}";\nexport type X = ${name};\n`;
     expect(await seamMessages("src/pages/SeamProbePage.tsx", code("Project", "../types/projects"))).toHaveLength(1);

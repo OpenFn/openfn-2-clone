@@ -1,35 +1,15 @@
 /**
  * Stands in for the network until pages are wired. Every mutation in a page
- * awaits `simulateRequest`, so the pending and error states of the
- * primitives are exercised in the demo. Once wired, the real client replaces
- * this and the pages' `await` lines stay as they are.
+ * awaits `simulateRequest`, so the pending states of the primitives are
+ * exercised in the demo. Once wired, the API client (src/api/) replaces this
+ * and the pages' `await` lines stay as they are; its stand-in's `failNext`
+ * makes a request fail.
  */
-import { RequestError } from "../utils/errors";
 
 /** Delay to make pending states visible, in ms. */
 const LATENCY_MS = 600;
 
-const settings = {
-  /** Reject the next call with this, then clear. For stories and manual testing. */
-  failNextWith: null as RequestError | null,
-};
-
-/**
- * Makes the next `simulateRequest` fail, e.g. from a story's play function or
- * the console. `fieldErrors` refuses named fields, as a rejected form would.
- */
-export function failNextRequest(message = "The server could not complete that request.", fieldErrors?: Record<string, string[]>) {
-  settings.failNextWith = new RequestError(message, { fieldErrors });
-}
-
-/** Resolves with `result` after a short delay, or rejects once if `failNextRequest` was called. */
+/** Resolves with `result` after a short delay. */
 export function simulateRequest<T = void>(result?: T, options: { latencyMs?: number } = {}): Promise<T> {
-  const fail = settings.failNextWith;
-  settings.failNextWith = null;
-  return new Promise((resolve, reject) => {
-    window.setTimeout(() => {
-      if (fail) reject(fail);
-      else resolve(result as T);
-    }, options.latencyMs ?? LATENCY_MS);
-  });
+  return new Promise((resolve) => window.setTimeout(() => resolve(result as T), options.latencyMs ?? LATENCY_MS));
 }

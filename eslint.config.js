@@ -238,10 +238,15 @@ const sessionImports = {
   message: 'Take the user and permissions as props; the replica reads the session.',
 }
 
+const apiImports = {
+  regex: '(^|/)api(/.*)?$',
+  message: 'Take data as props; the replica wrapper calls the API client (D376).',
+}
+
 const seamIgnores = ['**/*.stories.tsx', '**/*[rR]eplica.{ts,tsx}', '**/*.test.{ts,tsx}']
 const seamImports = (extra = []) => [
   'error',
-  { paths: routerImports, patterns: [modelImports, recordImports, mockDataImports, sessionImports, ...extra] },
+  { paths: routerImports, patterns: [modelImports, recordImports, mockDataImports, sessionImports, apiImports, ...extra] },
 ]
 
 // Each folder in src/components/ other than primitives/ and domain/ is an

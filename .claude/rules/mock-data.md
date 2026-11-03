@@ -28,5 +28,6 @@ seed (`lib/lightning/setup_utils.ex`) and the queries over them
   the same projects into a local Lightning (`kickstart/README.md`). Change
   the export and rerun; never edit the output.
 - **A fake request** is `simulateRequest` from `request.ts`, awaited in a
-  replica wrapper so pending states show. `failNextRequest` makes the next
-  one fail, for stories and trying a page by hand.
+  replica wrapper so pending states show. A wrapper on the API
+  client (`src/api/`) loads through its stand-in instead, where `failNext`
+  makes the next request fail.
