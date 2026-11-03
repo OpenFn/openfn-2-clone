@@ -20,7 +20,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components";
-import { formatDateTime } from "@/lib/format";
+import { formatDate } from "@/lib/format";
 
 /** One of your tokens. The server masks it; it's shown as sent. */
 export type TokenRow = { id: string; masked: string; createdAt: string; lastUsedAt: string | null };
@@ -144,8 +144,8 @@ export function TokensPage({ status, tokens, onGenerate, onDelete, onRetry }: To
                 <TableCell strong>
                   <code>{token.masked}</code>
                 </TableCell>
-                <TableCell>{formatDateTime(token.createdAt)}</TableCell>
-                <TableCell>{token.lastUsedAt ? formatDateTime(token.lastUsedAt) : "Never used"}</TableCell>
+                <TableCell>{formatDate(token.createdAt)}</TableCell>
+                <TableCell>{token.lastUsedAt ? formatDate(token.lastUsedAt) : "Never used"}</TableCell>
                 <TableCell align="end">
                   <Button
                     variant="secondary"

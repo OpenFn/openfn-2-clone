@@ -1,6 +1,6 @@
 import { beforeEach, expect, test } from "vitest";
 import { ApiError, failNext, isApiError, request, resetFakeApi } from "@/lib/api/client";
-import { formatDateTime } from "@/lib/format";
+import { formatDate } from "@/lib/format";
 import type { ApiToken } from "@/lib/api/tokens";
 
 beforeEach(resetFakeApi);
@@ -32,6 +32,6 @@ test("a refusal arrives as an ApiError with its code and detail, once", async ()
 });
 
 test("a date that can't be read is Unknown, never a crash", () => {
-  expect(formatDateTime("not a date")).toBe("Unknown");
-  expect(formatDateTime("2026-10-28T09:12:44Z")).toMatch(/2026/);
+  expect(formatDate("not a date")).toBe("Unknown");
+  expect(formatDate("2026-10-28T09:12:44Z")).toMatch(/2026/);
 });

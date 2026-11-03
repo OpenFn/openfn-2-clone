@@ -5,7 +5,7 @@
  */
 
 type Problem = { status: number; code: string; detail: string };
-type Handler = (params: Record<string, string>, body: unknown) => Response;
+type Handler = (params: Record<string, string>) => Response;
 
 const WAIT_MS = 300;
 
@@ -65,7 +65,7 @@ export async function fakeFetch(path: string, init: RequestInit = {}): Promise<R
     failures.delete(key);
     return problem(failure);
   }
-  return routes[key](params, init.body ? JSON.parse(String(init.body)) : undefined);
+  return routes[key](params);
 }
 
 /** For stories and tests: the next request to this route (`"POST /api/me/tokens"`) is refused with this problem. */
