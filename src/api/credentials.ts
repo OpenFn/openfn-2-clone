@@ -8,6 +8,7 @@ import type { ResourceStatus } from "../types/resource";
 import { ApiError, listAll, request, standIn, statusOf, useSave, withFieldNames } from "./client";
 import { projectKeys, projectRef, projectsQuery } from "./projects";
 import recordedCredentials from "./recorded/credentials.json";
+import recordedEnvironments from "./recorded/credential-environments.json";
 import recordedSchemas from "./recorded/credential-schemas.json";
 import recordedProjects from "./recorded/projects.json";
 
@@ -145,10 +146,17 @@ const parsed = (body: string): object | null => {
 };
 
 /** Lightning places an error in a body at `#/credential_bodies/<index>/…`; the form shows it on `environments.<name>`. */
-const atEnvironment = (names: string[]) => (pointer: string) => {
+/**
+ * Where the form shows each of Lightning's body errors: a body's error at
+ * `#/credential_bodies/<index>/…` on `environments.<name>`, a project link's
+ * on `projectIds`, and `external_id` on `externalId`.
+ */
+const toFormFields = (environmentNames: string[]) => (pointer: string) => {
   const index = /^#\/credential_bodies\/(\d+)/.exec(pointer)?.[1];
-  const name = index === undefined ? undefined : names[Number(index)];
-  return name === undefined ? undefined : `#/environments/${name}`;
+  if (index !== undefined) return environmentNames[Number(index)] === undefined ? undefined : `#/environments/${environmentNames[Number(index)]}`;
+  if (pointer.startsWith("#/project_credentials")) return "#/projectIds";
+  if (pointer === "#/external_id") return "#/externalId";
+  return undefined;
 };
 
 /** A refusal the form shows at one field, worded for the person, for what the API can't do yet. */
@@ -179,7 +187,7 @@ async function createCredential(v: CredentialValues): Promise<void> {
     })),
     project_credentials: v.projectIds.map((id) => ({ project_id: id })),
   });
-  await withFieldNames(send, atEnvironment(v.environments.map((e) => e.name)));
+  await withFieldNames(send, toFormFields(v.environments.map((e) => e.name)));
 }
 
 /**
@@ -198,17 +206,14 @@ async function updateCredential(before: ApiCredential, v: CredentialValues): Pro
   const renamedBlank = v.environments.find((e) => e.previousName && e.previousName !== e.name && !parsed(e.body));
   if (renamedBlank) throw refuseAt(`environments.${renamedBlank.name}`, NOT_SENT_BACK);
 
-  await request("PUT", path(before.id), {
-    name: v.name,
-    schema: before.schema,
-    credential_bodies: [{ name: "main", body: mainBody }],
-  });
+  await withFieldNames(request("PUT", path(before.id), { name: v.name, schema: before.schema, credential_bodies: [{ name: "main", body: mainBody }] }), toFormFields(["main"]));
 
   // Renaming writes the body under the new name and deletes the old one.
   const stored = await request<{ data: ApiEnvironment[] }>("GET", path(before.id, "/environments")).then((r) => r.data.map((e) => e.name));
   for (const e of v.environments) {
     const body = parsed(e.body);
-    if (e.name !== "main" && body) await withFieldNames(request("PUT", path(before.id, `/environments/${encodeURIComponent(e.name)}`), { body }), () => `#/environments/${e.name}`);
+    if (e.name !== "main" && body)
+      await withFieldNames(request("PUT", path(before.id, `/environments/${encodeURIComponent(e.name)}`), { body }), () => `#/environments/${e.name}`, true);
   }
   for (const name of stored) {
     if (!v.environments.some((e) => e.name === name)) await request("DELETE", path(before.id, `/environments/${encodeURIComponent(name)}`));
@@ -325,11 +330,11 @@ const now = () => new Date().toISOString();
 const RETENTION_DAYS = 7;
 const store = {
   credentials: recordedCredentials.credentials as ApiCredential[],
-  environments: Object.fromEntries(recordedCredentials.credentials.map((c) => [c.id, ["main"]])) as Record<string, string[]>,
+  environments: structuredClone(recordedEnvironments) as Record<string, string[]>,
 };
 const found = (id: string) => {
   const c = store.credentials.find((x) => x.id === id);
-  if (!c) throw new ApiError(403, "forbidden", "You are not authorized to perform this action.");
+  if (!c) throw new ApiError(403, "forbidden", "You may not do this (or it might not exist).");
   return c;
 };
 const projectNamed = (id: string) => {

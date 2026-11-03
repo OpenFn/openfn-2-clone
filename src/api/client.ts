@@ -21,7 +21,7 @@ export function request<T>(method: Method, path: string, body?: unknown): Promis
 /** Every page of a paged list (api/conventions.md), following `links.next`. */
 export async function listAll<T>(path: string, key: string): Promise<T[]> {
   const rows: T[] = [];
-  let next: string | null = `${path}?page_size=100`;
+  let next: string | null = `${path}${path.includes("?") ? "&" : "?"}page_size=100`;
   while (next) {
     const page: Record<string, unknown> & { links?: { next: string | null } } = await request("GET", next);
     rows.push(...(page[key] as T[]));
@@ -60,12 +60,13 @@ export function useSave<A extends unknown[]>(changes: QueryKey[], fn: (...args: 
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (args: A) => fn(...args),
-    onSuccess: () => Promise.all(changes.map((queryKey) => queryClient.invalidateQueries({ queryKey }))),
+    // A save of several requests can fail after some went through, so reload either way.
+    onSettled: () => Promise.all(changes.map((queryKey) => queryClient.invalidateQueries({ queryKey }))),
   }).mutateAsync;
 }
 
 /** The same refusal, with each body pointer Lightning sent moved to the form's field name (`#/recipient` → `#/receiverEmail`). */
-export async function withFieldNames(send: Promise<unknown>, field: (pointer: string) => string | undefined): Promise<void> {
+export async function withFieldNames(send: Promise<unknown>, field: (pointer: string) => string | undefined, placeUnplaced = false): Promise<void> {
   try {
     await send;
   } catch (error) {
@@ -74,7 +75,8 @@ export async function withFieldNames(send: Promise<unknown>, field: (pointer: st
       error.status ?? 422,
       error.code,
       error.message,
-      error.errors.map((e) => (e.pointer ? { ...e, pointer: field(e.pointer) ?? e.pointer } : e))
+      // An error placed at a path or query parameter has no body pointer; `placeUnplaced` puts it on `field("")`.
+      error.errors.map((e) => (e.pointer ? { ...e, pointer: field(e.pointer) ?? e.pointer } : placeUnplaced && field("") ? { ...e, pointer: field("")! } : e))
     );
   }
 }
@@ -143,25 +145,35 @@ export function toApiError(status: number, body: unknown): ApiError {
 /** The session's CSRF token, which every write sends (API.md "Authenticate"). Read once, and again when Lightning says it no longer matches. */
 let csrfToken: Promise<string> | null = null;
 
+/** The token, or "" when signed out: signing in is a write with no session to take one from. */
 function readCsrfToken(): Promise<string> {
-  const token = send<{ data: { csrf_token: string } }>("GET", "/api/session", undefined, {}).then((s) => s.data.csrf_token);
-  // A failed read leaves nothing behind for the next write.
-  token.catch(() => (csrfToken = null));
+  const token = send<{ data: { csrf_token: string } }>("GET", "/api/session", undefined, {}).then(
+    (s) => s.data.csrf_token,
+    (error: unknown) => {
+      if (error instanceof ApiError && error.status === 401) return "";
+      throw error;
+    }
+  );
+  // Only a token is worth keeping for the next write.
+  token.then(
+    (value) => value || (csrfToken = null),
+    () => (csrfToken = null)
+  );
   return token;
 }
+
+const withToken = (token: string): Record<string, string> => (token ? { "x-csrf-token": token } : {});
 
 async function fetchLightning<T>(method: Method, path: string, body: unknown): Promise<T> {
   if (method === "GET") return send<T>(method, path, body, {});
   csrfToken ??= readCsrfToken();
   try {
-    return await send<T>(method, path, body, {
-      "x-csrf-token": await csrfToken,
-    });
+    return await send<T>(method, path, body, withToken(await csrfToken));
   } catch (error) {
     // Signing in renews the session, and with it the token.
     if (!(error instanceof ApiError && error.code === "invalid_header")) throw error;
     csrfToken = readCsrfToken();
-    return send<T>(method, path, body, { "x-csrf-token": await csrfToken });
+    return send<T>(method, path, body, withToken(await csrfToken));
   }
 }
 
