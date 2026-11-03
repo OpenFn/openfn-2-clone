@@ -1,4 +1,5 @@
-import { Navigate, Route, Routes, useParams } from "react-router-dom";
+import { Navigate, Route, Routes, useLocation, useParams } from "react-router-dom";
+import RouteErrorBoundary from "./components/shell/RouteErrorBoundary";
 import AppShell from "./components/shell/AppShell";
 
 import AuthLoginPage from "./pages/auth/AuthLoginPage.replica";
@@ -51,6 +52,16 @@ function ProjectRoot() {
  * The comment on each route is its INVENTORY.md id.
  */
 export default function App() {
+  const { pathname } = useLocation();
+  // The pages inside the shell have their own, inside it (AppShell); this one catches the rest.
+  return (
+    <RouteErrorBoundary resetKey={pathname}>
+      <AppRoutes />
+    </RouteErrorBoundary>
+  );
+}
+
+function AppRoutes() {
   return (
     <Routes>
       {/* Auth and onboarding: no side menu. */}
