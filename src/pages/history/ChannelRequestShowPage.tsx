@@ -77,6 +77,7 @@ export default function ChannelRequestShowPage({
   return (
     <PageContent header={header}>
       <Centered>
+        {/* eslint-disable-next-line no-restricted-syntax -- debt: a child would change in a flex column */}
         <div className="space-y-4">
           <ChannelRequestSummary request={request} event={event} channel={channel} />
 
@@ -165,7 +166,7 @@ export default function ChannelRequestShowPage({
               <DetailItem label="Config Version">
                 {request.snapshot.lockVersion}
                 {configChanged && (
-                  // eslint-disable-next-line local/primitive-classname -- debt: F525 margin (ml-2)
+                  // eslint-disable-next-line local/primitive-classname -- debt: margin (ml-2)
                   <Pill tone="warning" className="ml-2">
                     Config changed
                   </Pill>

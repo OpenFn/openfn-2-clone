@@ -37,7 +37,7 @@ export default function Disclosure({ id, title, titleRight, note, defaultOpen = 
 
   if (variant === "inline") {
     return (
-      <HeadlessDisclosure as="div" id={id} defaultOpen={defaultOpen}>
+      <HeadlessDisclosure as="div" id={id} defaultOpen={defaultOpen} data-ui="disclosure" data-variant="inline">
         <DisclosureButton className="group flex items-center gap-1.5 text-strong">
           {chevron("h-3.5 w-3.5")}
           <Text variant="label-md">{title}</Text>
@@ -51,7 +51,7 @@ export default function Disclosure({ id, title, titleRight, note, defaultOpen = 
 
   if (variant === "section") {
     return (
-      <HeadlessDisclosure as="div" id={id} defaultOpen={defaultOpen} className="border-t border-subtle">
+      <HeadlessDisclosure as="div" id={id} defaultOpen={defaultOpen} data-ui="disclosure" data-variant="section" className="border-t border-subtle">
         <DisclosureButton className="group flex w-full items-center gap-2 px-4 py-2.5">
           <Heading size="xs" as="p">
             {title}

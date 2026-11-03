@@ -2,6 +2,7 @@ import Menu, { MenuDivider, MenuHeader, MenuItem, MenuLink } from "../primitives
 import UserAvatar from "../primitives/UserAvatar";
 import Heading from "../primitives/Heading";
 import Text from "../primitives/Text";
+import { Row } from "../primitives/Stack";
 
 /** What the account menu shows of the signed-in user. */
 export interface MenuUser {
@@ -55,16 +56,18 @@ export default function UserMenu({ user }: { user: MenuUser }) {
         </MenuHeader>
         {user.experimentalFeatures && (
           <div className="bg-amber-50 px-4 py-3">
-            <Heading size="sm" as="p" className="flex items-center gap-1.5">
-              <span className="hero-wrench-screwdriver-mini h-4 w-4 text-amber-600" />
-              Experimental features on
+            <Heading size="sm" as="p">
+              <Row as="span" gap="sm">
+                <span className="hero-wrench-screwdriver-mini h-4 w-4 text-amber-600" />
+                Experimental features on
+              </Row>
             </Heading>
-            {/* eslint-disable-next-line local/primitive-classname -- debt: F525 margin (mt-0.5) */}
+            {/* eslint-disable-next-line local/primitive-classname -- debt: margin (mt-0.5) */}
             <Text as="p" variant="body-sm" tone="muted" className="mt-0.5">
               You're using features that are still being built. Things may work differently for you than for your
               teammates.
             </Text>
-            {/* eslint-disable-next-line local/primitive-classname -- debt: F525 margin, F527 colour (mt-1.5 text-amber-700) */}
+            {/* eslint-disable-next-line local/primitive-classname -- debt: margin, colour (mt-1.5 text-amber-700) */}
             <Text as="p" variant="body-sm" className="mt-1.5 text-amber-700">
               <MenuLink to="/profile">Turn off in your profile</MenuLink>
             </Text>

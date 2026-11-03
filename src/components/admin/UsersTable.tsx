@@ -1,5 +1,6 @@
 import type { AdminUserRow as User } from "../../types/admin";
 import SearchInput from "../primitives/SearchInput";
+import { Stack } from "../primitives/Stack";
 import ButtonMenu from "../primitives/ButtonMenu";
 import { MenuItem } from "../primitives/Menu";
 import { Table, Td, Th, Tr } from "../primitives/Table";
@@ -45,57 +46,58 @@ export default function UsersTable({
 
   return (
     <>
-      {/* eslint-disable-next-line local/primitive-classname -- debt: F525 margin (mb-4) */}
-      <SearchInput value={filter} onChange={setFilter} placeholder="Filter users..." className="mb-4 max-w-sm" />
-      <Table
-        header={
-          <Tr>
-            <Th {...thProps("first_name")}>First name</Th>
-            <Th {...thProps("last_name")}>Last name</Th>
-            <Th {...thProps("email")}>Email</Th>
-            <Th {...thProps("role")}>Role*</Th>
-            <Th {...thProps("enabled")}>Enabled?</Th>
-            <Th {...thProps("support_user")}>Support?</Th>
-            <Th {...thProps("scheduled_deletion")}>Scheduled Deletion</Th>
-            <Th actions>Actions</Th>
-          </Tr>
-        }
-      >
-        {rows.map((user) => (
-          <Tr key={user.id} id={`user-${user.id}`}>
-            <Td wrap maxWidth={40}>
-              <Tooltip content={user.firstName}>
-                <span>{user.firstName}</span>
-              </Tooltip>
-            </Td>
-            <Td wrap maxWidth={40}>
-              <Tooltip content={user.lastName}>
-                <span>{user.lastName}</span>
-              </Tooltip>
-            </Td>
-            <Td wrap maxWidth={48}>
-              <Tooltip content={user.email}>
-                <span>{user.email}</span>
-              </Tooltip>
-            </Td>
-            <Td>{user.role}</Td>
-            <Td>{!user.disabled && checkIcon}</Td>
-            <Td>{user.supportUser && checkIcon}</Td>
-            <Td>{user.scheduledDeletion && formatShortDateTime(user.scheduledDeletion)}</Td>
-            {/* eslint-disable-next-line local/primitive-classname -- debt: F526 box (py-0.5) */}
-            <Td className="py-0.5">
-              <ButtonMenu label="Actions">
-                <MenuItem to={`/settings/users/${user.id}`}>Edit</MenuItem>
-                {user.scheduledDeletion && <MenuItem onClick={() => onCancelDeletion?.(user)}>Cancel deletion</MenuItem>}
-                {/* Superusers can't be deleted from here. */}
-                <MenuItem to={`/settings/users/${user.id}/delete`} disabled={user.role === "superuser"}>
-                  {user.scheduledDeletion ? "Delete now" : "Delete"}
-                </MenuItem>
-              </ButtonMenu>
-            </Td>
-          </Tr>
-        ))}
-      </Table>
+      <Stack>
+        <SearchInput value={filter} onChange={setFilter} placeholder="Filter users..." className="max-w-sm" />
+        <Table
+          header={
+            <Tr>
+              <Th {...thProps("first_name")}>First name</Th>
+              <Th {...thProps("last_name")}>Last name</Th>
+              <Th {...thProps("email")}>Email</Th>
+              <Th {...thProps("role")}>Role*</Th>
+              <Th {...thProps("enabled")}>Enabled?</Th>
+              <Th {...thProps("support_user")}>Support?</Th>
+              <Th {...thProps("scheduled_deletion")}>Scheduled Deletion</Th>
+              <Th actions>Actions</Th>
+            </Tr>
+          }
+        >
+          {rows.map((user) => (
+            <Tr key={user.id} id={`user-${user.id}`}>
+              <Td wrap maxWidth={40}>
+                <Tooltip content={user.firstName}>
+                  <span>{user.firstName}</span>
+                </Tooltip>
+              </Td>
+              <Td wrap maxWidth={40}>
+                <Tooltip content={user.lastName}>
+                  <span>{user.lastName}</span>
+                </Tooltip>
+              </Td>
+              <Td wrap maxWidth={48}>
+                <Tooltip content={user.email}>
+                  <span>{user.email}</span>
+                </Tooltip>
+              </Td>
+              <Td>{user.role}</Td>
+              <Td>{!user.disabled && checkIcon}</Td>
+              <Td>{user.supportUser && checkIcon}</Td>
+              <Td>{user.scheduledDeletion && formatShortDateTime(user.scheduledDeletion)}</Td>
+              {/* eslint-disable-next-line local/primitive-classname -- debt: box (py-0.5) */}
+              <Td className="py-0.5">
+                <ButtonMenu label="Actions">
+                  <MenuItem to={`/settings/users/${user.id}`}>Edit</MenuItem>
+                  {user.scheduledDeletion && <MenuItem onClick={() => onCancelDeletion?.(user)}>Cancel deletion</MenuItem>}
+                  {/* Superusers can't be deleted from here. */}
+                  <MenuItem to={`/settings/users/${user.id}/delete`} disabled={user.role === "superuser"}>
+                    {user.scheduledDeletion ? "Delete now" : "Delete"}
+                  </MenuItem>
+                </ButtonMenu>
+              </Td>
+            </Tr>
+          ))}
+        </Table>
+      </Stack>
       <p className="mt-6 text-body">
         *Note that a <code>superuser</code> can access <em>everything</em> in a Lightning installation across all
         projects, including this page. Most day-to-day user management (adding and removing collaborators) will be

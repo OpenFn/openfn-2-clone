@@ -5,7 +5,7 @@ import { fakeMfaSetup, profilePropsFor } from "../../mock-data/profile";
 import { simulateRequest } from "../../mock-data/request";
 import { users } from "../../mock-data/users";
 import { useCurrentUser } from "../../session/session";
-import type { User } from "../../mock-data/models/users";
+import type { User } from "../../types/users";
 import { RequestError } from "../../utils/errors";
 import ProfilePage from "./ProfilePage";
 

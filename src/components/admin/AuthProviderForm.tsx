@@ -13,6 +13,7 @@ import { cn } from "../../utils/cn";
 import { RequestError, errorMessage } from "../../utils/errors";
 import { useAction } from "../../utils/useAction";
 import { blank } from "../../utils/validate";
+import { Stack } from "../primitives/Stack";
 
 type TestState = "unknown" | "success" | "failed";
 
@@ -200,45 +201,47 @@ export default function AuthProviderForm({ provider, onSave, onTest, onRemove, i
             onChange={(e) => set("allowUnverifiedEmail", e.target.checked)}
           />
         </Form>
-        <Text as="div" tone="body" className="flex flex-col gap-4">
-          <p>
-            Allows users with existing accounts to login with an external OpenID Connect account that matches their
-            email address.
-          </p>
-          <p>
-            In order to make things easier we rely on the providers well-known file to determine all the different
-            endpoints for authentication and retrieving the user information. Documentation on Google's OpenID
-            Connect support and it's well-known file see{" "}
-            {docsLink("https://developers.google.com/identity/protocols/oauth2/openid-connect#discovery")}
-          </p>
-          <div className="sm:border-t sm:border-subtle sm:pt-4">
-            <Section title="Redirect URI" size="sm">
-              <Card
-                variant="muted"
-                padding="sm"
-                id="redirect-uri-preview"
-                // eslint-disable-next-line local/primitive-classname -- debt: F528 type, F529 state, F527 colour (font-mono cursor-not-allowed text-faint)
-                className={cn("font-mono", !valid && "cursor-not-allowed text-faint")}
-              >
-                {valid ? authRedirectUri(values) : <>{values.redirectHost}&hellip;</>}
-              </Card>
-              <p>
-                Ensure your provider has this redirect URI set. For more information see{" "}
-                {docsLink("https://developers.google.com/identity/protocols/oauth2/openid-connect#setredirecturi")}
-              </p>
-            </Section>
-          </div>
-          {provider.id !== null && (
-            <div className="mt-auto">
-              <Section title="Remove" size="sm">
-                <p>Deletes the Authentication Configuration, and disables external authentication for Lightning.</p>
-                {remove.error && <Alert tone="danger">{errorMessage(remove.error)}</Alert>}
-                <Button tone="danger" onClick={() => void remove.run()} pending={remove.pending} icon="hero-trash">
-                  Remove
-                </Button>
+        <Text as="div" tone="body">
+          <Stack gap="md" className="h-full">
+            <p>
+              Allows users with existing accounts to login with an external OpenID Connect account that matches their
+              email address.
+            </p>
+            <p>
+              In order to make things easier we rely on the providers well-known file to determine all the different
+              endpoints for authentication and retrieving the user information. Documentation on Google's OpenID
+              Connect support and it's well-known file see{" "}
+              {docsLink("https://developers.google.com/identity/protocols/oauth2/openid-connect#discovery")}
+            </p>
+            <div className="sm:border-t sm:border-subtle sm:pt-4">
+              <Section title="Redirect URI" size="sm">
+                <Card
+                  variant="muted"
+                  padding="sm"
+                  id="redirect-uri-preview"
+                  // eslint-disable-next-line local/primitive-classname -- debt: type, state, colour (font-mono cursor-not-allowed text-faint)
+                  className={cn("font-mono", !valid && "cursor-not-allowed text-faint")}
+                >
+                  {valid ? authRedirectUri(values) : <>{values.redirectHost}&hellip;</>}
+                </Card>
+                <p>
+                  Ensure your provider has this redirect URI set. For more information see{" "}
+                  {docsLink("https://developers.google.com/identity/protocols/oauth2/openid-connect#setredirecturi")}
+                </p>
               </Section>
             </div>
-          )}
+            {provider.id !== null && (
+              <div className="mt-auto">
+                <Section title="Remove" size="sm">
+                  <p>Deletes the Authentication Configuration, and disables external authentication for Lightning.</p>
+                  {remove.error && <Alert tone="danger">{errorMessage(remove.error)}</Alert>}
+                  <Button tone="danger" onClick={() => void remove.run()} pending={remove.pending} icon="hero-trash">
+                    Remove
+                  </Button>
+                </Section>
+              </div>
+            )}
+          </Stack>
         </Text>
       </div>
     </div>

@@ -14,6 +14,7 @@ import TextLink from "../primitives/TextLink";
 import WorkOrderStatus from "./WorkOrderStatus";
 import { useUrlParams } from "../../utils/useUrlParams";
 import Text from "../primitives/Text";
+import { Stack } from "../primitives/Stack";
 
 /**
  * The workflows index table (DashboardComponents.workflows_table): name and
@@ -115,15 +116,16 @@ export default function WorkflowsTable({
           return (
             <Tr key={wf.id} id={`workflow-${wf.id}`}>
               <Td maxWidth={60}>
-                <Tooltip content={on ? wf.name : `${wf.name} (disabled)`}>
-                  <p className={cn("workflow-name truncate font-medium", on ? "text-strong" : "text-faint")}>
-                    <RowLink to={`/projects/${projectId}/w/${wf.id}`}>{wf.name}</RowLink>
-                  </p>
-                </Tooltip>
-                {/* eslint-disable-next-line local/primitive-classname -- debt: F525 margin (mt-1) */}
-                <Text as="p" variant="body-sm" className="mt-1">
-                  Updated <DateTime value={wf.updatedAt} />
-                </Text>
+                <Stack gap="xs">
+                  <Tooltip content={on ? wf.name : `${wf.name} (disabled)`}>
+                    <p className={cn("workflow-name truncate font-medium", on ? "text-strong" : "text-faint")}>
+                      <RowLink to={`/projects/${projectId}/w/${wf.id}`}>{wf.name}</RowLink>
+                    </p>
+                  </Tooltip>
+                  <Text as="p" variant="body-sm">
+                    Updated <DateTime value={wf.updatedAt} />
+                  </Text>
+                </Stack>
               </Td>
               <Td>
                 <WorkOrderStatus state={s.lastWorkOrder?.state ?? null} updatedAt={s.lastWorkOrder?.updatedAt} period={period} />
@@ -186,10 +188,9 @@ function toggleTooltip(triggerType: string, enabled: boolean, lifecycle: boolean
  */
 function Count({ value, to, children }: { value: number; to: string; children: ReactNode }) {
   return (
-    <>
-      <Text as="div" variant="stat-sm">{value > 0 ? <TextLink to={to}>{value}</TextLink> : <span className="text-faint">0</span>}</Text>{" "}
-      {/* eslint-disable-next-line local/primitive-classname -- debt: F525 margin (mt-1) */}
-      <Text as="div" variant="body-sm" className="mt-1">{value > 0 ? children : "N/A"}</Text>
-    </>
+    <Stack gap="xs">
+      <Text as="div" variant="stat-sm">{value > 0 ? <TextLink to={to}>{value}</TextLink> : <span className="text-faint">0</span>}</Text>
+      <Text as="div" variant="body-sm">{value > 0 ? children : "N/A"}</Text>
+    </Stack>
   );
 }

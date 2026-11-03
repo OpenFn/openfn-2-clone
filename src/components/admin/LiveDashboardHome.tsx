@@ -7,6 +7,7 @@ import { DetailItem, DetailList } from "../primitives/DetailList";
 import Heading from "../primitives/Heading";
 import Pill from "../primitives/Pill";
 import TextLink from "../primitives/TextLink";
+import { Stack, Row } from "../primitives/Stack";
 
 type Data = LiveDashboardData;
 
@@ -67,7 +68,7 @@ export default function LiveDashboardHome({
   return (
     // eslint-disable-next-line no-restricted-syntax -- copies Phoenix LiveDashboard's type
     <div className="min-h-screen bg-page text-sm text-body">
-      {/* eslint-disable-next-line local/primitive-classname -- debt: F526 box (rounded-none) */}
+      {/* eslint-disable-next-line local/primitive-classname -- debt: box (rounded-none) */}
       <Alert tone="warning" className="rounded-none">
         <div className="flex justify-between gap-2">
           <span>
@@ -103,7 +104,7 @@ export default function LiveDashboardHome({
         </Card>
 
         <div className="mt-8 grid grid-cols-2 gap-6 pb-16">
-          <div className="space-y-3">
+          <Stack gap="md">
             <Heading as="h2" size="lg">System information</Heading>
             <Card padding="lg">{data.systemInfo}</Card>
             <div className="grid grid-cols-3 gap-6 pt-3">
@@ -114,48 +115,50 @@ export default function LiveDashboardHome({
               <Stat label="Total input" value={data.totalInput} hasInfo />
               <Stat label="Total output" value={data.totalOutput} hasInfo />
             </div>
-            {/* eslint-disable-next-line local/primitive-classname -- debt: F526 box (pt-3) */}
+            {/* eslint-disable-next-line local/primitive-classname -- debt: box (pt-3) */}
             <Heading as="h2" size="lg" className="pt-3">Run queues</Heading>
             <div className="grid grid-cols-3 gap-6">
               <Stat label="Total" value={data.runQueues.total} hasInfo />
               <Stat label="CPU" value={data.runQueues.cpu} />
               <Stat label="IO" value={data.runQueues.io} />
             </div>
-          </div>
-          <div className="space-y-3">
+          </Stack>
+          <Stack gap="md">
             <Heading as="h2" size="lg">System limits</Heading>
             {data.limits.map((l) => (
               <Limit key={l.label} {...l} />
             ))}
-            {/* eslint-disable-next-line local/primitive-classname -- debt: F526 box (pt-3) */}
+            {/* eslint-disable-next-line local/primitive-classname -- debt: box (pt-3) */}
             <Heading as="h2" size="lg" className="pt-3">Memory</Heading>
-            <Card padding="lg" className="space-y-5">
-              <div className="flex h-6 gap-0.5 overflow-hidden">
-                {data.memory.map((m) => (
-                  <div key={m.label} className={m.color} style={{ width: `${(m.value / totalMemory) * 100}%` }} />
-                ))}
-              </div>
-              <DetailList>
-                {data.memory.map((m) => (
-                  <DetailItem
-                    key={m.label}
-                    label={
-                      <span className="flex items-center gap-2">
-                        <span className={cn("h-4 w-4 rounded-sm", m.color)} />
-                        {m.label}
-                      </span>
-                    }
-                  >
-                    {m.value} MB
-                  </DetailItem>
-                ))}
-              </DetailList>
-              {/* eslint-disable-next-line local/primitive-classname -- debt: F528 type (text-center) */}
-              <Card variant="muted" padding="sm" className="text-center">
-                Total usage: {totalMemory.toFixed(1)} MB
-              </Card>
+            <Card padding="lg">
+              <Stack gap="lg">
+                <div className="flex h-6 gap-0.5 overflow-hidden">
+                  {data.memory.map((m) => (
+                    <div key={m.label} className={m.color} style={{ width: `${(m.value / totalMemory) * 100}%` }} />
+                  ))}
+                </div>
+                <DetailList>
+                  {data.memory.map((m) => (
+                    <DetailItem
+                      key={m.label}
+                      label={
+                        <Row as="span" gap="sm">
+                          <span className={cn("h-4 w-4 rounded-sm", m.color)} />
+                          {m.label}
+                        </Row>
+                      }
+                    >
+                      {m.value} MB
+                    </DetailItem>
+                  ))}
+                </DetailList>
+                {/* eslint-disable-next-line local/primitive-classname -- debt: type (text-center) */}
+                <Card variant="muted" padding="sm" className="text-center">
+                  Total usage: {totalMemory.toFixed(1)} MB
+                </Card>
+              </Stack>
             </Card>
-          </div>
+          </Stack>
         </div>
       </div>
     </div>

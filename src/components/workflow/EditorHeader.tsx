@@ -9,6 +9,7 @@ import SaveButton from "./SaveButton";
 import VersionDropdown from "./VersionDropdown";
 import Tooltip from "../primitives/Tooltip";
 import Text from "../primitives/Text";
+import { Row } from "../primitives/Stack";
 
 interface Props {
   project: CurrentProject;
@@ -72,7 +73,7 @@ export default function EditorHeader({
   children,
 }: Props) {
   return (
-    // eslint-disable-next-line local/primitive-classname -- debt: F526 box (border-b border-subtle bg-surface shadow-xs sm:px-4)
+    // eslint-disable-next-line local/primitive-classname -- debt: box (border-b border-subtle bg-surface shadow-xs sm:px-4)
     <Text as="div" className="relative z-50 flex h-20 flex-none items-center gap-2 border-b border-subtle bg-surface shadow-xs sm:px-4">
       <div className="flex min-w-0 items-center">
         <ProjectBreadcrumbs
@@ -80,7 +81,7 @@ export default function EditorHeader({
           label={projectLabel}
           items={[["Workflows", `/projects/${project.id}/w`]]}
           current={
-            <span className="flex items-center gap-2">
+            <Row as="span" gap="sm">
               <Tooltip content={workflowName}>
                 {/* eslint-disable-next-line no-restricted-syntax -- debt: a plain text button; Button has no text theme */}
                 <button type="button" onClick={onTitleClick} className="max-w-64 truncate hover:text-body">
@@ -88,7 +89,7 @@ export default function EditorHeader({
                 </button>
               </Tooltip>
               <VersionDropdown snapshots={snapshots} pinnedVersion={pinnedVersion} onVersionSelect={onVersionSelect} />
-            </span>
+            </Row>
           }
         />
       </div>
@@ -114,7 +115,7 @@ export default function EditorHeader({
         tooltip={`${aiOpen ? "Close AI Assistant" : "Open AI Assistant"} (⌘ K)`}
         active={aiOpen}
         size="lg"
-        // eslint-disable-next-line local/primitive-classname -- debt: F525 margin, F526 box (ml-2 rounded-full)
+        // eslint-disable-next-line local/primitive-classname -- debt: margin, box (ml-2 rounded-full)
         className="ml-2 rounded-full"
         onClick={onAIClick}
       />

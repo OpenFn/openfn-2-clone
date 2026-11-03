@@ -36,7 +36,7 @@ export default function SectionHeader({ title, subtitle, size = "md", variant = 
   const nestedLevel = useContext(NestedLevel);
   const eyebrow = variant === "eyebrow";
   return (
-    <div className={cn("flex items-start justify-between gap-8", eyebrow && "border-b border-subtle pb-1.5")}>
+    <div data-ui="section-header" className={cn("flex items-start justify-between gap-8", eyebrow && "border-b border-subtle pb-1.5")}>
       <div>
         <Heading size={eyebrow ? "xs" : size} as={size === "lg" && !eyebrow ? "h2" : nestedLevel}>
           {title}

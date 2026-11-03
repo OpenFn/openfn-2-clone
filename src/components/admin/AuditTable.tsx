@@ -48,7 +48,7 @@ export default function AuditTable({
     >
       {events.map((audit) => (
         <Fragment key={audit.id}>
-          {/* eslint-disable-next-line local/primitive-classname -- debt: F526 box (border-t border-subtle) */}
+          {/* eslint-disable-next-line local/primitive-classname -- debt: box (border-t border-subtle) */}
           <Tr className="border-t border-subtle">
             <Td>
               <DateTime value={audit.insertedAt} />

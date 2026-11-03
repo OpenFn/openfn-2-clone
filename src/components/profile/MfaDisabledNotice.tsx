@@ -9,7 +9,7 @@ export default function MfaDisabledNotice({ profileHref }: { profileHref: string
         In order to use backup codes, you need to have MFA enabled in your account. You can enable MFA in your account
         by visiting your profile page.
       </p>
-      {/* eslint-disable-next-line local/primitive-classname -- debt: F525 margin (mt-4) */}
+      {/* eslint-disable-next-line local/primitive-classname -- debt: margin (mt-4) */}
       <Button to={profileHref} className="mt-4">
         Back to profile
       </Button>

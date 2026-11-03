@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { Link } from "../../../routing/router";
 import { cn } from "../../../utils/cn";
-import { formatNumber } from "../../../utils/format";
+import { formatMonthDayIn, formatNumber, hourIn } from "../../../utils/format";
 import { historyUrl } from "../../../utils/history";
 import type { RunBucket } from "../../../types/workflow-health";
 import { CANCELLED, DOT, EMPTY, FAILED, FRAME, LEGEND, SUCCESS } from "./palette";
 import Text from "../../primitives/Text";
+import { Row } from "../../primitives/Stack";
 
 /** A run has no `rejected` state, so the red band folds the other five. */
 const RUN_FAILURE_KEYS = ["failed", "crashed", "killed", "exception", "lost"] as const;
@@ -30,24 +31,19 @@ const bucketUrl = (projectId: string, workflowId: string, buckets: RunBucket[], 
     run_status: states,
   });
 
-const dayLabel = (d: Date, tz: string) => d.toLocaleDateString(undefined, { month: "short", day: "numeric", timeZone: tz });
-const hour = (d: Date, tz: string) =>
-  Number(d.toLocaleString("en-GB", { hour: "2-digit", hourCycle: "h23", timeZone: tz }));
 const hourLabel = (h: number) => `${String(h).padStart(2, "0")}:00`;
 
 /** "Oct 14, 14:00 – 16:00"; a daily bar is just its day. */
 function rangeLabel(at: string, hours: number, tz: string) {
-  const start = new Date(at);
-  if (hours >= 24) return dayLabel(start, tz);
-  const from = hour(start, tz);
-  return `${dayLabel(start, tz)}, ${hourLabel(from)} – ${hourLabel((from + hours) % 24)}`;
+  if (hours >= 24) return formatMonthDayIn(at, tz);
+  const from = hourIn(at, tz);
+  return `${formatMonthDayIn(at, tz)}, ${hourLabel(from)} – ${hourLabel((from + hours) % 24)}`;
 }
 
 function tickLabel(at: string, hours: number, tz: string) {
-  const d = new Date(at);
-  if (hours >= 24) return dayLabel(d, tz);
-  if (hours >= 12) return hour(d, tz) < 12 ? dayLabel(d, tz) : "";
-  return hourLabel(hour(d, tz));
+  if (hours >= 24) return formatMonthDayIn(at, tz);
+  if (hours >= 12) return hourIn(at, tz) < 12 ? formatMonthDayIn(at, tz) : "";
+  return hourLabel(hourIn(at, tz));
 }
 
 /**
@@ -140,7 +136,7 @@ export default function VolumeBars({
               <Text
                 as="div"
                 variant="body-sm"
-                // eslint-disable-next-line local/primitive-classname -- debt: F529 state, F526 box (pointer-events-none rounded-lg border border-subtle bg-surface shadow-lg)
+                // eslint-disable-next-line local/primitive-classname -- debt: state, box (pointer-events-none rounded-lg border border-subtle bg-surface shadow-lg)
                 className="pointer-events-none absolute top-0 z-10 whitespace-nowrap rounded-lg border border-subtle bg-surface shadow-lg"
                 // Beside the bar, on the side with more room.
                 style={hovered < n / 2 ? { left: `${((hovered + 1) / n) * 100}%` } : { right: `${((n - hovered) / n) * 100}%` }}
@@ -148,17 +144,17 @@ export default function VolumeBars({
                 <p className="border-b border-subtle px-3 py-2 font-medium text-strong">{rangeLabel(tip.at, hours, timezone)}</p>
                 <ul className="flex flex-col gap-1.5 px-3 py-2 text-body">
                   {totals.map(({ key, label, color }) => (
-                    <li key={key} className="flex items-center gap-2">
+                    <Row as="li" gap="sm" key={key}>
                       <span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: color }} />
                       <span className="grow pr-4">{label}</span>
                       <span className="font-medium tabular-nums text-strong">{formatNumber(tip[key])}</span>
-                    </li>
+                    </Row>
                   ))}
                 </ul>
               </Text>
             )}
           </div>
-          {/* eslint-disable-next-line no-restricted-syntax, local/primitive-classname -- chart geometry: bar gaps scale with the chart; debt: F526 box (pt-1) */}
+          {/* eslint-disable-next-line no-restricted-syntax, local/primitive-classname -- chart geometry: bar gaps scale with the chart; debt: box (pt-1) */}
           <Text as="div" variant="body-sm" tone="muted" className="flex h-5 gap-[1%] pt-1">
             {rows.map((r, i) => (
               <span key={r.at} className="flex-1 truncate text-center">
@@ -171,10 +167,10 @@ export default function VolumeBars({
       <p className="sr-only">{`Window totals: ${totals.map(({ label, value }) => `${label} ${formatNumber(value)}`).join(", ")}.`}</p>
       <Text as="ul" aria-hidden="true" tone="body" className={LEGEND}>
         {totals.map(({ key, label, color }) => (
-          <li key={key} className="flex items-center gap-2">
+          <Row as="li" gap="sm" key={key}>
             <span className={DOT} style={{ backgroundColor: color }} />
             {label}
-          </li>
+          </Row>
         ))}
       </Text>
     </>

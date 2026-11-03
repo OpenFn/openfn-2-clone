@@ -9,6 +9,7 @@ import { Checkbox, Select } from "../../primitives/Inputs";
 import Pill from "../../primitives/Pill";
 import Spinner from "../../primitives/Spinner";
 import Text from "../../primitives/Text";
+import { Stack, Row } from "../../primitives/Stack";
 
 interface State {
   /** The latest preview that arrived. Merge always sends its target. */
@@ -138,35 +139,37 @@ export default function MergeSandboxModal({
         })
       }
     >
-      <div className="space-y-2">
-        <Text as="div" tone="body" className="flex items-center gap-2">
-          <span>Merge</span>
-          {/* eslint-disable-next-line no-restricted-syntax, local/primitive-classname -- debt: Pill has no 14px size; F528 type, F527 colour (text-sm text-strong) */}
-          <Pill variant="square" color="gray" className="text-sm text-strong">
-            {sandboxName}
-          </Pill>
-          <span>into</span>
-          <Select
-            id="merge-target-select"
-            aria-label="Target project"
-            fieldClassName="max-w-64 flex-1"
-            options={(preview?.targets ?? []).map((t) => ({ label: t.name, value: t.id }))}
-            // With no target yet the prompt shows, and picking any real target is a change.
-            {...(s.shown === null && { prompt: "Select a project" })}
-            value={s.shown ?? ""}
-            disabled={!preview}
-            onChange={(e) => {
-              const targetId = e.target.value;
-              setS((cur) => ({ ...cur, shown: targetId, loading: true, error: null }));
-              void ask(targetId);
-            }}
-          />
+      <Stack gap="sm">
+        <Text as="div" tone="body">
+          <Row gap="sm">
+            <span>Merge</span>
+            {/* eslint-disable-next-line no-restricted-syntax, local/primitive-classname -- debt: Pill has no 14px size; type, colour (text-sm text-strong) */}
+            <Pill variant="square" color="gray" className="text-sm text-strong">
+              {sandboxName}
+            </Pill>
+            <span>into</span>
+            <Select
+              id="merge-target-select"
+              aria-label="Target project"
+              fieldClassName="max-w-64 flex-1"
+              options={(preview?.targets ?? []).map((t) => ({ label: t.name, value: t.id }))}
+              // With no target yet the prompt shows, and picking any real target is a change.
+              {...(s.shown === null && { prompt: "Select a project" })}
+              value={s.shown ?? ""}
+              disabled={!preview}
+              onChange={(e) => {
+                const targetId = e.target.value;
+                setS((cur) => ({ ...cur, shown: targetId, loading: true, error: null }));
+                void ask(targetId);
+              }}
+            />
+          </Row>
         </Text>
         <Text as="p" tone="body">
           The workflows you select below will overwrite their counterparts in{" "}
           <strong className="font-medium text-strong">{targetName}</strong>. Any conflicting changes in the target are lost.
         </Text>
-      </div>
+      </Stack>
 
       {s.error && (
         <Alert tone="danger" id="merge-preview-error">
@@ -284,10 +287,10 @@ function TickList({
           <li key={r.id} className="px-3 py-2 hover:bg-hover">
             <Checkbox
               label={
-                <span className="flex items-center gap-2">
+                <Row as="span" gap="sm">
                   <span className="truncate">{r.label}</span>
                   {r.badges}
-                </span>
+                </Row>
               }
               checked={selected.has(r.id)}
               onChange={() => onChange(toggled(selected, r.id))}

@@ -43,15 +43,19 @@ its items. Answers 201 on create and 200 on rename, with the same shape as
 
 Notable errors:
 
-- 409 `id_taken` when the id belongs to a collection in another project.
-- 409 `taken` when the name is already used in the project.
-- 402 `exceeds_limit` when creating would go over the plan's limit.
+- 409 `id_taken` when the id belongs to a collection in another project,
+  even one you can't see.
+- 422 `invalid` with a `taken` entry at `#/name` when the name is already used
+  in the project.
+- 402 `exceeds_limit` when creating would go over the plan's limit. A body
+  that is also invalid answers 422 instead.
 
 Planned additional scope: a superuser's personal access token, and moving a
 collection to another project by sending its `id` under the new project's
-path, instead of answering 409 `id_taken`. The superuser page at
-`/settings/collections` can already do this: its edit form has a project
-picker, and `Lightning.Collections.update_collection/2` casts `project_id`.
+path, instead of answering 409 `id_taken`. Lightning can't do this today:
+the project picker on the superuser page at `/settings/collections` is
+disabled when editing, and `Lightning.Collections.update_collection/3` casts
+only the name.
 
 ## List a project's collections
 
@@ -131,7 +135,9 @@ Deletes the collection and every item in it. Answers 204 with no body.
 
 These routes address a collection by name. If more than one project you can
 see has a collection with that name, add `?project_id=…`, or you get 409
-`ambiguous_name`.
+`ambiguous_name`. A name that no project you can see holds answers 404
+`not_found`, as does a `project_id` that isn't a UUID. Unlike the rest of the
+API, these routes answer 404 rather than 403 for what you can't see.
 
 Tokens: personal access token or run token. A run can only reach its own
 project's collections. With a personal access token, reading needs any role in
@@ -186,7 +192,7 @@ entry.
 > Implementation note: the Download button on the project settings
 > Collections tab uses the session-cookie route
 > `GET /download/collections/:project_id/:name`
-> (`LightningWeb.CollectionsController.download/2`), authorised by
+> (`LightningWeb.CollectionDownloadController.download/2`), authorised by
 > `:access_collection` like this one. It sends every item as one JSON array,
 > as a file named `<name>.json`. There is no API route for that; page through
 > this route with `cursor` and build the file instead.
@@ -200,7 +206,9 @@ PUT /collections/:name/:key
 ```
 
 Body: `{"value": "<string>"}`. Answers `{"upserted": 1, "error": null}`. A
-missing or invalid value answers 422.
+value that is missing, not a string or too long to store (over 1,000,000
+characters) answers 422, and so does a key too long to store. A body that
+isn't a JSON object answers 400 `malformed`.
 
 ### Put many items
 

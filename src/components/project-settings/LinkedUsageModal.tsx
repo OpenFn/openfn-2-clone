@@ -3,6 +3,7 @@ import Modal from "../primitives/Modal";
 import TextLink from "../primitives/TextLink";
 import { byName } from "./usageRefs";
 import type { WebhookAuthMethodRow, WebhookUsageRef } from "../../types/project-settings";
+import { Stack } from "../primitives/Stack";
 
 /** The workflow triggers or channels an auth method protects, as a bulleted list of links in the order given. */
 export function UsageLinks({ refs }: { refs: WebhookUsageRef[] }) {
@@ -27,7 +28,7 @@ export default function LinkedUsageModal({ authMethod, onClose }: Props) {
   const { triggers, channels } = authMethod;
   return (
     <Modal open onClose={onClose} title="Associated Triggers & Channels">
-      <div className="space-y-6">
+      <Stack gap="lg">
         <p>
           The "<span className="font-semibold">{authMethod.name}</span>" authentication method is used by:
         </p>
@@ -41,7 +42,7 @@ export default function LinkedUsageModal({ authMethod, onClose }: Props) {
             <UsageLinks refs={byName(channels)} />
           </Section>
         )}
-      </div>
+      </Stack>
     </Modal>
   );
 }

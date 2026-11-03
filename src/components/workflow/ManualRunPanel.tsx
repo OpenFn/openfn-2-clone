@@ -20,6 +20,7 @@ import { formatLocalDate, formatShortLocalDateTime, prettyJson, shortUuid, uuidO
 import Tooltip from "../primitives/Tooltip";
 import EmptyState from "../primitives/EmptyState";
 import Text from "../primitives/Text";
+import { Row } from "../primitives/Stack";
 
 type Tab = "empty" | "custom" | "existing";
 
@@ -101,7 +102,7 @@ export default function ManualRunPanel({
               invalidMessage="Invalid file format. Please only upload: JSON"
               onFile={(file) => void file.text().then((text) => setBody(prettyJson(text)))}
             />
-            {/* eslint-disable-next-line local/primitive-classname -- debt: F526 box (py-2 *:bg-emphasis) */}
+            {/* eslint-disable-next-line local/primitive-classname -- debt: box (py-2 *:bg-emphasis) */}
             <Text as="div" tone="muted" className="flex items-center gap-2 py-2 *:h-px *:flex-1 *:bg-emphasis" aria-hidden="true">
               <span />
               OR
@@ -114,15 +115,15 @@ export default function ManualRunPanel({
         </div>
       )}
       {tab === "existing" && (
-        // eslint-disable-next-line local/primitive-classname -- debt: F526 box (px-3 pt-4 pb-6)
+        // eslint-disable-next-line local/primitive-classname -- debt: box (px-3 pt-4 pb-6)
         <Text as="div" className="flex flex-col gap-3 px-3 pt-4 pb-6">
-          <div className="flex items-center gap-2">
+          <Row>
             <SearchInput value={query} onChange={setQuery} placeholder="Search names or UUID prefixes" size="sm" className="flex-1" />
             <Button>Search</Button>
             <IconButton icon="hero-calendar-days" label="Filter by date created" />
             <IconButton icon="hero-rectangle-group" label="Filter by type" />
             <IconButton icon="hero-tag" label="Named only" active={namedOnly} onClick={() => setNamedOnly((n) => !n)} />
-          </div>
+          </Row>
           <div className="flex flex-col gap-3 overflow-auto">
             {visible.length ? (
               visible.map((clip, i) => (
@@ -131,7 +132,7 @@ export default function ManualRunPanel({
                   as="button"
                   padding="none"
                   onClick={() => setSelected(clip)}
-                  // eslint-disable-next-line local/primitive-classname -- debt: F526 box (rounded-md px-3 py-2 shadow-none hover:border-primary-600 hover:bg-hover hover:shadow-none)
+                  // eslint-disable-next-line local/primitive-classname -- debt: box (rounded-md px-3 py-2 shadow-none hover:border-primary-600 hover:bg-hover hover:shadow-none)
                   className="group flex items-center justify-between gap-2 rounded-md px-3 py-2 shadow-none hover:border-primary-600 hover:bg-hover hover:shadow-none"
                 >
                   <div className="flex min-w-0 items-center gap-2">
@@ -168,14 +169,16 @@ export default function ManualRunPanel({
     <div className="flex h-full flex-col">
       <div className={cn("flex items-center justify-between gap-4 pb-4", embedded ? "px-3 pt-3" : "px-6 pt-4")}>
         <div className="flex min-w-0 flex-col gap-1">
-          <div className="flex items-center gap-2">
+          <Row>
             <Heading className="min-w-0 wrap-break-word">{selected.name || "Unnamed"}</Heading>
             <IconButton icon="hero-pencil" label="Rename" size="xs" />
-          </div>
-          <Text as="div" variant="body-sm" tone="muted" className="flex items-center gap-2">
-            <span className="capitalize">{selected.type.replace("_", " ")}</span>
-            <span>•</span>
-            <span>{formatLocalDate(selected.insertedAt)}</span>
+          </Row>
+          <Text as="div" variant="body-sm" tone="muted">
+            <Row gap="sm">
+              <span className="capitalize">{selected.type.replace("_", " ")}</span>
+              <span>•</span>
+              <span>{formatLocalDate(selected.insertedAt)}</span>
+            </Row>
           </Text>
         </div>
         <IconButton icon="hero-x-mark" label="Unselect dataclip" onClick={() => setSelected(null)} />
@@ -197,7 +200,7 @@ export default function ManualRunPanel({
           <Tabs
             variant="pill"
             fill
-            // eslint-disable-next-line local/primitive-classname -- debt: F526 box (px-3 pt-2 pb-1)
+            // eslint-disable-next-line local/primitive-classname -- debt: box (px-3 pt-2 pb-1)
             className="shrink-0 px-3 pt-2 pb-1"
             tabs={tabOptions}
             active={tab}

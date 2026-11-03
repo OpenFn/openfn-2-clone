@@ -7,6 +7,7 @@ import Pill from "../../primitives/Pill";
 import { Table, Td, Th, Tr } from "../../primitives/Table";
 import Text from "../../primitives/Text";
 import { DOT, EMPTY, FAILURE_COLORS, adaptorLabel } from "./palette";
+import { Stack } from "../../primitives/Stack";
 
 // One tip per error type the worker reports (TriageTable.tsx `TIPS`).
 const TIPS: Record<string, string> = {
@@ -64,12 +65,12 @@ function Signature({ signature }: { signature: ErrorSignature }) {
   const state = OUTCOMES[signature.exit_reason];
   const color = state && FAILURE_COLORS[state];
   return (
-    <div className="space-y-1.5">
+    <Stack gap="sm">
       <p className="flex items-center gap-2 font-medium text-strong capitalize">
         {color && <span aria-hidden="true" className={DOT} style={{ backgroundColor: color }} />}
         {state ?? errorTypeOf(signature)}
       </p>
-      {/* eslint-disable-next-line local/primitive-classname -- debt: F526 box (border-l-2 border-strong pl-2) */}
+      {/* eslint-disable-next-line local/primitive-classname -- debt: box (border-l-2 border-strong pl-2) */}
       <Text as="p" variant="code-md" tone="strong" className="border-l-2 border-strong pl-2" style={{ borderColor: color }}>
         {signature.exit_reason}:{errorTypeOf(signature)}
         {signature.step_name && ` @ ${signature.step_name}`}
@@ -79,7 +80,7 @@ function Signature({ signature }: { signature: ErrorSignature }) {
           {adaptorLabel(signature.adaptor)}
         </Text>
       )}
-    </div>
+    </Stack>
   );
 }
 
@@ -125,7 +126,7 @@ export default function TriageTable({
         {signatures.map((s) => (
           <Tr key={[s.exit_reason, s.error_type, s.step_name, s.adaptor, s.job_id].join("|")}>
             <Td>
-              {/* eslint-disable-next-line local/primitive-classname -- debt: F528 type (tabular-nums) */}
+              {/* eslint-disable-next-line local/primitive-classname -- debt: type (tabular-nums) */}
               <Pill className="tabular-nums">{formatNumber(s.count)}</Pill>
             </Td>
             <Td>

@@ -5,6 +5,7 @@ import Card from "../primitives/Card";
 import Pill from "../primitives/Pill";
 import AdaptorIcon from "./AdaptorIcon";
 import Text from "../primitives/Text";
+import { Row } from "../primitives/Stack";
 
 /** The help text on the Adaptor field label. */
 export const ADAPTOR_HELP =
@@ -29,7 +30,8 @@ export default function AdaptorDisplay({ adaptor, credentialName = null, onEdit,
   const hasCredential = !!credentialName;
   const canEdit = hasCredential || !needsCredential;
   return (
-    <Card padding="sm" className="flex items-center justify-between gap-2">
+    <Card padding="sm">
+      <Row justify="between">
       <Text as="div" className="flex min-w-0 flex-1 items-center gap-2">
         {onChangeAdaptor && !isReadOnly ? (
           <Button variant="secondary" size="xs" onClick={onChangeAdaptor} aria-label={`Change adaptor: ${adaptorDisplayName(adaptor)}`} className="min-w-0">
@@ -37,10 +39,10 @@ export default function AdaptorDisplay({ adaptor, credentialName = null, onEdit,
             <span className="truncate">{adaptorDisplayName(adaptor)}</span>
           </Button>
         ) : (
-          <div className="flex items-center gap-2">
+          <Row>
             <AdaptorIcon name={adaptor} size="sm" />
             <span className="truncate font-medium text-muted">{adaptorDisplayName(adaptor)}</span>
-          </div>
+          </Row>
         )}
         <Text variant="body-sm" tone={isReadOnly ? "faint" : "muted"} className="whitespace-nowrap">
           {version === "latest" ? "latest" : `v${version}`}
@@ -63,6 +65,7 @@ export default function AdaptorDisplay({ adaptor, credentialName = null, onEdit,
           {canEdit ? "Edit" : "Connect"}
         </Button>
       )}
+      </Row>
     </Card>
   );
 }

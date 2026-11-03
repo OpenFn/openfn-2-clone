@@ -30,11 +30,18 @@ a run limit), the answer carries the `work_order_id` and the reason: a 200 with
 an `error` member, or a 429 for an `after_completion` trigger. Don't resend in
 that case; the payload is stored.
 
-Errors are problem documents: 401 when the trigger needs credentials and none
-were sent, 404 `not_found` for an unknown trigger or wrong credentials, 403
-`trigger_disabled`, 413 for a body over the instance's size limit, 415 for a
-body Lightning doesn't read, and 429 for any rate or plan limit
-(`too_many_runs`, `too_many_requests` or `exceeds_limit`).
+Errors are problem documents: 400 `malformed` for a JSON body that doesn't
+parse (`bad_request` for a form body that isn't UTF-8), 401 `unauthenticated`
+when the trigger needs credentials and none were sent (with an
+`ApiKey header="x-api-key"` challenge when it takes an API key), 404
+`not_found` for an unknown trigger or wrong credentials, 403
+`trigger_disabled`, 413 `content_too_large` for a body over the instance's
+size limit, 415 `unsupported_media_type` for a body Lightning doesn't read,
+422 `invalid` when the work order can't be saved, 429 for any rate or plan
+limit (`too_many_runs`, `too_many_requests` or `exceeds_limit`; webhooks keep
+429 where the rest of the API answers 402), and 503 `service_unavailable`
+with `retry-after` when the database can't be reached. A 429 from the rate
+limiter carries no `retry-after`.
 
 ## Check a webhook
 

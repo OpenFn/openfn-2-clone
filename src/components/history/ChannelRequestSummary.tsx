@@ -11,6 +11,7 @@ import { ChannelStatePill } from "../domain/StatePill";
 import { humanizeError } from "./channelErrors";
 import { formatUs, shortUuid } from "../../utils/format";
 import CopyButton from "../primitives/CopyButton";
+import { Row } from "../primitives/Stack";
 
 /**
  * The channel request page's summary card (channel_request_live/show.ex
@@ -36,21 +37,21 @@ export default function ChannelRequestSummary({
           state={request.state}
           title={request.state === "timeout" && event?.errorMessage ? humanizeError(event.errorMessage) : undefined}
         />
-        {/* eslint-disable-next-line local/primitive-classname -- debt: F525 margin (ml-auto) */}
+        {/* eslint-disable-next-line local/primitive-classname -- debt: margin (ml-auto) */}
         <Text as="div" variant="body-sm" className="ml-auto flex flex-wrap items-center gap-x-4 gap-y-1">
-          <span className="flex items-center gap-1.5">
+          <Row as="span" gap="sm">
             <Heading size="xs" as="span">
               Channel
             </Heading>
             <TextLink to={`/projects/${channel.projectId}/channels/${channel.id}/edit`}>{channel.name}</TextLink>
-          </span>
-          <span className="flex items-center gap-1.5">
+          </Row>
+          <Row as="span" gap="sm">
             <Heading size="xs" as="span">
               Request
             </Heading>
             <span className="font-mono text-strong">{shortUuid(request.id)}</span>
             <CopyButton value={request.id} label="Copy request ID" size="xs" />
-          </span>
+          </Row>
         </Text>
       </div>
 

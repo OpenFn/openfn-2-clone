@@ -2,7 +2,7 @@
  * Profile page settings (/profile). Static fixtures only.
  */
 import type { MfaSetupResult, ProfilePageData } from "../types/profile";
-import type { User } from "./models/users";
+import type { User } from "../types/users";
 
 /** VersionControl.github_enabled?(): the demo instance has no GitHub app configured, like the reference. */
 export const githubOauthEnabled = false;

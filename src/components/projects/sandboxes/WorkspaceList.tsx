@@ -3,6 +3,7 @@ import Section from "../../primitives/Section";
 import TextLink from "../../primitives/TextLink";
 import WorkspaceCard from "./WorkspaceCard";
 import EmptyState from "../../primitives/EmptyState";
+import { Stack } from "../../primitives/Stack";
 
 /**
  * The sandboxes page list (SandboxLive.Components.workspace_list): the root
@@ -53,8 +54,8 @@ export default function WorkspaceList({
   );
 
   return (
-    <div className="space-y-8">
-      <div className="space-y-3">
+    <Stack gap="lg">
+      <Stack gap="md">
         {card(root, !rootIsSandbox)}
         {active.length === 0 && scheduled.length === 0 ? (
           <EmptyState
@@ -71,12 +72,12 @@ export default function WorkspaceList({
         ) : (
           active.map((s) => card(s))
         )}
-      </div>
+      </Stack>
       {scheduled.length > 0 && (
         <Section id="scheduled-for-deletion-section" size="lg" title="Scheduled for deletion">
           {scheduled.map((s) => card(s))}
         </Section>
       )}
-    </div>
+    </Stack>
   );
 }

@@ -44,7 +44,7 @@ export default function NameField({
 }: Props) {
   const name = urlSafeName(value);
   return (
-    <div className={cn("space-y-2", fieldClassName)}>
+    <div data-ui="name-field" className={cn("space-y-2", fieldClassName)}>
       <TextInput
         id={id}
         label={label}

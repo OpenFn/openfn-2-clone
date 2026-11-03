@@ -9,6 +9,7 @@ import type { Tone } from "../primitives/tone";
 import EmptyState from "../primitives/EmptyState";
 import TextLink from "../primitives/TextLink";
 import Markdown from "../primitives/Markdown";
+import { Stack, Row } from "../primitives/Stack";
 
 interface Props {
   id: string;
@@ -36,14 +37,16 @@ function statusTone(status: string): Tone {
 function IdList({ label, ids, onOpenId }: { label: string; ids: string[]; onOpenId?: ((id: string) => void) | undefined }) {
   if (ids.length === 0) return null;
   return (
-    <Text as="div" variant="body-sm" className="flex flex-wrap items-center gap-1.5">
-      <span className="text-muted">{label}</span>
-      {ids.map((id) => (
-        // eslint-disable-next-line no-restricted-syntax, local/primitive-classname -- debt: Button has no 12px mono size for ids; F528 type (font-mono text-xs)
-        <Button key={id} variant="secondary" size="xs" className="font-mono text-xs" onClick={() => onOpenId?.(id)}>
-          {id}
-        </Button>
-      ))}
+    <Text as="div" variant="body-sm">
+      <Row gap="sm" wrap>
+        <span className="text-muted">{label}</span>
+        {ids.map((id) => (
+          // eslint-disable-next-line no-restricted-syntax, local/primitive-classname -- debt: Button has no 12px mono size for ids; type (font-mono text-xs)
+          <Button key={id} variant="secondary" size="xs" className="font-mono text-xs" onClick={() => onOpenId?.(id)}>
+            {id}
+          </Button>
+        ))}
+      </Row>
     </Text>
   );
 }
@@ -60,8 +63,9 @@ export default function AnnotationCard({ id, annotation, inventory, onOpenId, in
   const list = (key: string) => (Array.isArray(fm[key]) ? (fm[key] as string[]) : []);
 
   return (
+    // eslint-disable-next-line no-restricted-syntax -- debt: a child would change in a flex column
     <div className="space-y-4">
-      <div className="space-y-2">
+      <Stack gap="sm">
         <div className="flex items-start justify-between gap-2">
           <Heading as="h2">{title}</Heading>
           {annotation && (
@@ -74,14 +78,14 @@ export default function AnnotationCard({ id, annotation, inventory, onOpenId, in
             />
           )}
         </div>
-        <div className="flex flex-wrap items-center gap-1.5">
+        <Row gap="sm" wrap>
           <Pill variant="square">
             <code>{id}</code>
           </Pill>
           {annotation && <Pill color="primary">{annotation.folder.replace(/s$/, "")}</Pill>}
           {status && <Pill tone={statusTone(status)}>{status}</Pill>}
           {inventory && <Pill tone={statusTone(inventory.status)}>inventory: {inventory.status}</Pill>}
-        </div>
+        </Row>
         {inventory && (
           <Text as="p" variant="body-sm" tone="muted">
             {inventory.section} · <code>{inventory.route.replace(/`/g, "")}</code>
@@ -89,7 +93,7 @@ export default function AnnotationCard({ id, annotation, inventory, onOpenId, in
         )}
         <IdList label="Inherits" ids={list("inherits")} onOpenId={onOpenId} />
         <IdList label="Flows" ids={list("flows")} onOpenId={onOpenId} />
-      </div>
+      </Stack>
 
       {!annotation && (
         <EmptyState
@@ -113,7 +117,7 @@ export default function AnnotationCard({ id, annotation, inventory, onOpenId, in
         <>
           {annotation.frontMatterRaw && (
             <Disclosure title="Front matter" defaultOpen={false} padding="none">
-              {/* eslint-disable-next-line local/primitive-classname -- debt: F526 box (border-t border-subtle px-4 py-3) */}
+              {/* eslint-disable-next-line local/primitive-classname -- debt: box (border-t border-subtle px-4 py-3) */}
               <Text as="pre" variant="code-sm" tone="muted" className="overflow-x-auto border-t border-subtle px-4 py-3">
                 {annotation.frontMatterRaw}
               </Text>

@@ -119,7 +119,7 @@ export default function AdminProjectForm({ project, users, onSave, cancelHref }:
           badgeLabel="Note that this project will be named:"
           fieldClassName="w-1/2"
         />
-        {/* eslint-disable-next-line local/primitive-classname -- debt: F525 margin (mt-8) */}
+        {/* eslint-disable-next-line local/primitive-classname -- debt: margin (mt-8) */}
         <Section title="Manage project users" className="mt-8">
           <SearchInput value={sort.filter} onChange={sort.setFilter} placeholder="Filter users..." className="max-w-sm" />
 
@@ -138,7 +138,7 @@ export default function AdminProjectForm({ project, users, onSave, cancelHref }:
             }
           >
             {sort.rows.map(({ user, role }) => (
-              // eslint-disable-next-line local/primitive-classname -- debt: F527 colour (text-faint)
+              // eslint-disable-next-line local/primitive-classname -- debt: colour (text-faint)
               <Tr key={user.id} className={cn(role === "" && "text-faint")}>
                 <Td>{fullName(user)}</Td>
                 <Td>{user.email}</Td>

@@ -11,6 +11,7 @@ import TextLink from "../primitives/TextLink";
 import InspectorLayout, { InspectorFooter } from "./InspectorLayout";
 import CopyButton from "../primitives/CopyButton";
 import Text from "../primitives/Text";
+import { Stack, Row } from "../primitives/Stack";
 
 const TITLES = { webhook: "On webhook call", cron: "On a schedule" } as const;
 
@@ -39,7 +40,7 @@ export function TriggerTypeBadge({ type = "webhook" }: { type?: "webhook" | "cro
 }
 
 function ReadOnlyField({ id, label, value }: { id: string; label: string; value: string }) {
-  // eslint-disable-next-line local/primitive-classname -- debt: F527 colour (text-muted)
+  // eslint-disable-next-line local/primitive-classname -- debt: colour (text-muted)
   return <TextInput id={id} label={label} value={value} readOnly className="text-muted" />;
 }
 
@@ -67,19 +68,21 @@ function EditFooter({ onEdit }: { onEdit: () => void }) {
 function WizardBreadcrumb({ step, onChoose }: { step: "choose" | "configure"; onChoose?: () => void }) {
   return (
     <nav aria-label="Wizard steps">
-      <Text as="div" variant="body-sm" className="flex items-center gap-1.5">
-        {step === "configure" && onChoose ? (
-          // eslint-disable-next-line local/primitive-classname -- debt: F527 colour (text-faint hover:text-muted)
-          <TextLink onClick={onChoose} className="text-faint hover:text-muted">
-            Choose
-          </TextLink>
-        ) : (
-          <span className={step === "choose" ? "font-semibold text-strong underline" : "text-faint"}>Choose</span>
-        )}
-        <span aria-hidden="true" className="text-faint">
-          ›
-        </span>
-        <span className={step === "configure" ? "font-semibold text-strong underline" : "text-faint"}>Configure</span>
+      <Text as="div" variant="body-sm">
+        <Row gap="sm">
+          {step === "configure" && onChoose ? (
+            // eslint-disable-next-line local/primitive-classname -- debt: colour (text-faint hover:text-muted)
+            <TextLink onClick={onChoose} className="text-faint hover:text-muted">
+              Choose
+            </TextLink>
+          ) : (
+            <span className={step === "choose" ? "font-semibold text-strong underline" : "text-faint"}>Choose</span>
+          )}
+          <span aria-hidden="true" className="text-faint">
+            ›
+          </span>
+          <span className={step === "configure" ? "font-semibold text-strong underline" : "text-faint"}>Configure</span>
+        </Row>
       </Text>
     </nav>
   );
@@ -141,7 +144,7 @@ export default function TriggerInspector({ trigger, onChange, onClose }: Props) 
           <TriggerTypeBadge type={draft.type} />
           <Text>
             <TextLink
-              // eslint-disable-next-line local/primitive-classname -- debt: F528 type (font-semibold)
+              // eslint-disable-next-line local/primitive-classname -- debt: type (font-semibold)
               className="font-semibold"
               onClick={() =>
                 setDraft((d) =>
@@ -186,9 +189,9 @@ export default function TriggerInspector({ trigger, onChange, onClose }: Props) 
               </Card>
             </WebhookUrlField>
             <Field group label="Response">
-              <div className="space-y-2">
+              <Stack gap="sm">
                 {[IMMEDIATELY, ON_COMPLETE].map((o) => (
-                  // eslint-disable-next-line local/primitive-classname -- debt: F526 box (hover:bg-hover)
+                  // eslint-disable-next-line local/primitive-classname -- debt: box (hover:bg-hover)
                   <Card key={o.value} padding="sm" className="hover:bg-hover">
                     <Radio
                       name="webhook-reply"
@@ -199,7 +202,7 @@ export default function TriggerInspector({ trigger, onChange, onClose }: Props) 
                     />
                   </Card>
                 ))}
-              </div>
+              </Stack>
             </Field>
           </>
         ) : (
@@ -209,7 +212,7 @@ export default function TriggerInspector({ trigger, onChange, onClose }: Props) 
             hint="Minute, hour, day of month, month, day of week (UTC)."
             value={draft.cronExpression ?? ""}
             onChange={(e) => setDraft((d) => ({ ...d, cronExpression: e.target.value, cronDescription: e.target.value }))}
-            // eslint-disable-next-line local/primitive-classname -- debt: F528 type (font-mono)
+            // eslint-disable-next-line local/primitive-classname -- debt: type (font-mono)
             className="font-mono"
           />
         )}
@@ -236,27 +239,30 @@ export default function TriggerInspector({ trigger, onChange, onClose }: Props) 
       <TriggerTypeBadge />
       <WebhookUrlField>
         <Card padding="sm">
-          <div className="flex items-center justify-between gap-2">
-            <Pill>Default</Pill>
-            <CopyButton value={url} label="Copy Default URL" size="xs" />
-          </div>
-          {/* eslint-disable-next-line local/primitive-classname -- debt: F525 margin (mt-1) */}
-          <Text as="div" variant="code-sm" tone="muted" className="mt-1 break-all">
-            {url}
-          </Text>
+          <Stack gap="xs">
+            <Row justify="between">
+              <Pill>Default</Pill>
+              <CopyButton value={url} label="Copy Default URL" size="xs" />
+            </Row>
+            <Text as="div" variant="code-sm" tone="muted" className="break-all">
+              {url}
+            </Text>
+          </Stack>
         </Card>
       </WebhookUrlField>
       <Disclosure variant="inline" defaultOpen={false} title="Authentication" note={trigger.hasAuthMethod ? "1 configured" : "none configured"}>
         {trigger.hasAuthMethod ? (
-          <Text as="div" variant="body-sm" className="flex items-center gap-2">
-            <span className="hero-shield-check-micro h-4 w-4 text-success-icon" />
-            <span className="font-medium text-body">CommCare webhook key</span>
-            <span className="text-faint">(API Key)</span>
+          <Text as="div" variant="body-sm">
+            <Row gap="sm">
+              <span className="hero-shield-check-micro h-4 w-4 text-success-icon" />
+              <span className="font-medium text-body">CommCare webhook key</span>
+              <span className="text-faint">(API Key)</span>
+            </Row>
           </Text>
         ) : (
           <Text as="p" variant="body-sm" tone="muted">
             No authentication configured.{" "}
-            {/* eslint-disable-next-line local/primitive-classname -- debt: F528 type (font-medium) */}
+            {/* eslint-disable-next-line local/primitive-classname -- debt: type (font-medium) */}
             <TextLink onClick={startEdit} className="font-medium">
               Add authentication
             </TextLink>

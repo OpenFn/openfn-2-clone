@@ -1,8 +1,13 @@
 # Users
 
 Tokens: service account only. `users:read` for `GET`, `users:write` for `POST`
-and `PATCH`. Personal access token support is planned. Access will depend on
-the user's instance role: today, only superusers can manage users. Planned
+and `PATCH`. A service account without the grant gets 403
+`insufficient_scope` naming it, and so does a GitHub sync token. A personal
+access token, a superuser's included, gets 403 `forbidden` on every route,
+whether or not the user exists and whether or not the id is a UUID.
+
+Personal access token support is planned. Access will depend on the user's
+instance role: today, only superusers can manage users, in the app. Planned
 additional scope on some sections lets people create and change their own
 account.
 
@@ -54,6 +59,10 @@ Status: **Public**
 GET /api/users/:id
 ```
 
+An id that names no user answers 404 `not_found`, and one that isn't a UUID
+400 `invalid_parameter` with a `path` entry. `PATCH` answers these the same
+way, before it reads the body.
+
 ## Create a user
 
 Status: **Public**
@@ -71,23 +80,14 @@ POST /api/users
 | `role` | string | `user` or `superuser`. Defaults to `user`. |
 | `confirmed` | boolean | `true` marks the email as already verified. |
 
-Any other key answers 422 with an `unknown_key` entry. Lightning doesn't email
-users it creates.
+Any other key answers 422 with an `unknown_key` entry, alongside every other
+error in the body. A body that isn't a JSON object answers 400 `malformed`.
+Lightning doesn't email users it creates.
 
-Answers 201 with the user. If the email is already taken and nothing else is
-wrong, it answers 409 `taken` with the existing user's id, so a retry is safe:
-
-```json
-{
-  "type": "about:blank",
-  "title": "Conflict",
-  "status": 409,
-  "code": "taken",
-  "detail": "A value that must be unique is already in use. See errors.",
-  "errors": [{ "pointer": "#/email", "code": "taken", "detail": "has already been taken" }],
-  "existing": { "id": "604f0cd2-37fb-4833-a5e1-821555b5b314" }
-}
-```
+Answers 201 with the user. An email already taken, in any case, is a `taken`
+entry at `#/email` in a 422 `invalid`. It names nothing about the user who
+holds it. To make a retry safe, look the user up with `?email=` on
+[List users](#list-users) after a `taken` answer.
 
 Planned additional scope:
 

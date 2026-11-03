@@ -7,8 +7,8 @@
 import { fullName } from "../utils/format";
 import { users } from "./users";
 import { projects } from "./projects";
-import type { Project } from "./models/projects";
-import type { User } from "./models/users";
+import type { Project } from "../types/projects";
+import type { User } from "../types/users";
 import { collections } from "./project-settings";
 import type { AdminCollectionRow, AdminProjectRow, AuditEvent, AuthProvider, LiveDashboardData } from "../types/admin";
 

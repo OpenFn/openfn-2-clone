@@ -14,6 +14,7 @@ import TextLink from "../primitives/TextLink";
 import { ADAPTOR_HELP } from "./AdaptorDisplay";
 import AdaptorIcon from "./AdaptorIcon";
 import Text from "../primitives/Text";
+import { Stack, Row } from "../primitives/Stack";
 
 const CREDENTIALS_HELP =
   "If the system you're working with requires authentication, choose a credential with login details (secrets) that will allow this job to connect. If you're not connecting to an external system you don't need a credential.";
@@ -61,11 +62,11 @@ export default function ConfigureAdaptorModal({
       title="Configure connection"
       footer={<Button onClick={onClose}>Close</Button>}
     >
-      <div className="space-y-6">
+      <Stack gap="lg">
         <div className="grid grid-cols-3 gap-4">
           <Field className="col-span-2" label="Adaptor" info={ADAPTOR_HELP}>
             {/* As tall as the Version field beside it. */}
-            {/* eslint-disable-next-line local/primitive-classname -- debt: F526 box (py-1.5 pl-3 pr-1.5) */}
+            {/* eslint-disable-next-line local/primitive-classname -- debt: box (py-1.5 pl-3 pr-1.5) */}
             <Card padding="none" className="flex items-center gap-2 py-1.5 pl-3 pr-1.5">
               <AdaptorIcon name={adaptor} size="sm" />
               <span className="flex-1 truncate font-medium text-strong">{adaptorDisplayName(adaptor)}</span>
@@ -90,14 +91,14 @@ export default function ConfigureAdaptorModal({
           aside={needsCredentials && <TextLink>New Credential</TextLink>}
         >
           {!needsCredentials ? (
-            // eslint-disable-next-line local/primitive-classname -- debt: F528 type, F527 colour (text-center text-muted)
+            // eslint-disable-next-line local/primitive-classname -- debt: type, colour (text-center text-muted)
             <Card variant="muted" padding="lg" className="text-center text-muted">
               <Text as="p">This adaptor does not require credentials.</Text>
             </Card>
           ) : shown.length === 0 ? (
             <EmptyState message="No credentials found in this project" buttonText="Create a new credential" />
           ) : (
-            // eslint-disable-next-line local/primitive-classname -- debt: F526 box (divide-y divide-subtle)
+            // eslint-disable-next-line local/primitive-classname -- debt: box (divide-y divide-subtle)
             <Card padding="none" className="max-h-48 divide-y divide-subtle overflow-y-auto">
               {shown.map((c) => {
                 const selected = c.name === credentialName;
@@ -109,9 +110,11 @@ export default function ConfigureAdaptorModal({
                       onChange={() => onCredentialChange(c.name)}
                       label={<span className="font-medium text-strong">{c.name}</span>}
                       hint={
-                        <Text className="flex items-center gap-1">
-                          <span className="hero-user-solid h-4 w-4" />
-                          {ownerEmail(c.ownerId)}
+                        <Text>
+                          <Row as="span" gap="xs">
+                            <span className="hero-user-solid h-4 w-4" />
+                            {ownerEmail(c.ownerId)}
+                          </Row>
                         </Text>
                       }
                     />
@@ -122,7 +125,7 @@ export default function ConfigureAdaptorModal({
             </Card>
           )}
         </Field>
-      </div>
+      </Stack>
     </Modal>
   );
 }

@@ -54,7 +54,7 @@ export default function TemplateBrowserModal({ isOpen, onClose, projectId, templ
           </div>
           <RadioCards
             aria-label="Templates"
-            // eslint-disable-next-line local/primitive-classname -- debt: F526 box (pt-1)
+            // eslint-disable-next-line local/primitive-classname -- debt: box (pt-1)
             className="pt-1"
             value={previewedId}
             onChange={setPreviewedId}

@@ -62,6 +62,7 @@ export default function Markdown({ source, className }: { source: string; classN
   const html = useMemo(() => marked.parse(source, { async: false }), [source]);
   return (
     <div
+      data-ui="markdown"
       className={cn(
         "prose prose-sm max-w-none prose-headings:font-semibold prose-h2:text-base prose-h2:mt-6 prose-h3:text-sm",
         "prose-code:before:content-none prose-code:after:content-none prose-code:bg-sunken prose-code:rounded prose-code:px-1 prose-code:font-normal",

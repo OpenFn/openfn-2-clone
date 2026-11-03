@@ -3,6 +3,7 @@ import { Link } from "../../../routing/router";
 import TextLink from "../../primitives/TextLink";
 import { DOT, EMPTY, FRAME, LEGEND, percent } from "./palette";
 import Text from "../../primitives/Text";
+import { Row } from "../../primitives/Stack";
 
 export interface Slice {
   key: string;
@@ -88,11 +89,13 @@ export default function Donut({
       <Text as="ul" tone="body" className={LEGEND}>
         {slices.map(({ key, label, color, value, href }) => (
           <li key={key}>
-            <TextLink to={href} variant="plain" className="flex items-center gap-1.5">
-              <span aria-hidden="true" className={DOT} style={{ backgroundColor: color }} />
-              <span className="capitalize">{label}</span>{" "}
-              <span className="font-medium tabular-nums text-strong">{formatNumber(value)}</span>{" "}
-              <span className="sr-only">({percent(value, total)})</span>
+            <TextLink to={href} variant="plain" className="block">
+              <Row as="span" gap="sm">
+                <span aria-hidden="true" className={DOT} style={{ backgroundColor: color }} />
+                <span className="capitalize">{label}</span>{" "}
+                <span className="font-medium tabular-nums text-strong">{formatNumber(value)}</span>{" "}
+                <span className="sr-only">({percent(value, total)})</span>
+              </Row>
             </TextLink>
           </li>
         ))}

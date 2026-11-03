@@ -63,7 +63,7 @@ export const LoadError: Story = {
 
 /**
  * `wrap` breaks long words when the table is narrow. `maxWidth` sets a
- * max-width the table layout ignores while it has room (F530).
+ * max-width the table layout ignores while it has room.
  */
 export const WrapAndMaxWidth: Story = {
   render: () => (

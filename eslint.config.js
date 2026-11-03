@@ -40,7 +40,7 @@ const designRules = [
     selector: 'JSXOpeningElement[name.name=/^[A-Z]/]:not([name.name=/^(Diff)?Editor$/]) > JSXAttribute[name.name=/^(theme|kind|appearance)$/]',
     message: propNames,
   },
-  // D300: a look is one `variant`, not a boolean. The primitives' old boolean names stay banned.
+  // A look is one `variant`, not a boolean. The primitives' old boolean names stay banned.
   {
     selector: 'JSXOpeningElement[name.name=/^(Card|Table|Modal|DetailItem|Pill|Disclosure|Header)$/] > JSXAttribute[name.name=/^(muted|dashed|square|mono|bare|divide|padded|loggedOut)$/]',
     message: "A look is one `variant`, not a boolean prop (PRINCIPLES.md, Components).",
@@ -62,12 +62,24 @@ const designRules = [
     selector: 'JSXOpeningElement[name.name=/^[a-z]/] > JSXAttribute[name.name="title"]',
     message: "Native title tooltip: use `Tooltip`, or the component's own `tooltip` prop.",
   },
-  // A cell's own max-width doesn't hold in an auto-layout table, so hand-made truncation spills (F530).
+  // A cell's own max-width doesn't hold in an auto-layout table, so hand-made truncation spills.
   {
     selector: 'JSXOpeningElement[name.name="Td"] > JSXAttribute[name.name="className"] :matches(Literal[value=/\\btruncate\\b/], TemplateElement[value.raw=/\\btruncate\\b/])',
     message: "Truncate a cell with `<Td truncate maxWidth={…}>`, not a class: a cell's max-width doesn't hold in an auto table layout.",
   },
 ]
+
+// A className that is only a plain column or line is Stack or Row. Any gap is caught, so an
+// off-scale one left behind carries a debt: disable until it's rounded. Only static strings are read.
+const tok = (t) => `(?=(?:\\S+\\s+)*${t}(?:\\s|$))`
+const only = (ts) => `(?:(?:${ts})(?:\\s+|$))+$`
+const stackMessage =
+  'Plain column or line: use Stack (column) or Row (centred line) with gap xs, sm, md or lg (4, 8, 16, 24px); the parent owns the gap. See src/components/primitives/Stack.tsx.'
+const stackRules = [
+  `^\\s*space-y-[\\d.]+\\s*$`,
+  `^\\s*${tok('flex')}${tok('flex-col')}${tok('gap-[\\d.]+')}${only('flex|flex-col|gap-[\\d.]+')}`,
+  `^\\s*${tok('flex')}${tok('items-center')}${tok('gap-[\\d.]+')}${only('flex|items-center|flex-wrap|justify-between|justify-end|gap-[\\d.]+')}`,
+].map((re) => ({ selector: `JSXAttribute[name.name="className"] > Literal[value=/${re}/]`, message: stackMessage }))
 
 // Colours are named for what they're for (src/theme/tokens.css). Each message
 // names what to use instead. White and black with an alpha (`black/5`,
@@ -150,7 +162,7 @@ const local = {
         }
       },
     },
-    // D299: a primitive's className, from a page or feature component, is layout and sizing only
+    // A primitive's className, from a page or feature component, is layout and sizing only
     // (src/components/CLAUDE.md). Names imported from primitives/ are checked; a className held in
     // a variable passes unread.
     'primitive-classname': {
@@ -191,7 +203,7 @@ const local = {
   },
 }
 
-// Layout and sizing (D299): display, flex and grid, gaps, sizing, text overflow, overflow,
+// Layout and sizing: display, flex and grid, gaps, sizing, text overflow, overflow,
 // position, sr-only, group/peer and container queries. Variant prefixes (`sm:`) and `!` are stripped first.
 const layoutClass =
   /^(flex|inline-flex|grid|inline-grid|block|inline-block|inline|hidden|contents|(flex|grid|col|row|items|justify|content|self|place|order|gap|space-[xy])-.+|(min-|max-)?[wh]-.+|size-.+|(shrink|grow)(-.+)?|basis-.+|aspect-.+|truncate|line-clamp-.+|(whitespace|break|wrap)-.+|text-(wrap|nowrap|balance|pretty|ellipsis|clip)|overflow-.+|relative|absolute|fixed|sticky|static|(inset|top|bottom|left|right|z)-.+|(not-)?sr-only|(group|peer)(\/.+)?|isolate|@container(\/.+)?)$/
@@ -209,6 +221,13 @@ const modelImports = {
   group: ['**/mock-data/models', '**/mock-data/models/**'],
   message: "Models are the replica's records: take a hand-written contract shape from src/types/ (STANDARDS §11).",
 }
+// Project and User sit in src/types/ so the session and permissions don't reach
+// into mock-data, but they are records, not contract shapes.
+const recordImports = {
+  regex: '((^|/)types|^\\.)/(projects|users)$',
+  importNames: ['Project', 'ProjectMember', 'User'],
+  message: 'Project and User are records: take a hand-written contract shape such as CurrentProject (STANDARDS §11).',
+}
 const mockDataImports = {
   // Any other mock-data path: models get their own message.
   regex: '(^|/)mock-data(/(?!models(/|$)).*)?$',
@@ -219,10 +238,17 @@ const sessionImports = {
   message: 'Take the user and permissions as props; the replica reads the session.',
 }
 
+const apiImports = {
+  regex: '(^|/)api(/.*)?$',
+  message: 'Take data as props; the replica wrapper calls the API client.',
+}
+
+const cacheWriteMessage = "Don't write into the query cache: invalidate the keys the save changed and return that from onSuccess (.claude/rules/api.md)."
+
 const seamIgnores = ['**/*.stories.tsx', '**/*[rR]eplica.{ts,tsx}', '**/*.test.{ts,tsx}']
 const seamImports = (extra = []) => [
   'error',
-  { paths: routerImports, patterns: [modelImports, mockDataImports, sessionImports, ...extra] },
+  { paths: routerImports, patterns: [modelImports, recordImports, mockDataImports, sessionImports, apiImports, ...extra] },
 ]
 
 // Each folder in src/components/ other than primitives/ and domain/ is an
@@ -298,10 +324,10 @@ export default defineConfig([
   {
     files: ['src/pages/**/*.tsx', 'src/components/*/**/*.tsx'],
     ignores: ['src/components/primitives/**', '**/*.stories.tsx'],
-    rules: { 'no-restricted-syntax': [...consumerRules(colourRules()), ...typeRules] },
+    rules: { 'no-restricted-syntax': [...consumerRules(colourRules()), ...typeRules, ...stackRules] },
   },
   {
-    // D299.
+    // A primitive's className, from a page or feature component, is layout and sizing only.
     files: ['src/pages/**/*.tsx', 'src/components/*/**/*.tsx'],
     ignores: ['src/components/primitives/**', '**/*.stories.tsx', '**/*.test.tsx'],
     rules: { 'local/primitive-classname': 'error' },
@@ -319,7 +345,7 @@ export default defineConfig([
   // Chart palettes (the status-shade ban still holds):
   {
     files: ['src/components/history/ChannelTiming.tsx', 'src/components/admin/LiveDashboardHome.tsx'],
-    rules: { 'no-restricted-syntax': [...consumerRules(colourRules({ palette: false, literals: false })), ...typeRules] },
+    rules: { 'no-restricted-syntax': [...consumerRules(colourRules({ palette: false, literals: false })), ...typeRules, ...stackRules] },
   },
   // Tests and fixtures hold data (sandbox colours) and query chart classes:
   { files: ['src/**/*.test.{ts,tsx}', 'src/mock-data/**/*.{ts,tsx}'], rules: { 'no-restricted-syntax': srcRules([]) } },
@@ -334,7 +360,7 @@ export default defineConfig([
   // The amber notices (support user, experimental):
   {
     files: ['src/components/shell/UserMenu.tsx', 'src/components/shell/Sidebar.tsx'],
-    rules: { 'no-restricted-syntax': [...consumerRules(colourRules({ amber: true })), ...typeRules] },
+    rules: { 'no-restricted-syntax': [...consumerRules(colourRules({ amber: true })), ...typeRules, ...stackRules] },
   },
   {
     // The router adapter is the one place that reads the browser URL.
@@ -348,6 +374,9 @@ export default defineConfig([
         { object: 'document', property: 'location', message: hostMessage },
         { property: 'pushEvent', message: hostMessage },
         { property: 'pushEventTo', message: hostMessage },
+        // After a save, invalidate and let the refetch bring the server's answer.
+        { property: 'setQueryData', message: cacheWriteMessage },
+        { property: 'setQueriesData', message: cacheWriteMessage },
       ],
     },
   },
@@ -410,8 +439,19 @@ export default defineConfig([
     rules: { 'no-restricted-imports': ['error', { patterns: [pageImports] }] },
   },
   {
+    // The API client has no UI: a failed save stays in its form, and success
+    // toasts are the wrapper's.
+    files: ['src/api/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        { patterns: [pageImports, { regex: '(^|/)components(/.*)?$', message: 'src/api/ has no UI: no toasts or components. A failed save stays in its form; the wrapper toasts success.' }] },
+      ],
+    },
+  },
+  {
     // Contract shapes are written by hand, never built on models or fixtures.
     files: ['src/types/**/*.ts'],
-    rules: { 'no-restricted-imports': ['error', { patterns: [modelImports, mockDataImports, pageImports] }] },
+    rules: { 'no-restricted-imports': ['error', { patterns: [modelImports, recordImports, mockDataImports, pageImports] }] },
   },
 ])

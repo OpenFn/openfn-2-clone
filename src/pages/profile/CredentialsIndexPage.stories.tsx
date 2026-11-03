@@ -36,3 +36,5 @@ type Story = StoryObj<typeof CredentialsIndexPage>;
 
 export const Default: Story = {};
 export const Empty: Story = { args: { credentials: [], oauthClients: [] } };
+export const Loading: Story = { args: { credentials: [], oauthClients: [], status: { state: "loading" } } };
+export const Failed: Story = { args: { credentials: [], oauthClients: [], status: { state: "error", message: "Authentication is required." } } };

@@ -3,6 +3,7 @@ import Button from "../../components/primitives/Button";
 import { Centered, PageContent } from "../../components/primitives/PageContent";
 import NewTokenBanner from "../../components/profile/NewTokenBanner";
 import TokensTable from "../../components/profile/TokensTable";
+import { Stack } from "../../components/primitives/Stack";
 import TokenDeletionModal from "../../components/profile/TokenDeletionModal";
 import type { ApiToken } from "../../types/tokens";
 import { useAction } from "../../utils/useAction";
@@ -46,8 +47,10 @@ export default function TokensPage({ tokens, newToken, tokenId, onGenerate, onDe
         {tokenId && tokens.some((t) => t.id === tokenId) && (
           <TokenDeletionModal onClose={onClose} onDelete={() => onDelete(tokenId)} />
         )}
-        {newToken && <NewTokenBanner token={newToken} />}
-        <TokensTable tokens={tokens} />
+        <Stack>
+          {newToken && <NewTokenBanner token={newToken} />}
+          <TokensTable tokens={tokens} />
+        </Stack>
       </Centered>
     </PageContent>
   );

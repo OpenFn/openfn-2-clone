@@ -15,7 +15,7 @@ it takes.
 | Personal access token | A person | Create one in the app under your user profile. It acts as that person, with their project roles. |
 | Service account access token | Automation | Trade a signed assertion at `POST /api/oauth/token` (see below). It lasts five minutes and carries scopes. |
 | Run token | A running job | Issued by Lightning to a run. Only used by the collections item API. |
-| GitHub sync token | Lightning's GitHub integration | Created when a project is connected to a repository. Only used by provisioning, for that project. |
+| GitHub sync token | Lightning's GitHub integration | Created when a project is connected to a repository. Only used by provisioning, for that project. Any other route answers it 403 `insufficient_scope`. |
 | Session token (planned) | A person using Lightning's own app | Sign in with `POST /api/session` (see below). Sent as a cookie, not a header. |
 
 ## Session tokens
@@ -50,7 +50,19 @@ who they are, or use the AI assistant.
 A service account signs in with an RSA key pair instead of a password. The
 instance operator sets the public key as `SERVICE_ACCOUNT_PUBLIC_KEY`, and your
 automation keeps the private key. Each instance has at most one service
-account. Changing or removing the key revokes every token already issued.
+account. Changing or removing the key revokes every token already issued, and
+so does changing `WORKER_RUNS_PRIVATE_KEY`, which signs the access tokens.
+
+`SERVICE_ACCOUNT_PUBLIC_KEY` takes raw PEM, PEM with literal `\n`, or the PEM
+file base64-encoded on one line. It must be an RSA key of at least 2048 bits. A
+bad value stops Lightning at boot with a message naming the variable. While it
+is set, the web app's first setup page is turned off, so the first superuser
+comes from [`POST /api/users`](./users.md).
+
+The service account isn't a user. It can't own credentials, so `POST` and
+`DELETE /api/credentials` answer it 403 `forbidden`. It can't provision through
+`POST /api/provision`, and it can't use the `/collections` item API that jobs
+read and write. It is the only caller `/api/users` accepts.
 
 ### Discover the token endpoint
 
@@ -81,7 +93,8 @@ The body must be form encoded. JSON is refused.
 | `grant_type` | `client_credentials` |
 | `client_assertion_type` | `urn:ietf:params:oauth:client-assertion-type:jwt-bearer` |
 | `client_assertion` | A JWT signed with RS256 by the private key |
-| `scope` | Space-separated scopes. Required: a request with no `scope` is refused. |
+| `scope` | Space-separated scopes, sent once. Required: a request with no `scope` is refused. |
+| `client_id` | Optional. If sent, it must be the service account's id. |
 
 The assertion's claims:
 
@@ -89,9 +102,11 @@ The assertion's claims:
 | --- | --- |
 | `iss`, `sub` | Both the service account's id: the public key's RFC 7638 thumbprint. Write `e`, `kty` and `n` as JSON in that order with no spaces, hash with SHA-256, then base64url encode. |
 | `aud` | The `token_endpoint` from the metadata document, exactly. |
-| `iat` | Now, in seconds. At most five seconds ahead of Lightning's clock. |
-| `exp` | At most 60 seconds after `iat`. |
-| `jti` | A new unique value for every assertion. Each assertion works once. |
+| `iat` | Now, as an integer in seconds. At most five seconds ahead of Lightning's clock. |
+| `exp` | An integer, at most 60 seconds after `iat`. |
+| `jti` | 1 to 255 bytes with no NUL character, new for every assertion. Once Lightning issues a token for a `jti` it refuses that `jti` again. An assertion it refuses doesn't use up its `jti`. |
+
+The header's `alg` must be `RS256`.
 
 A successful response:
 
@@ -105,16 +120,26 @@ A successful response:
 ```
 
 There is no refresh token. Sign a new assertion when you need a new token.
+Each token issued records a `token_issued` audit event with the scopes it
+carries.
 
-Failures follow OAuth's error format rather than the problem documents the
-rest of the API uses:
+An expired access token answers 401 `invalid_token` with
+`WWW-Authenticate: Bearer error="invalid_token", error_description="The access token expired"`.
+Any other bad token gets `Bearer error="invalid_token"` with no description.
+
+Failures follow OAuth's error format,
+`{"error": "<code>", "error_description": "<why>"}`, rather than the problem
+documents the rest of the API uses, whatever `Accept` says.
+`error_description` says what to fix, so a client can show it. A 401 from the
+token endpoint has no `WWW-Authenticate` header.
 
 | Status | `error` | Meaning |
 | --- | --- | --- |
-| 400 | `invalid_request` | A field is missing or malformed, or the body isn't form encoded. |
+| 400 | `invalid_request` | The body isn't form encoded or can't be parsed, `grant_type`, `client_assertion_type`, `client_assertion` or `scope` is missing or sent more than once, or `grant_type` is in the query string. |
+| 413 | `invalid_request` | The body is too large. |
 | 400 | `unsupported_grant_type` | `grant_type` isn't `client_credentials`. |
-| 400 | `invalid_scope` | `scope` is missing or names a scope that doesn't exist. |
-| 401 | `invalid_client` | The assertion was refused. The instance's logs say why. |
+| 400 | `invalid_scope` | `scope` is missing or empty, or names a scope that doesn't exist. |
+| 401 | `invalid_client` | The assertion was refused: not a JWT, wrong `iss`, `sub`, `aud` or `client_id`, a bad signature, missing or bad `exp`, `iat` or `jti`, expired, living longer than 60 seconds, issued in the future, or a `jti` used before. `error_description` says which. |
 
 ### Node.js example
 
@@ -154,20 +179,24 @@ const { access_token } = await fetch(token_endpoint, {
 
 ## Scopes
 
-A service account token can only do what its scopes allow. Within those
-scopes it acts on every project as if it held every role, but it never appears
-as a project member.
+Lightning's own docs call these token grants. A service account token can
+only do what its scopes allow. Within those scopes it acts on every project as
+if it held every role, but it never appears as a project member.
 
 | Scope | Allows |
 | --- | --- |
 | `users:read` | Listing and reading users |
-| `users:write` | Creating and changing users |
-| `projects:write` | Reading, creating and changing projects |
-| `credentials:write` | Reading, creating and replacing credentials |
+| `users:write` | Creating and changing users, superusers included. It doesn't include `users:read`. |
+| `projects:write` | Reading, creating and changing projects, and reading what's in them: workflows, jobs, work orders, runs and log lines. Also creating and changing workflows. |
+| `credentials:write` | Reading, creating and replacing credentials, and which projects they're linked to |
 | `collections:write` | Reading, creating and renaming collections |
 
 Projects, credentials and collections have no read scopes. Their `GET` routes
 need the same `:write` scope as their `PUT` routes.
+
+A token without the scope a route needs answers 403 `insufficient_scope`
+before Lightning looks for the record, so the answer is the same whether or not
+it exists. The body's `scope` and the `WWW-Authenticate` header both name it.
 
 Planned: an `audit:read` scope, for [audit events](./audit-events.md). Planned
 endpoints on projects, credentials and collections use the scopes above.

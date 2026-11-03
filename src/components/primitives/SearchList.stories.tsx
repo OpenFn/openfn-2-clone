@@ -4,7 +4,7 @@ import SearchList from "./SearchList";
 import { adaptors } from "../../mock-data/adaptors";
 import type { Adaptor } from "../../types/adaptors";
 import { projects } from "../../mock-data/projects";
-import type { Project } from "../../mock-data/models/projects";
+import type { Project } from "../../types/projects";
 import { matchesQuery } from "../../utils/search";
 
 const meta: Meta<typeof SearchList> = {
@@ -30,14 +30,13 @@ export const Palette: Story = {
     return (
       <SearchList<Project>
         variant="palette"
-        items={items}
+        sections={[{ key: "projects", items, empty: "No projects found" }]}
         getKey={(p) => p.id}
         isSelected={(p) => p.id === projects[0]!.id}
         query={query}
         onQueryChange={setQuery}
         onSelect={() => {}}
         placeholder="Search projects..."
-        emptyState="No projects found"
         renderItem={(p, { selected }) => (
           <>
             <span className="hero-folder mr-2 h-5 w-5 shrink-0" />
@@ -104,7 +103,7 @@ export const LongRow: Story = {
   render: () => (
     <SearchList<Project>
       variant="palette"
-      items={[longProject, ...projects]}
+      sections={[{ key: "projects", items: [longProject, ...projects] }]}
       getKey={(p) => p.id}
       query=""
       onQueryChange={() => {}}

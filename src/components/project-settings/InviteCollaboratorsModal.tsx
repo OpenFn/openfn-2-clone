@@ -97,7 +97,7 @@ export default function InviteCollaboratorsModal({ initial, onCancel, onInvite }
             <IconButton
               icon="hero-minus-circle"
               label="Remove row"
-              // eslint-disable-next-line local/primitive-classname -- debt: F525 margin (mt-2)
+              // eslint-disable-next-line local/primitive-classname -- debt: margin (mt-2)
               className="mt-2"
               onClick={() => {
                 setRows(rows.filter((_, j) => j !== i));

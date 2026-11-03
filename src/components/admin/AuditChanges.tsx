@@ -2,6 +2,7 @@ import type { AuditEvent, AuditValue } from "../../types/admin";
 import Card from "../primitives/Card";
 import { Td } from "../primitives/Table";
 import Text from "../primitives/Text";
+import { Stack } from "../primitives/Stack";
 
 /** Values print as Lightning's HEEx prints them: `true` as "true", nil as "". */
 const show = (value: AuditValue) => (value === null ? "" : String(value));
@@ -23,7 +24,7 @@ export default function AuditChanges({ audit }: { audit: AuditEvent }) {
 
   if (changes.length === 0 && bodies.length === 0) {
     return (
-      // eslint-disable-next-line local/primitive-classname -- debt: F526 box (p-6!)
+      // eslint-disable-next-line local/primitive-classname -- debt: box (p-6!)
       <Td colSpan={4} className="p-6! break-all">
         <Text as="div" variant="code-sm">
           No changes
@@ -33,11 +34,11 @@ export default function AuditChanges({ audit }: { audit: AuditEvent }) {
   }
 
   return (
-    // eslint-disable-next-line local/primitive-classname -- debt: F526 box (p-4!)
+    // eslint-disable-next-line local/primitive-classname -- debt: box (p-4!)
     <Td colSpan={4} className="p-4! break-all">
       <Text as="div" variant="code-sm">
         {changes.length > 0 && (
-          // eslint-disable-next-line local/primitive-classname -- debt: F525 margin (mb-3)
+          // eslint-disable-next-line local/primitive-classname -- debt: margin (mb-3)
           <Card variant="muted" padding="sm" as="ul" className="mb-3 space-y-2">
             {changes.map(({ key, old, next }) => (
               <li key={key}>
@@ -54,12 +55,14 @@ export default function AuditChanges({ audit }: { audit: AuditEvent }) {
           </Card>
         )}
         {bodies.length > 0 && (
-          <Card variant="muted" padding="sm" as="ul" className="space-y-2">
-            {bodies.map(([env, body]) => (
-              <li key={env}>
-                <span className="font-semibold">body:{env}</span>&nbsp; <span className="text-body">{body}</span>
-              </li>
-            ))}
+          <Card variant="muted" padding="sm">
+            <Stack as="ul" gap="sm">
+              {bodies.map(([env, body]) => (
+                <li key={env}>
+                  <span className="font-semibold">body:{env}</span>&nbsp; <span className="text-body">{body}</span>
+                </li>
+              ))}
+            </Stack>
           </Card>
         )}
       </Text>

@@ -92,7 +92,7 @@ export default function WorkOrdersTable({
       errorMessage="There was an error loading the work orders"
       header={
         <Tr>
-          {/* eslint-disable-next-line local/primitive-classname -- debt: F526 box (!pr-1) */}
+          {/* eslint-disable-next-line local/primitive-classname -- debt: box (!pr-1) */}
           <Th className="!pr-1">
             <div className="relative">
               <Checkbox
@@ -102,7 +102,7 @@ export default function WorkOrdersTable({
                 indeterminate={partial}
                 disabled={rows.length === 0}
                 onChange={(e) => onSelectionChange(e.target.checked ? selectable.map((w) => w.id) : [])}
-                // eslint-disable-next-line local/primitive-classname -- debt: F529 state (disabled:opacity-50)
+                // eslint-disable-next-line local/primitive-classname -- debt: state (disabled:opacity-50)
                 className="disabled:opacity-50"
               />
               {selected.length > 0 && (
@@ -153,7 +153,7 @@ export default function WorkOrdersTable({
                 icon="hero-cloud-arrow-down"
                 label={`Export all ${page.totalEntries} results matching your query`}
                 onClick={onExport}
-                // eslint-disable-next-line local/primitive-classname -- debt: F529 state, F527 colour (transition hover:-rotate-6 hover:text-primary-500)
+                // eslint-disable-next-line local/primitive-classname -- debt: state, colour (transition hover:-rotate-6 hover:text-primary-500)
                 className="transition hover:-rotate-6 hover:text-primary-500"
               />
             )

@@ -8,6 +8,7 @@ import Pill from "../primitives/Pill";
 import TextLink from "../primitives/TextLink";
 import AIDisclaimerFooter from "./AIDisclaimerFooter";
 import Text from "../primitives/Text";
+import { Stack } from "../primitives/Stack";
 
 interface Props {
   aiAssistantEnabled?: boolean;
@@ -19,18 +20,19 @@ interface Props {
 
 function OptionCard({ icon, title, description, onClick, testId }: { icon: string; title: string; description: string; onClick: () => void; testId: string }) {
   return (
-    // eslint-disable-next-line local/primitive-classname -- debt: F527 colour (text-muted)
+    // eslint-disable-next-line local/primitive-classname -- debt: colour (text-muted)
     <Card as="button" data-testid={testId} onClick={onClick} padding="lg" className="h-full text-muted">
       <div className="mb-3 w-fit rounded-lg bg-sunken p-2">
         <span className={cn("block h-5 w-5 text-body", icon)} />
       </div>
-      <Heading size="sm" as="p">
-        {title}
-      </Heading>
-      {/* eslint-disable-next-line local/primitive-classname -- debt: F525 margin (mt-1) */}
-      <Text as="p" className="mt-1">
-        {description}
-      </Text>
+      <Stack gap="xs">
+        <Heading size="sm" as="p">
+          {title}
+        </Heading>
+        <Text as="p">
+          {description}
+        </Text>
+      </Stack>
     </Card>
   );
 }
@@ -66,7 +68,7 @@ export default function LandingScreen({ aiAssistantEnabled = true, onBuildWithAI
               </Pill>
             }
           >
-            {/* eslint-disable-next-line local/primitive-classname -- debt: F526 box (focus-within:shadow-card) */}
+            {/* eslint-disable-next-line local/primitive-classname -- debt: box (focus-within:shadow-card) */}
             <Card padding="none" className="focus-within:shadow-card">
               {/* eslint-disable-next-line no-restricted-syntax -- debt: chat composer; TextArea has no borderless variant (also AIAssistantPanel) */}
               <textarea
@@ -109,7 +111,7 @@ export default function LandingScreen({ aiAssistantEnabled = true, onBuildWithAI
             onClick={onBrowseTemplates}
           />
         </div>
-        {/* eslint-disable-next-line local/primitive-classname -- debt: F528 type (text-center) */}
+        {/* eslint-disable-next-line local/primitive-classname -- debt: type (text-center) */}
         <Text as="p" tone="muted" className="text-center">
           or{" "}
           <TextLink onClick={onImportYAML}>import a YAML file manually</TextLink>

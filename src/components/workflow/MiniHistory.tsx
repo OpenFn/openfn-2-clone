@@ -12,6 +12,7 @@ import { formatDuration, formatRelative, uuidOf } from "../../utils/format";
 import Tooltip from "../primitives/Tooltip";
 import EmptyState from "../primitives/EmptyState";
 import Text from "../primitives/Text";
+import { Row } from "../primitives/Stack";
 
 const Dot = () => <span className="text-strong">&bull;</span>;
 
@@ -73,7 +74,7 @@ export default function MiniHistory({
     history.length === 0 ? (
       <EmptyState variant="plain" icon="hero-rectangle-stack" title="No related history" message="Why not run it a few times to see some history?" />
     ) : (
-      // eslint-disable-next-line local/primitive-classname -- debt: F526 box (divide-y divide-subtle)
+      // eslint-disable-next-line local/primitive-classname -- debt: box (divide-y divide-subtle)
       <Text as="div" variant="body-sm" className="divide-y divide-subtle">
         {history.map(({ workOrder, runs }) => {
           const selected = runs.some((r) => r.id === selectedRunId);
@@ -95,7 +96,7 @@ export default function MiniHistory({
                     icon={selected || isExpanded ? "hero-chevron-down" : "hero-chevron-right"}
                     label={`${isExpanded ? "Collapse" : "Expand"} work order details`}
                     size="xs"
-                    // eslint-disable-next-line local/primitive-classname -- debt: F527 colour (text-primary-600)
+                    // eslint-disable-next-line local/primitive-classname -- debt: colour (text-primary-600)
                     className={cn(selected && "text-primary-600")}
                     onClick={(e) => {
                       e.stopPropagation();
@@ -179,7 +180,7 @@ export default function MiniHistory({
         <div className="flex items-center gap-1 border-b border-subtle bg-subtle py-2 pr-5 pl-3">
           <Heading size="sm">Run History</Heading>
           <FullHistoryLink to={historyHref} />
-          {/* eslint-disable-next-line local/primitive-classname -- debt: F525 margin (ml-auto) */}
+          {/* eslint-disable-next-line local/primitive-classname -- debt: margin (ml-auto) */}
           <IconButton icon="hero-x-mark" label="Back to landing" size="xs" className="ml-auto" onClick={onBack} />
         </div>
         <div className="flex-1 overflow-y-auto">{list}</div>
@@ -204,7 +205,7 @@ export default function MiniHistory({
           )}
           onClick={onToggle}
         >
-          <div className="flex items-center gap-2">
+          <Row>
             {/* Only on the heading: around the link too, it would open with the link's own tooltip. */}
             <Tooltip content="⌘ H">
               <div>
@@ -212,7 +213,7 @@ export default function MiniHistory({
               </div>
             </Tooltip>
             <FullHistoryLink id="view-history" to={historyHref} />
-          </div>
+          </Row>
           <IconButton
             icon={collapsed ? "hero-chevron-right" : "hero-chevron-left"}
             label={collapsed ? "Show history" : "Hide history"}

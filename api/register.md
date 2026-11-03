@@ -215,7 +215,7 @@ libraries, background workers, "no public endpoint" notes) are left out.
 | `POST /admin/users/:id/deletion` | Private | [`DELETE /api/users/:id`](./users.md#delete-a-user) | |
 | `DELETE /admin/users/:id/deletion` | Private | [`DELETE /api/users/:id/scheduled_deletion`](./users.md#cancel-a-users-deletion) | |
 | `DELETE /admin/users/:id` | Misfit | | [Immediate purges](./misfits.md#immediate-purges) |
-| `GET /admin/projects` | Partial | [`GET /api/projects`](./projects.md#list-projects) | Lists your own projects only; no instance-wide listing yet. |
+| `GET /admin/projects` | Partial | [`GET /api/projects`](./projects.md#list-projects) | Only the service account lists every project; a superuser still sees only their own. |
 | `GET /admin/projects/:id` | Partial | [`GET /api/projects/:id`](./projects.md#get-a-project) | No settings fields yet. |
 | `POST /admin/projects` | Partial | [`PUT /api/projects/:id`](./projects.md#create-or-replace-a-project) | No colour, environment or concurrency yet. |
 | `PATCH /admin/projects/:id` | Partial | [`PUT /api/projects/:id`](./projects.md#create-or-replace-a-project) | As for creating. Moving a project under a new parent stays out ([misfit](./misfits.md#re-parenting-a-project)). |

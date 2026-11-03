@@ -12,8 +12,8 @@ import { findUser } from "./users";
 import { permissionsFor } from "../permissions";
 import type { CollaboratorRow, GithubRepoConnection, ProjectSettingsPageData, WebhookAuthMethodRow } from "../types/project-settings";
 import type { Collection, ProjectFile, ProjectSettings, VcsFixture, WebhookAuthMethod } from "./models/project-settings";
-import type { Project, ProjectMember } from "./models/projects";
-import type { User } from "./models/users";
+import type { Project, ProjectMember } from "../types/projects";
+import type { User } from "../types/users";
 import { fullName } from "../utils/format";
 
 const OPENHIE = "4adf2644-ed4e-4f97-a24c-ab35b3cb1efa";

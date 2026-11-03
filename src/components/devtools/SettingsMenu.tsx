@@ -10,6 +10,7 @@ import Popover from "../primitives/Popover";
 import Toggle from "../primitives/Toggle";
 import { ANNOTATIONS_PANEL_WIDTH } from "./AnnotationsPanel";
 import Tooltip from "../primitives/Tooltip";
+import { Stack } from "../primitives/Stack";
 
 /**
  * Floating settings button in the bottom-right corner. Its panel opens and
@@ -28,7 +29,7 @@ export default function SettingsMenu() {
     <div data-devtools className="fixed bottom-5 z-9999" style={{ right: annotations.open ? ANNOTATIONS_PANEL_WIDTH + 20 : 20 }}>
       <Popover
         align="end"
-        // eslint-disable-next-line local/primitive-classname -- debt: F526 box (p-4)
+        // eslint-disable-next-line local/primitive-classname -- debt: box (p-4)
         className="w-80 p-4"
         trigger={
           <IconButton
@@ -36,7 +37,7 @@ export default function SettingsMenu() {
             label="Open settings"
             tooltip="Settings"
             data-ui="settings-trigger"
-            // eslint-disable-next-line local/primitive-classname -- debt: F526 box, F527 colour (rounded-full bg-inverse text-inverse shadow-lg hover:bg-inverse/90)
+            // eslint-disable-next-line local/primitive-classname -- debt: box, colour (rounded-full bg-inverse text-inverse shadow-lg hover:bg-inverse/90)
             className="h-12 w-12 rounded-full bg-inverse text-inverse shadow-lg hover:bg-inverse/90"
           />
         }
@@ -44,7 +45,7 @@ export default function SettingsMenu() {
         {(close) => (
           // The panel is portalled out of the root, so it marks itself as
           // devtools too: hovering it mustn't change the annotation shown.
-          <div data-devtools aria-label="Settings" className="space-y-4">
+          <Stack gap="md" data-devtools aria-label="Settings">
             <div className="flex items-center justify-between">
               <Heading size="sm">Settings</Heading>
               <CloseButton label="Close settings" size="xs" onClick={close} />
@@ -57,7 +58,7 @@ export default function SettingsMenu() {
             />
             <div className="border-t border-subtle pt-4">
               <Field group label="Theme">
-                  <div className="space-y-2">
+                <Stack gap="sm">
                   {themes.map((theme) => (
                     <Radio
                       key={theme.id}
@@ -68,10 +69,10 @@ export default function SettingsMenu() {
                       hint={theme.description}
                     />
                   ))}
-                </div>
+                </Stack>
               </Field>
             </div>
-          </div>
+          </Stack>
         )}
       </Popover>
     </div>

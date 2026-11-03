@@ -5,6 +5,7 @@ import type { SearchFieldId } from "../../types/history";
 import SearchInput from "../primitives/SearchInput";
 import Text from "../primitives/Text";
 import Tooltip from "../primitives/Tooltip";
+import { Row } from "../primitives/Stack";
 
 /**
  * History's search row (run_live/index.html.heex): the search input, "by",
@@ -32,7 +33,7 @@ export default function HistorySearchBar({
   }
 
   return (
-    <div className="flex items-center gap-2">
+    <Row>
       <form
         className="flex-1"
         onSubmit={(e) => {
@@ -44,7 +45,7 @@ export default function HistorySearchBar({
         <SearchInput value={value} onChange={setValue} onClear={() => onSearch("")} placeholder="Search work orders..." />
       </form>
       <Text tone="muted">by</Text>
-      <div id="search_button_group" className="flex items-center gap-2">
+      <Row gap="sm" id="search_button_group">
         <div className="inline-flex gap-0.5 rounded-md bg-surface p-1 ring-1 ring-inset ring-strong">
           {fields.map((f) => (
             <Tooltip key={f.id} content={f.label} side="top">
@@ -61,7 +62,7 @@ export default function HistorySearchBar({
         <Button type="submit" form="run-search-form">
           Search
         </Button>
-      </div>
-    </div>
+      </Row>
+    </Row>
   );
 }

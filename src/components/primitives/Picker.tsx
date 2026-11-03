@@ -24,8 +24,6 @@ export interface PickerItem {
   searchLabel: string;
   /** Indent level; 0 for top-level items. */
   depth: number;
-  /** Optional accent color (sandboxes, account tiers). */
-  color?: string | null;
   /** Where to navigate when selected. Pre-computed server-side. */
   href: string;
   /**

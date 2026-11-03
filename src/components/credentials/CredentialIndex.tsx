@@ -21,6 +21,7 @@ import type {
   OauthClientSecretsResult,
 } from "../../types/credentials";
 import { useActions } from "../../utils/useAction";
+import { Stack } from "../primitives/Stack";
 
 /** Project settings' scope: the project, its keychain credentials and their actions. */
 interface ProjectScope extends KeychainCredentialActions {
@@ -125,7 +126,7 @@ export default function CredentialIndex(props: Props) {
   };
 
   return (
-    <div id="credentials-index-component" data-annotation="shared-credential-index-component" className="space-y-4">
+    <Stack gap="md" id="credentials-index-component" data-annotation="shared-credential-index-component">
       <OauthClientsTable
         rows={oauthClients}
         showOwner={showOwner}
@@ -289,6 +290,6 @@ export default function CredentialIndex(props: Props) {
           <p>Do you want to proceed with this action?</p>
         </ConfirmModal>
       )}
-    </div>
+    </Stack>
   );
 }
