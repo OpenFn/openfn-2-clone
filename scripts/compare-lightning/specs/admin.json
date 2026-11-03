@@ -1,9 +1,0 @@
-[
-  { "name": "admin-projects", "path": "/settings/projects" },
-  { "name": "admin-users", "path": "/settings/users" },
-  { "name": "admin-user-new", "path": "/settings/users/new" },
-  { "name": "admin-authentication", "path": "/settings/authentication" },
-  { "name": "admin-audit", "path": "/settings/audit" },
-  { "name": "admin-collections", "path": "/settings/collections" },
-  { "name": "admin-maintenance", "path": "/settings/maintenance" }
-]
