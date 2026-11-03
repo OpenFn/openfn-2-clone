@@ -1,20 +1,22 @@
 import type { FailureState } from "../../../types/workflow-health";
+import { stateTone, toneSolid } from "../../../theme/runStateColours";
 
-/** Status colours shared by the health charts (assets/js/health/charts). */
-export const SUCCESS = "#0ca30c";
-export const FAILED = "#d03b3b";
-export const CANCELLED = "var(--color-gray-500)";
+/** The health charts draw each state in its run-state tone (docs/colour.md, Run states). */
+export const SUCCESS = toneSolid("success");
+export const FAILED = toneSolid("danger");
+export const CANCELLED = toneSolid("neutral");
 /** Step-failure rows with no step to blame. */
-export const UNATTRIBUTED = "#9ca3af";
+export const UNATTRIBUTED = "var(--background-color-emphasis)";
 
-/** The failure breakdown's categorical palette (FailureBreakdownDonut.tsx). */
+/** The failure breakdown: each failure state in its tone. Two states can share
+ * a colour (failed and rejected, exception and lost); the legend names them. */
 export const FAILURE_COLORS: Record<FailureState, string> = {
-  failed: FAILED,
-  crashed: "#e87ba4",
-  killed: "#4a3aa7",
-  exception: "#2a78d6",
-  lost: "#1baf7a",
-  rejected: "#eda100",
+  failed: toneSolid(stateTone("failed")),
+  crashed: toneSolid(stateTone("crashed")),
+  killed: toneSolid(stateTone("killed")),
+  exception: toneSolid(stateTone("exception")),
+  lost: toneSolid(stateTone("lost")),
+  rejected: toneSolid(stateTone("rejected")),
 };
 
 /** The chart frame, so empty and full cards are the same height. */

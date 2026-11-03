@@ -142,7 +142,7 @@ export function BodyViewer({
                 <code>{contentTypeLabel(ct)}</code>
               </Pill>
             )}
-            {/* eslint-disable-next-line local/primitive-classname -- debt: F526 box (bg-white/80) */}
+            {/* eslint-disable-next-line local/primitive-classname -- debt: F526 box (bg-surface) */}
             <CopyButton value={preview} label="Copy body" size="xs" className="bg-surface" />
           </div>
           <pre className="max-h-80 overflow-auto whitespace-pre-wrap break-all p-3 pr-20 font-mono text-body">{preview}</pre>

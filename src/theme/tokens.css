@@ -116,8 +116,31 @@
   --background-color-info-badge: var(--color-info-100); /* a info pill or badge */
   --background-color-info-strong: var(--color-info-600); /* the info solid: a button, a dot */
 
+  --text-color-severe: var(--color-severe-700); /* severe text: a crash */
+  --text-color-severe-strong: var(--color-severe-800); /* severe headings, text on a severe panel */
+  --text-color-severe-icon: var(--color-severe-600); /* severe icons */
+  --border-color-severe: var(--color-severe-200); /* the edge of a severe panel */
+  --ring-color-severe: var(--color-severe-200); /* the same edge, drawn as a ring */
+  --background-color-severe: var(--color-severe-50); /* a severe panel */
+  --background-color-severe-badge: var(--color-severe-100); /* a severe pill or badge */
+  --background-color-severe-strong: var(--color-severe-600); /* the severe solid: a dot, a chart slice */
+  --background-color-neutral-strong: var(--color-gray-500); /* the neutral solid: a pending or cancelled dot, a chart slice */
+
   /* Elevation: a modal's shadow, tinted grey as Lightning's is. */
   --shadow-modal: 0 10px 15px -3px color-mix(in oklab, var(--color-gray-700) 10%, transparent), 0 4px 6px -4px color-mix(in oklab, var(--color-gray-700) 10%, transparent);
+
+  /* severe is orange: a crash, worse than a warning, not a plain failure. */
+  --color-severe-50: var(--color-orange-50);
+  --color-severe-100: var(--color-orange-100);
+  --color-severe-200: var(--color-orange-200);
+  --color-severe-300: var(--color-orange-300);
+  --color-severe-400: var(--color-orange-400);
+  --color-severe-500: var(--color-orange-500);
+  --color-severe-600: var(--color-orange-600);
+  --color-severe-700: var(--color-orange-700);
+  --color-severe-800: var(--color-orange-800);
+  --color-severe-900: var(--color-orange-900);
+  --color-severe-950: var(--color-orange-950);
 
   /* info is blue, which is what both apps draw for alerts, toasts and
      "running". */

@@ -73,7 +73,6 @@ export default function EdgeInspector({ edge, onChange, onDelete, onClose }: Pro
                     <span
                       role="img"
                       aria-label="Expression contains potentially unsafe functions"
-                       
                       className="hero-exclamation-triangle h-4 w-4 text-warning-icon"
                     />
                   </Tooltip>

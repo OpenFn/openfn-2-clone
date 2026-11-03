@@ -124,7 +124,7 @@ export default function VolumeBars({
                       base -= r[key];
                       return (
                         <Link key={key} to={bucketUrl(projectId, workflowId, buckets, i, states)} tabIndex={-1}>
-                          <path d={`M0 ${base}H1V${base + r[key]}H0Z`} fill={color} className="cursor-pointer" />
+                          <path d={`M0 ${base}H1V${base + r[key]}H0Z`} style={{ fill: color }} className="cursor-pointer" />
                         </Link>
                       );
                     })}

@@ -96,7 +96,7 @@ export default function MiniHistory({
                     icon={selected || isExpanded ? "hero-chevron-down" : "hero-chevron-right"}
                     label={`${isExpanded ? "Collapse" : "Expand"} work order details`}
                     size="xs"
-                    // eslint-disable-next-line local/primitive-classname -- debt: F527 colour (text-primary-600)
+                    // eslint-disable-next-line local/primitive-classname -- debt: F527 colour (text-selected)
                     className={cn(selected && "text-selected")}
                     onClick={(e) => {
                       e.stopPropagation();

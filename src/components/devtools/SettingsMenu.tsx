@@ -94,7 +94,6 @@ function ThemeName({ meta }: { meta: ThemeMeta }) {
         <span
           role="img"
           aria-label={dark ? "Dark" : "Light"}
-           
           className={cn("h-2 w-2 rounded-full border", dark ? "border-transparent bg-inverse" : "border-strong bg-emphasis")}
         />
       </Tooltip>

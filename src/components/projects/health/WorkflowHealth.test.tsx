@@ -97,7 +97,7 @@ describe("WorkflowHealth links", () => {
   it("opens a wedge's states like its legend row, and a breakdown row's one state", () => {
     renderHealth();
     const outcomesCard = card("Outcomes");
-    const wedge = outcomesCard.querySelector(`path[fill="${FAILED}"]`)!.closest("a")!;
+    const wedge = outcomesCard.querySelector(`path[style*="${FAILED}"]`)!.closest("a")!;
     expect(wedge.getAttribute("target")).toBeNull();
     expect(wedge.getAttribute("href")).toBe(within(outcomesCard).getByRole("link", { name: /^Failed 2\b/ }).getAttribute("href"));
 
@@ -130,7 +130,7 @@ describe("WorkflowHealth runs over time", () => {
 
   it("draws a red SVG band per bar with failures, opening that bar's failed runs in the same tab", () => {
     const chart = openRuns();
-    const red = chart.querySelectorAll(`path[fill="${FAILED}"]`);
+    const red = chart.querySelectorAll(`path[style*="${FAILED}"]`);
     expect(red).toHaveLength(2);
     const link = red[1]!.closest("a")!;
     expect(link.getAttribute("target")).toBeNull();
@@ -143,7 +143,7 @@ describe("WorkflowHealth runs over time", () => {
 
   it("names a hovered bar's slot on the reader's clock, with its counts", () => {
     const chart = openRuns();
-    const column = chart.querySelectorAll(`path[fill="${FAILED}"]`)[1]!.closest("svg")!.parentElement!;
+    const column = chart.querySelectorAll(`path[style*="${FAILED}"]`)[1]!.closest("svg")!.parentElement!;
     fireEvent.mouseEnter(column);
     const day = formatMonthDayIn("2026-10-14T13:00:00.000Z", "Africa/Nairobi");
     const label = within(chart).getByText(`${day}, 16:00 – 18:00`);

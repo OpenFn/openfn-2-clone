@@ -34,7 +34,7 @@ function StepRerun({ step, dataStorageHref, onRetry }: { step: StepRow; dataStor
       id={step.id}
       icon="hero-play-circle-mini"
       label="Run this step with the latest version of this workflow"
-      // eslint-disable-next-line local/primitive-classname -- debt: F527 colour (hover:text-primary-400)
+      // eslint-disable-next-line local/primitive-classname -- debt: F527 colour (hover:text-link)
       className="hover:text-link"
       onClick={onRetry}
     />

@@ -10,16 +10,13 @@ export type AlertTone = Extract<Tone, "info" | "success" | "warning" | "danger">
 const classes: Record<AlertTone, { bg: string; icon: string; header: string; text: string; iconName: string }> = {
   success: {
     bg: "bg-success",
-     
     icon: "text-success-icon",
     header: "text-success-strong",
     text: "text-success",
     iconName: "hero-check-circle-solid",
   },
   warning: {
-    // eslint-disable-next-line no-restricted-syntax -- debt: warning fill is 100, Alert's is 50 (F520)
-    bg: "bg-warning-50",
-     
+    bg: "bg-warning",
     icon: "text-warning-icon",
     header: "text-warning-strong",
     text: "text-warning",
@@ -27,7 +24,6 @@ const classes: Record<AlertTone, { bg: string; icon: string; header: string; tex
   },
   danger: {
     bg: "bg-danger",
-     
     icon: "text-danger-icon",
     header: "text-danger-strong",
     text: "text-danger",
@@ -35,7 +31,6 @@ const classes: Record<AlertTone, { bg: string; icon: string; header: string; tex
   },
   info: {
     bg: "bg-info",
-     
     icon: "text-info-icon",
     header: "text-info-strong",
     text: "text-info",

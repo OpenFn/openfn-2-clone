@@ -160,7 +160,7 @@ export default function WorkOrderTableRow({
                     icon="hero-arrow-path-mini"
                     label="Retry (run from the start)"
                     size="xs"
-                    // eslint-disable-next-line local/primitive-classname -- debt: F527 colour (hover:text-primary-400)
+                    // eslint-disable-next-line local/primitive-classname -- debt: F527 colour (hover:text-link)
                     className="hover:text-link"
                     onClick={() => {
                       onRetry();
