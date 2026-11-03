@@ -1,6 +1,6 @@
 /** Personal access tokens (api/account.md): the API's shape, the mapper, the query keys, and the hooks a route calls. */
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { request } from "@/lib/api/client";
+import { canRetry, request } from "@/lib/api/client";
 
 // The API's shape.
 
@@ -20,7 +20,8 @@ export const tokenKeys = { all: ["tokens"] as const };
 
 // What a route calls.
 
-export type LoadStatus = { state: "loading" } | { state: "ready" } | { state: "error"; message: string };
+/** `retryable` is false for a refusal (4xx), which asking again won't change. */
+export type LoadStatus = { state: "loading" } | { state: "ready" } | { state: "error"; message: string; retryable: boolean };
 
 const selectTokens = (answer: { data: ApiToken[] }) => answer.data.map(toToken);
 
@@ -34,25 +35,30 @@ export function useTokens() {
   const status: LoadStatus = query.data
     ? { state: "ready" }
     : query.isError && !query.isFetching
-      ? { state: "error", message: query.error.message }
+      ? { state: "error", message: query.error.message, retryable: canRetry(query.error) }
       : { state: "loading" };
   return { status, tokens: query.data ?? [], retry: () => void query.refetch() };
 }
 
 /**
- * Generate and revoke. Each resolves once the list has reloaded, and rejects with the `ApiError`. `create` resolves
- * with the whole new token, which is never shown again. A refusal reloads the list too: a token already gone goes.
+ * Generate and revoke. Each resolves once the list has reloaded, and rejects with the `ApiError`, or with the
+ * reload's error if the list couldn't be reloaded. `create` resolves with the whole new token, which is never shown
+ * again. A refusal reloads the list too: a token already gone goes.
  */
 export function useTokenSaves() {
   const queryClient = useQueryClient();
-  const reload = () => queryClient.invalidateQueries({ queryKey: tokenKeys.all });
+  const thenReload = async <T>(send: Promise<T>) => {
+    try {
+      return await send;
+    } finally {
+      await queryClient.refetchQueries({ queryKey: tokenKeys.all }, { throwOnError: true });
+    }
+  };
   const create = useMutation({
-    mutationFn: () => request<{ data: ApiToken }>("POST", "/api/me/tokens").then((answer) => answer.data.token),
-    onSettled: reload,
+    mutationFn: () => thenReload(request<{ data: ApiToken }>("POST", "/api/me/tokens")).then((answer) => answer.data.token),
   });
   const revoke = useMutation({
-    mutationFn: (id: string) => request<void>("DELETE", `/api/me/tokens/${encodeURIComponent(id)}`),
-    onSettled: reload,
+    mutationFn: (id: string) => thenReload(request<void>("DELETE", `/api/me/tokens/${encodeURIComponent(id)}`)),
   });
   return { create: () => create.mutateAsync(), revoke: (id: string) => revoke.mutateAsync(id) };
 }

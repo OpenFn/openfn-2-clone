@@ -27,6 +27,12 @@ export class ApiError extends Error {
 /** Lightning refused it with this `code` (`"step_up_required"`). */
 export const isApiError = (error: unknown, code: string): error is ApiError => error instanceof ApiError && error.code === code;
 
+/** Whether asking again might help: not for a refusal (4xx), which won't change. */
+export const canRetry = (error: unknown) => !(error instanceof ApiError && error.status < 500);
+
+/** TanStack Query's settings for whatever hosts the app: retry a failed load up to three times, never a refusal. */
+export const queryDefaults = { queries: { retry: (count: number, error: unknown) => canRetry(error) && count < 3 } };
+
 export async function request<T>(method: Method, path: string, body?: unknown): Promise<T> {
   const response = await send(path, {
     method,

@@ -21,6 +21,7 @@ const noApp = ban("(^|/)app(/|$)", "Nothing imports the app shell.");
 const noUpper = ban("(^|/)(layout|openfn)(/|$)", "ui/ uses nothing above it: no layout/ or openfn/.");
 const noComponents = ban("(^|/)components(/|$)", "Data knows nothing about how it's shown: no components/.");
 const noReact = ban("^react(-dom)?(/|$)", "lib/ and fake-api/ have no React.");
+const noQuery = ban("^@tanstack/react-query$", "Only lib/api/ uses TanStack Query: the rest of lib/ has no React.");
 const noParent = ban("^\\.\\./", "Import across folders with @/ (for example @/components); ./ only within a folder.");
 
 const noIconLibrary = ban("^lucide-react$", "Icons come from @/components/ui/icons, the one file that imports the library.");
@@ -174,7 +175,8 @@ export default defineConfig([
   { files: ["src/components/ui/**/*.{ts,tsx}"], rules: { "no-restricted-imports": imports(notPages, noLib, noData, noApp, noFake, noUpper) } },
 
   // Data: no React, nothing about how it's shown.
-  { files: ["src/lib/**/*.ts"], rules: { "no-restricted-imports": imports(notPages, noComponents, noApp, noFake, noReact) } },
+  { files: ["src/lib/**/*.ts"], rules: { "no-restricted-imports": imports(notPages, noComponents, noApp, noFake, noReact, noQuery) } },
+  { files: ["src/lib/api/**/*.ts"], rules: { "no-restricted-imports": imports(notPages, noComponents, noApp, noFake, noReact) } },
   { files: ["src/lib/api/client.ts"], rules: { "no-restricted-imports": imports(notPages, noComponents, noApp, noReact) } },
   { files: ["src/fake-api/**/*.ts"], rules: { "no-restricted-imports": imports(notPages, noComponents, noApp, noReact) } },
   { files: ["src/theme/**/*.ts"], rules: { "no-restricted-imports": imports(notPages, noComponents, noApp, noFake, noLib) } },

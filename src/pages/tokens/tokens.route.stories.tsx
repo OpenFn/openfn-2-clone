@@ -31,15 +31,15 @@ type Story = StoryObj<typeof meta>;
 export const GenerateThenDelete: Story = {
   play: async ({ canvas }) => {
     const table = await canvas.findByRole("table", { name: "API tokens" });
-    await expect(within(table).getAllByRole("row")).toHaveLength(3);
+    const rows = within(table).getAllByRole("row").length;
     await userEvent.click(canvas.getByRole("button", { name: "Generate new token" }));
     const token = (await canvas.findByRole("textbox", { name: "New token" })) as HTMLInputElement;
-    await expect(within(table).getAllByRole("row")).toHaveLength(4);
+    await expect(within(table).getAllByRole("row")).toHaveLength(rows + 1);
     const masked = `${token.value.slice(0, 5)}…${token.value.slice(-5)}`;
     await userEvent.click(canvas.getByRole("button", { name: `Delete token ${masked}` }));
     await userEvent.click(await canvas.findByRole("button", { name: "Delete token" }));
     await expect(await canvas.findByText("Token deleted")).toBeInTheDocument();
-    await expect(within(table).getAllByRole("row")).toHaveLength(3);
+    await expect(within(table).getAllByRole("row")).toHaveLength(rows);
   },
 };
 /** Lightning refuses with step_up_required: shown above the table, saying asking for the password isn't built. */

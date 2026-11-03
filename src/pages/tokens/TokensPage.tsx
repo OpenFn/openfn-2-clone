@@ -26,8 +26,8 @@ import { formatDate } from "@/lib/format";
 /** One of your tokens. The server masks it; it's shown as sent. */
 export type TokenRow = { id: string; masked: string; createdAt: string; lastUsedAt: string | null };
 
-/** Where the list stands. A failed reload with tokens already on screen stays `ready`. */
-export type TokensStatus = { state: "loading" } | { state: "ready" } | { state: "error"; message: string };
+/** Where the list stands. A failed reload with tokens already on screen stays `ready`. `retryable` is false when asking again won't help. */
+export type TokensStatus = { state: "loading" } | { state: "ready" } | { state: "error"; message: string; retryable: boolean };
 
 type TokensPageProps = {
   status: TokensStatus;
@@ -119,9 +119,11 @@ export function TokensPage({ status, tokens, onGenerate, onDelete, onRetry }: To
           role="alert"
           title="Couldn't load your tokens"
           actions={
-            <Button variant="secondary" size="xs" onClick={onRetry}>
-              Try again
-            </Button>
+            status.retryable && (
+              <Button variant="secondary" size="xs" onClick={onRetry}>
+                Try again
+              </Button>
+            )
           }
         >
           {status.message}

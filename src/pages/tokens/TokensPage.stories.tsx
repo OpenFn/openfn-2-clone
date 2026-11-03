@@ -35,11 +35,19 @@ export const Loading: Story = { args: { status: { state: "loading" }, tokens: []
 export const Empty: Story = { args: { tokens: [] } };
 /** The list didn't load: an error that says what to do, not an empty list. */
 export const LoadFailed: Story = {
-  args: { status: { state: "error", message: "Lightning didn't answer. Check your connection." }, tokens: [] },
+  args: { status: { state: "error", message: "Lightning didn't answer. Check your connection.", retryable: true }, tokens: [] },
   play: async ({ canvas, args }) => {
     await expect(canvas.queryByText("No personal access tokens")).not.toBeInTheDocument();
     await userEvent.click(canvas.getByRole("button", { name: "Try again" }));
     await expect(args.onRetry).toHaveBeenCalledOnce();
+  },
+};
+/** Refused: asking again won't help, so there's no Try again. */
+export const LoadRefused: Story = {
+  args: { status: { state: "error", message: "You may not do this.", retryable: false }, tokens: [] },
+  play: async ({ canvas }) => {
+    await expect(canvas.getByRole("alert")).toHaveTextContent("You may not do this.");
+    await expect(canvas.queryByRole("button", { name: "Try again" })).not.toBeInTheDocument();
   },
 };
 /** A date the page can't read says "Unknown". */
