@@ -12,6 +12,7 @@
   },
   "scripts": {
     "dev": "vite",
+    "dev:fake": "VITE_API=fake vite",
     "build": "tsc -b && vite build",
     "lint": "eslint . --max-warnings 0 --cache",
     "preview": "vite preview",
@@ -28,6 +29,7 @@
   "dependencies": {
     "@floating-ui/react": "^0.26.28",
     "@headlessui/react": "^2.2.10",
+    "@tanstack/react-query": "^5.105.3",
     "clsx": "^2.1.1",
     "marked": "^16.4.1",
     "tailwind-merge": "^3.3.1"

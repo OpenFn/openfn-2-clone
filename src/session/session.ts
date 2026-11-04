@@ -38,3 +38,12 @@ export function useInstanceInfo(): InstanceInfo {
 export function usePermissions(project?: Project): Permissions {
   return permissionsFor(project, useCurrentUser());
 }
+
+/**
+ * What the log in pages carry in the router's location state: where to go
+ * once signed in (Lightning's `user_return_to`), and a notice to show.
+ */
+export interface SignInState {
+  returnTo?: string;
+  info?: string;
+}

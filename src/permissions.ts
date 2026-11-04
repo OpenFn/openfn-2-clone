@@ -80,7 +80,11 @@ export function roleIn(project: Project, userId: string): ProjectRole | undefine
 
 /** Everything `user` may do, in `project` when there is one. */
 export function permissionsFor(project: Project | undefined, user: User): Permissions {
-  const role = project && roleIn(project, user.id);
+  return permissionsForRole(project && roleIn(project, user.id), user);
+}
+
+/** Everything `user` may do with this role in a project (undefined: not a member, or no project), for a host that knows the role but not the whole project. */
+export function permissionsForRole(role: ProjectRole | undefined, user: User): Permissions {
   const member = role !== undefined;
   const owner = role === "owner";
   const admin = owner || role === "admin";

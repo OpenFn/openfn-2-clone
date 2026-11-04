@@ -1,0 +1,19 @@
+{
+  "data": {
+    "url": "http://localhost:4000",
+    "admin_email": "support@openfn.org",
+    "release": {
+      "label": "2.20.0",
+      "branch": null,
+      "commit": null,
+      "image_tag": null
+    },
+    "allow_signup": false,
+    "purge_deleted_after_days": 7,
+    "ai_assistant": false,
+    "github_sync": false,
+    "github_connect_url": null,
+    "needs_setup": false,
+    "sign_in_providers": []
+  }
+}

@@ -24,6 +24,10 @@ export default meta;
 type Story = StoryObj<typeof RemoveCollaboratorModal>;
 
 export const Default: Story = {};
+/** The host can't say which credentials they own (Lightning's API), so it warns without naming them. */
+export const CredentialsUnknown: Story = {
+  args: { collaborator: { ...collaborator, ownedCredentialNames: null } },
+};
 export const OwnsCredentials: Story = {
   args: { collaborator: { ...collaborator, ownedCredentialNames: ["DHIS2 play", "CommCare demo"] } },
 };

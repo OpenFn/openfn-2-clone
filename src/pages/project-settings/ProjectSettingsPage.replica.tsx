@@ -1,17 +1,12 @@
 import { useRef, useState } from "react";
 import { Navigate, useLocation, useNavigate, useParams } from "react-router-dom";
+import { useProjectMemberSaves, useProjectMembers, useProjectName } from "../../api/projects";
 import { useToast } from "../../components/primitives/Toast";
 import { projectLabel } from "../../components/shell/projectPickerItems";
-import {
-  generateApiKey,
-  projectSettingsPropsFor,
-  rootOf,
-  settingsFixtureFor,
-  type SettingsFixture,
-} from "../../mock-data/project-settings";
+import { generateApiKey, projectSettingsPropsFor, rootOf, settingsFixtureFor, type SettingsFixture } from "../../mock-data/project-settings";
 import { findProject, projects } from "../../mock-data/projects";
 import { simulateRequest } from "../../mock-data/request";
-import { users } from "../../mock-data/users";
+import { permissionsForRole } from "../../permissions";
 import type { Project } from "../../types/projects";
 import { useCurrentUser } from "../../session/session";
 import { RequestError } from "../../utils/errors";
@@ -34,18 +29,23 @@ function addedMessage(existing: number, unknown: number) {
 /**
  * The replica's side of ProjectSettingsPage: one project's settings held in
  * state as the server would, the deletion route, and the success toasts
- * (Lightning's flashes) and navigation. Lightning replaces this file with a
- * LiveView wrapper.
+ * (Lightning's flashes) and navigation. The collaborators come from
+ * Lightning's API (or its stand-in), and so does who may add and remove them;
+ * everything else stays on the fixture until the API serves it. Lightning
+ * replaces this file with a LiveView wrapper.
  */
 export default function ProjectSettingsPageReplica() {
-  const { projectId } = useParams();
-  const project = findProject(projectId);
-  if (!project) return <Navigate to="/projects" replace />;
+  const { projectId = "" } = useParams();
+  const apiName = useProjectName(projectId);
+  // The fixtures' ids aren't always Lightning's, so the rest of the project is also found by its name on the API.
+  const project = findProject(projectId) ?? projects.find((p) => apiName && p.name === apiName);
+  if (!project) return apiName === undefined ? null : <Navigate to="/projects" replace />;
   // Keyed so another project starts from its own fixtures.
-  return <Replica key={project.id} project={project} />;
+  return <Replica key={project.id} project={project} apiProjectId={projectId} />;
 }
 
-function Replica({ project: initial }: { project: Project }) {
+/** `apiProjectId` is the project's id on the API, which the members are read and saved under. */
+function Replica({ project: initial, apiProjectId }: { project: Project; apiProjectId: string }) {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const toast = useToast();
@@ -53,6 +53,11 @@ function Replica({ project: initial }: { project: Project }) {
   const [fixture, setFixture] = useState<SettingsFixture>(() => settingsFixtureFor(initial));
   const { project } = fixture;
   const settingsPath = `/projects/${project.id}/settings`;
+  const props = projectSettingsPropsFor(fixture, viewer);
+  // Who may add and remove collaborators comes from the viewer's role in the API's members, as the members do.
+  const members = useProjectMembers(apiProjectId, (role) => permissionsForRole(role, viewer).canRemoveProjectUser);
+  const memberSaves = useProjectMemberSaves(apiProjectId);
+  const asMember = permissionsForRole(members.viewerRole, viewer);
 
   // The key onGenerateApiKey last handed out, kept here as Lightning keeps it on the server.
   const apiKey = useRef("");
@@ -67,16 +72,17 @@ function Replica({ project: initial }: { project: Project }) {
   };
   const updateCredentials = (change: (c: SettingsFixture["credentials"]) => Partial<SettingsFixture["credentials"]>) =>
     update((f) => ({ credentials: { ...f.credentials, ...change(f.credentials) } }));
-  const updateMember = async (id: string, changes: Partial<Project["members"][number]>) => {
-    await simulateRequest();
-    update((f) => ({ project: { ...f.project, members: f.project.members.map((m) => (m.userId === id ? { ...m, ...changes } : m)) } }));
-    // Lightning's own spelling (project_live/settings.ex).
-    toast("Project user updated successfuly");
-  };
 
   return (
     <ProjectSettingsPage
-      {...projectSettingsPropsFor(fixture, viewer)}
+      {...props}
+      collaboration={{
+        ...props.collaboration,
+        collaborators: members.collaborators,
+        canAddProjectUser: asMember.canAddProjectUser,
+        canEditProject: asMember.canEditProject,
+      }}
+      collaborationStatus={members.status}
       projectLabel={projectLabel(project, projects)}
       deleting={pathname.endsWith("/settings/delete")}
       onSaveIdentity={({ rawName, description }) => updateProject({ name: urlSafeName(rawName), description })}
@@ -144,30 +150,16 @@ function Replica({ project: initial }: { project: Project }) {
         return (method?.authType === "basic" ? method.password : method?.apiKey) ?? "";
       }}
       onAddCollaborators={async (values) => {
-        await simulateRequest();
-        const known = values.flatMap((v) => {
-          const user = users.find((u) => u.email.toLowerCase() === v.email.toLowerCase());
-          return user ? [{ userId: user.id, role: v.role, failureAlert: true, digest: "weekly" as const }] : [];
-        });
-        const toInvite = values.filter((v) => !users.some((u) => u.email.toLowerCase() === v.email.toLowerCase()));
-        update((f) => ({ project: { ...f.project, members: [...f.project.members, ...known] } }));
-        toast(addedMessage(known.length, toInvite.length));
-        return { toInvite };
+        const result = await memberSaves.onAddCollaborators(values);
+        toast(addedMessage(values.length - result.toInvite.length, result.toInvite.length));
+        return result;
       }}
       onInviteCollaborators={async (values) => {
-        await simulateRequest();
-        // invited_collaborators.ex: an email that already has an account is refused on its row.
-        const taken = Object.fromEntries(
-          values.flatMap((v, i) =>
-            users.some((u) => u.email.toLowerCase() === v.email.toLowerCase()) ? [[`${i}.email`, ["This email is already taken"]]] : []
-          )
-        );
-        if (Object.keys(taken).length) throw new RequestError("This email is already taken", { fieldErrors: taken });
+        await memberSaves.onInviteCollaborators(values);
         toast(`Invite${values.length > 1 ? "s" : ""} sent successfully`);
       }}
       onRemoveCollaborator={async (id) => {
-        await simulateRequest();
-        update((f) => ({ project: { ...f.project, members: f.project.members.filter((m) => m.userId !== id) } }));
+        await memberSaves.onRemoveCollaborator(id);
         toast("Collaborator removed");
       }}
       onSetSupportAccess={async (on) => {
@@ -175,8 +167,15 @@ function Replica({ project: initial }: { project: Project }) {
         update(() => ({ supportAccess: on }));
         toast(on ? "Granted access to support users successfully" : "Revoked access to support users successfully");
       }}
-      onSetFailureAlert={(id, failureAlert) => updateMember(id, { failureAlert })}
-      onSetDigest={(id, digest) => updateMember(id, { digest })}
+      onSetFailureAlert={async (id, on) => {
+        await memberSaves.onSetFailureAlert(id, on);
+        // Lightning's own spelling (project_live/settings.ex).
+        toast("Project user updated successfuly");
+      }}
+      onSetDigest={async (id, digest) => {
+        await memberSaves.onSetDigest(id, digest);
+        toast("Project user updated successfuly");
+      }}
       onSetRequiresMfa={async (requiresMfa) => {
         await simulateRequest();
         patchProject({ requiresMfa });

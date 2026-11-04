@@ -1,0 +1,25 @@
+{
+  "workflows": [
+    {
+      "id": "acc41c8d-19b9-585e-9843-2c8af6aad340",
+      "name": "catfact demo",
+      "project_id": "1da97d81-152f-5f7d-a0fc-8416bd411706",
+      "inserted_at": "2026-11-03T16:07:30Z",
+      "updated_at": "2026-11-03T16:07:30Z"
+    },
+    {
+      "id": "5169a138-a68a-407e-a322-2e6d58e43cc2",
+      "name": "OpenHIE Workflow",
+      "project_id": "4adf2644-ed4e-4f97-a24c-ab35b3cb1efa",
+      "inserted_at": "2026-11-03T16:03:49Z",
+      "updated_at": "2026-11-03T16:03:49Z"
+    },
+    {
+      "id": "0666ff53-88ca-4025-9a4a-fbd73f8d1f40",
+      "name": "DHIS2 to Sheets",
+      "project_id": "f5c51652-8428-4fb0-9b01-b27638079dc0",
+      "inserted_at": "2026-11-03T16:03:49Z",
+      "updated_at": "2026-11-03T16:03:49Z"
+    }
+  ]
+}

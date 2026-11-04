@@ -13,7 +13,9 @@ export default function RemoveCollaboratorModal({ collaborator, onCancel, onConf
   const name = `${collaborator.firstName} ${collaborator.lastName}`;
   const owned = collaborator.ownedCredentialNames;
   const credentialsText =
-    owned.length === 0
+    owned === null
+      ? " and any credentials they own will be removed from it"
+      : owned.length === 0
       ? ""
       : owned.length === 1
         ? ` and their owned credential ${owned[0]} will be removed from it`

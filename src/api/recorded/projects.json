@@ -3,7 +3,13 @@
     {
       "attributes": {
         "name": "dhis2-project",
-        "description": null
+        "description": null,
+        "scheduled_deletion": null,
+        "allow_support_access": false,
+        "history_retention_period": null,
+        "dataclip_retention_period": null,
+        "requires_mfa": false,
+        "retention_policy": "retain_all"
       },
       "id": "f5c51652-8428-4fb0-9b01-b27638079dc0",
       "links": {
@@ -15,7 +21,13 @@
     {
       "attributes": {
         "name": "kickstart-me",
-        "description": null
+        "description": null,
+        "scheduled_deletion": null,
+        "allow_support_access": false,
+        "history_retention_period": null,
+        "dataclip_retention_period": null,
+        "requires_mfa": false,
+        "retention_policy": "retain_all"
       },
       "id": "1da97d81-152f-5f7d-a0fc-8416bd411706",
       "links": {
@@ -27,7 +39,13 @@
     {
       "attributes": {
         "name": "openhie-project",
-        "description": null
+        "description": null,
+        "scheduled_deletion": null,
+        "allow_support_access": false,
+        "history_retention_period": null,
+        "dataclip_retention_period": null,
+        "requires_mfa": false,
+        "retention_policy": "retain_all"
       },
       "id": "4adf2644-ed4e-4f97-a24c-ab35b3cb1efa",
       "links": {

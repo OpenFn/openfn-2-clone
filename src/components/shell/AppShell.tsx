@@ -5,6 +5,7 @@ import { Outlet, useLocation, useParams } from "react-router-dom";
 import { findProject, projects } from "../../mock-data/projects";
 // eslint-disable-next-line no-restricted-imports -- wiring: the shell reads the signed-in user, their permissions and instance info for the header and sidebar.
 import { useCurrentUser, useInstanceInfo, usePermissions } from "../../session/session";
+import RouteErrorBoundary from "./RouteErrorBoundary";
 import Sidebar, { type SidebarMenu } from "./Sidebar";
 import Picker from "../primitives/Picker";
 import { buildProjectPickerItems } from "./projectPickerItems";
@@ -24,11 +25,7 @@ export default function AppShell() {
   const [collapsed, setCollapsed] = useState(false);
   const toggle = useCallback(() => setCollapsed((c) => !c), []);
 
-  const menu: SidebarMenu = pathname.startsWith("/settings")
-    ? "admin"
-    : project
-      ? "project"
-      : "profile";
+  const menu: SidebarMenu = pathname.startsWith("/settings") ? "admin" : project ? "project" : "profile";
 
   return (
     <main className="flex h-screen">
@@ -43,7 +40,9 @@ export default function AppShell() {
         onToggle={toggle}
       />
       <div className="min-w-0 flex-auto">
-        <Outlet />
+        <RouteErrorBoundary resetKey={pathname}>
+          <Outlet />
+        </RouteErrorBoundary>
       </div>
       <Picker
         items={buildProjectPickerItems(pathname, projects)}

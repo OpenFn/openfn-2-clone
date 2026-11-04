@@ -1,10 +1,11 @@
-import { Navigate, Route, Routes, useParams } from "react-router-dom";
+import { Navigate, Route, Routes, useLocation, useParams } from "react-router-dom";
+import RouteErrorBoundary from "./components/shell/RouteErrorBoundary";
 import AppShell from "./components/shell/AppShell";
 
-import AuthLoginPage from "./pages/auth/AuthLoginPage";
+import AuthLoginPage from "./pages/auth/AuthLoginPage.replica";
 import AuthRegisterPage from "./pages/auth/AuthRegisterPage";
 import AuthResetPasswordPage from "./pages/auth/AuthResetPasswordPage";
-import AuthTwoFactorPage from "./pages/auth/AuthTwoFactorPage";
+import AuthTwoFactorPage from "./pages/auth/AuthTwoFactorPage.replica";
 import AuthConfirmAccountPage from "./pages/auth/AuthConfirmAccountPage";
 import AuthConfirmationRequiredPage from "./pages/auth/AuthConfirmationRequiredPage.replica";
 import AuthConfirmAccessPage from "./pages/auth/AuthConfirmAccessPage.replica";
@@ -51,11 +52,21 @@ function ProjectRoot() {
  * The comment on each route is its INVENTORY.md id.
  */
 export default function App() {
+  const { pathname } = useLocation();
+  // The pages inside the shell have their own, inside it (AppShell); this one catches the rest.
+  return (
+    <RouteErrorBoundary resetKey={pathname}>
+      <AppRoutes />
+    </RouteErrorBoundary>
+  );
+}
+
+function AppRoutes() {
   return (
     <Routes>
       {/* Auth and onboarding: no side menu. */}
       <Route path="/users/log_in" element={<AuthLoginPage />} /> {/* auth-login */}
-      <Route path="/users/log_out" element={<Navigate to="/users/log_in" replace />} />
+      <Route path="/users/log_out" element={<Navigate to="/users/log_in" replace />} /> {/* main.tsx signs out first */}
       <Route path="/users/register" element={<AuthRegisterPage />} /> {/* auth-register */}
       <Route path="/users/reset_password" element={<AuthResetPasswordPage />} /> {/* auth-reset-password */}
       <Route path="/users/reset_password/:token" element={<AuthResetPasswordPage />} />
