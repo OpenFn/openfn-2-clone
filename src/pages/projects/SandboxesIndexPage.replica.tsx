@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { projectsUnder, sandboxRow, useSandboxSaves, useWorkspace } from "../../api/projects";
 import { useToast } from "../../components/primitives/Toast";
@@ -49,6 +49,27 @@ export default function SandboxesIndexPageReplica() {
           { mode: "edit", sandboxId: editing.id, initial: { rawName: editing.name, color: null } }
         : null;
 
+  // index.ex (:edit and :new): a route the viewer may not use sends them back to the list with Lightning's error flash.
+  const refusal =
+    workspace.status.state !== "ready"
+      ? null
+      : onNew && createBlockedReason
+        ? createBlockedReason
+        : editing && !editing.canEdit
+          ? "You are not authorized to edit this sandbox"
+          : null;
+  // Once per refusal: StrictMode runs the effect twice.
+  const refusing = useRef(false);
+  useEffect(() => {
+    if (!refusal || refusing.current) {
+      refusing.current = !!refusal;
+      return;
+    }
+    refusing.current = true;
+    toast(refusal, "danger");
+    navigate(back, { replace: true });
+  }, [refusal, toast, navigate, back]);
+
   return (
     <SandboxesIndexPage
       status={workspace.status}
@@ -91,7 +112,10 @@ export default function SandboxesIndexPageReplica() {
       onPreviewMerge={async (id, targetId) => ({ targets: workspace.mergeTargets(id), ...(await saves.onPreviewMerge(id, targetId)) })}
       onMergeSandbox={async (id, values) => {
         const [sandbox, target] = [nameOf(id), nameOf(values.targetId)];
-        const scheduled = await saves.onMergeSandbox(id, values);
+        // index.ex `format_merge_error`: a merge that fails on Lightning's side says only this.
+        const scheduled = await saves.onMergeSandbox(id, values).catch((error: unknown) => {
+          throw error instanceof RequestError && (error.status ?? 0) >= 500 ? new RequestError("Couldn't merge this sandbox. Please try again.") : error;
+        });
         // index.ex `build_merge_success_message`.
         toast(
           scheduled

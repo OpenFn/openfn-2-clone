@@ -1,4 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { failNext } from "../../api/client";
 import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { MemoryRouter, Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import { afterEach, describe, expect, it, vi } from "vitest";
@@ -92,7 +93,7 @@ describe("SandboxesIndexPageReplica", () => {
     renderAt(`/projects/${ROOT}/sandboxes/new`);
     fireEvent.change(await screen.findByLabelText(/Name/, {}, wait), { target: { value: "Staging" } });
     fireEvent.submit(document.getElementById("sandbox-form")!);
-    expect(await screen.findByText("has already been taken", {}, wait)).toBeTruthy();
+    expect(await screen.findByText("Sandbox name already exists", {}, wait)).toBeTruthy();
     expect(screen.getByRole("dialog")).toBeTruthy();
   }, 15_000);
 
@@ -139,6 +140,18 @@ describe("SandboxesIndexPageReplica", () => {
     // The merge, the scheduling, then every list it touched reloads.
     expect(await screen.findByText("Successfully merged to-merge into openhie-project. Sandbox scheduled for deletion.", {}, { timeout: 12_000 })).toBeTruthy();
     await waitFor(() => expect(screen.getByTestId("where").textContent).toBe(`/projects/${ROOT}/w`));
+  }, 25_000);
+
+  it("says a merge Lightning fails in Lightning's words", async () => {
+    renderAt(`/projects/${ROOT}/sandboxes/new`);
+    await create("Will Fail");
+    fireEvent.click(document.querySelector(`#branch-rewire-sandbox-${cardId("will-fail")} button`)!);
+    const dialog = await screen.findByRole("dialog");
+    await within(dialog).findByText("Workflows to merge", {}, wait);
+    fireEvent.click(within(dialog).getByLabelText("OpenHIE Workflow"));
+    failNext({ status: 500, code: "internal" });
+    fireEvent.submit(document.getElementById("merge-sandbox-form")!);
+    expect(await within(dialog).findByText("Couldn't merge this sandbox. Please try again.", {}, wait)).toBeTruthy();
   }, 25_000);
 
   // Last: it schedules part of the recorded workspace.
