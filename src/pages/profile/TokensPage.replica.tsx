@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDocumentTitle } from "../../utils/useDocumentTitle";
 import { useNavigate, useParams } from "react-router-dom";
 import { isStepUpRequired } from "../../api/client";
@@ -22,6 +22,23 @@ export default function TokensPageReplica() {
   const { status, tokens } = useTokens();
   const saves = useTokenSaves();
   const [newToken, setNewToken] = useState<string | null>(null);
+  // The one just deleted here leaves the list before the modal closes; that isn't a refusal.
+  const deleted = useRef<string | null>(null);
+  // Lightning refuses the delete route for a token that isn't yours (tokens_live/index.ex :delete).
+  const refused = status.state === "ready" && !!tokenId && !tokens.some((t) => t.id === tokenId);
+
+  // Once per refusal: StrictMode runs the effect twice.
+  const refusing = useRef(false);
+  useEffect(() => {
+    const refusal = refused && tokenId !== deleted.current;
+    if (!refusal || refusing.current) {
+      refusing.current = refusal;
+      return;
+    }
+    refusing.current = true;
+    toast("You can't perform this action", "danger");
+    navigate("/profile/tokens", { replace: true });
+  }, [refused, tokenId, toast, navigate]);
 
   return (
     <TokensPage
@@ -41,6 +58,7 @@ export default function TokensPageReplica() {
         toast("Token created successfully");
       }}
       onDelete={async (id) => {
+        deleted.current = id;
         await saves.onDelete(id);
         toast("Token deleted successfully");
       }}
