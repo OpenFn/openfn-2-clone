@@ -56,6 +56,21 @@ const saveCollection = (projectId: string, id: string, rawName: string) =>
     pointer === "#/name" ? "#/rawName" : undefined
   );
 
+/**
+ * A rename. `PUT` would make a collection deleted since the page loaded again
+ * under its old id, so this first asks whether it is still there, and says
+ * Lightning's "Collection not found" if not.
+ */
+async function renameCollection(projectId: string, id: string, rawName: string) {
+  try {
+    await request("GET", collectionsPath(projectId, `/${encodeURIComponent(id)}`));
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 404) throw new ApiError(404, "not_found", "Collection not found");
+    throw error;
+  }
+  await saveCollection(projectId, id, rawName);
+}
+
 /** Lightning's API reads a collection's items only with an API token, not the signed-in session the app uses. */
 const NO_PREVIEW = "Lightning's API can't show a collection's items yet.";
 
@@ -86,11 +101,12 @@ export function useProjectCollections(projectId: string): ProjectCollections {
 /** The Collections tab's saves. Each resolves once the project's collections have reloaded. */
 export function useCollectionSaves(projectId: string) {
   const changes = [collectionKeys.all(projectId)];
-  const save = useSave(changes, (id: string, rawName: string) => saveCollection(projectId, id, rawName));
+  const create = useSave(changes, (id: string, rawName: string) => saveCollection(projectId, id, rawName));
+  const rename = useSave(changes, (id: string, rawName: string) => renameCollection(projectId, id, rawName));
   const remove = useSave(changes, (id: string) => request("DELETE", collectionsPath(projectId, `/${encodeURIComponent(id)}`)));
   return {
-    onCreateCollection: async (rawName: string) => void (await save([crypto.randomUUID(), rawName])),
-    onRenameCollection: async (id: string, rawName: string) => void (await save([id, rawName])),
+    onCreateCollection: async (rawName: string) => void (await create([crypto.randomUUID(), rawName])),
+    onRenameCollection: async (id: string, rawName: string) => void (await rename([id, rawName])),
     onDeleteCollection: async (id: string) => void (await remove([id])),
     onPreviewCollection: (): Promise<string | null> => Promise.reject(new ApiError(422, "not_supported", NO_PREVIEW)),
   };
@@ -105,6 +121,11 @@ standIn("GET", "/api/projects/:project_id/collections", ({ project_id }) => ({
   data: [...collectionsOf(project_id!)].sort((x, y) => x.name.localeCompare(y.name)),
   links: { next: null },
 }));
+standIn("GET", "/api/projects/:project_id/collections/:id", ({ project_id, id }) => {
+  const c = collectionsOf(project_id!).find((c) => c.id === id);
+  if (!c) throw new ApiError(404, "not_found", "Not found.");
+  return { data: { id, project_id, name: c.name } };
+});
 standIn("PUT", "/api/projects/:project_id/collections/:id", ({ project_id, id }, b) => {
   const name = (b as { name?: string }).name ?? "";
   if (!name) throw new ApiError(422, "invalid", "The request is not valid. See errors.", [{ pointer: "#/name", code: "required", detail: "can't be blank" }]);

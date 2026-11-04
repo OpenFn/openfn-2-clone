@@ -58,4 +58,14 @@ describe("useCollectionSaves", () => {
     await result.current.saves.onDeleteCollection(id);
     expect(cachedNames(client)).not.toContain("renamed");
   });
+
+  it("says a collection deleted since the page loaded is not found, instead of making it again", async () => {
+    const { result, client } = renderCollections();
+    await waitFor(() => expect(result.current.index.status).toEqual({ state: "ready" }), loaded);
+    await result.current.saves.onCreateCollection("gone-meanwhile");
+    const id = client.getQueryData<ApiCollection[]>(collectionKeys.all(KICKSTART))!.find((c) => c.name === "gone-meanwhile")!.id;
+    await result.current.saves.onDeleteCollection(id);
+    await expect(result.current.saves.onRenameCollection(id, "back-again")).rejects.toMatchObject({ message: "Collection not found" });
+    expect(cachedNames(client)).not.toContain("back-again");
+  });
 });
