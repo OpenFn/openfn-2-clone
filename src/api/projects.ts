@@ -6,7 +6,7 @@
 import { useQueries, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { CredentialProjectRef } from "../types/credentials";
 import type { AddCollaboratorsResult, CollaboratorRow, CollaboratorValues, Digest, InviteValues } from "../types/project-settings";
-import type { ProjectRole } from "../types/projects";
+import type { Project, ProjectRole } from "../types/projects";
 import type { ResourceStatus } from "../types/resource";
 import type { MergePreviewResult, MergeValues, MergeWorkflowRow, SandboxRow, SandboxValues } from "../types/sandboxes";
 import type { ProjectOverview } from "../types/workflows";
@@ -323,11 +323,34 @@ export function useProjectMembers(projectId: string, canRemoveAs: (role: Project
   };
 }
 
-/** The project's name, as `GET /api/projects` lists it, for a host that still finds the rest of the project by name; null if the caller isn't a member, undefined while loading. */
-export function useProjectName(projectId: string): string | null | undefined {
+/** The project as `GET /api/projects` lists it; null if the caller isn't a member, undefined while loading. */
+export function useApiProject(projectId: string): ApiProject | null | undefined {
   const projects = useQuery(projectsQuery);
   if (!projects.data) return projects.isError ? null : undefined;
-  return projects.data.find((p) => p.id === projectId)?.attributes.name ?? null;
+  return projects.data.find((p) => p.id === projectId) ?? null;
+}
+
+/**
+ * The project settings page's project, for one the API lists but no fixture
+ * holds. The API gives only the name and description; the rest are
+ * Lightning's defaults for a new project (no limit, retain all, no MFA).
+ */
+export function settingsProject(p: ApiProject): Project {
+  return {
+    id: p.id,
+    name: p.attributes.name,
+    description: p.attributes.description ?? "",
+    parentId: null,
+    color: null,
+    concurrency: null,
+    retentionPolicy: "retain_all",
+    historyRetentionPeriod: null,
+    dataclipRetentionPeriod: null,
+    requiresMfa: false,
+    members: [],
+    lastUpdatedAt: "",
+    insertedAt: "",
+  };
 }
 
 /**

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useDocumentTitle } from "../../utils/useDocumentTitle";
 import { Navigate, useLocation, useNavigate, useParams } from "react-router-dom";
 import { useCollectionSaves, useProjectCollections } from "../../api/collections";
-import { useProjectMemberSaves, useProjectMembers, useProjectName } from "../../api/projects";
+import { settingsProject, useApiProject, useProjectMemberSaves, useProjectMembers } from "../../api/projects";
 import { useProjectWebhookAuthMethods, useWebhookAuthMethodSaves } from "../../api/webhookAuthMethods";
 import { useToast } from "../../components/primitives/Toast";
 import { projectLabel } from "../../components/shell/projectPickerItems";
@@ -41,10 +41,14 @@ function addedMessage(existing: number, unknown: number) {
 export default function ProjectSettingsPageReplica() {
   useDocumentTitle("Project settings");
   const { projectId = "" } = useParams();
-  const apiName = useProjectName(projectId);
-  // The fixtures' ids aren't always Lightning's, so the rest of the project is also found by its name on the API.
-  const project = findProject(projectId) ?? projects.find((p) => apiName && p.name === apiName);
-  if (!project) return apiName === undefined ? null : <Navigate to="/projects" replace />;
+  const apiProject = useApiProject(projectId);
+  // The fixtures' ids aren't always Lightning's, so the rest of the project is also found by its name on the API;
+  // a project no fixture holds opens with what the API gives, and its other tabs empty.
+  const project =
+    findProject(projectId) ??
+    projects.find((p) => p.name === apiProject?.attributes.name) ??
+    (apiProject ? settingsProject(apiProject) : undefined);
+  if (!project) return apiProject === undefined ? null : <Navigate to="/projects" replace />;
   // Keyed so another project starts from its own fixtures.
   return <Replica key={project.id} project={project} apiProjectId={projectId} />;
 }
