@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useDocumentTitle } from "../../utils/useDocumentTitle";
 import { Navigate, useLocation, useNavigate, useParams } from "react-router-dom";
 import { useCollectionSaves, useProjectCollections } from "../../api/collections";
-import { settingsProject, useApiProject, useProjectMemberSaves, useProjectMembers } from "../../api/projects";
+import { useApiProject, useApiSettingsProject, useProjectMemberSaves, useProjectMembers } from "../../api/projects";
 import { useProjectWebhookAuthMethods, useWebhookAuthMethodSaves } from "../../api/webhookAuthMethods";
 import { useToast } from "../../components/primitives/Toast";
 import { projectLabel } from "../../components/shell/projectPickerItems";
@@ -10,6 +10,7 @@ import { projectSettingsPropsFor, rootOf, settingsFixtureFor, type SettingsFixtu
 import { findProject, projects } from "../../mock-data/projects";
 import { simulateRequest } from "../../mock-data/request";
 import { permissionsForRole } from "../../permissions";
+import type { ParentProjectRef } from "../../types/project-settings";
 import type { Project } from "../../types/projects";
 import { useCurrentUser } from "../../session/session";
 import { ApiError } from "../../api/client";
@@ -53,19 +54,28 @@ export default function ProjectSettingsPageReplica() {
   useDocumentTitle("Project settings");
   const { projectId = "" } = useParams();
   const apiProject = useApiProject(projectId);
-  // The fixtures' ids aren't always Lightning's, so the rest of the project is also found by its name on the API;
-  // a project no fixture holds opens with what the API gives, and its other tabs empty.
-  const project =
-    findProject(projectId) ??
-    projects.find((p) => p.name === apiProject?.attributes.name) ??
-    (apiProject ? settingsProject(apiProject) : undefined);
-  if (!project) return apiProject === undefined ? null : <Navigate to="/projects" replace />;
+  // A project no fixture holds opens with what the API gives, and its other tabs empty; a sandbox with its parent.
+  const fromApi = useApiSettingsProject(projectId);
+  // The fixtures' ids aren't always Lightning's, so the rest of the project is also found by its name on the API.
+  const project = findProject(projectId) ?? projects.find((p) => p.name === apiProject?.attributes.name) ?? fromApi?.project;
+  if (!project) return fromApi === undefined ? null : <Navigate to="/projects" replace />;
+  const parent = fromApi?.parent;
   // Keyed so another project starts from its own fixtures.
-  return <Replica key={project.id} project={project} apiProjectId={projectId} />;
+  return (
+    <Replica
+      key={project.id}
+      project={project}
+      apiProjectId={projectId}
+      apiParent={parent ? { name: parent.name, settingsHref: `/projects/${parent.id}/settings` } : null}
+    />
+  );
 }
 
-/** `apiProjectId` is the project's id on the API, which the members, collections and webhook auth methods are read and saved under. */
-function Replica({ project: initial, apiProjectId }: { project: Project; apiProjectId: string }) {
+/**
+ * `apiProjectId` is the project's id on the API, which the members, collections and webhook auth methods are read and saved under;
+ * `apiParent` a sandbox's parent from the API, when no fixture holds it.
+ */
+function Replica({ project: initial, apiProjectId, apiParent }: { project: Project; apiProjectId: string; apiParent: ParentProjectRef | null }) {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const toast = useToast();
@@ -98,6 +108,7 @@ function Replica({ project: initial, apiProjectId }: { project: Project; apiProj
   return (
     <ProjectSettingsPage
       {...props}
+      parent={props.parent ?? apiParent}
       collaboration={{
         ...props.collaboration,
         collaborators: members.collaborators,

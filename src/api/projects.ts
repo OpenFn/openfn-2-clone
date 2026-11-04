@@ -331,16 +331,16 @@ export function useApiProject(projectId: string): ApiProject | null | undefined 
 }
 
 /**
- * The project settings page's project, for one the API lists but no fixture
+ * The project settings page's project, for one the API has but no fixture
  * holds. The API gives only the name and description; the rest are
  * Lightning's defaults for a new project (no limit, retain all, no MFA).
  */
-export function settingsProject(p: ApiProject): Project {
+export function settingsProject(p: { id: string; name: string; description: string | null }, parentId: string | null = null): Project {
   return {
     id: p.id,
-    name: p.attributes.name,
-    description: p.attributes.description ?? "",
-    parentId: null,
+    name: p.name,
+    description: p.description ?? "",
+    parentId,
     color: null,
     concurrency: null,
     retentionPolicy: "retain_all",
@@ -351,6 +351,24 @@ export function settingsProject(p: ApiProject): Project {
     lastUpdatedAt: "",
     insertedAt: "",
   };
+}
+
+/**
+ * The settings page's project from the API, with its parent for a sandbox:
+ * `GET /api/projects` lists only roots, so a sandbox is found by walking the
+ * workspaces, only when the roots don't hold it. Undefined while loading,
+ * null when the API has no such project.
+ */
+export function useApiSettingsProject(projectId: string): { project: Project; parent: { id: string; name: string } | null } | null | undefined {
+  const root = useApiProject(projectId);
+  const workspaces = useQuery({ ...workspacesQuery, enabled: root === null });
+  if (root) return { project: settingsProject({ id: root.id, ...root.attributes }), parent: null };
+  if (root === undefined) return undefined;
+  if (!workspaces.data) return workspaces.isError ? null : undefined;
+  const sandbox = workspaces.data.find((p) => p.id === projectId);
+  const parent = sandbox && workspaces.data.find((p) => p.id === sandbox.parentId);
+  if (!sandbox || !parent) return null;
+  return { project: settingsProject(sandbox, parent.id), parent: { id: parent.id, name: parent.name } };
 }
 
 /**

@@ -6,6 +6,7 @@ import { failNext } from "./client";
 import { standInAccount } from "./me";
 import {
   projectKeys,
+  useApiSettingsProject,
   useProjectMemberSaves,
   useProjectMembers,
   useProjectSaves,
@@ -142,6 +143,26 @@ describe("useWorkspace", () => {
   it("says not found for a project the caller can't see", async () => {
     const { result } = renderWorkspace("00000000-0000-4000-8000-000000000000");
     await waitFor(() => expect(result.current.index.status).toEqual({ state: "notFound" }), loaded);
+  });
+});
+
+describe("useApiSettingsProject", () => {
+  const render = (projectId: string) => {
+    const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    const wrapper = ({ children }: { children: ReactNode }) => createElement(QueryClientProvider, { client }, children);
+    return renderHook(() => useApiSettingsProject(projectId), { wrapper });
+  };
+
+  it("finds a sandbox, which GET /api/projects doesn't list, with its parent", async () => {
+    const { result } = render(FHIR_TESTS);
+    await waitFor(() => expect(result.current).toBeTruthy(), loaded);
+    expect(result.current?.project).toMatchObject({ id: FHIR_TESTS, name: "fhir-tests", parentId: STAGING });
+    expect(result.current?.parent).toEqual({ id: STAGING, name: "staging" });
+  });
+
+  it("is null for a project the API doesn't have", async () => {
+    const { result } = render("00000000-0000-4000-8000-000000000000");
+    await waitFor(() => expect(result.current).toBeNull(), loaded);
   });
 });
 
