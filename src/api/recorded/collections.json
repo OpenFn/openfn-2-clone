@@ -1,0 +1,24 @@
+{
+  "1da97d81-152f-5f7d-a0fc-8416bd411706": [
+    {
+      "id": "d1fa6821-2966-4b05-8532-0ac53d64203f",
+      "name": "facility-ids",
+      "project_id": "1da97d81-152f-5f7d-a0fc-8416bd411706",
+      "byte_size_sum": 0
+    },
+    {
+      "id": "1421fea5-ece9-4b85-b4e1-dda304af538a",
+      "name": "patients",
+      "project_id": "1da97d81-152f-5f7d-a0fc-8416bd411706",
+      "byte_size_sum": 0
+    }
+  ],
+  "f5c51652-8428-4fb0-9b01-b27638079dc0": [
+    {
+      "id": "04d88db9-1272-47f6-8157-9ec8d27b1286",
+      "name": "dhis2-org-units",
+      "project_id": "f5c51652-8428-4fb0-9b01-b27638079dc0",
+      "byte_size_sum": 0
+    }
+  ]
+}

@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import { Navigate, useLocation, useNavigate, useParams } from "react-router-dom";
+import { useCollectionSaves, useProjectCollections } from "../../api/collections";
 import { useProjectMemberSaves, useProjectMembers, useProjectName } from "../../api/projects";
 import { useToast } from "../../components/primitives/Toast";
 import { projectLabel } from "../../components/shell/projectPickerItems";
@@ -31,8 +32,9 @@ function addedMessage(existing: number, unknown: number) {
  * state as the server would, the deletion route, and the success toasts
  * (Lightning's flashes) and navigation. The collaborators come from
  * Lightning's API (or its stand-in), and so does who may add and remove them;
- * everything else stays on the fixture until the API serves it. Lightning
- * replaces this file with a LiveView wrapper.
+ * so do the collections and who may manage them. Everything else stays on
+ * the fixture until the API serves it. Lightning replaces this file with a
+ * LiveView wrapper.
  */
 export default function ProjectSettingsPageReplica() {
   const { projectId = "" } = useParams();
@@ -44,7 +46,7 @@ export default function ProjectSettingsPageReplica() {
   return <Replica key={project.id} project={project} apiProjectId={projectId} />;
 }
 
-/** `apiProjectId` is the project's id on the API, which the members are read and saved under. */
+/** `apiProjectId` is the project's id on the API, which the members and collections are read and saved under. */
 function Replica({ project: initial, apiProjectId }: { project: Project; apiProjectId: string }) {
   const { pathname } = useLocation();
   const navigate = useNavigate();
@@ -58,6 +60,8 @@ function Replica({ project: initial, apiProjectId }: { project: Project; apiProj
   const members = useProjectMembers(apiProjectId, (role) => permissionsForRole(role, viewer).canRemoveProjectUser);
   const memberSaves = useProjectMemberSaves(apiProjectId);
   const asMember = permissionsForRole(members.viewerRole, viewer);
+  const collections = useProjectCollections(apiProjectId);
+  const collectionSaves = useCollectionSaves(apiProjectId);
 
   // The key onGenerateApiKey last handed out, kept here as Lightning keeps it on the server.
   const apiKey = useRef("");
@@ -83,6 +87,8 @@ function Replica({ project: initial, apiProjectId }: { project: Project; apiProj
         canEditProject: asMember.canEditProject,
       }}
       collaborationStatus={members.status}
+      collections={{ collections: collections.collections, canManage: permissionsForRole(collections.viewerRole, viewer).canCreateCollection }}
+      collectionsStatus={collections.status}
       projectLabel={projectLabel(project, projects)}
       deleting={pathname.endsWith("/settings/delete")}
       onSaveIdentity={({ rawName, description }) => updateProject({ name: urlSafeName(rawName), description })}
@@ -103,23 +109,18 @@ function Replica({ project: initial, apiProjectId }: { project: Project; apiProj
       }}
       onCloseDelete={() => navigate(settingsPath)}
       onCreateCollection={async (rawName) => {
-        await simulateRequest();
-        update((f) => ({
-          collections: [...f.collections, { id: `col-${Date.now()}`, projectId: project.id, name: urlSafeName(rawName), byteSizeSum: 0, previewJson: null }],
-        }));
+        await collectionSaves.onCreateCollection(rawName);
         toast("Collection created");
       }}
       onRenameCollection={async (id, rawName) => {
-        await simulateRequest();
-        update((f) => ({ collections: f.collections.map((c) => (c.id === id ? { ...c, name: urlSafeName(rawName) } : c)) }));
+        await collectionSaves.onRenameCollection(id, rawName);
         toast("Collection updated");
       }}
       onDeleteCollection={async (id) => {
-        await simulateRequest();
-        update((f) => ({ collections: f.collections.filter((c) => c.id !== id) }));
+        await collectionSaves.onDeleteCollection(id);
         toast("Collection deleted");
       }}
-      onPreviewCollection={(id) => simulateRequest(fixture.collections.find((c) => c.id === id)?.previewJson ?? null)}
+      onPreviewCollection={collectionSaves.onPreviewCollection}
       onCreateWebhookAuthMethod={async (values) => {
         await simulateRequest();
         const secret = values.authType === "api" ? { apiKey: apiKey.current } : {};

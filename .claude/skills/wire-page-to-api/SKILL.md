@@ -39,6 +39,9 @@ and wraps only it. Then run step 7's overnight-1 check.
   `/auth/confirm_access?return_to=<this page>`, which steps the session up
   and brings them back (`TokensPage.replica.tsx`). Track it as a gap if
   Lightning's own page doesn't ask.
+- Some routes outside `/api` take only an API token, not the session
+  (a collection's items, `/collections/:name`). The app can't call them:
+  the action refuses in plain words, and it's a gap.
 - Anything the page needs that the API doesn't give is a gap. Track each
   gap as a finding (the `track` skill), one line each: the route, what's
   missing, what the page does instead.
@@ -115,7 +118,10 @@ In this order, as in `credentials.ts`:
   works out from the fixture comes out empty or all-false:
   - permissions: take the viewer's role from the API (the members list)
     and use `permissionsForRole(role, viewer)`, not
-    `permissionsFor(fixtureProject, viewer)`;
+    `permissionsFor(fixtureProject, viewer)`. A tab's hook that needs the
+    role reads `meQuery` and `membersQuery` itself (the same cache, no
+    extra request) and its `status` covers them, so the tab never shows
+    its buttons off while the members load;
   - a project the wrapper finds in the fixture: find it by name on the API
     too (`useProjectName`), and read and save under the URL's id.
   List every fixture lookup and permission left in the wrapper and check

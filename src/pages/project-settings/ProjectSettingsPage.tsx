@@ -48,6 +48,8 @@ export interface ProjectSettingsPageProps extends ProjectSettingsPageData, Crede
   deleting: boolean;
   /** While the host loads the collaborators, or why it couldn't (STANDARDS pattern 5). Leave it out when they arrive with the page. */
   collaborationStatus?: ResourceStatus;
+  /** While the host loads the collections, or why it couldn't (STANDARDS pattern 5). Leave it out when they arrive with the page. */
+  collectionsStatus?: ResourceStatus;
 
   onSaveIdentity: (values: ProjectIdentityValues) => Promise<void>;
   /** Saves Concurrency Override: 1 for one run at a time, null for parallel. */
@@ -149,14 +151,16 @@ export default function ProjectSettingsPage(props: ProjectSettingsPageProps) {
       </>
     ),
     collections: (
-      <CollectionsPanel
-        collections={props.collections}
-        sandbox={sandbox}
-        onCreate={props.onCreateCollection}
-        onRename={props.onRenameCollection}
-        onDelete={props.onDeleteCollection}
-        onPreview={props.onPreviewCollection}
-      />
+      <AsyncBoundary status={props.collectionsStatus ?? { state: "ready" }}>
+        <CollectionsPanel
+          collections={props.collections}
+          sandbox={sandbox}
+          onCreate={props.onCreateCollection}
+          onRename={props.onRenameCollection}
+          onDelete={props.onDeleteCollection}
+          onPreview={props.onPreviewCollection}
+        />
+      </AsyncBoundary>
     ),
     webhook_security: (
       <WebhookSecurityPanel
