@@ -25,13 +25,14 @@ export default function AppShell() {
   const [collapsed, setCollapsed] = useState(false);
   const toggle = useCallback(() => setCollapsed((c) => !c), []);
 
-  const menu: SidebarMenu = pathname.startsWith("/settings") ? "admin" : project ? "project" : "profile";
+  const menu: SidebarMenu = pathname.startsWith("/settings") ? "admin" : projectId ? "project" : "profile";
 
   return (
     <main className="flex h-screen">
       <Sidebar
         menu={menu}
-        project={project}
+        // The menu needs only the id, so it draws for a project the fixtures lack (one from the API).
+        project={projectId ? { id: projectId } : undefined}
         user={user}
         canAccessAdmin={canAccessAdmin}
         adminEmail={adminEmail}
