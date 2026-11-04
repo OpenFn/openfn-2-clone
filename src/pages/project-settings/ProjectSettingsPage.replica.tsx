@@ -12,6 +12,7 @@ import { simulateRequest } from "../../mock-data/request";
 import { permissionsForRole } from "../../permissions";
 import type { Project } from "../../types/projects";
 import { useCurrentUser } from "../../session/session";
+import { ApiError } from "../../api/client";
 import { RequestError } from "../../utils/errors";
 import { urlSafeName } from "../../utils/format";
 import { credentialReplicaActions } from "../profile/credentialsReplica";
@@ -27,6 +28,16 @@ function addedMessage(existing: number, unknown: number) {
   }
   const total = existing + unknown;
   return `${existing} out of ${total} collaborator${total === 1 ? "" : "s"} have OpenFn accounts and have been added to your project. You can invite others to join OpenFn and grant them access to this project.`;
+}
+
+/** settings.ex answers any refused collaboration change this way. */
+async function refusedAsLightning(save: Promise<void>) {
+  try {
+    await save;
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 403) throw new RequestError("You are not authorized to perform this action.");
+    throw error;
+  }
 }
 
 /**
@@ -66,6 +77,7 @@ function Replica({ project: initial, apiProjectId }: { project: Project; apiProj
   // Who may add and remove collaborators comes from the viewer's role in the API's members, as the members do.
   const members = useProjectMembers(apiProjectId, (role) => permissionsForRole(role, viewer).canRemoveProjectUser);
   const memberSaves = useProjectMemberSaves(apiProjectId);
+  const apiProject = useApiProject(apiProjectId);
   const asMember = permissionsForRole(members.viewerRole, viewer);
   const collections = useProjectCollections(apiProjectId);
   const collectionSaves = useCollectionSaves(apiProjectId);
@@ -89,6 +101,7 @@ function Replica({ project: initial, apiProjectId }: { project: Project; apiProj
       collaboration={{
         ...props.collaboration,
         collaborators: members.collaborators,
+        supportAccess: apiProject?.attributes.allow_support_access ?? props.collaboration.supportAccess,
         canAddProjectUser: asMember.canAddProjectUser,
         canEditProject: asMember.canEditProject,
       }}
@@ -153,21 +166,20 @@ function Replica({ project: initial, apiProjectId }: { project: Project; apiProj
         toast(`Invite${values.length > 1 ? "s" : ""} sent successfully`);
       }}
       onRemoveCollaborator={async (id) => {
-        await memberSaves.onRemoveCollaborator(id);
+        await refusedAsLightning(memberSaves.onRemoveCollaborator(id));
         toast("Collaborator removed");
       }}
       onSetSupportAccess={async (on) => {
-        await simulateRequest();
-        update(() => ({ supportAccess: on }));
+        await refusedAsLightning(memberSaves.onSetSupportAccess(on));
         toast(on ? "Granted access to support users successfully" : "Revoked access to support users successfully");
       }}
       onSetFailureAlert={async (id, on) => {
-        await memberSaves.onSetFailureAlert(id, on);
+        await refusedAsLightning(memberSaves.onSetFailureAlert(id, on));
         // Lightning's own spelling (project_live/settings.ex).
         toast("Project user updated successfuly");
       }}
       onSetDigest={async (id, digest) => {
-        await memberSaves.onSetDigest(id, digest);
+        await refusedAsLightning(memberSaves.onSetDigest(id, digest));
         toast("Project user updated successfuly");
       }}
       onSetRequiresMfa={async (requiresMfa) => {

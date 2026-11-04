@@ -21,10 +21,10 @@ import recordedSandboxes from "./recorded/sandboxes.json";
 
 // The API's shapes.
 
-/** A project as `GET /api/projects` lists it. */
+/** A project as `GET /api/projects` lists it (the settings it also gives are left out until a page reads them). */
 export interface ApiProject {
   id: string;
-  attributes: { name: string; description: string | null };
+  attributes: { name: string; description: string | null; allow_support_access: boolean };
 }
 
 /** A member as `GET /api/projects/:project_id/members` lists them; `id` is the user's. */
@@ -379,6 +379,9 @@ export function useProjectMemberSaves(projectId: string) {
   const invite = useSave([projectKeys.all], (values: InviteValues[]) => inviteMembers(projectId, values));
   const remove = useSave([projectKeys.all], (id: string) => request("DELETE", memberPath(projectId, id)));
   const notify = useSave([projectKeys.members(projectId)], notifications);
+  const supportAccess = useSave([projectKeys.all], (on: boolean) =>
+    request("PUT", `/api/projects/${encodeURIComponent(projectId)}/support_access`, { allow_support_access: on })
+  );
 
   return {
     // useSave doesn't carry the answer's type through.
@@ -387,6 +390,7 @@ export function useProjectMemberSaves(projectId: string) {
     onRemoveCollaborator: async (id: string) => void (await remove([id])),
     onSetFailureAlert: async (id: string, on: boolean) => void (await notify([id, { failure_alert: on }])),
     onSetDigest: async (id: string, digest: Digest) => void (await notify([id, { digest }])),
+    onSetSupportAccess: async (on: boolean) => void (await supportAccess([on])),
   };
 }
 
@@ -578,7 +582,7 @@ standIn("PUT", "/api/projects/:id", ({ id }, b) => {
   // Lightning lets only a superuser create a project through the API.
   if (standInRole() !== "superuser") throw new ApiError(403, "forbidden", "You may not do this (or it might not exist).");
   const body = b as { name: string; description: string | null; members: { email: string; role: ProjectRole }[] };
-  const project: ApiProject = { id: id!, attributes: { name: body.name, description: body.description } };
+  const project: ApiProject = { id: id!, attributes: { name: body.name, description: body.description, allow_support_access: false } };
   projectStore.push(project);
   projectStore.sort((x, y) => x.attributes.name.localeCompare(y.attributes.name));
   // Each member's user, as already recorded in another project.
@@ -588,6 +592,12 @@ standIn("PUT", "/api/projects/:id", ({ id }, b) => {
       .find((m) => m.attributes.email === email);
     return user ? [{ ...user, attributes: { ...user.attributes, role } }] : [];
   });
+  return { data: project };
+});
+standIn("PUT", "/api/projects/:id/support_access", ({ id }, b) => {
+  const project = projectStore.find((p) => p.id === id);
+  if (!project) throw new ApiError(404, "not_found", "Not found.");
+  project.attributes.allow_support_access = (b as { allow_support_access: boolean }).allow_support_access;
   return { data: project };
 });
 standIn("GET", "/api/projects/:project_id/members", ({ project_id }) => ({ data: memberStore[project_id!] ?? [], links: { next: null } }));
