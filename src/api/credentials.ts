@@ -241,7 +241,12 @@ export interface CredentialIndex {
   credentialTypes: CredentialTypeOption[];
 }
 
-/** The Credentials page's data: the viewer's credentials, the projects they can share with, and the adaptors, loaded side by side. */
+/**
+ * The Credentials page's data: the viewer's credentials, the projects they can
+ * share with, and the adaptors, loaded side by side. The adaptor catalogue
+ * can be down while the rest answers; Lightning still lists the credentials
+ * then, so the page waits on the catalogue but doesn't fail with it.
+ */
 export function useCredentialIndex(viewerEmail: string): CredentialIndex {
   const credentials = useQuery({
     queryKey: credentialKeys.all,
@@ -254,7 +259,7 @@ export function useCredentialIndex(viewerEmail: string): CredentialIndex {
     staleTime: Infinity,
   });
   return {
-    status: statusOf(credentials, projects, types),
+    status: statusOf(credentials, projects, ...(types.isError ? [] : [types])),
     credentials: (credentials.data ?? []).map((c) => ownCredentialRow(c, viewerEmail)).sort((a, b) => a.name.localeCompare(b.name)),
     projects: (projects.data ?? []).map(projectRef),
     credentialTypes: credentialTypeOptions(types.data ?? []),

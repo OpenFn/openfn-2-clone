@@ -3,7 +3,9 @@ import { renderHook, waitFor } from "@testing-library/react";
 import { createElement, type ReactNode } from "react";
 import { describe, expect, it } from "vitest";
 import type { CredentialValues } from "../types/credentials";
-import { credentialKeys, schemaFields, useCredentialIndex, useCredentialSaves, type ApiCredential } from "./credentials";
+import { failNext } from "./client";
+import { credentialKeys, listCredentials, schemaFields, useCredentialIndex, useCredentialSaves, type ApiCredential } from "./credentials";
+import { projectsQuery } from "./projects";
 
 const values = (overrides: Partial<CredentialValues> = {}): CredentialValues => ({
   formId: "f1",
@@ -71,5 +73,21 @@ describe("useCredentialSaves", () => {
     await expect(result.current.saves.onUpdateCredential(id, blank)).rejects.toMatchObject({
       fieldErrors: { "environments.main": ["Type it again: Lightning's API doesn't send a stored secret back"] },
     });
+  });
+});
+
+describe("useCredentialIndex", () => {
+  it("still lists the credentials when the adaptor catalogue can't answer", async () => {
+    // Loaded already and fresh, so the catalogue is the only request made
+    const client = new QueryClient({ defaultOptions: { queries: { retry: false, staleTime: Infinity } } });
+    await client.query({ queryKey: credentialKeys.all, queryFn: listCredentials });
+    await client.query(projectsQuery);
+    failNext({ status: 503, code: "unavailable", detail: "This is not ready yet. Try again shortly." });
+    const wrapper = ({ children }: { children: ReactNode }) => createElement(QueryClientProvider, { client }, children);
+    const { result } = renderHook(() => useCredentialIndex("me@example.com"), { wrapper });
+    await waitFor(() => expect(client.getQueryState(credentialKeys.types)?.status).toBe("error"));
+    expect(result.current.status).toEqual({ state: "ready" });
+    expect(result.current.credentials.length).toBeGreaterThan(0);
+    expect(result.current.credentialTypes).toEqual([]);
   });
 });
