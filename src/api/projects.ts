@@ -636,7 +636,7 @@ standIn("POST", "/api/projects/:project_id/invitations", ({ project_id }, b) => 
 // The stand-in's sandboxes, recorded from the real Lightning, each with its parent.
 
 type StandInSandbox = ApiProject & { parent_id: string; attributes: { scheduled_deletion: string | null } };
-const sandboxStore: StandInSandbox[] = Object.entries(recordedSandboxes.sandboxes).flatMap(([parent_id, list]) => list.map((p) => ({ ...p, parent_id })));
+const sandboxStore: StandInSandbox[] = Object.entries(recordedSandboxes.sandboxes).flatMap(([parent_id, list]) => list.map((p) => ({ ...p, parent_id, attributes: { allow_support_access: false, ...p.attributes } })));
 Object.assign(memberStore, Object.fromEntries(Object.entries(recordedSandboxes.members).map(([id, list]) => [id, list as ApiMember[]])));
 
 const sandboxesUnder = (id: string): StandInSandbox[] => sandboxStore.filter((s) => s.parent_id === id).flatMap((s) => [s, ...sandboxesUnder(s.id)]);
@@ -665,7 +665,7 @@ standIn("PUT", "/api/projects/:project_id/sandboxes/:id", ({ project_id, id }, b
   if (role !== "owner" && role !== "admin" && role !== "editor") throw forbidden();
   const { name } = b as { name: string };
   refuseTakenName(project_id!, name);
-  const sandbox: StandInSandbox = { id: id!, parent_id: project_id!, attributes: { name, description: null, scheduled_deletion: null } };
+  const sandbox: StandInSandbox = { id: id!, parent_id: project_id!, attributes: { name, description: null, allow_support_access: false, scheduled_deletion: null } };
   sandboxStore.push(sandbox);
   memberStore[id!] = (memberStore[project_id!] ?? []).map((m) => {
     const own = m.attributes.email === standInAccount.user?.email ? "owner" : m.attributes.role === "owner" ? "admin" : m.attributes.role;
