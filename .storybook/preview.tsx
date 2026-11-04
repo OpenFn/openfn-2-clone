@@ -6,6 +6,35 @@ import { DEFAULT_THEME_ID, THEMES } from "../src/theme/themes";
 import SessionProvider from "../src/session/SessionProvider";
 import { session } from "../src/mock-data/users";
 
+/*
+ * Each deploy replaces every hashed file on GitHub Pages, so a tab or cached
+ * page from before it asks for story files that no longer exist ("Failed to
+ * fetch dynamically imported module"). Reload once to pick up the new build;
+ * the flag stops a loop if the file is really missing.
+ */
+if (typeof window !== "undefined") {
+  const RELOADED = "storybook-reloaded-after-deploy";
+  window.addEventListener("vite:preloadError", (event) => {
+    try {
+      if (sessionStorage.getItem(RELOADED)) return;
+      sessionStorage.setItem(RELOADED, "1");
+    } catch {
+      return;
+    }
+    event.preventDefault();
+    window.location.reload();
+  });
+  window.addEventListener("load", () => {
+    setTimeout(() => {
+      try {
+        sessionStorage.removeItem(RELOADED);
+      } catch {
+        // Storage blocked: the listener above already gave up.
+      }
+    }, 10000);
+  });
+}
+
 /**
  * Reflects the toolbar-selected theme onto <html> so every story can be
  * previewed under any app theme — the same mechanism the app uses.
