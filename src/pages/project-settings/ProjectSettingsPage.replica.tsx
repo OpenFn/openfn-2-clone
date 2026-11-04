@@ -1,10 +1,11 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { Navigate, useLocation, useNavigate, useParams } from "react-router-dom";
 import { useCollectionSaves, useProjectCollections } from "../../api/collections";
 import { useProjectMemberSaves, useProjectMembers, useProjectName } from "../../api/projects";
+import { useProjectWebhookAuthMethods, useWebhookAuthMethodSaves } from "../../api/webhookAuthMethods";
 import { useToast } from "../../components/primitives/Toast";
 import { projectLabel } from "../../components/shell/projectPickerItems";
-import { generateApiKey, projectSettingsPropsFor, rootOf, settingsFixtureFor, type SettingsFixture } from "../../mock-data/project-settings";
+import { projectSettingsPropsFor, rootOf, settingsFixtureFor, type SettingsFixture } from "../../mock-data/project-settings";
 import { findProject, projects } from "../../mock-data/projects";
 import { simulateRequest } from "../../mock-data/request";
 import { permissionsForRole } from "../../permissions";
@@ -32,9 +33,9 @@ function addedMessage(existing: number, unknown: number) {
  * state as the server would, the deletion route, and the success toasts
  * (Lightning's flashes) and navigation. The collaborators come from
  * Lightning's API (or its stand-in), and so does who may add and remove them;
- * so do the collections and who may manage them. Everything else stays on
- * the fixture until the API serves it. Lightning replaces this file with a
- * LiveView wrapper.
+ * so do the collections and the webhook auth methods, and who may manage
+ * them. Everything else stays on the fixture until the API serves it.
+ * Lightning replaces this file with a LiveView wrapper.
  */
 export default function ProjectSettingsPageReplica() {
   const { projectId = "" } = useParams();
@@ -46,7 +47,7 @@ export default function ProjectSettingsPageReplica() {
   return <Replica key={project.id} project={project} apiProjectId={projectId} />;
 }
 
-/** `apiProjectId` is the project's id on the API, which the members and collections are read and saved under. */
+/** `apiProjectId` is the project's id on the API, which the members, collections and webhook auth methods are read and saved under. */
 function Replica({ project: initial, apiProjectId }: { project: Project; apiProjectId: string }) {
   const { pathname } = useLocation();
   const navigate = useNavigate();
@@ -62,9 +63,8 @@ function Replica({ project: initial, apiProjectId }: { project: Project; apiProj
   const asMember = permissionsForRole(members.viewerRole, viewer);
   const collections = useProjectCollections(apiProjectId);
   const collectionSaves = useCollectionSaves(apiProjectId);
-
-  // The key onGenerateApiKey last handed out, kept here as Lightning keeps it on the server.
-  const apiKey = useRef("");
+  const authMethods = useProjectWebhookAuthMethods(apiProjectId);
+  const authMethodSaves = useWebhookAuthMethodSaves(apiProjectId);
 
   // Every change applies to the latest state, so two quick edits don't overwrite each other.
   const update = (change: (f: SettingsFixture) => Partial<SettingsFixture>) => setFixture((f) => ({ ...f, ...change(f) }));
@@ -89,6 +89,8 @@ function Replica({ project: initial, apiProjectId }: { project: Project; apiProj
       collaborationStatus={members.status}
       collections={{ collections: collections.collections, canManage: permissionsForRole(collections.viewerRole, viewer).canCreateCollection }}
       collectionsStatus={collections.status}
+      webhookSecurity={{ authMethods: authMethods.authMethods, canWrite: permissionsForRole(authMethods.viewerRole, viewer).canWriteWebhookAuthMethod }}
+      webhookSecurityStatus={authMethods.status}
       projectLabel={projectLabel(project, projects)}
       deleting={pathname.endsWith("/settings/delete")}
       onSaveIdentity={({ rawName, description }) => updateProject({ name: urlSafeName(rawName), description })}
@@ -122,34 +124,19 @@ function Replica({ project: initial, apiProjectId }: { project: Project; apiProj
       }}
       onPreviewCollection={collectionSaves.onPreviewCollection}
       onCreateWebhookAuthMethod={async (values) => {
-        await simulateRequest();
-        const secret = values.authType === "api" ? { apiKey: apiKey.current } : {};
-        update((f) => ({
-          authMethods: [...f.authMethods, { ...values, ...secret, id: `wam-${Date.now()}`, projectId: project.id, triggers: [], channels: [] }],
-        }));
+        await authMethodSaves.onCreateWebhookAuthMethod(values);
         toast("Webhook auth method created successfully");
       }}
       onRenameWebhookAuthMethod={async (id, name) => {
-        await simulateRequest();
-        update((f) => ({ authMethods: f.authMethods.map((m) => (m.id === id ? { ...m, name } : m)) }));
+        await authMethodSaves.onRenameWebhookAuthMethod(id, name);
         toast("Webhook auth method updated successfully");
       }}
       onDeleteWebhookAuthMethod={async (id) => {
-        await simulateRequest();
-        update((f) => ({ authMethods: f.authMethods.filter((m) => m.id !== id) }));
+        await authMethodSaves.onDeleteWebhookAuthMethod(id);
         toast("Your Webhook Authentication method has been deleted.");
       }}
-      onGenerateApiKey={async () => {
-        apiKey.current = await simulateRequest(generateApiKey());
-        return apiKey.current;
-      }}
-      onRevealWebhookSecret={async (id, { password, code }) => {
-        await simulateRequest();
-        // Any password or code passes here; Lightning checks them against the user's.
-        if (!password && !code) throw new RequestError("Invalid! Please try again");
-        const method = fixture.authMethods.find((m) => m.id === id);
-        return (method?.authType === "basic" ? method.password : method?.apiKey) ?? "";
-      }}
+      onGenerateApiKey={authMethodSaves.onGenerateApiKey}
+      onRevealWebhookSecret={authMethodSaves.onRevealWebhookSecret}
       onAddCollaborators={async (values) => {
         const result = await memberSaves.onAddCollaborators(values);
         toast(addedMessage(values.length - result.toInvite.length, result.toInvite.length));

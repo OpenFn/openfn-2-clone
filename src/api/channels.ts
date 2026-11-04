@@ -38,10 +38,23 @@ export interface ApiChannel {
   };
 }
 
-/** A webhook auth method, as much of it as the channel form shows. */
+/** A webhook auth method as `GET /api/projects/:project_id/webhook_auth_methods` lists it (webhookAuthMethods.ts saves them). */
 export interface ApiWebhookAuthMethod {
   id: string;
-  attributes: { name: string };
+  attributes: {
+    name: string;
+    auth_type: "basic" | "api";
+    /** Basic auth's username; null for an API key, or for a viewer who can't manage the methods. */
+    username: string | null;
+    /** An API key's last five characters; null for basic auth, or for a viewer who can't manage the methods. */
+    api_key_last_characters: string | null;
+    /** The workflow triggers it protects. */
+    triggers: { id: string; workflow_id: string }[];
+    /** Only in a stepped-up read of one method. */
+    password?: string;
+    /** Only in a stepped-up read of one method, or the answer that creates it. */
+    api_key?: string;
+  };
 }
 
 // Mappers.
@@ -83,8 +96,20 @@ export const channelKeys = {
 
 // Requests.
 
-const projectPath = (projectId: string, rest: string) => `/api/projects/${encodeURIComponent(projectId)}${rest}`;
+export const projectPath = (projectId: string, rest: string) => `/api/projects/${encodeURIComponent(projectId)}${rest}`;
 const channelPath = (projectId: string, id: string) => projectPath(projectId, `/channels/${encodeURIComponent(id)}`);
+
+// Queries, shared with the Webhook Security tab (webhookAuthMethods.ts).
+
+export const channelsQuery = (projectId: string) => ({
+  queryKey: channelKeys.all(projectId),
+  queryFn: () => listAll<ApiChannel>(projectPath(projectId, "/channels"), "data"),
+});
+
+export const authMethodsQuery = (projectId: string) => ({
+  queryKey: channelKeys.authMethods(projectId),
+  queryFn: () => listAll<ApiWebhookAuthMethod>(projectPath(projectId, "/webhook_auth_methods"), "data"),
+});
 
 /** Where Lightning's pointers land on the channel form. */
 const toFormFields = (pointer: string) => {
@@ -125,14 +150,8 @@ export interface ChannelIndex {
 
 /** The channels page's data: the channels, and what the form picks from, loaded side by side. */
 export function useChannelIndex(projectId: string): ChannelIndex {
-  const channels = useQuery({
-    queryKey: channelKeys.all(projectId),
-    queryFn: () => listAll<ApiChannel>(projectPath(projectId, "/channels"), "data"),
-  });
-  const authMethods = useQuery({
-    queryKey: channelKeys.authMethods(projectId),
-    queryFn: () => listAll<ApiWebhookAuthMethod>(projectPath(projectId, "/webhook_auth_methods"), "data"),
-  });
+  const channels = useQuery(channelsQuery(projectId));
+  const authMethods = useQuery(authMethodsQuery(projectId));
   const credentials = useQuery({
     queryKey: channelKeys.credentials(projectId),
     queryFn: () => listAll<ApiCredential>(`/api/credentials?project_id=${encodeURIComponent(projectId)}`, "credentials"),
@@ -166,7 +185,8 @@ export function useChannelSaves(projectId: string) {
 // The stand-in: the recorded channels, changed as Lightning would change them.
 
 const channelStore: Record<string, ApiChannel[]> = Object.fromEntries(Object.entries(recorded.channels).map(([id, page]) => [id, page.data as ApiChannel[]]));
-const authMethodStore = recorded.webhook_auth_methods as Record<string, ApiWebhookAuthMethod[]>;
+/** The stand-in's webhook auth methods, which webhookAuthMethods.ts's stand-in changes. */
+export const authMethodStore = recorded.webhook_auth_methods as Record<string, ApiWebhookAuthMethod[]>;
 const channelsOf = (projectId: string) => (channelStore[projectId] ??= []);
 const invalid = (errors: ProblemEntry[]) => new ApiError(422, "invalid", "The request is not valid. See errors.", errors);
 
@@ -174,7 +194,10 @@ standIn("GET", "/api/projects/:project_id/channels", ({ project_id }) => ({
   data: [...channelsOf(project_id!)].sort((x, y) => x.attributes.name.localeCompare(y.attributes.name)),
   links: { next: null },
 }));
-standIn("GET", "/api/projects/:project_id/webhook_auth_methods", ({ project_id }) => ({ data: authMethodStore[project_id!] ?? [], links: { next: null } }));
+standIn("GET", "/api/projects/:project_id/webhook_auth_methods", ({ project_id }) => ({
+  data: [...(authMethodStore[project_id!] ?? [])].sort((x, y) => x.attributes.name.localeCompare(y.attributes.name)),
+  links: { next: null },
+}));
 standIn("PUT", "/api/projects/:project_id/channels/:id", ({ project_id, id }, b) => {
   const body = b as Partial<Pick<ApiChannel["attributes"], "name" | "destination_url" | "enabled" | "destination_credential_id" | "client_auth_method_ids">>;
   const list = channelsOf(project_id!);

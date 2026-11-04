@@ -39,6 +39,11 @@ and wraps only it. Then run step 7's overnight-1 check.
   `/auth/confirm_access?return_to=<this page>`, which steps the session up
   and brings them back (`TokensPage.replica.tsx`). Track it as a gap if
   Lightning's own page doesn't ask.
+- Some reads send a secret only to a stepped-up session and leave it out
+  otherwise (a webhook auth method's password). When the page asks for the
+  password itself (a reauthenticate step), step up with that password
+  (`useSessionActions().stepUp`) and then read, rather than going to
+  confirm access.
 - Some routes outside `/api` take only an API token, not the session
   (a collection's items, `/collections/:name`). The app can't call them:
   the action refuses in plain words, and it's a gap.
@@ -176,6 +181,8 @@ the page in both modes: a save, a refusal, a delete.
 - Wait for a modal to close rather than for a fixed time: live answers are
   slower than the stand-in's. Log each non-GET request and each 4xx answer.
   Look at the screenshots.
+- A delete that only schedules deletion leaves the record in the database,
+  hidden from the list, so create as few as you can on the real Lightning.
 - Delete what you created on the real Lightning afterwards, and make the
   script refuse to delete anything that was there before you started: other
   people use the same Lightning. Signing out disconnects that person's other

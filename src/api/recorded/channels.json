@@ -59,5 +59,40 @@
       }
     }
   },
-  "webhook_auth_methods": {}
+  "webhook_auth_methods": {
+    "1da97d81-152f-5f7d-a0fc-8416bd411706": [
+      {
+        "id": "8b769609-745c-4e46-a059-04c46802682f",
+        "type": "webhook_auth_methods",
+        "attributes": {
+          "name": "nightly basic 2",
+          "auth_type": "basic",
+          "username": "nightuser",
+          "api_key_last_characters": null,
+          "triggers": [],
+          "inserted_at": "2026-11-04T01:35:03Z",
+          "updated_at": "2026-11-04T01:35:04Z"
+        },
+        "relationships": {}
+      },
+      {
+        "id": "a6f741e0-091d-4f53-9d5c-ecfa884937f3",
+        "type": "webhook_auth_methods",
+        "attributes": {
+          "name": "nightly key",
+          "auth_type": "api",
+          "username": null,
+          "api_key_last_characters": "7c31b",
+          "triggers": [],
+          "inserted_at": "2026-11-04T01:35:03Z",
+          "updated_at": "2026-11-04T01:35:04Z"
+        },
+        "relationships": {}
+      }
+    ]
+  },
+  "webhook_auth_method_secrets": {
+    "8b769609-745c-4e46-a059-04c46802682f": "nightpass1",
+    "a6f741e0-091d-4f53-9d5c-ecfa884937f3": "000000000000000000000000000000000000000000000000000000000007c31b"
+  }
 }

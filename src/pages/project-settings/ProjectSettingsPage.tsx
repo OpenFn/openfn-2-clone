@@ -50,6 +50,8 @@ export interface ProjectSettingsPageProps extends ProjectSettingsPageData, Crede
   collaborationStatus?: ResourceStatus;
   /** While the host loads the collections, or why it couldn't (STANDARDS pattern 5). Leave it out when they arrive with the page. */
   collectionsStatus?: ResourceStatus;
+  /** While the host loads the webhook auth methods, or why it couldn't (STANDARDS pattern 5). Leave it out when they arrive with the page. */
+  webhookSecurityStatus?: ResourceStatus;
 
   onSaveIdentity: (values: ProjectIdentityValues) => Promise<void>;
   /** Saves Concurrency Override: 1 for one run at a time, null for parallel. */
@@ -163,15 +165,17 @@ export default function ProjectSettingsPage(props: ProjectSettingsPageProps) {
       </AsyncBoundary>
     ),
     webhook_security: (
-      <WebhookSecurityPanel
-        webhookSecurity={props.webhookSecurity}
-        parent={parent}
-        onCreate={props.onCreateWebhookAuthMethod}
-        onRename={props.onRenameWebhookAuthMethod}
-        onDelete={props.onDeleteWebhookAuthMethod}
-        onGenerateApiKey={props.onGenerateApiKey}
-        onReveal={props.onRevealWebhookSecret}
-      />
+      <AsyncBoundary status={props.webhookSecurityStatus ?? { state: "ready" }}>
+        <WebhookSecurityPanel
+          webhookSecurity={props.webhookSecurity}
+          parent={parent}
+          onCreate={props.onCreateWebhookAuthMethod}
+          onRename={props.onRenameWebhookAuthMethod}
+          onDelete={props.onDeleteWebhookAuthMethod}
+          onGenerateApiKey={props.onGenerateApiKey}
+          onReveal={props.onRevealWebhookSecret}
+        />
+      </AsyncBoundary>
     ),
     collaboration: (
       <AsyncBoundary status={props.collaborationStatus ?? { state: "ready" }}>
