@@ -1,19 +1,21 @@
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { MemoryRouter, Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import Button from "../../components/primitives/Button";
 import { ToastProvider } from "../../components/primitives/Toast";
-import { findUser, session } from "../../mock-data/users";
+import { session } from "../../mock-data/users";
 import { sandboxColorPalette } from "../../constants";
-import { fixturesUnder, type SandboxFixture } from "../../mock-data/sandboxes";
+import { ReactRouterAdapter } from "../../routing/ReactRouterAdapter";
 import SessionProvider from "../../session/SessionProvider";
 import SandboxesIndexPageReplica from "./SandboxesIndexPage.replica";
-import { isDisabled } from "../../test/disabled";
 
+// The stand-in's recorded workspace: openhie-project, its sandbox staging, and staging's fhir-tests.
 const ROOT = "4adf2644-ed4e-4f97-a24c-ab35b3cb1efa";
-const FHIR = "8c1d2e3f-4a5b-4c6d-9e7f-0a1b2c3d4e5f";
-const OLD = "2b3c4d5e-6f70-4a81-92b3-c4d5e6f70a81";
-const wait = { timeout: 3000 };
+const STAGING = "bf2cd8b2-2380-44ca-a07a-7a79e394cdf9";
+const FHIR_TESTS = "1f030fbc-0f76-4f0d-b266-0e96ad34d087";
+// The workspace loads a level at a time, then each project's members: several of the stand-in's delays.
+const wait = { timeout: 5000 };
 
 function Where() {
   const navigate = useNavigate();
@@ -26,43 +28,58 @@ function Where() {
   );
 }
 
-function renderAt(path: string, as = session) {
+function renderAt(path: string) {
+  const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   render(
-    <SessionProvider session={as}>
-      <ToastProvider>
-        <MemoryRouter initialEntries={[path]}>
-          <Routes>
-            {["", "/new", "/:sandboxId/edit"].map((tail) => (
-              <Route key={tail} path={`/projects/:projectId/sandboxes${tail}`} element={<SandboxesIndexPageReplica />} />
-            ))}
-          </Routes>
-          <Where />
-        </MemoryRouter>
-      </ToastProvider>
-    </SessionProvider>
+    <QueryClientProvider client={client}>
+      <SessionProvider session={session}>
+        <ToastProvider>
+          <MemoryRouter initialEntries={[path]}>
+            <ReactRouterAdapter>
+              <Routes>
+                {["", "/new", "/:sandboxId/edit"].map((tail) => (
+                  <Route key={tail} path={`/projects/:projectId/sandboxes${tail}`} element={<SandboxesIndexPageReplica />} />
+                ))}
+              </Routes>
+              <Where />
+            </ReactRouterAdapter>
+          </MemoryRouter>
+        </ToastProvider>
+      </SessionProvider>
+    </QueryClientProvider>
   );
 }
 
-const scheduledNames = () =>
-  within(document.getElementById("scheduled-for-deletion-section")!)
-    .getAllByRole("heading")
-    .map((h) => h.textContent)
-    .slice(1);
+const cardId = (name: string) => screen.getByRole("heading", { name }).closest("[id^=sandbox-card-]")!.id.replace("sandbox-card-", "");
+
+async function create(name: string) {
+  fireEvent.change(await screen.findByLabelText(/Name/, {}, wait), { target: { value: name } });
+  fireEvent.submit(document.getElementById("sandbox-form")!);
+  expect(await screen.findByText("Sandbox created", {}, wait)).toBeTruthy();
+  await screen.findByRole("heading", { name: name.toLowerCase().replace(/ /g, "-") }, wait);
+}
+
+async function remove(id: string, name: string) {
+  fireEvent.click(document.querySelector(`#delete-sandbox-${id} button`)!);
+  fireEvent.change(screen.getByLabelText(/Sandbox name/), { target: { value: name } });
+  fireEvent.submit(document.getElementById("confirm-delete-sandbox-form")!);
+  expect(await screen.findByText(`Sandbox ${name} scheduled for deletion.`, {}, wait)).toBeTruthy();
+}
 
 describe("SandboxesIndexPageReplica", () => {
   afterEach(() => vi.restoreAllMocks());
 
-  it("lists every sandbox under the root by name, not by tree (projects.ex list_descendants)", () => {
-    const f = (id: string, name: string, parentId: string): SandboxFixture => ({ id, name, color: null, parentId, env: null, scheduledDeletion: null });
-    const all = [f("r", "root", ""), f("b", "beta", "r"), f("z", "zulu", "b"), f("a", "alpha", "b"), f("m", "mike", "r")];
-    all[0]!.parentId = null;
-    expect(fixturesUnder(all, "r").map((x) => x.name)).toEqual(["alpha", "beta", "mike", "zulu"]);
+  it("lists every sandbox in the workspace, from the root down", async () => {
+    renderAt(`/projects/${FHIR_TESTS}/sandboxes`);
+    expect(await screen.findByRole("heading", { name: "fhir-tests" }, wait)).toBeTruthy();
+    expect(screen.getByRole("heading", { name: "staging" })).toBeTruthy();
+    expect(screen.getByRole("heading", { name: "openhie-project" })).toBeTruthy();
   });
 
   it("picks a new colour each time the Create form opens", async () => {
     const random = vi.spyOn(Math, "random").mockReturnValue(0);
     renderAt(`/projects/${ROOT}/sandboxes/new`);
-    expect((screen.getByRole("radio", { name: sandboxColorPalette[0]! }) as HTMLInputElement).checked).toBe(true);
+    expect(((await screen.findByRole("radio", { name: sandboxColorPalette[0]! }, wait)) as HTMLInputElement).checked).toBe(true);
     fireEvent.click(within(screen.getByRole("dialog")).getByRole("button", { name: "Cancel" }));
     await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
     random.mockReturnValue(0.99);
@@ -71,89 +88,65 @@ describe("SandboxesIndexPageReplica", () => {
     expect(((await screen.findByRole("radio", { name: last })) as HTMLInputElement).checked).toBe(true);
   });
 
-  it("schedules a sandbox with the ones under it, moves the viewer out of it, and Restore brings them all back", async () => {
-    renderAt(`/projects/${FHIR}/sandboxes/new`);
-    fireEvent.change(screen.getByLabelText(/Name/), { target: { value: "Child One" } });
-    fireEvent.submit(document.getElementById("sandbox-form")!);
-    expect(await screen.findByText("Sandbox created", {}, wait)).toBeTruthy();
-    await waitFor(() => expect(screen.getByTestId("where").textContent).toBe(`/projects/${FHIR}/sandboxes`));
-    expect(screen.getByText("child-one")).toBeTruthy();
-
-    fireEvent.click(document.querySelector(`#delete-sandbox-${FHIR} button`)!);
-    fireEvent.change(screen.getByLabelText(/Sandbox name/), { target: { value: "fhir-mapping-v2" } });
-    fireEvent.submit(document.getElementById("confirm-delete-sandbox-form")!);
-    expect(await screen.findByText("Sandbox fhir-mapping-v2 scheduled for deletion.", {}, wait)).toBeTruthy();
-    await waitFor(() => expect(screen.getByTestId("where").textContent).toBe(`/projects/${ROOT}/sandboxes`));
-    expect(scheduledNames().sort()).toEqual(["child-one", "fhir-mapping-v2", "old-import-test"]);
-
-    fireEvent.click(document.querySelector(`#cancel-deletion-sandbox-${FHIR} button`)!);
-    expect(await screen.findByText("Cancelled deletion of sandbox fhir-mapping-v2.", {}, wait)).toBeTruthy();
-    expect(scheduledNames()).toEqual(["old-import-test"]);
-  }, 10_000);
-
-  it("refuses a name a sibling has, scheduled ones included, on the field", async () => {
+  it("refuses a name a sibling has, on the field, in Lightning's words", async () => {
     renderAt(`/projects/${ROOT}/sandboxes/new`);
-    fireEvent.change(screen.getByLabelText(/Name/), { target: { value: "Old Import Test" } });
+    fireEvent.change(await screen.findByLabelText(/Name/, {}, wait), { target: { value: "Staging" } });
     fireEvent.submit(document.getElementById("sandbox-form")!);
-    expect(await screen.findByText("Sandbox name already exists", {}, wait)).toBeTruthy();
+    expect(await screen.findByText("has already been taken", {}, wait)).toBeTruthy();
     expect(screen.getByRole("dialog")).toBeTruthy();
+  }, 15_000);
+
+  it("opens the edit form with the stored name", async () => {
+    renderAt(`/projects/${ROOT}/sandboxes/${STAGING}/edit`);
+    expect(((await screen.findByLabelText(/Name/, {}, wait)) as HTMLInputElement).value).toBe("staging");
   });
 
-  it("opens the edit form with the stored name", () => {
-    renderAt(`/projects/${ROOT}/sandboxes/${FHIR}/edit`);
-    expect((screen.getByLabelText(/Name/) as HTMLInputElement).value).toBe("fhir-mapping-v2");
+  it("refuses a colour on edit, which the API can't save", async () => {
+    renderAt(`/projects/${ROOT}/sandboxes/${STAGING}/edit`);
+    fireEvent.click(await screen.findByRole("radio", { name: sandboxColorPalette[0]! }, wait));
+    fireEvent.submit(document.getElementById("sandbox-form")!);
+    expect(await screen.findByText("Lightning's API can't change a sandbox's colour yet.", {}, wait)).toBeTruthy();
   });
 
-  it("opens no edit form for a sandbox scheduled for deletion, and still shows the list", () => {
-    renderAt(`/projects/${ROOT}/sandboxes/${OLD}/edit`);
-    expect(screen.queryByRole("dialog")).toBeNull();
-    expect(scheduledNames()).toEqual(["old-import-test"]);
-  });
+  it("renames a sandbox", async () => {
+    renderAt(`/projects/${STAGING}/sandboxes/new`);
+    await create("Rename Me");
+    fireEvent.click(document.querySelector(`#edit-sandbox-${cardId("rename-me")} button`)!);
+    fireEvent.change(await screen.findByLabelText(/Name/, {}, wait), { target: { value: "Renamed" } });
+    fireEvent.submit(document.getElementById("sandbox-form")!);
+    expect(await screen.findByText("Sandbox updated", {}, wait)).toBeTruthy();
+    expect(await screen.findByRole("heading", { name: "renamed" }, wait)).toBeTruthy();
+  }, 15_000);
 
   it("leaves the viewer where they are when they delete a sandbox they aren't in", async () => {
-    renderAt(`/projects/${FHIR}/sandboxes/new`);
-    fireEvent.change(screen.getByLabelText(/Name/), { target: { value: "Child One" } });
-    fireEvent.submit(document.getElementById("sandbox-form")!);
-    expect(await screen.findByText("Sandbox created", {}, wait)).toBeTruthy();
-    await waitFor(() => expect(screen.getByTestId("where").textContent).toBe(`/projects/${FHIR}/sandboxes`));
-    fireEvent.click(screen.getByRole("button", { name: "Go to the root" }));
-    const child = screen.getByText("child-one").closest("[id^=sandbox-card-]")!.id.replace("sandbox-card-", "");
-    fireEvent.click(document.querySelector(`#delete-sandbox-${child} button`)!);
-    fireEvent.change(screen.getByLabelText(/Sandbox name/), { target: { value: "child-one" } });
-    fireEvent.submit(document.getElementById("confirm-delete-sandbox-form")!);
-    expect(await screen.findByText("Sandbox child-one scheduled for deletion.", {}, wait)).toBeTruthy();
+    renderAt(`/projects/${ROOT}/sandboxes/new`);
+    await create("Child One");
+    await remove(cardId("child-one"), "child-one");
     expect(screen.getByTestId("where").textContent).toBe(`/projects/${ROOT}/sandboxes`);
-  }, 10_000);
+    await waitFor(() => expect(screen.queryByRole("heading", { name: "child-one" })).toBeNull(), wait);
+  }, 15_000);
 
-  it("lets an owner of a sandbox manage it without managing the rest of the workspace", async () => {
-    // Esther is an editor on the root and on fhir-mapping-v2, and owns the sandbox she creates.
-    renderAt(`/projects/${FHIR}/sandboxes/new`, { ...session, user: findUser("user-esther")! });
-    fireEvent.change(screen.getByLabelText(/Name/), { target: { value: "Mine" } });
-    fireEvent.submit(document.getElementById("sandbox-form")!);
-    expect(await screen.findByText("Sandbox created", {}, wait)).toBeTruthy();
-    await waitFor(() => expect(screen.getByTestId("where").textContent).toBe(`/projects/${FHIR}/sandboxes`));
-    const mine = screen.getByText("mine").closest("[id^=sandbox-card-]")!.id.replace("sandbox-card-", "");
-    for (const kind of ["branch-rewire", "edit", "delete"]) {
-      expect(isDisabled((document.querySelector(`#${kind}-sandbox-${mine} button`) as HTMLButtonElement))).toBe(false);
-      expect(isDisabled(document.querySelector(`#${kind}-sandbox-${FHIR} button`))).toBe(true);
-    }
-  }, 10_000);
-  it("previews the merge into the parent with Lightning's badges, then toasts the merge and opens the parent's workflows", async () => {
-    renderAt(`/projects/${ROOT}/sandboxes`);
-    fireEvent.click(document.querySelector(`#branch-rewire-sandbox-${FHIR} button`)!);
+  it("previews the merge into the parent, then toasts the merge and opens the parent's workflows", async () => {
+    renderAt(`/projects/${ROOT}/sandboxes/new`);
+    await create("To Merge");
+    fireEvent.click(document.querySelector(`#branch-rewire-sandbox-${cardId("to-merge")} button`)!);
     const dialog = await screen.findByRole("dialog");
     await within(dialog).findByText("Workflows to merge", {}, wait);
-    const rows = Array.from(dialog.querySelectorAll("li label")).map((l) => l.textContent);
-    expect(rows).toEqual([
-      "FHIR bundle exportNew",
-      "Facility registry syncDeleted in sandbox",
-      "OpenHIE WorkflowChangedDiverged",
-      "Referral follow-ups",
-      "FHIR sandbox server",
-      "fhir-staging-cache",
-    ]);
+    expect(Array.from(dialog.querySelectorAll("li label")).map((l) => l.textContent)).toEqual(["OpenHIE Workflow"]);
+    // Unchanged in the sandbox, so it starts unticked.
+    fireEvent.click(within(dialog).getByLabelText("OpenHIE Workflow"));
     fireEvent.submit(document.getElementById("merge-sandbox-form")!);
-    expect(await screen.findByText("Successfully merged fhir-mapping-v2 into openhie-project. Sandbox scheduled for deletion.", {}, wait)).toBeTruthy();
+    // The merge, the scheduling, then every list it touched reloads.
+    expect(await screen.findByText("Successfully merged to-merge into openhie-project. Sandbox scheduled for deletion.", {}, { timeout: 12_000 })).toBeTruthy();
     await waitFor(() => expect(screen.getByTestId("where").textContent).toBe(`/projects/${ROOT}/w`));
-  }, 10_000);
+  }, 25_000);
+
+  // Last: it schedules part of the recorded workspace.
+  it("schedules a sandbox with the ones under it and moves the viewer out of it", async () => {
+    renderAt(`/projects/${FHIR_TESTS}/sandboxes`);
+    await screen.findByRole("heading", { name: "fhir-tests" }, wait);
+    await remove(STAGING, "staging");
+    await waitFor(() => expect(screen.getByTestId("where").textContent).toBe(`/projects/${ROOT}/sandboxes`));
+    await waitFor(() => expect(screen.queryByRole("heading", { name: "fhir-tests" })).toBeNull(), wait);
+  }, 15_000);
 });

@@ -1,0 +1,171 @@
+{
+  "sandboxes": {
+    "4adf2644-ed4e-4f97-a24c-ab35b3cb1efa": [
+      {
+        "id": "bf2cd8b2-2380-44ca-a07a-7a79e394cdf9",
+        "attributes": {
+          "name": "staging",
+          "description": null,
+          "scheduled_deletion": null
+        }
+      }
+    ],
+    "bf2cd8b2-2380-44ca-a07a-7a79e394cdf9": [
+      {
+        "id": "1f030fbc-0f76-4f0d-b266-0e96ad34d087",
+        "attributes": {
+          "name": "fhir-tests",
+          "description": null,
+          "scheduled_deletion": null
+        }
+      }
+    ]
+  },
+  "members": {
+    "bf2cd8b2-2380-44ca-a07a-7a79e394cdf9": [
+      {
+        "attributes": {
+          "role": "owner",
+          "digest": "never",
+          "first_name": "Amy",
+          "email": "demo@openfn.org",
+          "last_name": "Admin",
+          "failure_alert": false
+        },
+        "id": "eb6a48a2-a1db-4c1b-a80b-8d7f40300564",
+        "links": {
+          "self": "http://localhost:4000/api/projects/bf2cd8b2-2380-44ca-a07a-7a79e394cdf9/members/eb6a48a2-a1db-4c1b-a80b-8d7f40300564"
+        },
+        "type": "project_members",
+        "relationships": {}
+      },
+      {
+        "attributes": {
+          "role": "editor",
+          "digest": "never",
+          "first_name": "Esther",
+          "email": "editor@openfn.org",
+          "last_name": "Editor",
+          "failure_alert": false
+        },
+        "id": "11c01281-99e6-4463-b32a-e89f10afb370",
+        "links": {
+          "self": "http://localhost:4000/api/projects/bf2cd8b2-2380-44ca-a07a-7a79e394cdf9/members/11c01281-99e6-4463-b32a-e89f10afb370"
+        },
+        "type": "project_members",
+        "relationships": {}
+      },
+      {
+        "attributes": {
+          "role": "admin",
+          "digest": "never",
+          "first_name": "Sizwe",
+          "email": "super@openfn.org",
+          "last_name": "Super",
+          "failure_alert": false
+        },
+        "id": "e6b4a426-9373-4c81-9eed-c0ae6deaf70e",
+        "links": {
+          "self": "http://localhost:4000/api/projects/bf2cd8b2-2380-44ca-a07a-7a79e394cdf9/members/e6b4a426-9373-4c81-9eed-c0ae6deaf70e"
+        },
+        "type": "project_members",
+        "relationships": {}
+      },
+      {
+        "attributes": {
+          "role": "viewer",
+          "digest": "never",
+          "first_name": "Vikram",
+          "email": "viewer@openfn.org",
+          "last_name": "Viewer",
+          "failure_alert": false
+        },
+        "id": "88ac8e42-6f55-4180-919b-d55c79679001",
+        "links": {
+          "self": "http://localhost:4000/api/projects/bf2cd8b2-2380-44ca-a07a-7a79e394cdf9/members/88ac8e42-6f55-4180-919b-d55c79679001"
+        },
+        "type": "project_members",
+        "relationships": {}
+      }
+    ],
+    "1f030fbc-0f76-4f0d-b266-0e96ad34d087": [
+      {
+        "attributes": {
+          "role": "owner",
+          "digest": "never",
+          "first_name": "Amy",
+          "email": "demo@openfn.org",
+          "last_name": "Admin",
+          "failure_alert": false
+        },
+        "id": "eb6a48a2-a1db-4c1b-a80b-8d7f40300564",
+        "links": {
+          "self": "http://localhost:4000/api/projects/1f030fbc-0f76-4f0d-b266-0e96ad34d087/members/eb6a48a2-a1db-4c1b-a80b-8d7f40300564"
+        },
+        "type": "project_members",
+        "relationships": {}
+      },
+      {
+        "attributes": {
+          "role": "editor",
+          "digest": "never",
+          "first_name": "Esther",
+          "email": "editor@openfn.org",
+          "last_name": "Editor",
+          "failure_alert": false
+        },
+        "id": "11c01281-99e6-4463-b32a-e89f10afb370",
+        "links": {
+          "self": "http://localhost:4000/api/projects/1f030fbc-0f76-4f0d-b266-0e96ad34d087/members/11c01281-99e6-4463-b32a-e89f10afb370"
+        },
+        "type": "project_members",
+        "relationships": {}
+      },
+      {
+        "attributes": {
+          "role": "admin",
+          "digest": "never",
+          "first_name": "Sizwe",
+          "email": "super@openfn.org",
+          "last_name": "Super",
+          "failure_alert": false
+        },
+        "id": "e6b4a426-9373-4c81-9eed-c0ae6deaf70e",
+        "links": {
+          "self": "http://localhost:4000/api/projects/1f030fbc-0f76-4f0d-b266-0e96ad34d087/members/e6b4a426-9373-4c81-9eed-c0ae6deaf70e"
+        },
+        "type": "project_members",
+        "relationships": {}
+      },
+      {
+        "attributes": {
+          "role": "viewer",
+          "digest": "never",
+          "first_name": "Vikram",
+          "email": "viewer@openfn.org",
+          "last_name": "Viewer",
+          "failure_alert": false
+        },
+        "id": "88ac8e42-6f55-4180-919b-d55c79679001",
+        "links": {
+          "self": "http://localhost:4000/api/projects/1f030fbc-0f76-4f0d-b266-0e96ad34d087/members/88ac8e42-6f55-4180-919b-d55c79679001"
+        },
+        "type": "project_members",
+        "relationships": {}
+      }
+    ]
+  },
+  "merge_preview": {
+    "credentials": [],
+    "workflows": [
+      {
+        "name": "OpenHIE Workflow",
+        "diverged": false,
+        "change": "unchanged",
+        "source_workflow_id": "cf1f5a47-9c8e-468d-af63-58807cc68e65",
+        "target_workflow_id": "5169a138-a68a-407e-a322-2e6d58e43cc2"
+      }
+    ],
+    "target_project_id": "4adf2644-ed4e-4f97-a24c-ab35b3cb1efa"
+  }
+}

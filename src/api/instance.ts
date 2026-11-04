@@ -11,6 +11,8 @@ export interface ApiInstance {
   release: { label: string };
   allow_signup: boolean;
   needs_setup: boolean;
+  /** Days a deleted project or sandbox is kept before it is purged. */
+  purge_deleted_after_days: number | null;
   sign_in_providers: { name: string; kind: string; start_url: string }[];
 }
 

@@ -1,19 +1,23 @@
 /**
- * Projects and their members on Lightning's API (API.md "Projects",
- * JSON:API): the API's shapes, the mappers, the keys, the hooks a wrapper
- * calls, and how the stand-in answers.
+ * Projects, their members and their sandboxes on Lightning's API (API.md
+ * "Projects" and "Sandboxes", JSON:API): the API's shapes, the mappers, the
+ * keys, the hooks a wrapper calls, and how the stand-in answers.
  */
 import { useQueries, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { CredentialProjectRef } from "../types/credentials";
 import type { AddCollaboratorsResult, CollaboratorRow, CollaboratorValues, Digest, InviteValues } from "../types/project-settings";
 import type { ProjectRole } from "../types/projects";
 import type { ResourceStatus } from "../types/resource";
+import type { MergePreviewResult, MergeValues, MergeWorkflowRow, SandboxRow, SandboxValues } from "../types/sandboxes";
 import type { ProjectOverview } from "../types/workflows";
+import { urlSafeName } from "../utils/format";
 import { ApiError, listAll, request, standIn, statusOf, useSave, withFieldNames } from "./client";
-import { meQuery, standInRole } from "./me";
-import { workflowsQuery, type ApiWorkflow } from "./workflows";
+import { instanceQuery } from "./instance";
+import { meQuery, standInAccount, standInRole } from "./me";
+import { workflowKeys, workflowsQuery, type ApiWorkflow } from "./workflows";
 import recorded from "./recorded/projects.json";
 import recordedMembers from "./recorded/members.json";
+import recordedSandboxes from "./recorded/sandboxes.json";
 
 // The API's shapes.
 
@@ -34,6 +38,32 @@ export interface ApiMember {
     failure_alert: boolean;
     digest: Digest;
   };
+}
+
+/**
+ * A project in a workspace. `GET /api/projects` lists the roots and
+ * `GET /api/projects/:project_id/sandboxes` each one's direct sandboxes, so the
+ * parent is the list it came from: the API sends no `parent_id`.
+ */
+export interface WorkspaceProject {
+  id: string;
+  name: string;
+  description: string | null;
+  parentId: string | null;
+}
+
+/** `POST …/sandboxes/:id/merge_previews`: what a merge would do, writing nothing. */
+export interface ApiMergePreview {
+  target_project_id: string;
+  workflows: {
+    name: string;
+    source_workflow_id: string | null;
+    target_workflow_id: string | null;
+    change: "new" | "changed" | "unchanged" | "deleted";
+    diverged: boolean;
+  }[];
+  /** The sandbox's credentials the target lacks, by the credential's own id. */
+  credentials: { credential_id: string; name: string }[];
 }
 
 // Mappers.
@@ -92,11 +122,63 @@ export function collaboratorRow(m: ApiMember, viewerId: string | undefined, canR
   };
 }
 
+/** Every project under `id`, at any depth. */
+export function projectsUnder(all: WorkspaceProject[], id: string): WorkspaceProject[] {
+  return all.filter((p) => p.parentId === id).flatMap((p) => [p, ...projectsUnder(all, p.id)]);
+}
+
+/** The top of the tree `id` sits in. */
+export function workspaceRootOf(all: WorkspaceProject[], id: string): WorkspaceProject | undefined {
+  let p = all.find((x) => x.id === id);
+  while (p?.parentId) {
+    const parentId: string = p.parentId;
+    p = all.find((x) => x.id === parentId);
+  }
+  return p;
+}
+
+/**
+ * A card on the sandboxes page. `canManage` is Lightning's owner-or-admin
+ * rule, on the root or on the sandbox. The API sends no colour or env, and
+ * leaves out sandboxes scheduled for deletion, so there's nothing to restore.
+ */
+export function sandboxRow(p: WorkspaceProject, all: WorkspaceProject[], canManage: boolean): SandboxRow {
+  return {
+    id: p.id,
+    name: p.name,
+    color: null,
+    env: null,
+    scheduledDeletion: null,
+    workflowsHref: `/projects/${p.id}/w`,
+    editHref: p.parentId ? `/projects/${p.parentId}/sandboxes/${p.id}/edit` : null,
+    canEdit: canManage,
+    canDelete: canManage,
+    canMerge: canManage,
+    canCancelDeletion: false,
+    restoreBlockedReason: null,
+    activeDescendantCount: projectsUnder(all, p.id).length,
+  };
+}
+
+/** A workflow in the merge dialog. A deleted one is the target's, so it goes by the target's id. */
+export function mergeWorkflowRow(w: ApiMergePreview["workflows"][number]): MergeWorkflowRow {
+  return {
+    id: (w.change === "deleted" ? w.target_workflow_id : w.source_workflow_id) ?? w.name,
+    name: w.name,
+    isNew: w.change === "new",
+    isChanged: w.change === "new" || w.change === "changed",
+    isDiverged: w.diverged,
+    isDeleted: w.change === "deleted",
+  };
+}
+
 // Keys and requests.
 
 export const projectKeys = {
   all: ["projects"] as const,
   members: (id: string) => ["projects", id, "members"] as const,
+  /** Every project the caller can see and every sandbox under each. */
+  workspaces: ["projects", "workspaces"] as const,
 };
 
 /** `GET /api/projects`: the projects the caller is a member of, every page. */
@@ -285,6 +367,176 @@ export function useProjectMemberSaves(projectId: string) {
   };
 }
 
+// Sandboxes.
+
+const sandboxesPath = (projectId: string, rest = "") => `/api/projects/${encodeURIComponent(projectId)}/sandboxes${rest}`;
+const projectPath = (projectId: string, rest = "") => `/api/projects/${encodeURIComponent(projectId)}${rest}`;
+
+/** The query for every workspace the caller can see: the projects, then each one's sandboxes, a level at a time. */
+export const workspacesQuery = {
+  queryKey: projectKeys.workspaces,
+  queryFn: async (): Promise<WorkspaceProject[]> => {
+    const node = (p: ApiProject, parentId: string | null): WorkspaceProject => ({
+      id: p.id,
+      name: p.attributes.name,
+      description: p.attributes.description,
+      parentId,
+    });
+    const all = (await listProjects()).map((p) => node(p, null));
+    // ponytail: one request per project in the instance, since the API lists only a project's direct sandboxes and sends no parent; one request when it does.
+    let level = all;
+    while (level.length > 0) {
+      const lists = await Promise.all(
+        level.map((parent) => listAll<ApiProject>(sandboxesPath(parent.id), "data").then((list) => list.map((p) => node(p, parent.id))))
+      );
+      level = lists.flat();
+      all.push(...level);
+    }
+    return all;
+  },
+};
+
+const isAdmin = (role: ProjectRole | undefined) => role === "owner" || role === "admin";
+const isEditor = (role: ProjectRole | undefined) => isAdmin(role) || role === "editor";
+
+export interface Workspace {
+  status: ResourceStatus;
+  /** The project in the URL, once loaded. */
+  project: WorkspaceProject | undefined;
+  /** The workspace the project sits in, root first. */
+  tree: WorkspaceProject[];
+  /** "parent/child" for a sandbox. */
+  label: string;
+  root: SandboxRow | undefined;
+  rootIsSandbox: boolean;
+  sandboxes: SandboxRow[];
+  /** The viewer's role in the project in the URL. */
+  viewerRole: ProjectRole | undefined;
+  gracePeriodDays: number | null;
+  /** Where the sandbox may merge: live projects of the workspace outside it, where the viewer is owner, admin or editor (index.ex `get_merge_target_options`). */
+  mergeTargets: (sandboxId: string) => { id: string; name: string }[];
+}
+
+/**
+ * The sandboxes page's data: the workspace the project sits in, and each
+ * project's members for the viewer's role there, loaded side by side.
+ */
+export function useWorkspace(projectId: string): Workspace {
+  const me = useQuery(meQuery);
+  const workspaces = useQuery(workspacesQuery);
+  const instance = useQuery(instanceQuery);
+  const all = workspaces.data ?? [];
+  const top = workspaceRootOf(all, projectId);
+  const tree = top ? [top, ...projectsUnder(all, top.id)] : [];
+  const members = useQueries({ queries: tree.map((p) => membersQuery(p.id)) });
+  const roleIn = (id: string) => members[tree.findIndex((p) => p.id === id)]?.data?.find((m) => m.id === me.data?.id)?.attributes.role;
+  const row = (p: WorkspaceProject) => sandboxRow(p, all, (top !== undefined && isAdmin(roleIn(top.id))) || isAdmin(roleIn(p.id)));
+  const project = all.find((p) => p.id === projectId);
+  const status = statusOf(me, workspaces, instance, ...members);
+  const label: string[] = [];
+  for (let p = project; p; p = all.find((x) => x.id === p!.parentId)) label.unshift(p.name);
+  return {
+    status: status.state === "ready" && !project ? { state: "notFound" } : status,
+    project,
+    tree,
+    label: label.join("/"),
+    root: top && row(top),
+    // `GET /api/projects` lists only roots, so a viewer who can see only a sandbox sees nothing here: tracked as a gap.
+    rootIsSandbox: false,
+    // By name, not by tree (projects.ex `list_descendants`).
+    sandboxes: tree
+      .slice(1)
+      .sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0))
+      .map(row),
+    viewerRole: roleIn(projectId),
+    gracePeriodDays: instance.data?.purge_deleted_after_days ?? null,
+    mergeTargets: (sandboxId) => {
+      const own = [sandboxId, ...projectsUnder(all, sandboxId).map((p) => p.id)];
+      return tree.filter((p) => !own.includes(p.id) && isEditor(roleIn(p.id))).map((p) => ({ id: p.id, name: p.name }));
+    },
+  };
+}
+
+/** The sandbox's parent, from the workspaces already loaded: the sandbox routes sit under it. */
+async function parentOf(queryClient: ReturnType<typeof useQueryClient>, sandboxId: string): Promise<string> {
+  const parentId = (await queryClient.query(workspacesQuery)).find((p) => p.id === sandboxId)?.parentId;
+  if (!parentId) throw new ApiError(404, "not_found", "Sandbox not found");
+  return parentId;
+}
+
+const toName = (pointer: string) => (pointer === "#/name" ? "#/rawName" : undefined);
+
+/** `POST …/merge_previews`; a null target asks for the parent. */
+async function previewMerge(queryClient: ReturnType<typeof useQueryClient>, id: string, targetId: string | null) {
+  const path = sandboxesPath(await parentOf(queryClient, id), `/${encodeURIComponent(id)}/merge_previews`);
+  return request<ApiMergePreview>("POST", path, targetId ? { target_project_id: targetId } : {});
+}
+
+/**
+ * The sandboxes page's saves. Each resolves once the workspaces, members and
+ * dashboard have reloaded; a merge also reloads the workflows.
+ */
+export function useSandboxSaves(projectId: string) {
+  const queryClient = useQueryClient();
+
+  const create = useSave([projectKeys.all], async ({ rawName, color }: SandboxValues) => {
+    const send = request("PUT", sandboxesPath(projectId, `/${crypto.randomUUID()}`), { name: urlSafeName(rawName), color });
+    await withFieldNames(send, toName);
+  });
+
+  // `PUT /api/projects/:id` replaces the name and the description, so the description goes back as it was.
+  const update = useSave([projectKeys.all], async (id: string, { rawName, color }: SandboxValues) => {
+    if (color !== null) throw new ApiError(422, "not_supported", "Lightning's API can't change a sandbox's colour yet.");
+    const current = (await queryClient.query(workspacesQuery)).find((p) => p.id === id);
+    if (!current) throw new ApiError(404, "not_found", "Sandbox not found");
+    await withFieldNames(request("PUT", projectPath(id), { name: urlSafeName(rawName), description: current.description }), toName);
+  });
+
+  const remove = useSave([projectKeys.all], (id: string) => request("DELETE", projectPath(id)));
+  const cancelDeletion = useSave([projectKeys.all], (id: string) => request("DELETE", projectPath(id, "/scheduled_deletion")));
+
+  /**
+   * `POST …/merges` with the ticked workflows, then, as Lightning's page does,
+   * `DELETE /api/projects/:id` to schedule the sandbox for deletion. The API
+   * never deletes a target's workflow and links every credential the target
+   * lacks, so a choice that needs otherwise is refused before anything runs.
+   * Resolves with whether the sandbox was scheduled.
+   */
+  const merge = useSave([projectKeys.all, workflowKeys.all], async (id: string, values: MergeValues): Promise<boolean> => {
+    if (values.deletedWorkflowIds.length > 0)
+      throw new ApiError(422, "not_supported", "Lightning's API can't delete a workflow from the target in a merge yet.");
+    const preview = await previewMerge(queryClient, id, values.targetId);
+    if (preview.credentials.some((c) => !values.credentialIds.includes(c.credential_id))) {
+      throw new ApiError(422, "not_supported", "Lightning's API can't leave out a credential in a merge yet.");
+    }
+    const path = sandboxesPath(await parentOf(queryClient, id), `/${encodeURIComponent(id)}/merges`);
+    await request("POST", path, { target_project_id: values.targetId, workflow_ids: values.workflowIds });
+    return request("DELETE", projectPath(id)).then(
+      () => true,
+      () => false
+    );
+  });
+
+  return {
+    onCreateSandbox: async (values: SandboxValues) => void (await create([values])),
+    onUpdateSandbox: async (id: string, values: SandboxValues) => void (await update([id, values])),
+    onDeleteSandbox: async (id: string) => void (await remove([id])),
+    onCancelDeletion: async (id: string) => void (await cancelDeletion([id])),
+    /** What merging into the target would do. The API doesn't say which collections a merge creates. */
+    onPreviewMerge: async (id: string, targetId: string | null): Promise<Omit<MergePreviewResult, "targets">> => {
+      const preview = await previewMerge(queryClient, id, targetId);
+      return {
+        targetId: preview.target_project_id,
+        workflows: preview.workflows.map(mergeWorkflowRow),
+        credentials: preview.credentials.map((c) => ({ id: c.credential_id, name: c.name })),
+        collectionsToAdd: [],
+      };
+    },
+    // useSave doesn't carry the answer's type through.
+    onMergeSandbox: (id: string, values: MergeValues) => merge([id, values]) as Promise<boolean>,
+  };
+}
+
 // The stand-in: the recorded projects and members, changed as Lightning would change them.
 
 const projectStore = recorded.data as ApiProject[];
@@ -292,6 +544,14 @@ const memberStore = Object.fromEntries(Object.entries(recordedMembers).map(([id,
 
 standIn("GET", "/api/projects", () => ({ ...recorded, data: projectStore }));
 standIn("PUT", "/api/projects/:id", ({ id }, b) => {
+  // An existing sandbox: its name and description replaced.
+  const sandbox = sandboxStore.find((s) => s.id === id);
+  if (sandbox) {
+    const { name, description } = b as { name: string; description: string | null };
+    refuseTakenName(sandbox.parent_id, name, sandbox.id);
+    Object.assign(sandbox.attributes, { name, description });
+    return { data: sandbox };
+  }
   // Lightning lets only a superuser create a project through the API.
   if (standInRole() !== "superuser") throw new ApiError(403, "forbidden", "You may not do this (or it might not exist).");
   const body = b as { name: string; description: string | null; members: { email: string; role: ProjectRole }[] };
@@ -338,4 +598,68 @@ standIn("POST", "/api/projects/:project_id/invitations", ({ project_id }, b) => 
   const member: ApiMember = { id: crypto.randomUUID(), attributes: { ...body, failure_alert: false, digest: "never" } };
   membersOf(project_id!).push(member);
   return { data: member };
+});
+
+// The stand-in's sandboxes, recorded from the real Lightning, each with its parent.
+
+type StandInSandbox = ApiProject & { parent_id: string; attributes: { scheduled_deletion: string | null } };
+const sandboxStore: StandInSandbox[] = Object.entries(recordedSandboxes.sandboxes).flatMap(([parent_id, list]) => list.map((p) => ({ ...p, parent_id })));
+Object.assign(memberStore, Object.fromEntries(Object.entries(recordedSandboxes.members).map(([id, list]) => [id, list as ApiMember[]])));
+
+const sandboxesUnder = (id: string): StandInSandbox[] => sandboxStore.filter((s) => s.parent_id === id).flatMap((s) => [s, ...sandboxesUnder(s.id)]);
+const standInRoleIn = (projectId: string) => memberStore[projectId]?.find((m) => m.attributes.email === standInAccount.user?.email)?.attributes.role;
+const forbidden = () => new ApiError(403, "forbidden", "You may not do this (or it might not exist).");
+const refuseTakenName = (parentId: string, name: string, selfId?: string) => {
+  if (sandboxStore.some((s) => s.parent_id === parentId && s.attributes.name === name && s.id !== selfId)) {
+    throw new ApiError(422, "invalid", "The request is not valid. See errors.", [{ pointer: "#/name", code: "taken", detail: "has already been taken" }]);
+  }
+};
+const liveSandbox = (parentId: string, id: string) => {
+  const sandbox = sandboxStore.find((s) => s.id === id && s.parent_id === parentId && !s.attributes.scheduled_deletion);
+  if (!sandbox) throw new ApiError(404, "not_found", "Not found.");
+  return sandbox;
+};
+
+standIn("GET", "/api/projects/:project_id/sandboxes", ({ project_id }) => ({
+  data: sandboxStore
+    .filter((s) => s.parent_id === project_id && !s.attributes.scheduled_deletion)
+    .sort((x, y) => x.attributes.name.localeCompare(y.attributes.name)),
+  links: { next: null },
+}));
+// Its creator owns it; the parent's members keep their roles, owners as admins (sandboxes.ex `provision`).
+standIn("PUT", "/api/projects/:project_id/sandboxes/:id", ({ project_id, id }, b) => {
+  const role = standInRoleIn(project_id!);
+  if (role !== "owner" && role !== "admin" && role !== "editor") throw forbidden();
+  const { name } = b as { name: string };
+  refuseTakenName(project_id!, name);
+  const sandbox: StandInSandbox = { id: id!, parent_id: project_id!, attributes: { name, description: null, scheduled_deletion: null } };
+  sandboxStore.push(sandbox);
+  memberStore[id!] = (memberStore[project_id!] ?? []).map((m) => {
+    const own = m.attributes.email === standInAccount.user?.email ? "owner" : m.attributes.role === "owner" ? "admin" : m.attributes.role;
+    return { ...m, attributes: { ...m.attributes, role: own } };
+  });
+  return { data: sandbox };
+});
+standIn("DELETE", "/api/projects/:id", ({ id }) => {
+  const sandbox = sandboxStore.find((s) => s.id === id);
+  if (!sandbox) throw forbidden();
+  const at = new Date().toISOString();
+  for (const s of [sandbox, ...sandboxesUnder(sandbox.id)]) s.attributes.scheduled_deletion = at;
+});
+standIn("DELETE", "/api/projects/:id/scheduled_deletion", ({ id }) => {
+  const sandbox = sandboxStore.find((s) => s.id === id && s.attributes.scheduled_deletion);
+  if (!sandbox) throw new ApiError(404, "not_found", "Not found.");
+  for (const s of [sandbox, ...sandboxesUnder(sandbox.id)]) s.attributes.scheduled_deletion = null;
+  return { data: sandbox };
+});
+// A merge preview replays the recorded one, for whichever sandbox and target.
+standIn("POST", "/api/projects/:project_id/sandboxes/:id/merge_previews", ({ project_id, id }, b) => {
+  liveSandbox(project_id!, id!);
+  const target = (b as { target_project_id?: string }).target_project_id ?? project_id!;
+  return { ...recordedSandboxes.merge_preview, target_project_id: target };
+});
+standIn("POST", "/api/projects/:project_id/sandboxes/:id/merges", ({ project_id, id }, b) => {
+  liveSandbox(project_id!, id!);
+  const target = (b as { target_project_id?: string }).target_project_id ?? project_id!;
+  return { data: [...projectStore, ...sandboxStore].find((p) => p.id === target) };
 });

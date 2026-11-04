@@ -133,6 +133,15 @@ In this order, as in `credentials.ts`:
 
 Break the invalidation once and watch the first test fail.
 
+The page's `.replica.test.tsx`, if it has one, moves onto the stand-in too:
+render it inside a fresh `QueryClientProvider`, and inside
+`ReactRouterAdapter` under the `MemoryRouter` if the page navigates with
+`useRouter()`. The stand-in's data lives as long as the test file, so give
+each test its own new record, and put a test that deletes a recorded one
+last. Each request waits the stand-in's delay, so a page that loads in
+several rounds (a tree a level at a time, then members) needs `waitFor`
+timeouts of several seconds.
+
 ## 5. See it work, both ways
 
 Start the replica twice: `npm run dev:fake -- --port <a>` for the stand-in,

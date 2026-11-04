@@ -1,4 +1,5 @@
 import { useState } from "react";
+import AsyncBoundary from "../../components/primitives/AsyncBoundary";
 import Button from "../../components/primitives/Button";
 import Header from "../../components/primitives/Header";
 import { Centered, PageContent } from "../../components/primitives/PageContent";
@@ -9,6 +10,7 @@ import SandboxFormModal from "../../components/projects/sandboxes/SandboxFormMod
 import WorkspaceList from "../../components/projects/sandboxes/WorkspaceList";
 import { useRouter } from "../../routing/router";
 import type { CurrentProject } from "../../types/projects";
+import type { ResourceStatus } from "../../types/resource";
 import type { MergePreviewResult, MergeValues, SandboxForm, SandboxRow, SandboxValues } from "../../types/sandboxes";
 
 export interface SandboxesIndexPageProps {
@@ -30,6 +32,8 @@ export interface SandboxesIndexPageProps {
   gracePeriodDays: number | null;
   /** The create or edit form the route opened, or null. */
   form: SandboxForm | null;
+  /** Where the workspace stands while the host loads it; ready when omitted. */
+  status?: ResourceStatus;
 
   /** Closes the form (Cancel, the X, Escape). The host goes back to the list route. */
   onCloseForm: () => void;
@@ -88,6 +92,7 @@ export default function SandboxesIndexPage({
   createBlockedReason,
   gracePeriodDays,
   form,
+  status = { state: "ready" },
   onCloseForm,
   onCreateSandbox,
   onUpdateSandbox,
@@ -120,59 +125,61 @@ export default function SandboxesIndexPage({
       }
     >
       <Centered>
-        <WorkspaceList
-          root={root}
-          rootIsSandbox={rootIsSandbox}
-          sandboxes={sandboxes}
-          currentProjectId={project.id}
-          newHref={newHref}
-          createBlockedReason={createBlockedReason}
-          onMerge={(s) => setMergingId(s.id)}
-          onEdit={(s) => s.editHref && navigate(s.editHref)}
-          onDelete={(s) => setDeletingId(s.id)}
-          // Each card spins its own Restore and toasts a refusal. The host announces success (its flash).
-          onRestore={(s) => onCancelDeletion(s.id)}
-        />
-
-        {deleting && (
-          <DeleteSandboxModal
-            key={deleting.id}
-            sandboxName={deleting.name}
-            descendantCount={deleting.activeDescendantCount}
-            isCurrent={deleting.id === project.id}
-            rootName={root.name}
-            gracePeriodDays={gracePeriodDays}
-            onClose={() => setDeletingId(null)}
-            onConfirm={async (typed) => {
-              await onDeleteSandbox(deleting.id, typed);
-              setDeletingId(null);
-            }}
+        <AsyncBoundary status={status}>
+          <WorkspaceList
+            root={root}
+            rootIsSandbox={rootIsSandbox}
+            sandboxes={sandboxes}
+            currentProjectId={project.id}
+            newHref={newHref}
+            createBlockedReason={createBlockedReason}
+            onMerge={(s) => setMergingId(s.id)}
+            onEdit={(s) => s.editHref && navigate(s.editHref)}
+            onDelete={(s) => setDeletingId(s.id)}
+            // Each card spins its own Restore and toasts a refusal. The host announces success (its flash).
+            onRestore={(s) => onCancelDeletion(s.id)}
           />
-        )}
 
-        {merging && (
-          <MergeSandboxModal
-            key={merging.id}
-            sandboxName={merging.name}
-            descendantCount={merging.activeDescendantCount}
-            gracePeriodDays={gracePeriodDays}
-            onPreview={(targetId) => onPreviewMerge(merging.id, targetId)}
-            onClose={() => setMergingId(null)}
-            onMerge={async (values) => {
-              await onMergeSandbox(merging.id, values);
-              setMergingId(null);
-            }}
-          />
-        )}
+          {deleting && (
+            <DeleteSandboxModal
+              key={deleting.id}
+              sandboxName={deleting.name}
+              descendantCount={deleting.activeDescendantCount}
+              isCurrent={deleting.id === project.id}
+              rootName={root.name}
+              gracePeriodDays={gracePeriodDays}
+              onClose={() => setDeletingId(null)}
+              onConfirm={async (typed) => {
+                await onDeleteSandbox(deleting.id, typed);
+                setDeletingId(null);
+              }}
+            />
+          )}
 
-        {form && (
-          <SandboxFormModal
-            key={form.mode === "edit" ? form.sandboxId : "new"}
-            form={form}
-            onClose={onCloseForm}
-            onSave={(values) => (form.mode === "new" ? onCreateSandbox(values) : onUpdateSandbox(form.sandboxId, values))}
-          />
-        )}
+          {merging && (
+            <MergeSandboxModal
+              key={merging.id}
+              sandboxName={merging.name}
+              descendantCount={merging.activeDescendantCount}
+              gracePeriodDays={gracePeriodDays}
+              onPreview={(targetId) => onPreviewMerge(merging.id, targetId)}
+              onClose={() => setMergingId(null)}
+              onMerge={async (values) => {
+                await onMergeSandbox(merging.id, values);
+                setMergingId(null);
+              }}
+            />
+          )}
+
+          {form && (
+            <SandboxFormModal
+              key={form.mode === "edit" ? form.sandboxId : "new"}
+              form={form}
+              onClose={onCloseForm}
+              onSave={(values) => (form.mode === "new" ? onCreateSandbox(values) : onUpdateSandbox(form.sandboxId, values))}
+            />
+          )}
+        </AsyncBoundary>
       </Centered>
     </PageContent>
   );

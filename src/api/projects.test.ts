@@ -4,7 +4,18 @@ import { createElement, type ReactNode } from "react";
 import { afterEach, describe, expect, it } from "vitest";
 import { failNext } from "./client";
 import { standInAccount } from "./me";
-import { projectKeys, useProjectMemberSaves, useProjectMembers, useProjectSaves, useProjectsOverview, type ApiMember, type ApiProject } from "./projects";
+import {
+  projectKeys,
+  useProjectMemberSaves,
+  useProjectMembers,
+  useProjectSaves,
+  useProjectsOverview,
+  useSandboxSaves,
+  useWorkspace,
+  type ApiMember,
+  type ApiProject,
+  type WorkspaceProject,
+} from "./projects";
 
 // The members load once the projects have: two of the stand-in's delays.
 function renderProjects() {
@@ -99,4 +110,68 @@ describe("useProjectMemberSaves", () => {
       fieldErrors: { "1.email": ["This person has an account, but Lightning's API can only add people who are in one of your projects"] },
     });
   });
+});
+
+// The stand-in's recorded workspace: openhie-project, its sandbox staging, and staging's fhir-tests.
+const STAGING = "bf2cd8b2-2380-44ca-a07a-7a79e394cdf9";
+const FHIR_TESTS = "1f030fbc-0f76-4f0d-b266-0e96ad34d087";
+// The workspace loads a level at a time, then each project's members.
+const loaded = { timeout: 5000 };
+
+function renderWorkspace(projectId: string) {
+  const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+  const wrapper = ({ children }: { children: ReactNode }) => createElement(QueryClientProvider, { client }, children);
+  return { client, ...renderHook(() => ({ index: useWorkspace(projectId), saves: useSandboxSaves(projectId) }), { wrapper }) };
+}
+
+describe("useWorkspace", () => {
+  it("finds a sandbox's workspace from its root down, by name, and who may manage each", async () => {
+    const { result } = renderWorkspace(FHIR_TESTS);
+    await waitFor(() => expect(result.current.index.status).toEqual({ state: "ready" }), loaded);
+    expect(result.current.index.label).toBe("openhie-project/staging/fhir-tests");
+    expect(result.current.index.root?.name).toBe("openhie-project");
+    expect(result.current.index.sandboxes.map((s) => [s.name, s.canEdit, s.activeDescendantCount])).toEqual([
+      // By name, not by tree.
+      ["fhir-tests", true, 0],
+      ["staging", true, 1],
+    ]);
+    // Merging staging may go to the root, not into fhir-tests, which is under it.
+    expect(result.current.index.mergeTargets(STAGING).map((t) => t.name)).toEqual(["openhie-project"]);
+  });
+
+  it("says not found for a project the caller can't see", async () => {
+    const { result } = renderWorkspace("00000000-0000-4000-8000-000000000000");
+    await waitFor(() => expect(result.current.index.status).toEqual({ state: "notFound" }), loaded);
+  });
+});
+
+describe("useSandboxSaves", () => {
+  const names = (client: QueryClient) => client.getQueryData<WorkspaceProject[]>(projectKeys.workspaces)?.map((p) => p.name);
+
+  it("resolves a new sandbox only once the workspace has reloaded with it", async () => {
+    const { result, client } = renderWorkspace(OPENHIE);
+    await waitFor(() => expect(result.current.index.status).toEqual({ state: "ready" }), loaded);
+    await result.current.saves.onCreateSandbox({ rawName: "Saved And Listed", color: "#5AA1F0" });
+    expect(names(client)).toContain("saved-and-listed");
+  }, 15_000);
+
+  it("puts Lightning's refusal of a name on the form's name field", async () => {
+    const { result } = renderWorkspace(OPENHIE);
+    await waitFor(() => expect(result.current.index.status).toEqual({ state: "ready" }), loaded);
+    await expect(result.current.saves.onCreateSandbox({ rawName: "staging", color: null })).rejects.toMatchObject({
+      fieldErrors: { rawName: ["has already been taken"] },
+    });
+  }, 15_000);
+
+  it("refuses what the API can't do yet, before sending anything", async () => {
+    const { result } = renderWorkspace(OPENHIE);
+    await waitFor(() => expect(result.current.index.status).toEqual({ state: "ready" }), loaded);
+    await expect(result.current.saves.onUpdateSandbox(STAGING, { rawName: "staging", color: "#5AA1F0" })).rejects.toMatchObject({
+      message: "Lightning's API can't change a sandbox's colour yet.",
+    });
+    const merge = { targetId: OPENHIE, workflowIds: [], deletedWorkflowIds: ["w"], credentialIds: [], skippedCollectionNames: [] };
+    await expect(result.current.saves.onMergeSandbox(STAGING, merge)).rejects.toMatchObject({
+      message: "Lightning's API can't delete a workflow from the target in a merge yet.",
+    });
+  }, 15_000);
 });
