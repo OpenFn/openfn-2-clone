@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { channelFormValues, channelRow, useChannelIndex, useChannelSaves } from "../../api/channels";
 import { useWorkspace } from "../../api/projects";
@@ -38,6 +39,30 @@ export default function ChannelsIndexPageReplica() {
           authMethodOptions: index.authMethodOptions,
         }
       : null;
+
+  // index.ex `apply_action` (:new, :edit): a form the viewer may not open, or
+  // another project's channel, sends them back to the list with Lightning's flash.
+  const refusal =
+    status.state !== "ready"
+      ? null
+      : pathname.endsWith("/channels/new") && !canCreateChannel
+        ? "You are not authorized to create channels."
+        : channelId && !canEditChannel
+          ? "You are not authorized to edit channels."
+          : channelId && !editing
+            ? "Channel not found"
+            : null;
+  // Once per refusal: StrictMode runs the effect twice.
+  const refusing = useRef(false);
+  useEffect(() => {
+    if (!refusal || refusing.current) {
+      refusing.current = !!refusal;
+      return;
+    }
+    refusing.current = true;
+    toast(refusal, "danger");
+    navigate(`/projects/${projectId}/channels`, { replace: true });
+  }, [refusal, toast, navigate, projectId]);
 
   return (
     <ChannelsIndexPage

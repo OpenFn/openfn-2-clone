@@ -73,6 +73,13 @@ describe("ChannelsIndexPageReplica", () => {
     expect(await screen.findByText("A channel with this name already exists in this project", {}, wait)).toBeTruthy();
   });
 
+  it("sends an edit of a channel the project doesn't have back to the list with 'Channel not found'", async () => {
+    renderAt(`/projects/${PROJECT}/channels/00000000-0000-4000-8000-000000000000/edit`);
+    expect(await screen.findByText("Channel not found", {}, wait)).toBeTruthy();
+    await waitFor(() => expect(screen.getByTestId("where").textContent).toBe(`/projects/${PROJECT}/channels`));
+    expect(screen.queryByRole("dialog")).toBeNull();
+  });
+
   // Last: it deletes a recorded channel.
   it("deletes a channel", async () => {
     renderAt(`/projects/${PROJECT}/channels`);
