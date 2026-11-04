@@ -27,6 +27,14 @@ interface Props {
   onReveal?: ((values: ReauthValues) => Promise<string>) | undefined;
 }
 
+/** WebhookAuthMethod's changeset: required, then 8 to 72 characters. */
+function passwordErrors(password: string): string[] {
+  const empty = blank(password);
+  if (empty.length > 0) return empty;
+  if (password.length < 8) return ["should be at least 8 character(s)"];
+  return password.length > 72 ? ["should be at most 72 character(s)"] : [];
+}
+
 /** A secret with a Show / Copy button (maybe_mask_password_field / maybe_mask_api_key_field). */
 function SecretField({ id, value, type, revealed, onShow }: { id: string; value: string; type: "password" | "text"; revealed: boolean; onShow: () => void }) {
   const buttonId = `${id}_action_button`;
@@ -66,7 +74,7 @@ export default function WebhookAuthMethodFormModal({ authMethod, onCancel, onSav
     initial: { name: authMethod?.name ?? "", username: authMethod?.username ?? "", password: "" },
     validate: ({ name, username, password }) => ({
       name: blank(name),
-      ...(isNew && authType === "basic" ? { username: blank(username), password: blank(password) } : {}),
+      ...(isNew && authType === "basic" ? { username: blank(username), password: passwordErrors(password) } : {}),
     }),
   });
   const next = useAction(async () => {

@@ -346,6 +346,23 @@ describe("ProjectSettingsPage", () => {
     expect(screen.queryByText("older")).toBeNull();
   });
 
+  it("refuses a basic auth password outside 8 to 72 characters, as Lightning's changeset does", async () => {
+    const { onCreateWebhookAuthMethod } = renderPage({}, "#webhook_security");
+    fireEvent.click(screen.getByRole("button", { name: "New auth method" }));
+    fireEvent.click(screen.getByText(/Basic HTTP Authentication/));
+    fireEvent.click(within(dialog()).getByRole("button", { name: "Next" }));
+    fireEvent.change(await screen.findByLabelText(/Auth method name/), { target: { value: "Kobo" } });
+    fireEvent.change(document.getElementById("webhook_auth_method_username")!, { target: { value: "kobo" } });
+    const password = document.getElementById("webhook_auth_method_password")!;
+    fireEvent.change(password, { target: { value: "short" } });
+    fireEvent.blur(password);
+    fireEvent.click(within(dialog()).getByRole("button", { name: "Create auth method" }));
+    expect(await within(dialog()).findByText("should be at least 8 character(s)")).toBeTruthy();
+    fireEvent.change(password, { target: { value: "x".repeat(73) } });
+    expect(await within(dialog()).findByText("should be at most 72 character(s)")).toBeTruthy();
+    expect(onCreateWebhookAuthMethod).not.toHaveBeenCalled();
+  });
+
   it("shows the key the host generated, and leaves the key with the host on create", async () => {
     const { onGenerateApiKey, onCreateWebhookAuthMethod } = renderPage({}, "#webhook_security");
     fireEvent.click(screen.getByRole("button", { name: "New auth method" }));
