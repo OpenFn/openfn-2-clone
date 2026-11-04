@@ -155,11 +155,11 @@ describe("useSandboxSaves", () => {
     expect(names(client)).toContain("saved-and-listed");
   }, 15_000);
 
-  it("puts Lightning's refusal of a name on the form's name field", async () => {
+  it("puts a sibling's name on the form's name field in Lightning's words", async () => {
     const { result } = renderWorkspace(OPENHIE);
     await waitFor(() => expect(result.current.index.status).toEqual({ state: "ready" }), loaded);
     await expect(result.current.saves.onCreateSandbox({ rawName: "staging", color: null })).rejects.toMatchObject({
-      fieldErrors: { rawName: ["has already been taken"] },
+      fieldErrors: { rawName: ["Sandbox name already exists"] },
     });
   }, 15_000);
 

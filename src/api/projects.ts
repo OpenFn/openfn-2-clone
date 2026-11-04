@@ -410,16 +410,28 @@ export const workspacesQuery = {
       parentId,
     });
     const all = (await listProjects()).map((p) => node(p, null));
+    // A sandbox the viewer has no role on refuses its list; Lightning leaves it off the page (sandbox_live/index.ex).
+    const hidden = new Set<string>();
+    const refused = (error: unknown) => error instanceof ApiError && (error.code === "forbidden" || error.code === "not_found");
     // ponytail: one request per project in the instance, since the API lists only a project's direct sandboxes and sends no parent; one request when it does.
     let level = all;
     while (level.length > 0) {
       const lists = await Promise.all(
-        level.map((parent) => listAll<ApiProject>(sandboxesPath(parent.id), "data").then((list) => list.map((p) => node(p, parent.id))))
+        level.map((parent) =>
+          listAll<ApiProject>(sandboxesPath(parent.id), "data").then(
+            (list) => list.map((p) => node(p, parent.id)),
+            (error: unknown) => {
+              if (!refused(error) || parent.parentId === null) throw error;
+              hidden.add(parent.id);
+              return [];
+            }
+          )
+        )
       );
       level = lists.flat();
       all.push(...level);
     }
-    return all;
+    return all.filter((p) => !hidden.has(p.id));
   },
 };
 
@@ -493,6 +505,17 @@ async function parentOf(queryClient: ReturnType<typeof useQueryClient>, sandboxI
 
 const toName = (pointer: string) => (pointer === "#/name" ? "#/rawName" : undefined);
 
+/** A sandbox save, its name refusals on the Name field; a sibling's name in Lightning's words (form_component.ex), not "has already been taken". */
+async function sandboxNameSave(send: Promise<unknown>): Promise<void> {
+  try {
+    await send;
+  } catch (error) {
+    if (!(error instanceof ApiError)) throw error;
+    const entries = error.errors.map((e) => (e.code === "taken" && e.pointer === "#/name" ? { ...e, detail: "Sandbox name already exists" } : e));
+    throw new ApiError(error.status ?? 422, error.code, error.message, entries);
+  }
+}
+
 /** `POST …/merge_previews`; a null target asks for the parent. */
 async function previewMerge(queryClient: ReturnType<typeof useQueryClient>, id: string, targetId: string | null) {
   const path = sandboxesPath(await parentOf(queryClient, id), `/${encodeURIComponent(id)}/merge_previews`);
@@ -508,7 +531,7 @@ export function useSandboxSaves(projectId: string) {
 
   const create = useSave([projectKeys.all], async ({ rawName, color }: SandboxValues) => {
     const send = request("PUT", sandboxesPath(projectId, `/${crypto.randomUUID()}`), { name: urlSafeName(rawName), color });
-    await withFieldNames(send, toName);
+    await withFieldNames(sandboxNameSave(send), toName);
   });
 
   // `PUT /api/projects/:id` replaces the name and the description, so the description goes back as it was.
@@ -516,7 +539,7 @@ export function useSandboxSaves(projectId: string) {
     if (color !== null) throw new ApiError(422, "not_supported", "Lightning's API can't change a sandbox's colour yet.");
     const current = (await queryClient.query(workspacesQuery)).find((p) => p.id === id);
     if (!current) throw new ApiError(404, "not_found", "Sandbox not found");
-    await withFieldNames(request("PUT", projectPath(id), { name: urlSafeName(rawName), description: current.description }), toName);
+    await withFieldNames(sandboxNameSave(request("PUT", projectPath(id), { name: urlSafeName(rawName), description: current.description })), toName);
   });
 
   const remove = useSave([projectKeys.all], (id: string) => request("DELETE", projectPath(id)));
