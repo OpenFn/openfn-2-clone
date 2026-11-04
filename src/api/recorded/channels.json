@@ -1,0 +1,63 @@
+{
+  "channels": {
+    "1da97d81-152f-5f7d-a0fc-8416bd411706": {
+      "data": [
+        {
+          "attributes": {
+            "enabled": false,
+            "name": "legacy-sms",
+            "url": "http://localhost:4000/channels/0d418375-6c7c-44d2-bb4e-dab824067a9d",
+            "inserted_at": "2026-11-04T01:11:13Z",
+            "updated_at": "2026-11-04T01:11:21Z",
+            "last_activity": null,
+            "lock_version": 3,
+            "destination_credential_id": null,
+            "destination_url": "http://sms.example.org/send",
+            "request_count": 0,
+            "client_auth_method_ids": []
+          },
+          "id": "0d418375-6c7c-44d2-bb4e-dab824067a9d",
+          "type": "channels",
+          "relationships": {}
+        },
+        {
+          "attributes": {
+            "enabled": true,
+            "name": "orders-proxy",
+            "url": "http://localhost:4000/channels/e4351c88-87e9-48df-a049-833a8e584cc9",
+            "inserted_at": "2026-11-04T01:11:13Z",
+            "updated_at": "2026-11-04T01:11:13Z",
+            "last_activity": null,
+            "lock_version": 1,
+            "destination_credential_id": "547eb25a-ebd5-41ab-ad9d-ab582f78eb3d",
+            "destination_url": "https://example.com/orders",
+            "request_count": 0,
+            "client_auth_method_ids": []
+          },
+          "id": "e4351c88-87e9-48df-a049-833a8e584cc9",
+          "type": "channels",
+          "relationships": {}
+        }
+      ],
+      "meta": {
+        "total_channels": 2,
+        "total_requests": 0
+      }
+    },
+    "4adf2644-ed4e-4f97-a24c-ab35b3cb1efa": {
+      "data": [],
+      "meta": {
+        "total_channels": 0,
+        "total_requests": 0
+      }
+    },
+    "f5c51652-8428-4fb0-9b01-b27638079dc0": {
+      "data": [],
+      "meta": {
+        "total_channels": 0,
+        "total_requests": 0
+      }
+    }
+  },
+  "webhook_auth_methods": {}
+}

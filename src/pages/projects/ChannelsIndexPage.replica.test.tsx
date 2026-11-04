@@ -1,39 +1,85 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { MemoryRouter, Route, Routes } from "react-router-dom";
-import { describe, expect, it, vi } from "vitest";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+import { MemoryRouter, Route, Routes, useLocation, useNavigate } from "react-router-dom";
+import { describe, expect, it } from "vitest";
+import Button from "../../components/primitives/Button";
 import { ToastProvider } from "../../components/primitives/Toast";
 import { session } from "../../mock-data/users";
-import { RouterProvider, type Router } from "../../routing/router";
+import { ReactRouterAdapter } from "../../routing/ReactRouterAdapter";
 import SessionProvider from "../../session/SessionProvider";
 import ChannelsIndexPageReplica from "./ChannelsIndexPage.replica";
 
-const navigate = vi.fn();
-vi.mock("react-router-dom", async (original) => ({
-  ...(await original<typeof import("react-router-dom")>()),
-  useNavigate: () => navigate,
-}));
+// kickstart-me on the stand-in: two recorded channels, orders-proxy and legacy-sms.
+const PROJECT = "1da97d81-152f-5f7d-a0fc-8416bd411706";
+const ORDERS = "e4351c88-87e9-48df-a049-833a8e584cc9";
+// The workspace loads a level at a time, then the members: several of the stand-in's delays.
+const wait = { timeout: 5000 };
 
-const PROJECT = "4adf2644-ed4e-4f97-a24c-ab35b3cb1efa";
+function Where() {
+  const navigate = useNavigate();
+  return (
+    <>
+      <output data-testid="where">{useLocation().pathname}</output>
+      <Button onClick={() => navigate(-1)}>Back</Button>
+    </>
+  );
+}
+
+function renderAt(path: string) {
+  const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+  render(
+    <QueryClientProvider client={client}>
+      <SessionProvider session={session}>
+        <ToastProvider>
+          <MemoryRouter initialEntries={["/before", path]} initialIndex={1}>
+            <ReactRouterAdapter>
+              <Routes>
+                {["", "/new", "/:channelId/edit"].map((tail) => (
+                  <Route key={tail} path={`/projects/:projectId/channels${tail}`} element={<ChannelsIndexPageReplica />} />
+                ))}
+              </Routes>
+              <Where />
+            </ReactRouterAdapter>
+          </MemoryRouter>
+        </ToastProvider>
+      </SessionProvider>
+    </QueryClientProvider>
+  );
+}
 
 describe("ChannelsIndexPageReplica", () => {
-  it("closes the form after a save by replacing the history entry, so Back doesn't reopen it", async () => {
-    const router: Router = { navigate: vi.fn(), useHref: (to) => to, useLocation: () => ({ pathname: "/", search: "", hash: "" }) };
-    render(
-      <SessionProvider session={session}>
-        <RouterProvider value={router}>
-          <ToastProvider>
-            <MemoryRouter initialEntries={[`/projects/${PROJECT}/channels/new`]}>
-              <Routes>
-                <Route path="/projects/:projectId/channels/new" element={<ChannelsIndexPageReplica />} />
-              </Routes>
-            </MemoryRouter>
-          </ToastProvider>
-        </RouterProvider>
-      </SessionProvider>
-    );
-    fireEvent.change(screen.getByLabelText("Name"), { target: { value: "new-channel" } });
+  it("lists the project's channels", async () => {
+    renderAt(`/projects/${PROJECT}/channels`);
+    expect(await screen.findByText("orders-proxy", {}, wait)).toBeTruthy();
+    expect(screen.getByText("legacy-sms")).toBeTruthy();
+  });
+
+  it("creates a channel, then closes the form by replacing the history entry, so Back doesn't reopen it", async () => {
+    renderAt(`/projects/${PROJECT}/channels/new`);
+    fireEvent.change(await screen.findByLabelText("Name", {}, wait), { target: { value: "new-channel" } });
     fireEvent.change(screen.getByLabelText("Destination URL"), { target: { value: "https://example.com" } });
     fireEvent.submit(document.getElementById("channel-form-new")!);
-    await waitFor(() => expect(navigate).toHaveBeenCalledWith(`/projects/${PROJECT}/channels`, { replace: true }), { timeout: 2000 });
+    expect(await screen.findByText("Channel created successfully.", {}, wait)).toBeTruthy();
+    await waitFor(() => expect(screen.getByTestId("where").textContent).toBe(`/projects/${PROJECT}/channels`));
+    expect(await screen.findByText("new-channel", {}, wait)).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: "Back" }));
+    await waitFor(() => expect(screen.getByTestId("where").textContent).toBe("/before"));
+  });
+
+  it("shows Lightning's refusal on the field it names", async () => {
+    renderAt(`/projects/${PROJECT}/channels/${ORDERS}/edit`);
+    fireEvent.change(await screen.findByLabelText("Name", {}, wait), { target: { value: "legacy-sms" } });
+    fireEvent.submit(document.getElementById(`channel-form-${ORDERS}`)!);
+    expect(await screen.findByText("A channel with this name already exists in this project", {}, wait)).toBeTruthy();
+  });
+
+  // Last: it deletes a recorded channel.
+  it("deletes a channel", async () => {
+    renderAt(`/projects/${PROJECT}/channels`);
+    const row = (await screen.findByText("orders-proxy", {}, wait)).closest("tr")!;
+    fireEvent.click(within(row).getByRole("button", { name: "Delete" }));
+    fireEvent.click(within(await screen.findByRole("dialog")).getByRole("button", { name: "Delete" }));
+    expect(await screen.findByText("Channel deleted.", {}, wait)).toBeTruthy();
+    await waitFor(() => expect(screen.queryByText("orders-proxy")).toBeNull(), wait);
   });
 });

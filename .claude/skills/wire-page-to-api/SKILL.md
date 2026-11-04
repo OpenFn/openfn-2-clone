@@ -94,6 +94,13 @@ In this order, as in `credentials.ts`:
    from the real Lightning with `curl`. Check a recording for anything that
    looks like a secret or a real token before committing (redact it);
    GitHub blocks the push if it finds one.
+   - A route another file's stand-in answers (`GET /api/credentials`) is
+     only taught once that file loads; `import type` doesn't load it, so
+     import the file itself too, or the page says "not found" on the
+     stand-in.
+   - Lightning sends a changeset's refusals together (a blank name and a
+     bad URL in one answer), and a name taken only once those pass, as the
+     database checks it. The stand-in refuses in the same order.
 
 ## 3. The wrapper
 

@@ -1,3 +1,4 @@
+import AsyncBoundary from "../../components/primitives/AsyncBoundary";
 import Button from "../../components/primitives/Button";
 import Header from "../../components/primitives/Header";
 import { Centered, PageContent } from "../../components/primitives/PageContent";
@@ -9,6 +10,7 @@ import { useToast } from "../../components/primitives/Toast";
 import { useRouter } from "../../routing/router";
 import type { ChannelForm, ChannelFormValues, ChannelRow } from "../../types/channels";
 import type { CurrentProject } from "../../types/projects";
+import type { ResourceStatus } from "../../types/resource";
 import { errorMessage } from "../../utils/errors";
 
 /** The contract between this page and whatever feeds it (the replica wrapper, later Lightning). */
@@ -26,6 +28,8 @@ export interface ChannelsIndexPageProps {
   canDeleteChannel: boolean;
   /** The New / Edit Channel form while the route has it open (/channels/new, /channels/:id/edit); null on the list. */
   form: ChannelForm | null;
+  /** While the host loads the channels, or why it couldn't (STANDARDS pattern 5). Leave it out when the data arrives with the page. */
+  status?: ResourceStatus;
   /** Switches a channel on or off. Resolves when the host has answered; the host announces the result. */
   onToggle: (id: string, enabled: boolean) => Promise<void>;
   /** Deletes a channel, after the page has asked the user to confirm. */
@@ -52,6 +56,7 @@ export default function ChannelsIndexPage({
   canEditChannel,
   canDeleteChannel,
   form,
+  status = { state: "ready" },
   onToggle,
   onDelete,
   onSave,
@@ -82,19 +87,21 @@ export default function ChannelsIndexPage({
           </Header>
         }
       >
-        <Centered>
-          <ChannelMetrics totalChannels={totalChannels} totalRequests={totalRequests} logsHref={logsHref} />
-          <div className="mt-8">
-            <ChannelsTable
-              channels={channels}
-              canEdit={canEditChannel}
-              canDelete={canDeleteChannel}
-              onToggle={(id, v) => void onToggle(id, v).catch(failed)}
-              onEdit={(id) => navigate(`${base}/${id}/edit`)}
-              onDelete={onDelete}
-            />
-          </div>
-        </Centered>
+        <AsyncBoundary status={status}>
+          <Centered>
+            <ChannelMetrics totalChannels={totalChannels} totalRequests={totalRequests} logsHref={logsHref} />
+            <div className="mt-8">
+              <ChannelsTable
+                channels={channels}
+                canEdit={canEditChannel}
+                canDelete={canDeleteChannel}
+                onToggle={(id, v) => void onToggle(id, v).catch(failed)}
+                onEdit={(id) => navigate(`${base}/${id}/edit`)}
+                onDelete={onDelete}
+              />
+            </div>
+          </Centered>
+        </AsyncBoundary>
       </PageContent>
       {form && (
         <ChannelFormModal
