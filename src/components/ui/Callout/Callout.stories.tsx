@@ -6,7 +6,8 @@ const meta = { title: "ui/Callout", component: Callout } satisfies Meta<typeof C
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Info: Story = { args: { title: "Copy your token now. You won't be able to see it again." } };
+export const Info: Story = { args: { title: "Your token works with the OpenFn CLI and the API." } };
+export const Warning: Story = { args: { tone: "warning", title: "Copy your token now. You won't be able to see it again." } };
 export const Danger: Story = {
   args: { tone: "danger", role: "alert", title: "Couldn't load your tokens", children: "Lightning didn't answer. Check your connection." },
 };

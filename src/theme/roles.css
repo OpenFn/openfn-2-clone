@@ -67,6 +67,13 @@
   --background-color-disabled: var(--color-white); /* a disabled secondary button */
   --text-color-disabled: color-mix(in oklab, var(--color-gray-700) 50%, var(--color-white)); /* text and icons on a disabled control */
 
+  /* Warning: amber, as Brandon draws "copy this now". Names as main's tokens.css has them. */
+  --background-color-warning: var(--color-amber-50); /* a warning panel */
+  --border-color-warning: var(--color-amber-200); /* its edge */
+  --text-color-warning: var(--color-amber-700); /* text on a warning panel */
+  --text-color-warning-strong: var(--color-amber-800); /* a warning panel's heading */
+  --text-color-warning-icon: var(--color-amber-600); /* a warning panel's icon: Brandon's 500 is under 3:1 on the panel */
+
   /* Info: indigo in Basic, as Brandon draws notices. */
   --background-color-info: var(--color-indigo-50); /* an info panel */
   --border-color-info: var(--color-indigo-200); /* its edge */

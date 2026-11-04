@@ -15,6 +15,7 @@
   --dk-red-fill: oklch(53% 0.2 26);
   --dk-red: oklch(63.7% 0.237 25.331);
   --dk-blue: oklch(62.3% 0.214 259.815);
+  --dk-amber: oklch(76.9% 0.188 70.08);
 
   /* Text */
   --text-color-strong: #f3f4f6;
@@ -61,6 +62,13 @@
   --text-color-on-brand-disabled: color-mix(in oklab, white 60%, var(--dk-surface));
   --background-color-disabled: var(--dk-surface);
   --text-color-disabled: color-mix(in oklab, #ccd1da 50%, var(--dk-surface));
+
+  /* Warning */
+  --background-color-warning: color-mix(in oklab, var(--dk-amber) 10%, var(--dk-surface));
+  --border-color-warning: color-mix(in oklab, var(--dk-amber) 30%, transparent);
+  --text-color-warning: oklch(87.9% 0.169 91.605);
+  --text-color-warning-strong: oklch(92.4% 0.12 95.746);
+  --text-color-warning-icon: var(--dk-amber);
 
   /* Info: blue here, as the dark-theme branch has it. */
   --background-color-info: color-mix(in oklab, var(--dk-blue) 10%, var(--dk-surface));

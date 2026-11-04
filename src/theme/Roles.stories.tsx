@@ -80,6 +80,16 @@ const groups: { title: string; roles: Role[] }[] = [
     ],
   },
   {
+    title: "Warning",
+    roles: [
+      { name: "bg-warning", job: "A warning panel", chips: [{ className: "bg-warning text-warning border border-warning", label: "panel" }] },
+      { name: "border-warning", job: "A warning panel's edge", chips: [{ className: "bg-warning text-warning border-2 border-warning", label: "edge" }] },
+      { name: "text-warning", job: "Text on a warning panel", chips: [{ className: "bg-warning text-warning", label: "on warning panel" }] },
+      { name: "text-warning-strong", job: "A warning panel's heading", chips: [{ className: "bg-warning text-warning-strong font-semibold", label: "on warning panel" }] },
+      { name: "text-warning-icon", job: "A warning panel's icon", chips: [{ className: "bg-warning text-warning", label: "icon", icon: "hero-information-circle text-warning-icon" }] },
+    ],
+  },
+  {
     title: "Info",
     roles: [
       { name: "bg-info", job: "An info panel", chips: [{ className: "bg-info text-info border border-info", label: "panel" }] },

@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import { Button } from "@/components/ui/Button/Button";
+import { cn } from "@/components/ui/cn";
 import { Check, Copy } from "@/components/ui/icons";
 import { StatusMessage } from "@/components/ui/StatusMessage/StatusMessage";
 import { TextInput } from "@/components/ui/TextInput/TextInput";
@@ -43,7 +44,13 @@ export function CopyValue({ value, label, autoFocus }: CopyValueProps) {
     <div className="flex gap-2">
       <TextInput ref={input} readOnly value={value} aria-label={label} monospace autoFocus={autoFocus} className="flex-1" />
       <Button variant="secondary" icon={copied ? Check : Copy} onClick={copy}>
-        {copied ? "Copied" : "Copy"}
+        {/* Both words sit in one grid cell and the hidden one keeps its width, so the button doesn't change size. */}
+        <span className="grid">
+          <span className={cn("col-start-1 row-start-1", copied && "invisible")}>Copy</span>
+          <span className={cn("col-start-1 row-start-1", !copied && "invisible")} aria-hidden={!copied}>
+            Copied
+          </span>
+        </span>
       </Button>
       <StatusMessage>{copied ? "Copied" : result === "failed" ? "Couldn't copy. It's selected for you to copy yourself." : ""}</StatusMessage>
     </div>

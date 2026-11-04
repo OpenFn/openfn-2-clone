@@ -8,7 +8,10 @@ Things that came up while building and aren't principles yet. Add anything.
 ## Components
 - Every action has a pending state: Button needs one (a spinner, stays in place, ignores clicks).
 - A blocked button says why: needs Tooltip; until then Button uses plain `disabled`.
-- Who owns the words inside a component ("Cancel", "Close", "Copy")?
+- Who owns the words inside a component ("Cancel", "Close", "Copy")? Lucy, 4 Nov: maybe the component owns the words that should never change, like Cancel, so no page can drift.
+- A control doesn't change size when its state changes (Copy → Copied, a button going pending), so nothing beside it jumps. Seen once, on CopyValue.
+- Dialog takes `title`, `children` and `footer` slots. When a second shape of dialog arrives (a form, a wide one, one with a ✕), split it into composed parts (header, body, footer) instead of adding props.
+- Types: the page declares the props it needs, `lib/api/` declares what it gives, and TypeScript checks they match where the route joins them. Is that the rule, or do shared shapes get a home? Being researched.
 - Headings inside dialogs and notices: which level?
 - Table cells: truncate or wrap long values?
 - Tooltips close on Escape?

@@ -105,7 +105,7 @@ export function TokensPage({ status, tokens, onGenerate, onDelete, onRetry }: To
       )}
 
       {newToken && (
-        <Callout title="Copy your token now. You won't be able to see it again.">
+        <Callout tone="warning" title="Copy your token now. You won't be able to see it again.">
           {/* Keyed, so a second new token is focused too. */}
           <CopyValue key={newToken} value={newToken} label="New token" autoFocus />
         </Callout>
