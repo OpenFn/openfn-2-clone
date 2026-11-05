@@ -32,7 +32,8 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: npm run build
+      # This repo was renamed from openfn-3-poc, which local dev still uses as its base.
+      - run: npm run build -- --base=/openfn-2-clone/
       - run: npm run build-storybook -- -o dist/storybook
       - uses: actions/upload-pages-artifact@v3
         with:
